@@ -1,0 +1,41 @@
+@font-face {
+  font-family: "Graphik";
+  font-weight: 300;
+  src: url("/fonts/graphik/Graphik-300-Light.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 400;
+  src: url("/fonts/graphik/Graphik-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 500;
+  src: url("/fonts/graphik/Graphik-500-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 600;
+  src: url("/fonts/graphik/Graphik-Semibold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 700;
+  src: url("/fonts/graphik/Graphik-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 800;
+  src: url("/fonts/graphik/Graphik-800-Black.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Graphik";
+  font-weight: 900;
+  src: url("/fonts/graphik/Graphik-900-Super.otf") format("opentype");
+}

@@ -1,0 +1,10 @@
+{
+  "marketplace": "Marketplace",
+  "home": {
+    "title": "Discover",
+    "logout": "Logout"
+  },
+  "account": {
+    "title": "My account"
+  }
+}
