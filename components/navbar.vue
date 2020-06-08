@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg fixed-top p-0">
     <div class="container-fluid h-100">
-      <div class="row ps-x-16 w-100 h-100">
+      <div class="row mx-auto ps-x-16 w-100 h-100">
         <nuxt-link class="logo-container d-flex" :to="{ name: 'index-staking' }">
           <button
             class="navbar-toggler"
@@ -17,83 +17,85 @@
           <div class="product-text align-self-center ps-l-12">{{$t("marketplace")}}</div>
         </nuxt-link>
         <div
-          class="navbar-collapse collapse d-flex col justify-content-center"
+          class="navbar-collapse collapse d-flex col p-0 justify-content-center"
           :class="{'show': openMenu}"
           @click.prevent.stop="handleOpenMenu(!openMenu)"
         >
           <ul class="navbar-nav main-nav mx-md-auto">
             <li class="nav-item">
               <nuxt-link
-                class="nav-link d-flex"
-                :to="{name: 'index-index'}"
+                class="nav-link d-flex justify-content-lg-center"
+                :to="{name: 'index'}"
                 :class="{ 'active': checkIfNestedRoute('index') }"
               >
                 <span class="align-self-center">{{ $t('home.title') }}</span>
               </nuxt-link>
             </li>
             <li class="nav-item">
-              <nuxt-link class="nav-link d-flex" :to="{name: 'index-staking'}">
+              <nuxt-link
+                class="nav-link d-flex justify-content-lg-center"
+                :to="{name: 'index-staking'}"
+              >
                 <span class="align-self-center">{{ $t('account.title') }}</span>
               </nuxt-link>
             </li>
             <div class="extra-links">
               <li class="nav-item">
-                <a class="nav-link d-flex" href="#" target="_blank">
+                <a class="nav-link d-flex justify-content-lg-center" href="#" target="_blank">
                   <span class="align-self-center">{{ $t('whatsNew') }}</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link d-flex" href="#" target="_blank">
+                <a class="nav-link d-flex justify-content-lg-center" href="#" target="_blank">
                   <span class="align-self-center">{{ $t('helpCenter') }}</span>
                 </a>
               </li>
             </div>
           </ul>
         </div>
-        <div class="profile-navbar ps-x-16 ps-x-md-32 d-flex ml-auto">
+        <div class="profile-navbar d-flex ml-auto ps-l-lg-16">
           <div class="d-flex align-self-center">
             <nuxt-link
               class="nav-link d-flex"
-              :to="{name: 'index-developers'}"
-              :class="{ 'active': checkIfNestedRoute('index-developers') }"
+              :to="{name: 'index-notification'}"
+              :class="{ 'active': checkIfNestedRoute('index-notification') }"
             >
-              <span class="notification-icon">
-                <svg-sprite-icon name="notification"></svg-sprite-icon>
+              <span class="notification-icon d-flex justify-content-center">
+                <svg-sprite-icon name="notification" class="align-self-center"></svg-sprite-icon>
               </span>
             </nuxt-link>
           </div>
-          <div class="d-flex nav-profile-container align-self-center dropdown">
-            <div class="d-flex" @click.prevent.stop="handleOpenProfile(!openProfile)">
-              <span class="profile-icon profile-with-status align-self-center">
-                <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon>
-                <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" />
-                <div class="profile-status ms-l-24 ms-t-8">
-                  <svg
-                    class="status-icon"
-                    v-bind:class="{'main': currentNetwork.key === 'main', 'matic': currentNetwork.key === 'matic','other': currentNetwork.key != 'main' && currentNetwork.key != 'matic',}"
-                    width="10"
-                    height="10"
-                    viewBox="0 0 10 10"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="5" cy="5" r="4" fill="#25CD79" stroke="white" stroke-width="2" />
-                  </svg>
-                </div>
-              </span>
-              <div
-                class="profile d-none d-md-flex flex-column align-self-center ps-l-12 ps-r-md-20 ps-r-md-12"
-              >
-                <span class="font-body-small font-medium user-name">{{ formattedUserAddress }}</span>
-                <span
-                  class="font-caption text-gray font-capitalize"
-                  v-if="selectedNetwork"
-                >{{ selectedNetwork.name || selectedNetwork.key }}</span>
+          <div
+            class="nav-profile-container d-flex align-self-center"
+            @click.prevent.stop="handleOpenProfile(!openProfile)"
+          >
+            <span class="profile-icon profile-with-status align-self-center">
+              <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon>
+              <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" />
+              <div class="profile-status ms-l-24 ms-t-8">
+                <svg
+                  class="status-icon"
+                  v-bind:class="{'main': currentNetwork.key === 'main', 'matic': currentNetwork.key === 'matic','other': currentNetwork.key != 'main' && currentNetwork.key != 'matic',}"
+                  width="10"
+                  height="10"
+                  viewBox="0 0 10 10"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="5" cy="5" r="4" fill="#25CD79" stroke="white" stroke-width="2" />
+                </svg>
               </div>
-              <span class="down-icon align-self-center d-none d-md-block">
-                <svg-sprite-icon name="right-arrow"></svg-sprite-icon>
-              </span>
+            </span>
+            <div class="profile d-none d-md-flex flex-column align-self-center ms-l-12">
+              <span class="font-body-small font-medium user-name">{{ formattedUserAddress }}</span>
+              <span
+                class="font-caption text-gray font-capitalize network-method"
+                v-if="selectedNetwork"
+              >{{ selectedNetwork.name || selectedNetwork.key }}</span>
             </div>
+            <span class="down-icon align-self-center d-none d-md-flex justify-content-center">
+              <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
+            </span>
           </div>
 
           <ul class="navbar-nav right-nav pr-3" v-if="false">
@@ -426,7 +428,8 @@ export default class Navbar extends Vue {
   }
 }
 
-.user-name {
+.user-name,
+.network-method {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -519,8 +522,7 @@ export default class Navbar extends Vue {
     position: relative;
     height: 40px;
     width: 40px;
-    border-radius: 32px;
-    margin-right: 7px;
+    border-radius: 50%;
     &:hover {
       background-color: light-color("500");
     }
@@ -528,8 +530,6 @@ export default class Navbar extends Vue {
     cursor: pointer;
     .svg-sprite-icon {
       position: absolute;
-      left: 12px;
-      top: 10px;
       height: 20px;
       width: 16px;
     }
@@ -548,9 +548,10 @@ export default class Navbar extends Vue {
     }
 
     .down-icon {
-      margin-left: 8px;
+      width: 24px;
+      height: 24px;
       .svg-sprite-icon {
-        width: 9px;
+        width: 10px;
         height: 14px;
         fill: rgba(dark-color("700"), 0.4);
         transform: rotate(90deg);
@@ -723,10 +724,8 @@ export default class Navbar extends Vue {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .logo-container {
-    padding-left: 1rem;
-    padding-right: 1rem;
   }
   .navbar {
     .navbar-collapse {

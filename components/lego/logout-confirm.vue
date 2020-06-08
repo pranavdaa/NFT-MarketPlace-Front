@@ -11,20 +11,20 @@
             </div>
 
             <div class="container">
-              <div class="row ps-16 ps-md-32 pt-0 d-flex justify-content-center">
+              <div class="row ps-16 w-100 mx-auto ps-md-32 pt-0 d-flex justify-content-center">
                 <div class="align-self-center mt-4">
-                  <img src="~/assets/svg/logout.svg" alt="Logout" />
+                  <img src="~/assets/svg/logout.svg" alt="Matic Marketplace" />
                 </div>
                 <div
                   class="col-12 font-heading-medium font-semibold text-center ps-t-32"
-                >Are you sure want to logout?</div>
+                >{{$t('logout.logoutQuestion')}}</div>
               </div>
-              <div class="row ps-x-md-32 ps-x-16 ps-b-32">
+              <div class="row w-100 mx-auto ps-x-md-32 ps-x-16 ps-b-32">
                 <div class="col-6">
-                  <button class="btn btn-light btn-block" @click="close()">Cancle</button>
+                  <button class="btn btn-light btn-block" @click="close()">{{$t('cancel')}}</button>
                 </div>
                 <div class="col-6">
-                  <button class="btn btn-primary btn-block" @click="logout()">Yes, logout</button>
+                  <button class="btn btn-primary btn-block" @click="logout()">{{$t('logout.okay')}}</button>
                 </div>
               </div>
             </div>

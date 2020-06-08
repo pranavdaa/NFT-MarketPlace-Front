@@ -1,4 +1,7 @@
 {
+  "cancel": "Cancel",
+  "helpCenter": "Help center",
+  "whatsNew": "What's new",
   "marketplace": "Marketplace",
   "home": {
     "title": "Discover",
@@ -6,5 +9,10 @@
   },
   "account": {
     "title": "My account"
+  },
+  "logout": {
+    "title": "Logout",
+    "logoutQuestion": "Are you sure want to logout?",
+    "okay": "Yes, logout"
   }
 }
