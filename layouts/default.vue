@@ -1,44 +1,23 @@
 <template>
   <div class="container p-0">
-    <navbar-section v-if="!query.embed" />
+    <navbar-section />
     <div class="content-container">
-      <div class="nuxt-section" :class="{'embed':!!query.embed}">
+      <div class="nuxt-section">
         <nuxt />
       </div>
     </div>
-    <!-- <footer-section /> -->
-    <!-- <toast></toast> -->
-    <!-- <wallet-connect-modal></wallet-connect-modal> -->
+    <toast></toast>
   </div>
 </template>
 
 <script>
-// import FooterSection from "~/components/footer";
 import NavbarSection from "~/components/navbar";
-// import Toast from "~/components/toast";
-// import WalletConnectModal from "~/components/lego/walletconnect-modal";
+import Toast from "~/components/toast";
 
 export default {
   components: {
-    // FooterSection,
-    NavbarSection
-    // Toast,
-    // WalletConnectModal
-  },
-  head() {
-    return {
-      bodyAttrs: {
-        class: this.$route.query.embed ? "embed" : ""
-      }
-    };
-  },
-  data() {
-    return {
-      query: {}
-    };
-  },
-  mounted() {
-    this.query = this.$route.query;
+    NavbarSection,
+    Toast
   }
 };
 </script>
