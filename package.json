@@ -25,6 +25,7 @@
     "axios": "^0.19.2",
     "bignumber.js": "^8.0.1",
     "bootstrap": "^4.5.0",
+    "color-thief": "^2.2.5",
     "copy-to-clipboard": "^3.0.8",
     "cross-env": "^5.0.1",
     "dotenv": "^6.2.0",

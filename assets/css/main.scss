@@ -18,7 +18,7 @@ body {
   display: flex;
   flex-direction: column;
   color: dark-color("900");
-  background-color: light-color("600");
+  background-color: light-color("700");
 
   // default font setting
   @include font-setting("body-medium");
