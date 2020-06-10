@@ -1,3 +1,22 @@
+const DEFAULT_DEBOUNCE_DURATION = 500
+export function debounce(method, duration = DEFAULT_DEBOUNCE_DURATION) {
+  let timeoutId
+  function debounceWrapper(...args) {
+    debounceWrapper.clear()
+    timeoutId = setTimeout(() => {
+      timeoutId = null
+      method.apply(this, args)
+    }, duration)
+  }
+
+  debounceWrapper.clear = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+      timeoutId = null
+    }
+  }
+  return debounceWrapper
+}
 
 /* eslint-disable no-restricted-syntax */
 export function fuzzysearch(rawNeedle, rawHaystack) {
