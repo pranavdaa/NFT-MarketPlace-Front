@@ -15,7 +15,7 @@
       </span>
     </div>
     <div class="modal fade show" v-if="showCategory">
-      <div class="container ms-l-16 ms-l-lg-32 ms-t-32">
+      <div class="container-fluid ms-l-16 ms-l-lg-32 ms-t-32">
         <div class="row categories d-flex flex-column ps-12">
           <div
             class="category d-flex ps-x-16 ps-y-12 cursor-pointer"

@@ -1,5 +1,5 @@
 <template>
-  <div class="container p-0">
+  <div class="container-fluid p-0">
     <navbar-section />
     <div class="content-container">
       <div class="nuxt-section">
@@ -41,17 +41,13 @@ export default {
 .logo-name {
   height: 24px;
 }
-
+.content-container {
+  margin-top: $navbar-local-height;
+}
 @media (max-width: 768px) {
   .logo-container {
     height: 60px;
     box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.05);
-  }
-
-  .content-container {
-    width: 100%;
-    margin-top: $navbar-local-height;
-    margin-left: 0px;
   }
 }
 </style>

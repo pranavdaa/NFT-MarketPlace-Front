@@ -179,7 +179,7 @@ main {
 @each $name, $value in $theme-colors {
   .btn-#{$name} {
     border: none;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+    // box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
     @if $name == "light" {
       border: 1px solid light-color("400") !important;
     }

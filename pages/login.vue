@@ -1,12 +1,12 @@
 <template>
-  <div class="container py-4 mt-5" v-show="loaded">
+  <div class="container-fluid py-4 mt-5" v-show="loaded">
     <div class="row justify-content-center">
       <div class="col-md-6 login-container text-center">
         <div class="matic-logo">
           <img src="~/assets/img/logo.svg" alt="Matic Network" />
           <img src="~/assets/img/logo-name.svg" alt="Matic Network" />
         </div>
-        <div class="container d-flex justify-content-center">
+        <div class="container-fluid d-flex justify-content-center">
           <div class="box ms-t-40 login-box">
             <div class="box-body">
               <div class="font-heading-medium font-semibold ps-16 ps-md-32">Login</div>
