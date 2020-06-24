@@ -71,7 +71,6 @@ export default class SearchBox extends Vue {
 @import "~assets/css/theme/_theme";
 
 .search-box {
-  box-shadow: $default-card-box-shadow;
   border-radius: 8px;
   padding: 0 10px;
   display: flex;
