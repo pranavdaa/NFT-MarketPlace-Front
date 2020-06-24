@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown-sort d-flex">
+  <div class="dropdown-sort d-flex" v-click-outside="() => active=false">
     <div class="sort-box cursor-pointer align-self-center">
       <div
         class="title-container d-flex position-relative form-control no-border justify-content-between"
