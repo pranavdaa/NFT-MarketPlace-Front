@@ -756,35 +756,9 @@ $p-color: dark-color("100");
     margin-bottom: -2px;
 
     &.active {
+      @include font-setting("body-medium", "medium");
       color: theme-color("primary");
       border-bottom: 2px solid theme-color("primary");
-    }
-  }
-}
-
-.tabs {
-  background-color: light-color("700");
-  box-shadow: $default-card-box-shadow;
-  border-radius: $default-card-box-border-radius;
-
-  .nav-item {
-    padding-top: 14px;
-    padding-bottom: 14px;
-    cursor: pointer;
-  }
-
-  &.nav-justified {
-    .nav-item {
-      border-right: 1px solid light-color("400");
-      &:last-child {
-        border-right: 0px;
-      }
-
-      &.active {
-        @include font-setting("body-medium", "medium");
-        color: dark-color("700");
-        border-bottom: 4px solid theme-color("primary");
-      }
     }
   }
 }
