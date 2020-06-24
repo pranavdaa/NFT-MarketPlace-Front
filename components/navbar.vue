@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg fixed-top p-0">
     <div class="container-fluid h-100">
       <div class="row mx-auto ps-x-16 w-100 h-100">
-        <nuxt-link class="logo-container d-flex" :to="{ name: 'index-staking' }">
+        <nuxt-link class="logo-container d-flex" :to="{ name: 'index' }">
           <button
             class="navbar-toggler"
             role="button"
@@ -34,7 +34,8 @@
             <li class="nav-item">
               <nuxt-link
                 class="nav-link d-flex justify-content-lg-center"
-                :to="{name: 'index-staking'}"
+                :to="{name: 'account'}"
+                :class="{ 'active': checkIfNestedRoute('account') }"
               >
                 <span class="align-self-center">{{ $t('account.title') }}</span>
               </nuxt-link>
