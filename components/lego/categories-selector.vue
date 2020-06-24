@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
+      class="category d-flex ps-x-16 ps-y-12 cursor-pointer w-100"
       @click="showCategory = !showCategory"
     >
       <img
@@ -10,7 +10,7 @@
         class="icon align-self-center ms-r-12"
       />
       <div class="font-body-small align-self-center font-medium">{{selectedCategory.title}}</div>
-      <span class="down-icon align-self-center d-flex justify-content-center ps-l-12">
+      <span class="down-icon align-self-center d-flex justify-content-center ps-l-12 ml-auto">
         <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
       </span>
     </div>
@@ -103,7 +103,7 @@ export default class CategoriesSelector extends Vue {
 .modal.show {
   padding: 0px !important;
 }
-.container {
+.container-fluid {
   padding-top: $navbar-local-height;
 
   .categories {
@@ -117,6 +117,20 @@ export default class CategoriesSelector extends Vue {
       &:hover {
         background: light-color("600");
       }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .container-fluid {
+    margin-left: auto;
+    margin-right: auto;
+    .row {
+      margin: 0px !important;
+    }
+    .categories {
+      max-width: 100%;
+      width: 100%;
     }
   }
 }
