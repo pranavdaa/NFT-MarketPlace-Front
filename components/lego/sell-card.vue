@@ -1,5 +1,5 @@
 <template>
-  <div class="sell-card text-center cursor-pointer" v-bind:style="{background: bg}">
+  <a href="/tokens/1" class="sell-card text-center cursor-pointer" v-bind:style="{background: bg}">
     <div class="time-left-pill d-flex" v-if="order.timeleft">
       <img
         src="~/assets/svg/clock-analog.svg"
@@ -8,7 +8,16 @@
       />
       <div class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1">{{order.timeleft}}</div>
     </div>
-    <img :src="order.img" class="asset-img" alt="kitty" @load="onImageLoad" />
+
+    <div class="img-wrapper d-flex justify-content-center">
+      <img
+        src="~/static/img/dummy-kitty.png"
+        class="asset-img align-self-center"
+        alt="kitty"
+        @load="onImageLoad"
+      />
+      <!-- <img :src="order.img" class="asset-img" alt="kitty" @load="onImageLoad" /> -->
+    </div>
     <div
       class="gradient"
       v-bind:style="{background: 'linear-gradient( 360deg,'+bg+'0%, rgba(236, 235, 223, 0) 100%)'}"
@@ -24,8 +33,8 @@
       >{{order.category.title}}</div>
     </div>
     <h3 class="w-100 title font-body-small font-medium ms-b-8">{{order.title}}</h3>
-    <div class="price font-body-small">{{order.price}} {{order.erc20Token.symbol}}</div>
-  </div>
+    <div class="price font-body-small ms-b-20">{{order.price}} {{order.erc20Token.symbol}}</div>
+  </a>
 </template>
 
 <script>
@@ -70,9 +79,15 @@ export default class SellCard extends Vue {
 
 <style lang="scss" scoped="true">
 @import "~assets/css/theme/_theme";
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 .sell-card {
   width: 258px;
-  height: 380px;
+  min-height: 380px;
   margin: 0.625rem;
   position: relative;
 
@@ -90,10 +105,15 @@ export default class SellCard extends Vue {
       height: 24px;
     }
   }
-  .asset-img {
+  .img-wrapper {
     width: 100%;
-    max-width: 100%;
-    height: auto;
+    max-width: 258px;
+    height: 100%;
+    max-height: 258px;
+    overflow: hidden;
+    .asset-img {
+      width: 100%;
+    }
   }
   .gradient {
     width: 100%;
