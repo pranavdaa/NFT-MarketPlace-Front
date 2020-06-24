@@ -1,18 +1,23 @@
 <template>
   <div class="container">
-    <div class="row ps-y-32 ps-x-16 ps-x-lg-32">
+    <div class="row ps-y-32 ps-x-16">
       <div class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center justify-content-md-start">
-        <categories-selector />
+        <categories-selector class="category-wrapper" />
       </div>
       <div class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center">
-        <search-box class="search-box" placeholder="Search NFT..." :change="(val) => val" />
+        <search-box class="search-box w-100" placeholder="Search NFT..." :change="(val) => val" />
       </div>
       <div class="col-md d-flex justify-content-center justify-content-md-end">
         <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="(val) => val" />
       </div>
     </div>
-    <div class="row ps-x-16 ps-x-lg-32 d-flex justify-content-center text-center">
-      <sell-card v-for="order in orders" :key="order.title" :order="order" />
+    <div class="row ps-x-16 d-flex justify-content-center text-center">
+      <sell-card
+        v-for="order in orders"
+        :key="order.title"
+        :order="order"
+        @click="orderDetails(order.id)"
+      />
     </div>
   </div>
 </template>
@@ -39,6 +44,35 @@ const getImage = url => {
 export default class Index extends Vue {
   orders = [
     {
+      id: 0,
+      title: "Kitty Kitten cat",
+      timeleft: "2 days",
+      img: "/_nuxt/static/img/dummy-kitty.png",
+      price: "0.113",
+      category: {
+        title: "Cryptokitty",
+        img: "~/static/img/cryptokitty.svg"
+      },
+      erc20Token: {
+        symbol: "ETH"
+      }
+    },
+    {
+      id: 0,
+      title: "Kitty Kitten cat",
+      timeleft: "2 days",
+      img: "/_nuxt/static/img/dummy-kitty.png",
+      price: "0.113",
+      category: {
+        title: "Cryptokitty",
+        img: "~/static/img/cryptokitty.svg"
+      },
+      erc20Token: {
+        symbol: "ETH"
+      }
+    },
+    {
+      id: 0,
       title: "Kitty Kitten cat",
       timeleft: "2 days",
       img: "/_nuxt/static/img/dummy-kitty.png",
@@ -83,5 +117,14 @@ export default class Index extends Vue {
 .search-box {
   max-width: 264px;
   width: 100%;
+}
+@media (max-width: 767px) {
+  .search-box {
+    max-width: 100%;
+    width: 100%;
+  }
+  .category-wrapper {
+    width: 100%;
+  }
 }
 </style>
