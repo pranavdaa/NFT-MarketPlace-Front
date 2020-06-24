@@ -14,7 +14,7 @@
         <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
       </span>
     </div>
-    <div class="modal fade show" v-if="showCategory">
+    <div class="modal fade show" v-if="showCategory" @click="showCategory=false">
       <div class="container-fluid ms-l-16 ms-l-lg-32 ms-t-32">
         <div class="row categories d-flex flex-column ps-12">
           <div
