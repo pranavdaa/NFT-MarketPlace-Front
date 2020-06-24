@@ -8,11 +8,20 @@
     "logout": "Logout"
   },
   "account": {
-    "title": "My account"
+    "title": "My account",
+    "tabs": {
+      "matic": "Items on Matic",
+      "ethereum": "Items on Ethereum",
+      "activity": "Activity",
+      "favorites": "Favorites"
+    }
   },
   "logout": {
     "title": "Logout",
     "logoutQuestion": "Are you sure want to logout?",
     "okay": "Yes, logout"
+  },
+  "token": {
+    "onsale": "On sale"
   }
 }

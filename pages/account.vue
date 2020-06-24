@@ -1,23 +1,9 @@
 <template>
-  <div class="container">
-    <div class="row ps-y-32 ps-x-16">
-      <div class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center justify-content-md-start">
-        <categories-selector class="category-wrapper" />
-      </div>
-      <div class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center">
-        <search-box class="search-box w-100" placeholder="Search NFT..." :change="(val) => val" />
-      </div>
-      <div class="col-md d-flex justify-content-center justify-content-md-end">
-        <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="(val) => val" />
-      </div>
-    </div>
-    <div class="row ps-x-16 d-flex justify-content-center text-center">
-      <sell-card
-        v-for="order in orders"
-        :key="order.title"
-        :order="order"
-        @click="orderDetails(order.id)"
-      />
+  <div class="container-fluid">
+    <account-banner />
+    <account-tabs :activeTab="activeTab" :onChangeTab="changeTab" />
+    <div class="row">
+      <matic-tab />
     </div>
   </div>
 </template>
@@ -30,6 +16,9 @@ import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
 import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
+import AccountBanner from "~/components/lego/account/account-banner";
+import MaticTab from "~/components/lego/account/matic-tab";
+import AccountTabs from "~/components/lego/account/account-tabs";
 
 const getImage = url => {
   return require(url);
@@ -37,7 +26,15 @@ const getImage = url => {
 
 @Component({
   props: {},
-  components: { SellCard, CategoriesSelector, SearchBox, SortDropdown },
+  components: {
+    SellCard,
+    CategoriesSelector,
+    SearchBox,
+    SortDropdown,
+    AccountBanner,
+    MaticTab,
+    AccountTabs
+  },
   middleware: [],
   mixins: []
 })
@@ -75,7 +72,7 @@ export default class Index extends Vue {
     {
       id: 0,
       title: "Kitty Kitten cat",
-      onSale: true,
+      timeleft: "2 days",
       img: "/_nuxt/static/img/dummy-kitty.png",
       price: "0.113",
       category: {
@@ -110,22 +107,66 @@ export default class Index extends Vue {
       name: "Price high to low"
     }
   ];
+
+  activeTab = 0;
+
+  allOrSale = true;
+
   mounted() {}
+
+  changeTab(num) {
+    this.activeTab = num;
+  }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import "~assets/css/theme/_theme";
+
 .search-box {
   max-width: 264px;
   width: 100%;
 }
-@media (max-width: 767px) {
-  .search-box {
-    max-width: 100%;
-    width: 100%;
+
+.switch-wrapper {
+  position: relative;
+  background-color: light-color("500");
+  border-radius: $default-card-box-border-radius;
+
+  .top {
+    z-index: 1;
+    cursor: pointer;
+    height: 100%;
   }
-  .category-wrapper {
-    width: 100%;
+
+  .switch {
+    left: 4px;
+    position: absolute;
+    height: 83%;
+    width: 50%;
+    background-color: light-color("700");
+    border-radius: 4px;
+    transition: left 0.2s linear;
+  }
+  &.active {
+    .switch {
+      left: 48%;
+    }
+  }
+}
+.count-wrapper {
+  height: 24px;
+  width: 24px;
+  background-color: primary-color("600");
+  color: light-color("700");
+  border-radius: 50%;
+}
+
+@media (max-width: 520px) {
+  .search-sort,
+  .cat-switch {
+    justify-content: center;
+    flex-direction: column;
   }
 }
 </style>
