@@ -1,13 +1,6 @@
 <template>
   <a href="/tokens/1" class="sell-card text-center cursor-pointer" v-bind:style="{background: bg}">
-    <div class="time-left-pill d-flex" v-if="order.timeleft">
-      <img
-        src="~/assets/svg/clock-analog.svg"
-        alt="Cryptokitty"
-        class="icon ms-r-4 align-self-center"
-      />
-      <div class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1">{{order.timeleft}}</div>
-    </div>
+    <on-sale-tag v-if="order.onSale" :time="order.timeleft" />
 
     <div class="img-wrapper d-flex justify-content-center">
       <img
@@ -42,10 +35,11 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
-
 import ColorThief from "color-thief";
-
 const colorThief = new ColorThief();
+
+import OnSaleTag from "~/components/lego/token/on-sale-tag";
+
 @Component({
   props: {
     order: {
@@ -53,7 +47,7 @@ const colorThief = new ColorThief();
       required: true
     }
   },
-  components: {},
+  components: { OnSaleTag },
   middleware: [],
   mixins: []
 })
@@ -93,18 +87,6 @@ a {
 
   background: light-color("700");
   border-radius: $default-card-box-border-radius;
-
-  .time-left-pill {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: light-color("700");
-    border-radius: 19px;
-    .icon {
-      width: 24px;
-      height: 24px;
-    }
-  }
   .img-wrapper {
     width: 100%;
     max-width: 258px;
