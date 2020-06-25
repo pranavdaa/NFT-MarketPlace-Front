@@ -775,7 +775,7 @@ export default class Navbar extends Vue {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .network-switch-dropdown,
   .profile-dropdown-menu,
   .profile-address,

@@ -238,7 +238,7 @@ export default class TokenDetail extends Vue {
   color: dark-color("300");
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .feature-image {
     min-height: auto;
   }

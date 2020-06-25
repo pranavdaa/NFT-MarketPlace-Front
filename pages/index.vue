@@ -31,10 +31,6 @@ import CategoriesSelector from "~/components/lego/categories-selector";
 import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
 
-const getImage = url => {
-  return require(url);
-};
-
 @Component({
   props: {},
   components: { SellCard, CategoriesSelector, SearchBox, SortDropdown },
@@ -119,7 +115,7 @@ export default class Index extends Vue {
   max-width: 264px;
   width: 100%;
 }
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .search-box {
     max-width: 100%;
     width: 100%;

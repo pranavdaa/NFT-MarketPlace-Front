@@ -119,7 +119,7 @@ export default class SortDropdown extends Vue {
     width: 100%;
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .dropdown-sort {
     max-width: 100%;
   }

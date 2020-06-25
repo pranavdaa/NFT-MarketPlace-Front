@@ -121,7 +121,7 @@ export default class CategoriesSelector extends Vue {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .container-fluid {
     margin-left: auto;
     margin-right: auto;
