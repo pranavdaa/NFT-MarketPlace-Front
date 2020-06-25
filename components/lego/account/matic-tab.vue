@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <div class="row ps-y-32 ps-x-16">
+    <div class="row ps-y-32 ps-x-16" v-if="true">
       <div
         class="col-12 col-lg cat-switch d-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
       >
@@ -12,7 +12,7 @@
         <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="(val) => val" />
       </div>
     </div>
-    <div class="row ps-x-16 d-flex justify-content-center text-center">
+    <div class="row ps-x-16 d-flex justify-content-center text-center" v-if="true">
       <sell-card
         v-for="order in orders"
         :key="order.title"
@@ -20,6 +20,8 @@
         @click="orderDetails(order.id)"
       />
     </div>
+
+    <no-item :message="exmptyMsg" v-if="!orders" />
   </div>
 </template>
 
@@ -32,10 +34,7 @@ import CategoriesSelector from "~/components/lego/categories-selector";
 import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
 import SlideSwitch from "~/components/lego/slide-switch";
-
-const getImage = url => {
-  return require(url);
-};
+import NoItem from "~/components/lego/no-item";
 
 @Component({
   props: {},
@@ -44,7 +43,8 @@ const getImage = url => {
     CategoriesSelector,
     SearchBox,
     SortDropdown,
-    SlideSwitch
+    SlideSwitch,
+    NoItem
   },
   middleware: [],
   mixins: []
@@ -94,6 +94,12 @@ export default class MaticTab extends Vue {
       }
     }
   ];
+
+  exmptyMsg = {
+    title: "Oops! No item found on Matic chain.",
+    description: "We didn’t found any item on Matic chain.",
+    img: true
+  };
 
   sortItems = [
     {
@@ -148,33 +154,6 @@ export default class MaticTab extends Vue {
   width: 100%;
 }
 
-.switch-wrapper {
-  position: relative;
-  background-color: light-color("500");
-  border-radius: $default-card-box-border-radius;
-  max-width: 258px;
-  width: 100%;
-  .top {
-    z-index: 1;
-    cursor: pointer;
-    height: 100%;
-  }
-
-  .switch {
-    left: 4px;
-    position: absolute;
-    height: 83%;
-    width: 50%;
-    background-color: light-color("700");
-    border-radius: 9px;
-    transition: left 0.2s linear;
-  }
-  &.active {
-    .switch {
-      left: 48.5%;
-    }
-  }
-}
 .count-wrapper {
   height: 24px;
   width: 24px;
@@ -183,7 +162,7 @@ export default class MaticTab extends Vue {
   border-radius: 50%;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .category-wrapper {
     width: 100% !important;
     // margin: 0 !important;
@@ -200,13 +179,8 @@ export default class MaticTab extends Vue {
     justify-content: center;
     flex-direction: column;
   }
-  .switch-wrapper {
-    max-width: 100%;
-    height: 44px;
-  }
 
-  .dropdown-filter,
-  .switch-wrapper {
+  .dropdown-filter {
     margin-top: 16px;
   }
 }
