@@ -3,7 +3,9 @@
     <account-banner />
     <account-tabs :activeTab="activeTab" :onChangeTab="changeTab" />
     <div class="row">
-      <matic-tab />
+      <matic-tab v-if="activeTab === 0" />
+      <ethereum-tab v-if="activeTab === 1" />
+      <favorite-tab v-if="activeTab === 2" />
     </div>
   </div>
 </template>
@@ -17,12 +19,10 @@ import CategoriesSelector from "~/components/lego/categories-selector";
 import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
 import AccountBanner from "~/components/lego/account/account-banner";
-import MaticTab from "~/components/lego/account/matic-tab";
 import AccountTabs from "~/components/lego/account/account-tabs";
-
-const getImage = url => {
-  return require(url);
-};
+import MaticTab from "~/components/lego/account/matic-tab";
+import EthereumTab from "~/components/lego/account/ethereum-tab";
+import FavoriteTab from "~/components/lego/account/favorite-tab";
 
 @Component({
   props: {},
@@ -32,8 +32,10 @@ const getImage = url => {
     SearchBox,
     SortDropdown,
     AccountBanner,
+    AccountTabs,
     MaticTab,
-    AccountTabs
+    EthereumTab,
+    FavoriteTab
   },
   middleware: [],
   mixins: []
