@@ -15,7 +15,7 @@
       class="gradient"
       v-bind:style="{background: 'linear-gradient( 360deg,'+bg+'0%, rgba(236, 235, 223, 0) 100%)'}"
     ></div>
-    <div class="category-pill d-flex mx-auto ms-t-20 ms-b-16">
+    <a href="/tokens/2" class="category-pill d-flex mx-auto ms-t-20 ms-b-16">
       <img
         src="~/static/img/cryptokitty.svg"
         alt="Cryptokitty"
@@ -24,9 +24,43 @@
       <div
         class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1"
       >{{order.category.title}}</div>
-    </div>
+    </a>
     <h3 class="w-100 title font-body-small font-medium ms-b-8">{{order.title}}</h3>
     <div class="price font-body-small ms-b-20">{{order.price}} {{order.erc20Token.symbol}}</div>
+    <div
+      class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
+      v-if="isMyAccount"
+    >
+      <a class="btn btn-transparent w-50 align-self-center" @click.prevent="sell()">Sell</a>
+      <a class="btn btn-transparent w-50 align-self-center" @click.prevent="transfer()">Transfer</a>
+    </div>
+    <div
+      class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
+      v-if="isMyAccount"
+    >
+      <a
+        class="btn btn-red btn-transparent w-100 align-self-center"
+        @click.prevent="removeFromMarketplace()"
+      >Remove from Marketplace</a>
+    </div>
+    <div
+      class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
+      v-if="isMyAccount"
+    >
+      <a
+        class="btn btn-transparent w-100 align-self-center"
+        @click.prevent="moveToMatic()"
+      >Move to Matic</a>
+    </div>
+    <div
+      class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
+      v-if="isMyAccount"
+    >
+      <a
+        class="btn btn-transparent w-100 align-self-center"
+        @click.prevent="moveToEthereum()"
+      >Move to Ethereum</a>
+    </div>
   </a>
 </template>
 
@@ -67,6 +101,32 @@ export default class SellCard extends Vue {
       });
       this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
     } else this.bg = "#ffffff";
+  }
+
+  get isMyAccount() {
+    if (this.$route.name === "account") {
+      return true;
+    }
+    return false;
+  }
+
+  sell() {
+    console.log("sell");
+  }
+  transfer() {
+    console.log("transfer");
+  }
+  moveToMatic() {
+    console.log("moveToMatic");
+  }
+  moveToEthereum() {
+    console.log("moveToEthereum");
+  }
+  transfer() {
+    console.log("transfer");
+  }
+  removeFromMarketplace() {
+    console.log("removeFromMarketplace");
   }
 }
 </script>
@@ -129,6 +189,24 @@ a {
 }
 .sell-card:hover {
   box-shadow: $default-card-box-shadow;
+}
+.actions {
+  height: 45px;
+  border-top: 1px solid rgba(dark-color("700"), 0.1);
+  &.matic-chain {
+    .btn-transparent {
+      color: primary-color("600");
+      border-radius: 0px;
+    }
+
+    .btn-red {
+      color: red-color("600");
+    }
+
+    .btn:nth-child(2) {
+      border-left: 1px solid rgba(dark-color("700"), 0.1);
+    }
+  }
 }
 @media (max-width: 330px) {
   .sell-card {
