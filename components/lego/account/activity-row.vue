@@ -1,6 +1,6 @@
 <template>
   <div class="col-md-12 d-flex ps-l-16 ms-y-8">
-    <svg
+    <!-- <svg
       class="unread-mark align-self-center"
       width="5"
       height="5"
@@ -9,7 +9,7 @@
       xmlns="http://www.w3.org/2000/svg"
     >
       <rect width="5" height="5" rx="2.5" fill="#003CB2" />
-    </svg>
+    </svg>-->
     <div class="d-flex align-self-center activity-wrapper">
       <div class="img-wrapper justify-content-center" v-bind:style="{background: bg}">
         <img
@@ -27,14 +27,16 @@
         </div>
         <div class="font-caption text-gray-300">2 days ago</div>
       </div>
-      <div class="d-flex ml-auto ms-r-16" v-if="true">
+      <div class="d-flex ml-auto ms-r-16" v-if="false">
         <button class="btn btn-light align-self-center">View details</button>
       </div>
-      <div class="d-flex ml-auto ms-r-16" v-if="false">
+      <div class="d-flex ml-auto ms-r-16" v-if="true">
         <button class="btn btn-light btn-deny align-self-center ms-r-12">deny</button>
-        <button class="btn btn-light align-self-center">Accept</button>
+        <button class="btn btn-light align-self-center" @click="onAccept()">Accept</button>
       </div>
     </div>
+
+    <accept-bid :show="showAcceptBid" :close="onAcceptClose" />
   </div>
 </template>
 
@@ -42,16 +44,19 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 
+import AcceptBid from "~/components/lego/modals/accept-bid";
+
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
 const colorThief = new ColorThief();
 
 @Component({
   props: {},
-  components: {}
+  components: { AcceptBid }
 })
 export default class ActivityRow extends Vue {
   bg = "#ffffff";
+  showAcceptBid = false;
   mounted() {}
 
   onImageLoad() {
@@ -65,6 +70,14 @@ export default class ActivityRow extends Vue {
       });
       this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
     } else this.bg = "#ffffff";
+  }
+
+  onAccept() {
+    this.showAcceptBid = true;
+    console.log("On accept");
+  }
+  onAcceptClose() {
+    this.showAcceptBid = false;
   }
 }
 </script>
