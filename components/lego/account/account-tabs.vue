@@ -81,6 +81,7 @@ export default class AccountTabs extends Vue {
     width: 100%;
     overflow-x: scroll;
     -ms-overflow-style: none;
+    scrollbar-width: none;
 
     &::-webkit-scrollbar {
       display: none;
