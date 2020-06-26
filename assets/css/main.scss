@@ -35,12 +35,12 @@ main {
   left: 0;
 }
 
-.container {
-  @media screen and (min-width: 1200px) {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-}
+// .container {
+//   @media screen and (min-width: 1200px) {
+//     width: 100% !important;
+//     max-width: 100% !important;
+//   }
+// }
 
 @mixin hover-transform($t-transform, $t-transition) {
   -webkit-transform: $t-transform;

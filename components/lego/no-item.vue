@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row ps-b-32" :class="{'ps-t-32': !message.img}">
       <div class="col-md-12 d-flex justify-content-center ps-t-80 ps-b-32" v-if="message.img">
         <img src="~/assets/svg/dummy-item.svg" alt="Marketplace" />

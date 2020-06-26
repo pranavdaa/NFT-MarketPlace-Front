@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row ps-y-32 ps-x-16">
       <div class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center justify-content-md-start">
         <categories-selector class="category-wrapper" />

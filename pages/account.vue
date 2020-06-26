@@ -6,6 +6,7 @@
       <matic-tab v-if="activeTab === 0" />
       <ethereum-tab v-if="activeTab === 1" />
       <favorite-tab v-if="activeTab === 2" />
+      <activity-tab v-if="activeTab === 3" />
     </div>
   </div>
 </template>
@@ -23,6 +24,7 @@ import AccountTabs from "~/components/lego/account/account-tabs";
 import MaticTab from "~/components/lego/account/matic-tab";
 import EthereumTab from "~/components/lego/account/ethereum-tab";
 import FavoriteTab from "~/components/lego/account/favorite-tab";
+import ActivityTab from "~/components/lego/account/activity-tab";
 
 @Component({
   props: {},
@@ -35,7 +37,8 @@ import FavoriteTab from "~/components/lego/account/favorite-tab";
     AccountTabs,
     MaticTab,
     EthereumTab,
-    FavoriteTab
+    FavoriteTab,
+    ActivityTab
   },
   middleware: [],
   mixins: []
@@ -110,7 +113,7 @@ export default class Index extends Vue {
     }
   ];
 
-  activeTab = 0;
+  activeTab = 3;
 
   allOrSale = true;
 
