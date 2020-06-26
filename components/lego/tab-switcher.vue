@@ -1,13 +1,19 @@
 <template>
-  <div class="row tabs-wrapper ps-y-0 ps-x-0 ps-x-md-16 justify-content-center d-flex">
+  <div
+    class="row tabs-wrapper ps-y-0 ps-x-0 ps-x-md-16 justify-content-center d-flex"
+    v-if="tabs && tabs.length > 0"
+  >
     <ul class="tabs navbar-nav flex-row align-self-center">
-      <li class="nav-item" @click="onChangeTab(0)">
-        <div class="nav-link d-flex justify-content-lg-center" :class="{'active': activeTab === 0}">
-          <span class="align-self-center font-body-medium">{{ $t('account.tabs.matic') }}</span>
-          <span class="align-self-center count font-body-medium">12</span>
+      <li class="nav-item" @click="onChangeTab(tab.id)" v-for="tab in tabs" :key="tab.id">
+        <div
+          class="nav-link d-flex justify-content-lg-center"
+          :class="{'active': activeTab === tab.id}"
+        >
+          <span class="align-self-center font-body-medium">{{ tab.title }}</span>
+          <span class="align-self-center count font-body-medium" v-if="tab.count">{{tab.count}}</span>
         </div>
       </li>
-      <li class="nav-item" @click="onChangeTab(1)">
+      <!-- <li class="nav-item" @click="onChangeTab(1)">
         <div class="nav-link d-flex justify-content-lg-center" :class="{'active': activeTab === 1}">
           <span class="align-self-center font-body-medium">{{ $t('account.tabs.ethereum') }}</span>
           <span class="align-self-center count font-body-medium">4</span>
@@ -23,7 +29,7 @@
         <div class="nav-link d-flex justify-content-lg-center" :class="{'active': activeTab === 3}">
           <span class="align-self-center font-body-medium">{{ $t('account.tabs.activity') }}</span>
         </div>
-      </li>
+      </li>-->
     </ul>
   </div>
 </template>
@@ -35,6 +41,7 @@ import Component from "nuxt-class-component";
 
 @Component({
   props: {
+    tabs: { type: Array, required: true },
     activeTab: { type: Number, required: false, default: 0 },
     onChangeTab: { type: Function, required: true }
   },
@@ -42,7 +49,7 @@ import Component from "nuxt-class-component";
   middleware: [],
   mixins: []
 })
-export default class AccountTabs extends Vue {
+export default class TabSwitcher extends Vue {
   mounted() {}
 }
 </script>

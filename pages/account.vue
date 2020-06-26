@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <account-banner />
-    <account-tabs :activeTab="activeTab" :onChangeTab="changeTab" />
+    <tab-switcher :tabs="tabs" :activeTab="activeTab" :onChangeTab="changeTab" />
     <div class="row">
       <matic-tab v-if="activeTab === 0" />
       <ethereum-tab v-if="activeTab === 1" />
@@ -20,7 +20,7 @@ import CategoriesSelector from "~/components/lego/categories-selector";
 import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
 import AccountBanner from "~/components/lego/account/account-banner";
-import AccountTabs from "~/components/lego/account/account-tabs";
+import TabSwitcher from "~/components/lego/tab-switcher";
 import MaticTab from "~/components/lego/account/matic-tab";
 import EthereumTab from "~/components/lego/account/ethereum-tab";
 import FavoriteTab from "~/components/lego/account/favorite-tab";
@@ -34,7 +34,7 @@ import ActivityTab from "~/components/lego/account/activity-tab";
     SearchBox,
     SortDropdown,
     AccountBanner,
-    AccountTabs,
+    TabSwitcher,
     MaticTab,
     EthereumTab,
     FavoriteTab,
@@ -113,11 +113,20 @@ export default class Index extends Vue {
     }
   ];
 
+  tabs = [
+    { id: 0, title: "Items on Matic", count: 12 },
+    { id: 1, title: "Items on Ethereum", count: 4 },
+    { id: 2, title: "Activities", count: 6 },
+    { id: 3, title: "Favorites" }
+  ];
+
   activeTab = 3;
 
   allOrSale = true;
 
-  mounted() {}
+  mounted() {
+    console.log(this.tabs);
+  }
 
   changeTab(num) {
     this.activeTab = num;
