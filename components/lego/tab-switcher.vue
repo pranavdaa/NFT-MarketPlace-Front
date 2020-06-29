@@ -13,23 +13,6 @@
           <span class="align-self-center count font-body-medium" v-if="tab.count">{{tab.count}}</span>
         </div>
       </li>
-      <!-- <li class="nav-item" @click="onChangeTab(1)">
-        <div class="nav-link d-flex justify-content-lg-center" :class="{'active': activeTab === 1}">
-          <span class="align-self-center font-body-medium">{{ $t('account.tabs.ethereum') }}</span>
-          <span class="align-self-center count font-body-medium">4</span>
-        </div>
-      </li>
-      <li class="nav-item" @click="onChangeTab(2)">
-        <div class="nav-link d-flex justify-content-lg-center" :class="{'active': activeTab === 2}">
-          <span class="align-self-center font-body-medium">{{ $t('account.tabs.favorites') }}</span>
-          <span class="align-self-center count font-body-medium">6</span>
-        </div>
-      </li>
-      <li class="nav-item" @click="onChangeTab(3)">
-        <div class="nav-link d-flex justify-content-lg-center" :class="{'active': activeTab === 3}">
-          <span class="align-self-center font-body-medium">{{ $t('account.tabs.activity') }}</span>
-        </div>
-      </li>-->
     </ul>
   </div>
 </template>

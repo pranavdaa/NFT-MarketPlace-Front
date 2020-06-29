@@ -687,7 +687,7 @@ $p-color: dark-color("100");
   @extend .justify-content-center;
 
   .modal-dialog {
-    max-width: 480px;
+    max-width: 570px;
   }
   @media #{$xs-devices} {
     .modal-dialog {
@@ -1185,33 +1185,33 @@ input.na::-webkit-outer-spin-button {
 .unstyle-input:focus,
 .unstyle-input:active,
 .unstyle-input[type="number"] {
-  border: none;
-  border-width: 0px;
-  outline-offset: 0px;
-  outline-color: transparent;
-  outline-style: none;
+  border: none !important;
+  border-width: 0px !important;
+  outline-offset: 0px !important;
+  outline-color: transparent !important;
+  outline-style: none !important;
 
-  box-shadow: none;
-  background-image: none;
-  background-color: transparent;
+  box-shadow: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
 
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  -moz-appearance: textfield;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  -moz-appearance: textfield !important;
 }
 
 /* Chrome, Safari, Edge, Opera */
 .unstyle-input::-webkit-outer-spin-button,
 .unstyle-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+  -webkit-appearance: none !important;
+  margin: 0 !important;
 }
 
 .unstyle-input::-webkit-input-placeholder,
 .unstyle-input::-moz-placeholder,
 .unstyle-input:-ms-input-placeholder,
 .unstyle-input:-moz-placeholder {
-  color: light-color("400");
+  color: light-color("400") !important;
 }
 
 // address-input for send token
@@ -1228,4 +1228,70 @@ input.na::-webkit-outer-spin-button {
   padding: 20px 0 !important;
 }
 
-// Wallet balance widget
+.bottom-border {
+  border-bottom: 1px solid light-color("500");
+}
+// Toggle switch
+label.switch {
+  margin-bottom: 0px;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 64px;
+  height: 34px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: light-color("400");
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 30px;
+    width: 30px;
+    left: 2px;
+    bottom: 2px;
+    background-color: light-color("700");
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+  }
+
+  input:checked + .slider {
+    background-color: primary-color("600");
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 1px primary-color("600");
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(30px);
+    -ms-transform: translateX(30px);
+    transform: translateX(30px);
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.08);
+  }
+}

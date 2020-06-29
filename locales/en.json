@@ -23,5 +23,7 @@
   },
   "token": {
     "onsale": "On sale"
-  }
+  },
+  "submitToMarketplace": "Submit to Marketplace",
+  "submittingToMarketplace": "Submitting to Marketplace"
 }

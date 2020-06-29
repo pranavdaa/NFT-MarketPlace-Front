@@ -124,9 +124,7 @@ export default class Index extends Vue {
 
   allOrSale = true;
 
-  mounted() {
-    console.log(this.tabs);
-  }
+  mounted() {}
 
   changeTab(num) {
     this.activeTab = num;

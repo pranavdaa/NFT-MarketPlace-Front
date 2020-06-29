@@ -2,6 +2,7 @@ import Vue from "vue"
 
 import Loader from "~/components/loader"
 import SvgSpriteIcon from "~/components/svg-sprite-icon"
+import ButtonLoader from "~/components/lego/button-loader"
 
 
 
@@ -40,3 +41,4 @@ Vue.directive("click-outside", {
 // register global components
 Vue.component("loader", Loader)
 Vue.component("svg-sprite-icon", SvgSpriteIcon)
+Vue.component("button-loader", ButtonLoader)
