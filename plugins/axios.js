@@ -14,10 +14,12 @@ export function initalizeAxios(options = {}) {
 }
 
 export function getAxios() {
+  initalizeAxios()
   return axiosAPIObj
 }
 
 export function getBaseAxios() {
+  initalizeAxios()
   return axiosBaseObj
 }
 export default getAxios

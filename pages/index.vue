@@ -52,35 +52,6 @@ export default class Index extends Vue {
       erc20Token: {
         symbol: "ETH"
       }
-    },
-    {
-      id: 0,
-      title: "Kitty Kitten cat",
-      timeleft: "2 days",
-      onSale: true,
-      img: "/_nuxt/static/img/dummy-kitty.png",
-      price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
-      }
-    },
-    {
-      id: 0,
-      title: "Kitty Kitten cat",
-      onSale: true,
-      img: "/_nuxt/static/img/dummy-kitty.png",
-      price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
-      }
     }
   ];
 
@@ -106,7 +77,24 @@ export default class Index extends Vue {
       name: "Price high to low"
     }
   ];
+
+  tokenListFull = [];
+  displayTokens = 0;
+
   mounted() {}
+
+  // fetchTokens(){
+  //   // Fetch tokens using Axios with pagination
+
+  // }
+
+  // get displayedToken(){
+  //   if(this.tokenListFull && this.tokenListFull.length > 0){
+  //     return this.tokenListFull.slice(0, this.displayedToken)
+  //   }
+
+  //   return null
+  // }
 }
 </script>
 

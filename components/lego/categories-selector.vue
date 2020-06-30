@@ -1,15 +1,15 @@
 <template>
-  <div>
+  <div v-if="categories && categories.length > 0">
     <div
       class="category d-flex ps-x-16 ps-y-12 cursor-pointer w-100"
       @click="showCategory = !showCategory"
     >
       <img
-        :src="selectedCategory.icon"
-        :alt="selectedCategory.title"
+        :src="selectedCategory.img_url"
+        :alt="selectedCategory.name"
         class="icon align-self-center ms-r-12"
       />
-      <div class="font-body-small align-self-center font-medium">{{selectedCategory.title}}</div>
+      <div class="font-body-small align-self-center font-medium">{{selectedCategory.name}}</div>
       <span class="down-icon align-self-center d-flex justify-content-center ps-l-12 ml-auto">
         <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
       </span>
@@ -20,11 +20,15 @@
           <div
             class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
             v-for="category in categories"
-            :key="category.title"
+            :key="category.name"
             @click="selectCategory(category)"
           >
-            <img :src="category.icon" :alt="category.title" class="icon align-self-center ms-r-12" />
-            <div class="font-body-small align-self-center font-medium">{{category.title}}</div>
+            <img
+              :src="img_url(category.img_url)"
+              :alt="category.name"
+              class="icon align-self-center ms-r-12"
+            />
+            <div class="font-body-small align-self-center font-medium">{{category.name}}</div>
             <div class="count ps-l-12 font-body-medium ml-auto">{{category.count}}</div>
           </div>
         </div>
@@ -39,30 +43,37 @@ import Vue from "vue";
 
 import Component from "nuxt-class-component";
 
+import getAxios from "~/plugins/axios";
+
 @Component({
   props: {}
 })
 export default class CategoriesSelector extends Vue {
-  categories = [
-    {
-      icon: require("~/assets/svg/category.svg"),
-      title: "All Categories",
-      count: 3224
-    },
-    {
-      icon: require("~/assets/svg/cryptokitty.svg"),
-      title: "Cryptokitty",
-      count: 352
-    },
-    {
-      icon: require("~/assets/svg/gods-unchain.svg"),
-      title: "Gods Unchain",
-      count: 1243
-    }
-  ];
+  categories = [];
   showCategory = false;
-  selectedCategory = this.categories[0];
-  mounted() {}
+  selectedCategory = null;
+  limit = 4;
+
+  async mounted() {
+    await this.fethCategory();
+  }
+
+  async fethCategory() {
+    const response = await getAxios().get(
+      `http://localhost:3000/api/v1/categories/?limit=${this.limit}`,
+      { data }
+    );
+
+    if (response.status === 200 && response.data.data) {
+      this.categories = [...this.categories, ...response.data.data.categories];
+    }
+
+    this.selectedCategory = this.categories[0];
+  }
+
+  img_url(postfix) {
+    return `http://localhost:3000/${postfix}`;
+  }
 
   selectCategory(category) {
     this.selectedCategory = category;
