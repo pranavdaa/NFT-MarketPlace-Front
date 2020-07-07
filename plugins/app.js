@@ -2,9 +2,9 @@ import Vue from "vue"
 import Web3 from "web3"
 
 import { clearStore, config as configStore } from "~/plugins/localstore"
-
 import { initalizeAxios } from "./axios"
 
+const uiconfig = JSON.parse(process.env.uiconfig)
 
 const app = {
   vuexStore: null,
@@ -13,6 +13,7 @@ const app = {
   maticDecimals: 18,
   bus: new Vue(),
 
+  uiconfig,
   strategies: {
     METAMASK: "metamask",
     WALLETCONNECT: "walletconnect",
@@ -22,6 +23,13 @@ const app = {
   async init(store) {
     // store vuex store in this app
     this.vuexStore = store
+
+    // initialize axios
+    initalizeAxios({
+      baseURL: uiconfig.apis.MARKETPLACE_API_HOST
+    })
+
+    // TODO: initialize Authentication
 
   },
 
@@ -49,8 +57,9 @@ const app = {
   async logout() {
     // clear all store
     clearStore()
+
     // redirect to login
-    // location.replace("/login")
+    location.replace("/login")
   },
 
   walletconnectModal: {

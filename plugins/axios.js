@@ -9,17 +9,16 @@ export function initalizeAxios(options = {}) {
   axiosAPIObj = axios.create(options)
   axiosBaseObj = axios.create({})
 
+  // Add Authorization header
 
   return axiosAPIObj
 }
 
 export function getAxios() {
-  initalizeAxios()
   return axiosAPIObj
 }
 
 export function getBaseAxios() {
-  initalizeAxios()
   return axiosBaseObj
 }
 export default getAxios

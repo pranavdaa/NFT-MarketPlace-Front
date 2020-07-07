@@ -1,3 +1,4 @@
+const uiconfig = require("./config/uiconfig")
 
 export default {
   mode: 'universal',
@@ -15,6 +16,12 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: "stylesheet", href: "/fonts/font.css" }
     ]
+  },
+  /*
+   ** Environment variables
+   */
+  env: {
+    uiconfig: JSON.stringify(uiconfig)
   },
   /*
   ** Customize the progress-bar color
