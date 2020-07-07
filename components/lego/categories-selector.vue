@@ -5,11 +5,11 @@
       @click="showCategory = !showCategory"
     >
       <img
-        :src="selectedCategory.img_url"
-        :alt="selectedCategory.name"
+        :src="defaultSelectedCategory.img_url"
+        :alt="defaultSelectedCategory.name"
         class="icon align-self-center ms-r-12"
       />
-      <div class="font-body-small align-self-center font-medium">{{selectedCategory.name}}</div>
+      <div class="font-body-small align-self-center font-medium">{{defaultSelectedCategory.name}}</div>
       <span class="down-icon align-self-center d-flex justify-content-center ps-l-12 ml-auto">
         <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
       </span>
@@ -19,12 +19,24 @@
         <div class="row categories d-flex flex-column ps-12">
           <div
             class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
+            @click="selectCategory(allCategory)"
+          >
+            <img
+              :src="allCategory.img_url"
+              :alt="allCategory.name"
+              class="icon align-self-center ms-r-12"
+            />
+            <div class="font-body-small align-self-center font-medium">{{allCategory.name}}</div>
+            <div class="count ps-l-12 font-body-medium ml-auto">{{allCategory.count}}</div>
+          </div>
+          <div
+            class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
             v-for="category in categories"
             :key="category.name"
             @click="selectCategory(category)"
           >
             <img
-              :src="img_url(category.img_url)"
+              :src="category.img_url"
               :alt="category.name"
               class="icon align-self-center ms-r-12"
             />
@@ -40,18 +52,22 @@
 
 <script>
 import Vue from "vue";
-
 import Component from "nuxt-class-component";
 
+import { mapGetters } from "vuex";
+
+import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
 
 @Component({
-  props: {}
+  props: {},
+  computed: {
+    ...mapGetters("page", ["selectedCategory"])
+  }
 })
 export default class CategoriesSelector extends Vue {
   categories = [];
   showCategory = false;
-  selectedCategory = null;
   limit = 4;
 
   async mounted() {
@@ -59,25 +75,51 @@ export default class CategoriesSelector extends Vue {
   }
 
   async fethCategory() {
-    const response = await getAxios().get(
-      `http://localhost:3000/api/v1/categories/?limit=${this.limit}`,
-      { data }
-    );
+    const response = await getAxios().get(`categories/?limit=${this.limit}`);
 
     if (response.status === 200 && response.data.data) {
-      this.categories = [...this.categories, ...response.data.data.categories];
+      this.categories = response.data.data.categories.map(item => {
+        item.img_url = `${app.uiconfig.apis.FILE_HOST}${item.img_url}`;
+        // dummy count to be removed
+        item.count = 123;
+
+        return item;
+      });
+    }
+  }
+
+  // Actions
+  selectCategory(category) {
+    if (category.isAll) {
+      this.$store.commit("page/selectedCategory", null);
+      return;
     }
 
-    this.selectedCategory = this.categories[0];
-  }
-
-  img_url(postfix) {
-    return `http://localhost:3000/${postfix}`;
-  }
-
-  selectCategory(category) {
-    this.selectedCategory = category;
+    this.$store.commit("page/selectedCategory", category);
     this.showCategory = false;
+  }
+
+  // Getters
+  get allCategory() {
+    return {
+      name: "All Categories",
+      img_url: require("~/static/img/category.svg"),
+      isAll: true,
+      count: this.totalOrderCount
+    };
+  }
+
+  get defaultSelectedCategory() {
+    if (this.selectedCategory) {
+      return this.selectedCategory;
+    }
+    return this.allCategory;
+  }
+
+  get totalOrderCount() {
+    return (
+      this.categories.reduce((total, item) => total + item.count, 0) || "00"
+    );
   }
 }
 </script>

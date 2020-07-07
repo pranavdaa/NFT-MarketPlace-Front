@@ -14,7 +14,7 @@ module.exports = {
     }
   },
   apis: {
-    MARKETPLACE_API_HOST: process.env.MARKETPLACE_API_HOST || "http://localhost:3001/api/v1",
+    MARKETPLACE_API_HOST: process.env.MARKETPLACE_API_HOST || "http://localhost:3001/api/v1/",
     FILE_HOST: process.env.FILE_HOST || "http://localhost:3001/"
   },
   displayDecimals: process.env.DISPLAY_DECIMALS || 2,
