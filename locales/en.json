@@ -3,6 +3,8 @@
   "helpCenter": "Help center",
   "whatsNew": "What's new",
   "marketplace": "Marketplace",
+  "loadMore": "Load More",
+  "loading": "Loading",
   "home": {
     "title": "Discover",
     "logout": "Logout"

@@ -2,6 +2,8 @@ import Vuex from 'vuex'
 
 import locale from './locale'
 import page from './page'
+import token from './token'
+import category from './category'
 
 
 const createStore = () =>
@@ -9,7 +11,9 @@ const createStore = () =>
     // modules
     modules: {
       locale,
-      page
+      page,
+      category,
+      token
     }
   })
 

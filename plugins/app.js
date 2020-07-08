@@ -19,6 +19,11 @@ const app = {
     WALLETCONNECT: "walletconnect",
     PORTIS: "portis"
   },
+  orderStatus: {
+    FIXED: "FIXED",
+    NEGOTIATION: "NEGOTIATION",
+    AUCTION: "AUCTION"
+  },
 
   async init(store) {
     // store vuex store in this app
@@ -29,9 +34,24 @@ const app = {
       baseURL: uiconfig.apis.MARKETPLACE_API_HOST
     })
 
+    // Initialize Categories
+    await this.initCategories(store)
+
+    // Initialize tokens
+    await this.initTokens(store)
+
     // TODO: initialize Authentication
 
   },
+
+  async initCategories(store) {
+    await store.dispatch('category/fetchCategories')
+  },
+
+  async initTokens(store) {
+    await store.dispatch("token/fetchERC20Tokens");
+  },
+
 
   isWCConnected() {
     return this.strategies.WALLETCONNECT === configStore.get("loginStrategy")

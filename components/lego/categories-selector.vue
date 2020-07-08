@@ -62,31 +62,14 @@ import getAxios from "~/plugins/axios";
 @Component({
   props: {},
   computed: {
-    ...mapGetters("page", ["selectedCategory"])
+    ...mapGetters("page", ["selectedCategory"]),
+    ...mapGetters("category", ["categories"])
   }
 })
 export default class CategoriesSelector extends Vue {
-  categories = [];
   showCategory = false;
-  limit = 4;
 
-  async mounted() {
-    await this.fethCategory();
-  }
-
-  async fethCategory() {
-    const response = await getAxios().get(`categories/?limit=${this.limit}`);
-
-    if (response.status === 200 && response.data.data) {
-      this.categories = response.data.data.categories.map(item => {
-        item.img_url = `${app.uiconfig.apis.FILE_HOST}${item.img_url}`;
-        // dummy count to be removed
-        item.count = 123;
-
-        return item;
-      });
-    }
-  }
+  async mounted() {}
 
   // Actions
   selectCategory(category) {
