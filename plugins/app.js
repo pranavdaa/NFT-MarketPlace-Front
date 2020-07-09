@@ -4,6 +4,8 @@ import Web3 from "web3"
 import { clearStore, config as configStore } from "~/plugins/localstore"
 import { initalizeAxios } from "./axios"
 
+import AccountModel from "~/components/model/account"
+
 const uiconfig = JSON.parse(process.env.uiconfig)
 
 const app = {
@@ -41,7 +43,30 @@ const app = {
     await this.initTokens(store)
 
     // TODO: initialize Authentication
+    await this.initAuthentication(store)
 
+  },
+
+  async initAuthentication(store) {
+    // Check auth token is there and is valid or not
+    await store.dispatch("auth/checkLogin")
+
+    // Initialize account
+    this.initAccount(store)
+
+  },
+
+  async initAccount(store) {
+    // store commit
+    console.log(new AccountModel({
+      address: store.getters["auth/address"]
+    }))
+    store.commit(
+      "account/account",
+      new AccountModel({
+        address: store.getters["auth/address"]
+      })
+    )
   },
 
   async initCategories(store) {

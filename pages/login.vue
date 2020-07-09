@@ -9,9 +9,9 @@
         <div class="container-fluid d-flex justify-content-center">
           <div class="box ms-t-40 login-box">
             <div class="box-body">
-              <div class="font-heading-medium font-semibold ps-16 ps-md-32">Login</div>
+              <div class="font-heading-medium font-semibold ps-16 ps-md-32">{{ $t('login') }}</div>
               <div class="container">
-                <div class="row ps-x-32">
+                <div class="row ps-x-32" v-if="false">
                   <div
                     class="col-12 login-with no-bottom-border-radius ps-16 ps-md-20"
                     :class="{'cursor-pointer': !loading}"
@@ -25,8 +25,8 @@
                         />
                       </div>
                       <div class="d-flex flex-column text-left align-self-center ps-l-20">
-                        <span class="font-heading font-semibold">WalletConnect</span>
-                        <span class="font-body-small text-gray">Connect using mobile wallet</span>
+                        <span class="font-heading font-semibold">{{ $t('walletConnect') }}</span>
+                        <span class="font-body-small text-gray">{{ $t('walletConnectMsg') }}</span>
                       </div>
                       <svg-sprite-icon
                         name="right-arrow"
@@ -39,6 +39,7 @@
                   <div
                     class="col-12 login-with no-top-border-radius ps-16 ps-md-20"
                     :class="{'cursor-pointer': !loading}"
+                    @click="loginWithMetamask"
                   >
                     <div class="d-flex">
                       <div class="logo-metamask d-flex align-self-center">
@@ -49,8 +50,8 @@
                         />
                       </div>
                       <div class="d-flex flex-column text-left align-self-center ps-l-20">
-                        <span class="font-heading font-semibold">Metamask</span>
-                        <span class="font-body-small text-gray">Connect using browser wallet</span>
+                        <span class="font-heading font-semibold">{{ $t('metamask.title') }}</span>
+                        <span class="font-body-small text-gray">{{ $t('webConnectMsg') }}</span>
                       </div>
                       <svg-sprite-icon
                         name="right-arrow"
@@ -69,8 +70,8 @@
                         <img src="~/assets/img/portis.svg" alt="portis" class="align-self-center" />
                       </div>
                       <div class="d-flex flex-column text-left align-self-center ps-l-20">
-                        <span class="font-heading font-semibold">Portis</span>
-                        <span class="font-body-small text-gray">Connect using browser wallet</span>
+                        <span class="font-heading font-semibold">{{ $t('portis') }}</span>
+                        <span class="font-body-small text-gray">{{ $t('webConnectMsg') }}</span>
                       </div>
                       <svg-sprite-icon
                         name="right-arrow"
@@ -80,12 +81,12 @@
                   </div>
                 </div>
                 <div class="row justify-content-center wallet-download-info ms-t-32">
-                  Don't have wallet?
+                  {{ $t('downloadWallet') }}
                   <a
                     href="https://matic.network/wallet"
                     target="_blank"
-                    class="link-color ps-l-2"
-                  >Download here</a>
+                    class="link-color ps-l-4"
+                  >{{ $t('downloadHere') }}</a>
                 </div>
               </div>
             </div>
@@ -100,14 +101,32 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import Web3 from "web3";
+import moment from "moment";
+import { mapGetters } from "vuex";
+import ethUtil from "ethereumjs-util";
+// import Portis from "@portis/web3";
+
+import {
+  isMetamask,
+  getDefaultAccount,
+  personalSign,
+  signTypedData,
+  isMetamaskLocked
+} from "~/plugins/helpers/metamask-utils";
+import app from "~/plugins/app";
+import { config as configStore } from "~/plugins/localstore";
+// import { getWalletConnectProvider } from "~/plugins/helpers/walletconnect-utils";
 
 import { NextNavigation } from "~/components/mixin";
-
+import { VueWatch } from "~/components/decorator";
+// import WalletConnectModal from "~/components/lego/walletconnect-modal";
 import ConnectingMetamask from "~/components/lego/connecting-metamask";
 
 @Component({
   layout: "blank",
   components: {
+    // WalletConnectModal,
     ConnectingMetamask
   },
   mixins: [NextNavigation],
@@ -117,6 +136,9 @@ export default class Login extends Vue {
   loading = false;
   loaded = false;
   metamaskLoading = false;
+  error = false;
+  sessionData = null;
+  sessionCreated = false;
 
   // query params
   queryParams = {};
@@ -125,6 +147,112 @@ export default class Login extends Vue {
     this.nextRoute = this.nextRoute || { name: "index" };
     this.queryParams = this.$route.query;
     this.loaded = true;
+  }
+
+  // actions
+  getLoginTypedData(address, timestamp) {
+    return {
+      types: {
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "host", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+          { name: "verifyingContract", type: "address" }
+        ],
+        WebLogin: [
+          { name: "address", type: "address" },
+          { name: "timestamp", type: "uint256" }
+        ]
+      },
+      domain: {
+        name: "Localhost",
+        host: "http://localhost:3000",
+        version: "1",
+        verifyingContract: "0x0",
+        chainId: 80001
+      },
+      primaryType: "WebLogin",
+      message: {
+        address: address,
+        timestamp: timestamp
+      }
+    };
+  }
+
+  // Metamask
+  async loginWithMetamask() {
+    if (this.loading) {
+      return;
+    }
+    this.metamaskLoading = true;
+
+    this.error = null;
+
+    if (!isMetamask()) {
+      return;
+    }
+
+    const isLocked = await isMetamaskLocked();
+    if (isLocked) {
+      this.error = this.$t("metamask.lockedMessage");
+      this.metamaskLoading = false;
+      return;
+    }
+
+    const from = await getDefaultAccount();
+    if (from) {
+      this.loading = true;
+      try {
+        const timestamp = moment().unix();
+        const result = await signTypedData(
+          from,
+          this.getLoginTypedData(from, timestamp),
+          window.ethereum
+        );
+
+        if (result.result) {
+          const options = {
+            strategy: app.strategies.METAMASK
+          };
+
+          // set login strategy
+          configStore.set("loginStrategy", app.strategies.METAMASK);
+
+          // login with metamask
+          await this.login(from, timestamp, result.result, options);
+        }
+      } catch (e) {
+        // ignore error
+      }
+
+      this.loading = false;
+    }
+    this.metamaskLoading = false;
+  }
+
+  async login(address, timestamp, signature, options) {
+    this.loading = true;
+
+    // to be removed
+    signature =
+      "0x51df797904019a4eba658305beecabc1b5efdb20269d6a775d59dfc59c8457306313bba0e1d898aef51b74875f78a1cdb58ab0b6d47f2577aad50da6df33811a1c";
+
+    try {
+      // login
+      await this.$store.dispatch("auth/doLogin", {
+        address,
+        signature,
+        timestamp
+      });
+
+      this.moveToNext();
+    } catch (e) {
+      this.error =
+        (e.response && e.response.data && e.response.data.message) || e.message;
+    }
+
+    this.loading = false;
   }
 }
 </script>

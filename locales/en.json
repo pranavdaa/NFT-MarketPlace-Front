@@ -5,9 +5,23 @@
   "marketplace": "Marketplace",
   "loadMore": "Load More",
   "loading": "Loading",
+  "login": "Login",
+  "walletConnect": "WalletConnect",
+  "walletConnectMsg": "Connect using mobile wallet",
+  "metamask": {
+    "title": "Metamask",
+    "loginWithMetamask": "Login with Metamask",
+    "lockedMessage": "Metamask is locked. Please unlock it and try again.",
+    "loginMessage": "You can login with Metamask. It will manage private keys for you. No extra password needed.",
+    "notAvailable": "Metamask is not available. You need to install <a href='https://metamask.io/' target='_blank'>Metamask browser extension</a> to use this feature.",
+    "unlockForTransaction": "Please make sure Metamask is unlocked to send transaction with account."
+  },
+  "webConnectMsg": "Connect using browser wallet",
+  "portis": "Portis",
+  "downloadHere": "Download here",
+  "downloadWallet": "Don't have wallet?",
   "home": {
-    "title": "Discover",
-    "logout": "Logout"
+    "title": "Discover"
   },
   "account": {
     "title": "My account",

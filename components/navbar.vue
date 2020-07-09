@@ -55,7 +55,7 @@
           </ul>
         </div>
         <div class="profile-navbar d-flex ml-auto ps-l-lg-16">
-          <div class="d-flex align-self-center">
+          <div class="d-flex align-self-center" v-if="user && false">
             <nuxt-link
               class="nav-link d-flex"
               :to="{name: 'index-notification'}"
@@ -69,10 +69,12 @@
           <div
             class="nav-profile-container d-flex align-self-center"
             @click.prevent.stop="handleOpenProfile(!openProfile)"
+            v-if="user"
           >
             <span class="profile-icon profile-with-status align-self-center">
-              <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon>
-              <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" />
+              <svg-sprite-icon name="profile" class="profile-logo"></svg-sprite-icon>
+              <!-- <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon> -->
+              <!-- <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" /> -->
               <div class="profile-status ms-l-24 ms-t-8">
                 <svg
                   class="status-icon"
@@ -99,7 +101,7 @@
             </span>
           </div>
 
-          <ul class="navbar-nav right-nav pr-3" v-if="false">
+          <ul class="navbar-nav right-nav ps-x-16 pr-1" v-if="!user">
             <li class="nav-item d-flex">
               <nuxt-link
                 class="align-self-center btn btn-primary login-button d-flex"
@@ -109,7 +111,7 @@
                 <span class="d-flex with-icon">
                   <svg-sprite-icon name="login" class="align-self-center"></svg-sprite-icon>
                 </span>
-                <span>{{ $t('navbar.login') }}</span>
+                <span>{{ $t('login') }}</span>
               </nuxt-link>
             </li>
           </ul>
@@ -125,8 +127,9 @@
       <div class="profile-container">
         <div class="d-flex ps-16 ps-md-32">
           <span class="profile-icon profile-with-status align-self-center">
-            <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon>
-            <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" />
+            <svg-sprite-icon name="profile" class="profile-logo"></svg-sprite-icon>
+            <!-- <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon> -->
+            <!-- <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" /> -->
             <div class="profile-status d-none">
               <svg
                 class="status-icon"
@@ -304,7 +307,10 @@ import * as animationData from "~/static/lottie-animations/green-check.json";
 @Component({
   props: {},
   components: { Lottie, ReceiveQrCode, LogoutConfirm },
-  computed: {},
+  computed: {
+    ...mapGetters("auth", ["user"]),
+    ...mapGetters("account", ["account"])
+  },
   methods: {}
 })
 export default class Navbar extends Vue {
@@ -320,12 +326,6 @@ export default class Navbar extends Vue {
   openQrCode = false;
   openLogout = false;
 
-  account = {
-    address: "Dummy",
-    checksumAddress: "Dummy",
-    shortChecksumAddress: "Dummy",
-    name: "Dummy"
-  };
   currentNetwork = {
     key: "matic",
     name: "Matic"
@@ -405,7 +405,11 @@ export default class Navbar extends Vue {
     }
   }
 
-  async logout() {}
+  async logout() {
+    await this.$store.dispatch("auth/logout");
+    this.$router.push({ name: "index" });
+    this.openLogout = false;
+  }
 }
 </script>
 
