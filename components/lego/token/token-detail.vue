@@ -1,11 +1,11 @@
 <template>
-  <div class="container-fluid ps-y-16">
+  <div class="container-fluid ps-y-16" v-if="order">
     <div class="row ps-y-16 ps-x-md-16">
       <div class="col-md-7 d-flex">
-        <token-short-info class="align-self-center" />
+        <token-short-info class="align-self-center" :order="order" />
       </div>
       <div class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end">
-        <wishlist-button :onClick="(val) => val" />
+        <wishlist-button :onClick="addToWishlist" />
         <a class="btn btn-light align-self-center action ms-l-16">
           <img
             src="~/static/icons/active/share.svg"
@@ -134,12 +134,13 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import getAxios from "~/plugins/axios";
+import app from "~/plugins/app";
 
 import TokenShortInfo from "~/components/lego/token/token-short-info";
 import WishlistButton from "~/components/lego/wishlist-button";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
-
 import ColorThief from "color-thief";
 const colorThief = new ColorThief();
 
@@ -159,6 +160,19 @@ export default class TokenDetail extends Vue {
   showMore = false;
   showCategoryInfo = true;
   showProperties = true;
+
+  order = {
+    id: 1,
+    price: "0.113",
+    categories_id: 1,
+    erc20tokens_id: 1,
+    token: {
+      name: "Kitty Kitten cat",
+      img_url: "/_nuxt/static/img/dummy-kitty.png",
+      owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e"
+    }
+  };
+
   mounted() {}
 
   onImageLoad() {
@@ -172,6 +186,33 @@ export default class TokenDetail extends Vue {
       });
       this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
     } else this.bg = "#ffffff";
+  }
+
+  // async
+  async fetchOrder() {
+    // if (!this.tokenId || this.isLoading) {
+    //   return;
+    // }
+  }
+
+  // actions
+  async addToWishlist() {
+    // Add current order to users wishlist if not wishlisted
+    try {
+      const response = await getAxios().post("users/favourites", {
+        orderId: this.order.id
+      });
+    } catch (error) {
+      if (error.response.status === 401) {
+        app.addToast(
+          "Need Login",
+          "You need to login to add token to wishlist",
+          {
+            type: "info"
+          }
+        );
+      }
+    }
   }
 }
 </script>

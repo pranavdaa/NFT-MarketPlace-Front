@@ -1,12 +1,16 @@
 <template>
-  <a href="/tokens/1" class="sell-card text-center cursor-pointer" v-bind:style="{background: bg}">
+  <nuxt-link
+    :to="{name: 'tokens-id', params: { id: order.id } }"
+    class="sell-card text-center cursor-pointer"
+    v-bind:style="{background: bg}"
+  >
     <on-sale-tag v-if="order.onSale" :time="order.timeleft" />
 
     <div class="img-wrapper d-flex justify-content-center">
       <img
-        src="~/static/img/dummy-kitty.png"
+        :src="order.token.img_url"
         class="asset-img align-self-center"
-        alt="kitty"
+        :alt="order.token.name"
         @load="onImageLoad"
       />
       <!-- <img :src="order.img" class="asset-img" alt="kitty" @load="onImageLoad" /> -->
@@ -15,18 +19,15 @@
       class="gradient"
       v-bind:style="{background: 'linear-gradient( 360deg,'+bg+'0%, rgba(236, 235, 223, 0) 100%)'}"
     ></div>
-    <a href="/tokens/2" class="category-pill d-flex mx-auto ms-t-20 ms-b-16">
-      <img
-        src="~/static/img/cryptokitty.svg"
-        alt="Cryptokitty"
-        class="icon ms-2 ms-r-4 align-self-center"
-      />
-      <div
-        class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1"
-      >{{order.category.title}}</div>
-    </a>
-    <h3 class="w-100 title font-body-small font-medium ms-b-8">{{order.title}}</h3>
-    <div class="price font-body-small ms-b-20">{{order.price}} {{order.erc20Token.symbol}}</div>
+    <div class="category-pill d-flex mx-auto ms-t-20 ms-b-16" v-if="category">
+      <img :src="category.img_url" :alt="category.name" class="icon ms-2 ms-r-4 align-self-center" />
+      <div class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1">{{category.name}}</div>
+    </div>
+    <h3 class="w-100 title font-body-small font-medium ms-b-8">{{order.token.name}}</h3>
+    <div
+      class="price font-body-small ms-b-20"
+      v-if="erc20Token"
+    >{{order.price}} {{erc20Token.symbol}}</div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
       v-if="isMyAccount"
@@ -61,12 +62,14 @@
         @click.prevent="moveToEthereum()"
       >Move to Ethereum</a>
     </div>
-  </a>
+  </nuxt-link>
 </template>
 
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import app from "~/plugins/app";
+import { mapGetters } from "vuex";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -82,12 +85,17 @@ import OnSaleTag from "~/components/lego/token/on-sale-tag";
     }
   },
   components: { OnSaleTag },
+  computed: {
+    ...mapGetters("category", ["categories"]),
+    ...mapGetters("token", ["erc20Tokens"])
+  },
   middleware: [],
   mixins: []
 })
 export default class SellCard extends Vue {
   bg = "#ffffff";
 
+  // Initial
   mounted() {}
 
   onImageLoad() {
@@ -103,6 +111,7 @@ export default class SellCard extends Vue {
     } else this.bg = "#ffffff";
   }
 
+  // Get
   get isMyAccount() {
     if (this.$route.name === "account") {
       return true;
@@ -110,6 +119,28 @@ export default class SellCard extends Vue {
     return false;
   }
 
+  get erc20Token() {
+    return this.erc20Tokens.filter(
+      token => token.id === this.order.erc20tokens_id
+    )[0];
+  }
+
+  get category() {
+    return this.categories.filter(
+      item => item.id === this.order.categories_id
+    )[0];
+  }
+
+  get sellTagData() {
+    // if order type AUCTION
+    if (order.type === app.orderStatus.AUCTION) {
+      // if expiry time is less than
+      if (order.expiry_date) {
+      }
+    }
+  }
+
+  // Actions
   sell() {
     console.log("sell");
   }

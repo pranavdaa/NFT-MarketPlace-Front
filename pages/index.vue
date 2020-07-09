@@ -8,16 +8,31 @@
         <search-box class="search-box w-100" placeholder="Search NFT..." :change="(val) => val" />
       </div>
       <div class="col-md d-flex justify-content-center justify-content-md-end">
-        <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="(val) => val" />
+        <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="onSortSelect" />
       </div>
     </div>
+
     <div class="row ps-x-16 d-flex justify-content-center text-center">
       <sell-card
         v-for="order in orders"
-        :key="order.title"
+        :key="order.id"
         :order="order"
         @click="orderDetails(order.id)"
       />
+    </div>
+
+    <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
+      <button-loader
+        class="mx-auto"
+        :loading="isLoadingTokens"
+        :loadingText="$t('loading')"
+        :text="$t('loadMore')"
+        block
+        lg
+        v-if="hasNextPage"
+        color="light"
+        :click="loadMore"
+      ></button-loader>
     </div>
   </div>
 </template>
@@ -25,6 +40,9 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import { mapGetters } from "vuex";
+import app from "~/plugins/app";
+import getAxios from "~/plugins/axios";
 
 import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
@@ -34,67 +52,144 @@ import SortDropdown from "~/components/lego/sort-dropdown";
 @Component({
   props: {},
   components: { SellCard, CategoriesSelector, SearchBox, SortDropdown },
+  computed: {
+    ...mapGetters("page", ["selectedFilters"])
+  },
   middleware: [],
-  mixins: []
+  mixins: [],
+  watch: {
+    selectedFilters: {
+      handler: async function() {
+        await this.fetchOrders({ filtering: true });
+      },
+      deep: true
+    }
+  }
 })
 export default class Index extends Vue {
   orders = [
     {
-      id: 0,
-      title: "Kitty Kitten cat",
-      timeleft: "",
-      img: "/_nuxt/static/img/dummy-kitty.png",
+      id: 1,
       price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
+      categories_id: 1,
+      erc20tokens_id: 1,
+      token: {
+        name: "Kitty Kitten cat",
+        img_url: "/_nuxt/static/img/dummy-kitty.png",
+        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e"
       }
     }
   ];
 
+  limit = app.uiconfig.defaultPageSize;
+
   sortItems = [
     {
       id: 0,
-      name: "Popular"
+      name: "Popular",
+      filter: "-views"
     },
     {
       id: 1,
-      name: "Newest"
+      name: "Newest",
+      filter: "-created"
     },
     {
       id: 2,
-      name: "Oldest"
+      name: "Oldest",
+      filter: "+created"
     },
     {
       id: 3,
-      name: "Price low to high"
+      name: "Price low to high",
+      filter: "+price"
     },
     {
       id: 4,
-      name: "Price high to low"
+      name: "Price high to low",
+      filter: "-price"
     }
   ];
 
-  tokenListFull = [];
+  orderFullList = [];
+  hasNextPage = true;
   displayTokens = 0;
+  isLoadingTokens = false;
 
   mounted() {}
 
-  // fetchTokens(){
-  //   // Fetch tokens using Axios with pagination
+  // handlers
+  onSortSelect(item) {
+    this.$store.commit("page/selectedSort", item.filter);
+  }
 
-  // }
+  // Get
+  get displayedTokens() {
+    return this.orderFullList || [];
+  }
 
-  // get displayedToken(){
-  //   if(this.tokenListFull && this.tokenListFull.length > 0){
-  //     return this.tokenListFull.slice(0, this.displayedToken)
-  //   }
+  get ifCategory() {
+    return this.selectedFilters.selectedCategory
+      ? `&categoryArray=[${this.selectedFilters.selectedCategory.id}]`
+      : "&categoryArray=[]";
+  }
+  get ifSort() {
+    return this.selectedFilters.selectedSort
+      ? `&sort=${this.selectedFilters.selectedSort}`
+      : "";
+  }
 
-  //   return null
-  // }
+  // async
+  async searchHandler(v) {
+    this.loaded = false;
+    this.searchInput = v;
+    this.resetValidatorList();
+    await this.fetchValidators();
+    this.loaded = true;
+  }
+
+  async fetchOrders(options = {}) {
+    // Tobe removed
+    this.orders = [...this.orders, ...this.orders];
+    // Do not remove data while fetching
+    if (this.isLoadingTokens || this.hasNextPage) {
+      return;
+    }
+    this.isLoadingTokens = true;
+    let response;
+    let offset = this.orderFullList.length;
+
+    if (options && options.filtering) {
+      // Start from page one with new filter
+      offset = 0;
+    }
+
+    // Fetch tokens with pagination and filters
+    if (this.searchInput != null && this.searchInput.length > 0) {
+      // with search
+      response = await getAxios().get(
+        `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
+      );
+    } else {
+      // without search
+      response = await getAxios().get(
+        `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
+      );
+    }
+
+    if (response.status === 200 && response.data.data.order) {
+      this.hasNextPage = response.data.data.has_next_page;
+      if (options && options.filtering) {
+        this.orderFullList = response.data.data.order;
+        return;
+      }
+      this.orderFullList = [...this.orderFullList, ...response.data.data];
+    }
+  }
+
+  async loadMore() {
+    await this.fetchOrders();
+  }
 }
 </script>
 

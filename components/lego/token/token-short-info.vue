@@ -1,17 +1,17 @@
 <template>
   <div class="d-flex short-info">
     <div class="profile-img-wrapper align-self-center">
-      <img src="~/assets/svg/cryptokitty.svg" alt="Cryptokitties" />
+      <img :src="category.img_url" :alt="category.name" />
       <div class="profile-status d-flex justify-content-center ps-2 ms-l-40">
         <svg-sprite-icon name="profile" class="status-icon align-self-center" />
       </div>
     </div>
     <div class="profile-info-wrapper align-self-center d-flex flex-column ps-16">
-      <h1 class="font-heading-medium font-semibold ms-b-8">Magic Cat Lottery Ticket</h1>
+      <h1 class="font-heading-medium font-semibold ms-b-8">{{order.token.name}}</h1>
       <div class="font-body-small owner-info">
         Owned by
-        <a href>0x81...d1b1</a> in
-        <a href>Decentraland Wearables</a>
+        <a href>{{shortAddress}}</a> in
+        <a href>{{category.name}}</a>
       </div>
     </div>
   </div>
@@ -21,19 +21,40 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 
+import { mapGetters } from "vuex";
+
 @Component({
   props: {
-    token: {
+    order: {
       type: Object,
       required: false
     }
   },
   components: {},
+  computed: {
+    ...mapGetters("category", ["categories"])
+  },
   middleware: [],
   mixins: []
 })
 export default class TokenShortInfo extends Vue {
   mounted() {}
+
+  get category() {
+    return this.categories.filter(
+      item => item.id === this.order.categories_id
+    )[0];
+  }
+
+  get shortAddress() {
+    const address = this.order.token.owner;
+    if (address) {
+      const addressStart = address.slice(0, 4);
+      const addressEnd = address.slice(address.length - 4);
+      return addressStart + "..." + addressEnd;
+    }
+    return null;
+  }
 }
 </script>
 

@@ -36,9 +36,7 @@ export default class WishlistButton extends Vue {
   mounted() {}
 
   addToWishList() {
-    this.wishlisted = !this.wishlisted;
-
-    this.onClick(this.wishlisted);
+    this.onClick();
   }
 }
 </script>

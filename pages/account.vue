@@ -40,7 +40,7 @@ import ActivityTab from "~/components/lego/account/activity-tab";
     FavoriteTab,
     ActivityTab
   },
-  middleware: [],
+  middleware: ["auth"],
   mixins: []
 })
 export default class Index extends Vue {
