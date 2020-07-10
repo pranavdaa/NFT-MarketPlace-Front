@@ -105,7 +105,6 @@ export default {
 
       const respones = await getAxios().post("users", payload)
       if (respones.status === 200 && respones.data.data) {
-        console.log(respones.data)
         // Store auth token to local store and add user
         configStore.set("authToken", respones.data.auth_token)
         dispatch('login', respones.data.data)

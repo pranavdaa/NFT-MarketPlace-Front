@@ -37,10 +37,10 @@ const app = {
     })
 
     // Initialize Categories
-    await this.initCategories(store)
+    this.initCategories(store)
 
     // Initialize tokens
-    await this.initTokens(store)
+    this.initTokens(store)
 
     // TODO: initialize Authentication
     await this.initAuthentication(store)
@@ -58,9 +58,6 @@ const app = {
 
   async initAccount(store) {
     // store commit
-    console.log(new AccountModel({
-      address: store.getters["auth/address"]
-    }))
     store.commit(
       "account/account",
       new AccountModel({
