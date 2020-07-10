@@ -7,6 +7,8 @@ const debug = !process.env.NODE_ENV || process.env.NODE_ENV === "development"
 module.exports = {
   env: process.env.NODE_ENV || "development",
   debug,
+  ethDBID: "2",
+  maticDBID: process.env.MATIC_DB_UID || "1",
   matic: {
     deployment: {
       network: process.env.DEPLOYMENT_NETWORK || "testnet",

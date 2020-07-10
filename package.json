@@ -12,8 +12,8 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@maticnetwork/meta": "git://github.com/maticnetwork/static.git#a1a5c5364bd3bda513ddf2a179e3929c9760d1bf",
-    "@maticnetwork/metamask-provider": "0.0.1",
+    "@maticnetwork/meta": "^2.3.1",
+    "@maticnetwork/metamask-provider": "^0.0.1",
     "@maticnetwork/walletconnect-provider": "0.0.1-beta.1",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",

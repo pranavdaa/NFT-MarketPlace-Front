@@ -1,3 +1,6 @@
+import eutils from 'ethjs-util'
+import BigNumber from '~/plugins/bignumber'
+
 const DEFAULT_DEBOUNCE_DURATION = 500
 export function debounce(method, duration = DEFAULT_DEBOUNCE_DURATION) {
   let timeoutId
@@ -60,4 +63,91 @@ export function getNextRoute(route) {
   }
 
   return null
+}
+
+export function getLocationFromURL(href) {
+  const l = document.createElement('a')
+  l.href = href
+  return l
+}
+
+export function getBlob(mime, value) {
+  const str = typeof value === 'object' ? JSON.stringify(value) : value
+  if (!str) {
+    return ''
+  }
+  const blob = new Blob([str], {
+    type: mime
+  })
+  return window.URL.createObjectURL(blob)
+}
+
+export function isHex(str = '') {
+  const stripped = eutils.stripHexPrefix(str)
+  return /^[a-fA-F0-9]+$/.test(stripped)
+}
+
+export function padLeft(data, width, padding = '0') {
+  return data.length >= width
+    ? data
+    : new Array(width - data.length + 1).join(padding) + data
+}
+
+export function sanitizeHex(value) {
+  const hex = eutils.stripHexPrefix(value)
+  if (hex === '') return ''
+  return eutils.addHexPrefix(eutils.padToEven(hex))
+}
+
+export function trimHexZero(value) {
+  if (value === '0x00' || value === '0x0') {
+    return '0x0'
+  }
+
+  let hex = sanitizeHex(value)
+  hex = hex.substring(2).replace(/^0+/, '')
+  return eutils.addHexPrefix(hex)
+}
+
+export function decimalToHex(dec) {
+  return new BigNumber(dec).toString(16)
+}
+
+export function hexToDecimal(hex) {
+  return new BigNumber(sanitizeHex(hex)).toString()
+}
+
+export function isValidTxHash(txHash) {
+  return (
+    txHash.substring(0, 2) === '0x' &&
+    txHash.length === 66 &&
+    this.isHex(txHash)
+  )
+}
+
+export function getFunctionSignature(name) {
+  return eutils
+    .sha3(name)
+    .toString('hex')
+    .slice(0, 8)
+}
+
+export function isChecksumAddress(address) {
+  return address === eutils.toChecksumAddress(address)
+}
+
+export function dataSize(data) {
+  return data ? eutils.stripHexPrefix(data).length : 0
+}
+
+export function namehash(name) {
+  let node = eutils.addHexPrefix(Array(64).join('0'))
+  if (name) {
+    const labels = name.split('.')
+    for (let i = labels.length - 1; i >= 0; i -= 1) {
+      const labelSha = eutils.sha3(labels[i]).toString('hex')
+      node = eutils.addHexPrefix(eutils.sha3(node + labelSha).toString('hex'))
+    }
+  }
+  return node
 }

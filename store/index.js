@@ -6,6 +6,8 @@ import auth from './auth'
 import account from './account'
 import token from './token'
 import category from './category'
+import network from './network'
+import trunk from './trunk'
 
 
 
@@ -16,9 +18,11 @@ const createStore = () =>
       locale,
       auth,
       account,
-      page,
       category,
-      token
+      token,
+      network,
+      trunk,
+      page,
     }
   })
 

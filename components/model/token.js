@@ -19,6 +19,16 @@ export default class Token extends Model {
     return this.address && toChecksumAddress(this.address)
   }
 
+  get addresses() {
+    let addresses = {}
+    if (this.erc20tokensaddresses) {
+      this.erc20tokensaddresses.forEach(address => {
+        addresses[address.chain_id] = address.address
+      })
+    }
+    return addresses
+  }
+
   get address() {
     if (!this.addresses) {
       return null
@@ -46,12 +56,6 @@ export default class Token extends Model {
       address,
       network
     })
-  }
-
-  get iconURL() {
-    if (this.icon) {
-      return `/token-icons/${this.icon}`
-    }
   }
 
   get isEther() {
