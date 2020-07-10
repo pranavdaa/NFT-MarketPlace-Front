@@ -2,7 +2,7 @@
   <div class="container-fluid ps-y-16" v-if="order">
     <div class="row ps-y-16 ps-x-md-16">
       <div class="col-md-7 d-flex">
-        <token-short-info class="align-self-center" :order="order" />
+        <token-short-info class="align-self-center" :order="order" :category="category" />
       </div>
       <div class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end">
         <wishlist-button :onClick="addToWishlist" />
@@ -24,21 +24,21 @@
         >
           <img
             class="asset-img align-self-center"
-            src="~/assets/img/navbar-logo.svg"
+            :src="order.token.img_url"
             alt="Kitty"
             @load="onImageLoad"
           />
         </div>
         <div class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16">
-          <h3 class="font-heading-medium font-semibold">About Magic Cat Lottery Ticket</h3>
-          <p class="font-body-medium" :class="{'show-less': showMore, 'show-more': !showMore}">
-            Meet 3,186 Emojis Published on the Blockchain with on-chain Power & Luck Scores Generated Dynamically
-            <span
-              class="dots"
-            >...</span>
-            <span
-              class="more"
-            >Meet 3,186 Emojis Published on the Blockchain with on-chain Power & Luck Scores Generated Dynamically</span>
+          <h3 class="font-heading-medium font-semibold">About {{order.token.name}}</h3>
+          <p
+            class="font-body-medium"
+            :class="{'show-less': showMore, 'show-more': !showMore}"
+            v-if="order.token.description"
+          >
+            {{order.token.description}}
+            <span class="dots">...</span>
+            <span class="more">{{order.token.description}}</span>
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
@@ -54,15 +54,17 @@
           </p>
 
           <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">Listed for</div>
-          <div class="font-heading-large font-semibold ps-b-20">23.234 ETH</div>
+          <div
+            class="font-heading-large font-semibold ps-b-20"
+          >{{order.price}} {{erc20Token.symbol}}</div>
           <button class="btn btn-primary">Buy Now</button>
         </div>
         <div class="d-flex flex-column ps-y-16 ps-y-md-32">
           <h3 class="font-heading-medium font-semibold category">
-            About Cryptokitty
+            About {{category.name}}
             <a
               class="ps-l-12"
-              href
+              :href="category.url"
               target="_blank"
               rel="noopener noreferrer"
             >Visit Website</a>
@@ -71,16 +73,17 @@
               class="float-right cursor-pointer right-arrow"
               :class="{'down-icon':showCategoryInfo}"
               @click="showCategoryInfo = !showCategoryInfo"
+              v-if="category.description"
             >
               <svg-sprite-icon name="right-arrow" />
             </span>
           </h3>
           <p
             class="font-body-medium ps-t-20"
-            v-if="showCategoryInfo"
-          >Dolore consequat id cupidatat reprehenderit aliquip velit in consectetur aliquip voluptate anim dolor cillum magna. Enim cupidatat laborum aute aliqua Lorem magna ut labore ex non do. Aliqua quis irure ut incididunt labore magna labore culpa et enim.</p>
+            v-if="showCategoryInfo && category.description"
+          >{{category.description}}</p>
         </div>
-        <div class="d-flex flex-column ps-y-16 ps-y-md-32">
+        <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="order.token.properties">
           <h3 class="font-heading-medium font-semibold category">
             Properties
             <span
@@ -91,23 +94,20 @@
               <svg-sprite-icon name="right-arrow" />
             </span>
           </h3>
-          <p
-            class="font-body-medium ps-t-20"
-            v-if="showProperties"
-          >Dolore consequat id cupidatat reprehenderit aliquip velit in consectetur aliquip voluptate anim dolor cillum magna. Enim cupidatat laborum aute aliqua Lorem magna ut labore ex non do. Aliqua quis irure ut incididunt labore magna labore culpa et enim.</p>
+          <p class="font-body-medium ps-t-20" v-if="showProperties">{{order.token.properties}}</p>
         </div>
       </div>
       <div class="col-md-4 d-none d-lg-flex">
         <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
-          <h3 class="font-heading-medium font-semibold">About Magic Cat Lottery Ticket</h3>
-          <p class="font-body-medium" :class="{'show-less': showMore, 'show-more': !showMore}">
-            Meet 3,186 Emojis Published on the Blockchain with on-chain Power & Luck Scores Generated Dynamically
-            <span
-              class="dots"
-            >...</span>
-            <span
-              class="more"
-            >Meet 3,186 Emojis Published on the Blockchain with on-chain Power & Luck Scores Generated Dynamically</span>
+          <h3 class="font-heading-medium font-semibold">About {{order.token.name}}</h3>
+          <p
+            class="font-body-medium"
+            :class="{'show-less': showMore, 'show-more': !showMore}"
+            v-if="order.token.description"
+          >
+            {{order.token.description}}
+            <span class="dots">...</span>
+            <span class="more">{{order.token.description}}</span>
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
@@ -123,7 +123,9 @@
           </p>
 
           <div class="font-body-small text-gray-300 mt-auto ps-y-4">Listed for</div>
-          <div class="font-heading-large font-semibold ps-b-20">23.234 ETH</div>
+          <div
+            class="font-heading-large font-semibold ps-b-20"
+          >{{order.price}} {{erc20Token.symbol}}</div>
           <button class="btn btn-primary">Buy Now</button>
         </div>
       </div>
@@ -136,6 +138,7 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import getAxios from "~/plugins/axios";
 import app from "~/plugins/app";
+import { mapGetters } from "vuex";
 
 import TokenShortInfo from "~/components/lego/token/token-short-info";
 import WishlistButton from "~/components/lego/wishlist-button";
@@ -152,6 +155,10 @@ const colorThief = new ColorThief();
     }
   },
   components: { TokenShortInfo, WishlistButton },
+  computed: {
+    ...mapGetters("category", ["categories"]),
+    ...mapGetters("token", ["erc20Tokens"])
+  },
   middleware: [],
   mixins: []
 })
@@ -173,6 +180,7 @@ export default class TokenDetail extends Vue {
     }
   };
 
+  // initialize
   mounted() {}
 
   onImageLoad() {
@@ -186,6 +194,19 @@ export default class TokenDetail extends Vue {
       });
       this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
     } else this.bg = "#ffffff";
+  }
+
+  // Get
+  get category() {
+    return this.categories.filter(
+      item => item.id === this.order.categories_id
+    )[0];
+  }
+
+  get erc20Token() {
+    return this.erc20Tokens.filter(
+      token => token.id === this.order.erc20tokens_id
+    )[0];
   }
 
   // async
@@ -226,7 +247,8 @@ export default class TokenDetail extends Vue {
   min-height: 500px;
   border-radius: $default-card-box-border-radius;
   .asset-img {
-    min-width: 65%;
+    min-width: 34%;
+    max-height: 380px;
   }
 }
 .feature-info {

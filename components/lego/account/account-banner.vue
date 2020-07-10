@@ -7,9 +7,9 @@
       <div
         class="d-flex flex-column align-self-center ps-l-md-16 text-center text-md-left ps-t-16 ps-t-md-0"
       >
-        <div class="name ps-b-4 font-heading-small font-semibold">Account name</div>
-        <div class="address font-body-medium">0x8185ddfcf81a87977d1b16c68106c30fff9f2490</div>
-        <div class="address-short font-body-medium">0x8185d....f9f2490</div>
+        <div class="name ps-b-4 font-heading-small font-semibold">{{account.name}}</div>
+        <div class="address font-body-medium">{{account.address.toUpperCase()}}</div>
+        <div class="address-short font-body-medium">{{account.shortChecksumAddress}}</div>
       </div>
     </div>
     <div
@@ -24,7 +24,11 @@
         <div class="amount font-body-medium">$544</div>
       </div>
       <div class="align-self-center">
-        <button class="btn btn-light ml-auto">View Wallet</button>
+        <a
+          href="https://wallet.matic.today"
+          target="_blank"
+          class="btn btn-light ml-auto"
+        >View Wallet</a>
       </div>
     </div>
   </div>
@@ -32,11 +36,14 @@
 
 <script>
 import Vue from "vue";
-
 import Component from "nuxt-class-component";
+import { mapGetters } from "vuex";
 
 @Component({
-  props: {}
+  props: {},
+  computed: {
+    ...mapGetters("account", ["account"])
+  }
 })
 export default class AccountBanner extends Vue {
   mounted() {}

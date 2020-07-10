@@ -10,8 +10,8 @@
       <h1 class="font-heading-medium font-semibold ms-b-8">{{order.token.name}}</h1>
       <div class="font-body-small owner-info">
         Owned by
-        <a href>{{shortAddress}}</a> in
-        <a href>{{category.name}}</a>
+        <a href @click.prevent>{{shortAddress}}</a> in
+        <a href @click.prevent>{{category.name}}</a>
       </div>
     </div>
   </div>
@@ -21,30 +21,24 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 
-import { mapGetters } from "vuex";
-
 @Component({
   props: {
     order: {
       type: Object,
       required: false
+    },
+    category: {
+      type: Object,
+      required: true
     }
   },
   components: {},
-  computed: {
-    ...mapGetters("category", ["categories"])
-  },
+  computed: {},
   middleware: [],
   mixins: []
 })
 export default class TokenShortInfo extends Vue {
   mounted() {}
-
-  get category() {
-    return this.categories.filter(
-      item => item.id === this.order.categories_id
-    )[0];
-  }
 
   get shortAddress() {
     const address = this.order.token.owner;
