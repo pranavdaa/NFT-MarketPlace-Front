@@ -285,7 +285,7 @@
       </div>
     </div>
     <!-- ./ Profile Dropdown -->
-    <receive-qr-code :show="openQrCode" :uri="account.address" :close="qrClose" />
+    <receive-qr-code :show="openQrCode" :uri="account.address" :close="qrClose" v-if="user" />
     <logout-confirm :show="openLogout" :logout="logout" :close="logoutClose" />
   </nav>
 </template>

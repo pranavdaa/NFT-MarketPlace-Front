@@ -85,9 +85,7 @@ export function personalSign(from, messageInHex, provider) {
 
 export function signTypedData(from, data, provider) {
   const params = [from, JSON.stringify(data)]
-  const method = provider.isMetaMask
-    ? "eth_signTypedData_v3"
-    : "eth_signTypedData"
+  const method = "eth_signTypedData_v3"
 
   // promise
   return new Promise((resolve, reject) => {

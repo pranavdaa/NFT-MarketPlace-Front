@@ -160,22 +160,18 @@ export default class Login extends Vue {
           { name: "chainId", type: "uint256" },
           { name: "verifyingContract", type: "address" }
         ],
-        WebLogin: [
-          { name: "address", type: "address" },
-          { name: "timestamp", type: "uint256" }
-        ]
+        Test: [{ name: "owner", type: "string" }]
       },
       domain: {
-        name: "Localhost",
-        host: "http://localhost:3000",
+        name: "Ether Mail",
+        host: "https://rpc-mumbai.matic.today",
         version: "1",
         verifyingContract: "0x0",
-        chainId: 80001
+        chainId: ""
       },
-      primaryType: "WebLogin",
+      primaryType: "Test",
       message: {
-        address: address,
-        timestamp: timestamp
+        owner: address
       }
     };
   }
@@ -220,7 +216,7 @@ export default class Login extends Vue {
           configStore.set("loginStrategy", app.strategies.METAMASK);
 
           // login with metamask
-          await this.login(from, timestamp, result.result, options);
+          await this.login(from, result.result, options);
         }
       } catch (e) {
         // ignore error
@@ -231,7 +227,7 @@ export default class Login extends Vue {
     this.metamaskLoading = false;
   }
 
-  async login(address, timestamp, signature, options) {
+  async login(address, signature, options) {
     this.loading = true;
 
     // to be removed
@@ -242,8 +238,7 @@ export default class Login extends Vue {
       // login
       await this.$store.dispatch("auth/doLogin", {
         address,
-        signature,
-        timestamp
+        signature
       });
 
       this.moveToNext();

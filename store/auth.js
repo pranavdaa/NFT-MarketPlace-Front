@@ -1,6 +1,7 @@
 /* eslint no-param-reassign: 0 */
 import { clearStore, config as configStore } from "~/plugins/localstore"
 import { getAxios } from "~/plugins/axios"
+import app from "~/plugins/app"
 
 export default {
   namespaced: true,
@@ -103,11 +104,12 @@ export default {
         return
       }
 
-      const respones = await getAxios().post("users", payload)
-      if (respones.status === 200 && respones.data.data) {
+      const response = await getAxios().post("users/login", payload)
+      if (response.status === 200 && response.data.data) {
         // Store auth token to local store and add user
-        configStore.set("authToken", respones.data.auth_token)
-        dispatch('login', respones.data.data)
+        configStore.set("authToken", response.data.auth_token)
+        dispatch('login', response.data.data)
+        app.initAccount(app.vuexStore)
       }
 
       return null
@@ -115,12 +117,12 @@ export default {
 
     async checkLogin({ dispatch }) {
       try {
-        const respones = await getAxios().get('users/1')
-        if (respones.status === 200) {
-          dispatch('login', respones.data.data)
+        const response = await getAxios().get('users/details')
+        if (response.status === 200) {
+          dispatch('login', response.data.data)
         }
       } catch (err) {
-        if (err.respones.status === 401) {
+        if (err.response.status === 401) {
           dispatch('logout');
         }
       }
