@@ -54,7 +54,7 @@
             </div>
           </ul>
         </div>
-        <div class="profile-navbar d-flex ml-auto ps-l-lg-16">
+        <div class="profile-navbar d-flex ml-auto ps-l-16">
           <div class="d-flex align-self-center" v-if="user && false">
             <nuxt-link
               class="nav-link d-flex"

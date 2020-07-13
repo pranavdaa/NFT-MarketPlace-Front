@@ -9,13 +9,13 @@
       </div>
       <div class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end">
         <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" />
-        <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="(val) => val" />
+        <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="onSortSelect" />
       </div>
     </div>
     <div class="row ps-x-16 d-flex justify-content-center text-center" v-if="true">
       <sell-card
         v-for="order in orders"
-        :key="order.title"
+        :key="order.id"
         :order="order"
         @click="orderDetails(order.id)"
       />
@@ -28,6 +28,7 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import { mapGetters } from "vuex";
 
 import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
@@ -46,81 +47,66 @@ import NoItem from "~/components/lego/no-item";
     SlideSwitch,
     NoItem
   },
+  computed: {
+    ...mapGetters("page", ["selectedFilters"])
+  },
   middleware: [],
-  mixins: []
+  mixins: [],
+  watch: {
+    selectedFilters: {
+      handler: async function() {
+        // await this.fetchNFTTokens({ filtering: true });
+      },
+      deep: true
+    }
+  }
 })
 export default class MaticTab extends Vue {
-  orders = [
-    {
-      id: 0,
-      title: "Kitty Kitten cat",
-      timeleft: "2 days",
-      onSale: true,
-      img: "/_nuxt/static/img/dummy-kitty.png",
-      price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
-      }
-    },
-    {
-      id: 0,
-      title: "Kitty Kitten cat",
-      onSale: true,
-      img: "/_nuxt/static/img/dummy-kitty.png",
-      price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
-      }
-    },
-    {
-      id: 0,
-      title: "Kitty Kitten cat",
-      img: "/_nuxt/static/img/dummy-kitty.png",
-      price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
-      }
-    }
-  ];
-
   exmptyMsg = {
     title: "Oops! No item found on Matic chain.",
     description: "We didn’t found any item on Matic chain.",
     img: true
   };
 
+  orders = [
+    {
+      id: 1,
+      price: "0.113",
+      categories_id: 1,
+      erc20tokens_id: 1,
+      token: {
+        name: "Kitty Kitten cat",
+        img_url: "/_nuxt/static/img/dummy-kitty.png",
+        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e"
+      }
+    }
+  ];
+
   sortItems = [
     {
       id: 0,
-      name: "Popular"
+      name: "Popular",
+      filter: "-views"
     },
     {
       id: 1,
-      name: "Newest"
+      name: "Newest",
+      filter: "-created"
     },
     {
       id: 2,
-      name: "Oldest"
+      name: "Oldest",
+      filter: "+created"
     },
     {
       id: 3,
-      name: "Price low to high"
+      name: "Price low to high",
+      filter: "+price"
     },
     {
       id: 4,
-      name: "Price high to low"
+      name: "Price high to low",
+      filter: "-price"
     }
   ];
 
@@ -136,12 +122,68 @@ export default class MaticTab extends Vue {
       selected: false
     }
   ];
-
   mounted() {}
+
+  // Handlers
+  onSortSelect(item) {
+    this.$store.commit("page/selectedSort", item.filter);
+  }
 
   onSwitched(value) {
     this.switchItems[1].selected = value;
     this.switchItems[0].selected = !value;
+  }
+
+  // Get
+  get ifCategory() {
+    return this.selectedFilters.selectedCategory
+      ? `&categoryArray=[${this.selectedFilters.selectedCategory.id}]`
+      : "&categoryArray=[]";
+  }
+  get ifSort() {
+    return this.selectedFilters.selectedSort
+      ? `&sort=${this.selectedFilters.selectedSort}`
+      : "";
+  }
+
+  // async
+  async fetchNFTTokens(options = {}) {
+    // Tobe removed
+    this.orders = [...this.orders, ...this.orders];
+    // Do not remove data while fetching
+    if (this.isLoadingTokens || this.hasNextPage) {
+      return;
+    }
+    this.isLoadingTokens = true;
+    let response;
+    let offset = this.orderFullList.length;
+
+    if (options && options.filtering) {
+      // Start from page one with new filter
+      offset = 0;
+    }
+
+    // Fetch tokens with pagination and filters
+    if (this.searchInput != null && this.searchInput.length > 0) {
+      // with search
+      response = await getAxios().get(
+        `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
+      );
+    } else {
+      // without search
+      response = await getAxios().get(
+        `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
+      );
+    }
+
+    if (response.status === 200 && response.data.data.order) {
+      this.hasNextPage = response.data.data.has_next_page;
+      if (options && options.filtering) {
+        this.orderFullList = response.data.data.order;
+        return;
+      }
+      this.orderFullList = [...this.orderFullList, ...response.data.data];
+    }
   }
 }
 </script>

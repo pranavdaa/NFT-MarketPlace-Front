@@ -24,7 +24,7 @@
                 >{{tabs[activeTab].description}}</div>
 
                 <div class="col-md-12 p-0">
-                  <input-matic-view :placeholder="'0.00'" :integer="true" :change="changeAmount" />
+                  <input-token :placeholder="'0.00'" :integer="true" :change="changeAmount" />
                 </div>
 
                 <div
@@ -50,7 +50,7 @@
                   <div class="col-md-12 p-0" v-if="negotiation">
                     <div class="w-100 font-body-small ps-y-12 text-gray-500">Set minimum price</div>
                     <div class="w-100 p-0">
-                      <input-matic-view
+                      <input-token
                         :placeholder="'0.00'"
                         :integer="true"
                         :change="changeAmount"
@@ -119,10 +119,7 @@ import Component from "nuxt-class-component";
 
 import moment from "moment";
 
-import Lottie from "vue-lottie";
-import * as animationData from "~/static/lottie-animations/ripple-loader.json";
-
-import InputMaticView from "~/components/lego/input-matic";
+import InputToken from "~/components/lego/input-token";
 
 @Component({
   props: {
@@ -135,13 +132,7 @@ import InputMaticView from "~/components/lego/input-matic";
       required: true
     }
   },
-  components: { Lottie, InputMaticView },
-  data() {
-    return {
-      defaultOptions: { animationData: animationData.default },
-      animationSpeed: 1
-    };
-  },
+  components: { InputToken },
   methods: {},
   mixins: []
 })
@@ -179,6 +170,7 @@ export default class SellToken extends Vue {
   tokenImage(token) {
     return require("~/static/tokens/" + token.toUpperCase() + ".svg");
   }
+
   changeAmount(value) {
     console.log("Amount: ", value);
   }

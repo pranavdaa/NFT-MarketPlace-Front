@@ -15,13 +15,18 @@
               <div class="table table-wrapper no-border selectable">
                 <div class="table">
                   <div class="table-body">
-                    <div class="d-flex justify-content-center" v-if="userERC20Tokens.length == 0">
+                    <div
+                      class="d-flex justify-content-center"
+                      v-if="erc20Tokens && erc20Tokens.length == 0"
+                    >
                       <span class="ps-32">No Tokens</span>
                     </div>
                     <div
                       class="table-row no-border p-0"
-                      v-for="token in userERC20Tokens"
+                      v-for="token in erc20Tokens"
                       :key="token.id"
+                      @click="onTokenSelect(token)"
+                      :class="{'active': selectedERC20Token.id == token.id}"
                     >
                       <div
                         class="table-row-in-row bottom-separator ps-l-0 ps-r-md-20 ps-r-4 ms-l-lg-32 ms-l-16 w-100"
@@ -61,6 +66,7 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import { mapGetters } from "vuex";
 
 @Component({
   props: {
@@ -73,45 +79,21 @@ import Component from "nuxt-class-component";
       required: true
     }
   },
-  components: {}
+  components: {},
+  computed: {
+    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"])
+  }
 })
 export default class TokenList extends Vue {
-  userERC20Tokens = [
-    {
-      id: 0,
-      name: "Matic",
-      symbol: "MATIC"
-    },
-    {
-      id: 1,
-      name: "Matic",
-      symbol: "MATIC"
-    },
-    {
-      id: 2,
-      name: "Matic",
-      symbol: "MATIC"
-    },
-    {
-      id: 3,
-      name: "Matic",
-      symbol: "MATIC"
-    },
-    {
-      id: 4,
-      name: "Matic",
-      symbol: "MATIC"
-    },
-    {
-      id: 5,
-      name: "Matic",
-      symbol: "MATIC"
-    }
-  ];
   mounted() {}
 
   tokenImage(token) {
     return require("~/static/tokens/" + token.toUpperCase() + ".svg");
+  }
+
+  onTokenSelect(token) {
+    this.$store.commit("token/selectedERC20Token", token);
+    this.close();
   }
 }
 </script>
@@ -139,6 +121,7 @@ export default class TokenList extends Vue {
 .box {
   max-width: 446px;
   width: 446px;
+  min-height: 568px;
   .box-header {
     position: relative;
   }

@@ -31,9 +31,11 @@
         lg
         v-if="hasNextPage"
         color="light"
-        :click="loadMore"
+        :click="onModalShow"
       ></button-loader>
     </div>
+    <!-- <buy-token :show="showModal" :close="onModalClose" :order="orders[0]" /> -->
+    <place-bid :show="showModal" :bid="true" :close="onModalClose" :order="orders[0]" />
   </div>
 </template>
 
@@ -48,10 +50,19 @@ import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
 import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
+import BuyToken from "~/components/lego/modals/buy-token";
+import PlaceBid from "~/components/lego/modals/place-bid";
 
 @Component({
   props: {},
-  components: { SellCard, CategoriesSelector, SearchBox, SortDropdown },
+  components: {
+    SellCard,
+    CategoriesSelector,
+    SearchBox,
+    SortDropdown,
+    BuyToken,
+    PlaceBid
+  },
   computed: {
     ...mapGetters("page", ["selectedFilters"])
   },
@@ -71,12 +82,15 @@ export default class Index extends Vue {
     {
       id: 1,
       price: "0.113",
+      minprice: "12.4",
       categories_id: 1,
       erc20tokens_id: 1,
       token: {
         name: "Kitty Kitten cat",
         img_url: "/_nuxt/static/img/dummy-kitty.png",
-        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e"
+        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e",
+        description:
+          "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it."
       }
     }
   ];
@@ -116,11 +130,20 @@ export default class Index extends Vue {
   displayTokens = 0;
   isLoadingTokens = false;
 
+  showModal = false;
+
   mounted() {}
 
   // handlers
   onSortSelect(item) {
     this.$store.commit("page/selectedSort", item.filter);
+  }
+
+  onModalShow() {
+    this.showModal = true;
+  }
+  onModalClose() {
+    this.showModal = false;
   }
 
   // Get

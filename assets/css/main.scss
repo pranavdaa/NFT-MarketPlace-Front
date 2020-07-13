@@ -57,21 +57,24 @@ main {
 //
 
 // font weights
-@each $name, $value in $font-weights {
+@each $name,
+$value in $font-weights {
   .font-#{$name} {
     font-weight: $value;
   }
 }
 
 // font sizes
-@each $name, $value in $font-sizes {
+@each $name,
+$value in $font-sizes {
   .font-#{$name} {
     @include font-setting($name);
   }
 }
 
 // font display sizes (larger screen)
-@each $name, $value in $font-display-sizes-lg {
+@each $name,
+$value in $font-display-sizes-lg {
   .font-#{$name} {
     @include font-setting($name);
   }
@@ -79,7 +82,9 @@ main {
 
 // font display sizes (smaller screen)
 @media (max-width: 768px) {
-  @each $name, $value in $font-display-sizes-sm {
+
+  @each $name,
+  $value in $font-display-sizes-sm {
     .font-#{$name} {
       font-size: map-get($font-display-sizes-sm, $name);
       line-height: line-height($name);
@@ -131,16 +136,19 @@ main {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
+
 @keyframes load8 {
   0% {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
@@ -176,11 +184,13 @@ main {
   }
 }
 
-@each $name, $value in $theme-colors {
+@each $name,
+$value in $theme-colors {
   .btn-#{$name} {
     border: none;
+
     // box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
-    @if $name == "light" {
+    @if $name=="light" {
       border: 1px solid light-color("400") !important;
     }
 
@@ -203,7 +213,8 @@ main {
   .btn-outline-#{$name} {
     border: none;
     background-color: none;
-    @if $name == "light" {
+
+    @if $name=="light" {
       color: dark-color("700") !important;
     }
 
@@ -212,7 +223,8 @@ main {
       border: none;
       background-color: theme-color-with-weight($name, "100") !important;
       color: $value !important;
-      @if $name == "light" {
+
+      @if $name=="light" {
         background-color: theme-color-with-weight($name, "500") !important;
         color: dark-color("700") !important;
       }
@@ -222,7 +234,8 @@ main {
       border: none;
       background-color: theme-color-with-weight($name, "200") !important;
       color: $value !important;
-      @if $name == "light" {
+
+      @if $name=="light" {
         background-color: theme-color-with-weight($name, "300") !important;
         color: dark-color("700") !important;
       }
@@ -300,21 +313,26 @@ label.btn {
 }
 
 $p-color: dark-color("100");
+
 ::placeholder {
   color: $p-color !important;
 }
+
 ::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */
   color: $p-color !important;
 }
+
 ::-moz-placeholder {
   /* Firefox 19+ */
   color: $p-color !important;
 }
+
 :-ms-input-placeholder {
   /* IE 10+ */
   color: $p-color !important;
 }
+
 :-moz-placeholder {
   /* Firefox 18- */
   color: $p-color !important;
@@ -342,7 +360,9 @@ $p-color: dark-color("100");
 // Padding and margin for different devices
 
 @each $ps in $paddingSizes {
-  @each $pt, $pv in $paddingTypes {
+
+  @each $pt,
+  $pv in $paddingTypes {
     .#{$pt}-#{$ps} {
       #{$pv}: #{$ps}px;
     }
@@ -380,7 +400,9 @@ $p-color: dark-color("100");
   $device-type: "sm";
 
   @each $ps in $paddingSizes {
-    @each $pt, $pv in $paddingTypes {
+
+    @each $pt,
+    $pv in $paddingTypes {
       .#{$pt}-#{$device-type}-#{$ps} {
         #{$pv}: #{$ps}px;
       }
@@ -412,21 +434,26 @@ $p-color: dark-color("100");
       }
     }
   }
+
   .ms-x-#{$device-type}-auto {
     margin-left: auto;
     margin-right: auto;
   }
+
   .ms-y-#{$device-type}-auto {
     margin-top: auto;
     margin-bottom: auto;
   }
 }
+
 @media #{$md-devices} {
   // Padding and margin
   $device-type: "md";
 
   @each $ps in $paddingSizes {
-    @each $pt, $pv in $paddingTypes {
+
+    @each $pt,
+    $pv in $paddingTypes {
       .#{$pt}-#{$device-type}-#{$ps} {
         #{$pv}: #{$ps}px;
       }
@@ -458,10 +485,12 @@ $p-color: dark-color("100");
       }
     }
   }
+
   .ms-x-#{$device-type}-auto {
     margin-left: auto;
     margin-right: auto;
   }
+
   .ms-y-#{$device-type}-auto {
     margin-top: auto;
     margin-bottom: auto;
@@ -473,7 +502,9 @@ $p-color: dark-color("100");
   $device-type: "lg";
 
   @each $ps in $paddingSizes {
-    @each $pt, $pv in $paddingTypes {
+
+    @each $pt,
+    $pv in $paddingTypes {
       .#{$pt}-#{$device-type}-#{$ps} {
         #{$pv}: #{$ps}px;
       }
@@ -505,10 +536,12 @@ $p-color: dark-color("100");
       }
     }
   }
+
   .ms-x-#{$device-type}-auto {
     margin-left: auto;
     margin-right: auto;
   }
+
   .ms-y-#{$device-type}-auto {
     margin-top: auto;
     margin-bottom: auto;
@@ -520,7 +553,9 @@ $p-color: dark-color("100");
   $device-type: "xl";
 
   @each $ps in $paddingSizes {
-    @each $pt, $pv in $paddingTypes {
+
+    @each $pt,
+    $pv in $paddingTypes {
       .#{$pt}-#{$device-type}-#{$ps} {
         #{$pv}: #{$ps}px;
       }
@@ -552,10 +587,12 @@ $p-color: dark-color("100");
       }
     }
   }
+
   .ms-x-#{$device-type}-auto {
     margin-left: auto;
     margin-right: auto;
   }
+
   .ms-y-#{$device-type}-auto {
     margin-top: auto;
     margin-bottom: auto;
@@ -567,10 +604,12 @@ $p-color: dark-color("100");
   margin-left: auto;
   margin-right: auto;
 }
+
 .ms-y-auto {
   margin-top: auto;
   margin-bottom: auto;
 }
+
 //
 // Box
 //
@@ -689,6 +728,7 @@ $p-color: dark-color("100");
   .modal-dialog {
     max-width: 570px;
   }
+
   @media #{$xs-devices} {
     .modal-dialog {
       max-width: 100%;
@@ -793,6 +833,7 @@ textarea.form-control:active {
 
 .with-input-action {
   position: relative;
+
   .input-action {
     @extend .align-self-center;
     position: absolute;
@@ -869,6 +910,7 @@ input.na::-webkit-outer-spin-button {
   }
 
   $table-min-width: 1024px;
+
   @media (max-width: $table-min-width) {
     & {
       flex-direction: row !important;
@@ -921,6 +963,7 @@ input.na::-webkit-outer-spin-button {
         @extend .table-row;
         @extend .no-border-radius;
       }
+
       .table-column {
         @extend .align-self-center;
         @extend .d-flex;
@@ -957,16 +1000,20 @@ input.na::-webkit-outer-spin-button {
     .table-body {
       .table-row {
         cursor: pointer;
-        &:hover {
+
+        &:hover,
+        &.active {
           background-color: light-color("600");
         }
       }
     }
   }
 }
+
 .row-hover-bg:hover {
   background-color: light-color("600");
 }
+
 //
 // Status box
 //
@@ -1054,11 +1101,16 @@ input.na::-webkit-outer-spin-button {
 }
 
 // No Border
-@each $side in "", "-top", "-bottom", "-right", "-left" {
+@each $side in "",
+"-top",
+"-bottom",
+"-right",
+"-left" {
   .no#{$side}-border {
     border#{$side}: 0px !important;
   }
 }
+
 // no box shadows
 .no-box-shadow {
   box-shadow: none !important;
@@ -1067,21 +1119,26 @@ input.na::-webkit-outer-spin-button {
 .no-hover-bg:hover {
   background-color: inherit !important;
 }
+
 // No Radius
 .no-top-border-radius {
   border-top-left-radius: 0px !important;
   border-top-right-radius: 0px !important;
 }
+
 .no-bottom-border-radius {
   border-bottom-left-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
 }
+
 .no-border-radius {
   border-radius: 0px !important;
 }
+
 .bottom-separator {
   border-bottom: 1px solid light-color("500") !important;
 }
+
 .no-bg-color {
   background-color: transparent !important;
 }
@@ -1130,11 +1187,11 @@ input.na::-webkit-outer-spin-button {
   border-radius: $border-radius;
 }
 
-.check-container:hover input ~ .checkmark {
+.check-container:hover input~.checkmark {
   background-color: light-color("700");
 }
 
-.check-container input:checked ~ .checkmark {
+.check-container input:checked~.checkmark {
   background-color: primary-color("600");
 }
 
@@ -1145,7 +1202,7 @@ input.na::-webkit-outer-spin-button {
 }
 
 /* Show the checkmark when checked */
-.check-container input:checked ~ .checkmark:after {
+.check-container input:checked~.checkmark:after {
   display: block;
 }
 
@@ -1161,6 +1218,7 @@ input.na::-webkit-outer-spin-button {
   border-bottom-left-radius: 2px;
   transform: rotate(-45deg);
 }
+
 // Custom Upload button
 .upload-btn-wrapper {
   position: relative;
@@ -1215,7 +1273,7 @@ input.na::-webkit-outer-spin-button {
 }
 
 // address-input for send token
-.input-address-wrapper > input {
+.input-address-wrapper>input {
   @extend .unstyle-input;
   height: 44px;
   border-width: 0px;
@@ -1231,10 +1289,12 @@ input.na::-webkit-outer-spin-button {
 .bottom-border {
   border-bottom: 1px solid light-color("500");
 }
+
 // Toggle switch
 label.switch {
   margin-bottom: 0px;
 }
+
 .switch {
   position: relative;
   display: inline-block;
@@ -1271,15 +1331,15 @@ label.switch {
     transition: 0.4s;
   }
 
-  input:checked + .slider {
+  input:checked+.slider {
     background-color: primary-color("600");
   }
 
-  input:focus + .slider {
+  input:focus+.slider {
     box-shadow: 0 0 1px primary-color("600");
   }
 
-  input:checked + .slider:before {
+  input:checked+.slider:before {
     -webkit-transform: translateX(30px);
     -ms-transform: translateX(30px);
     transform: translateX(30px);

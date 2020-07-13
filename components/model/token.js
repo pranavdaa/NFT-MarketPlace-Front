@@ -4,6 +4,8 @@ import BigNumber from "~/plugins/bignumber"
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
 
+import getBaseAxios from "~/plugins/axios"
+
 import { parseBalance, parseUSDBalance } from "~/plugins/helpers/token-utils"
 
 const ZERO = new BigNumber(0)
@@ -42,22 +44,6 @@ export default class Token extends Model {
     return null
   }
 
-  getContract(network) {
-    let address = this.address
-    if (network && network.id) {
-      address = this.getAddress(network.id)
-    }
-
-    if (!address) {
-      return null
-    }
-
-    return app.vuexStore.dispatch("trunk/fetchERC20ContractObject", {
-      address,
-      network
-    })
-  }
-
   get isEther() {
     return this.id === app.uiconfig.ethDBUID
   }
@@ -92,6 +78,22 @@ export default class Token extends Model {
 
   getFormattedBalance(networkId) {
     return this.getBalance(networkId).toFixed(3)
+  }
+
+  getContract(network) {
+    let address = this.address
+    if (network && network.id) {
+      address = this.getAddress(network.id)
+    }
+
+    if (!address) {
+      return null
+    }
+
+    return app.vuexStore.dispatch("trunk/fetchERC20ContractObject", {
+      address,
+      network
+    })
   }
 
   // new methods (getAddress/getBalance) to return values based on network ID

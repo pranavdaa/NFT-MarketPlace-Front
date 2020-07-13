@@ -39,8 +39,8 @@
     <accept-bid :show="showAcceptBid" :close="onAcceptClose" />
     <!-- <in-process :show="showInProcess" :close="onDenyClose" /> -->
     <!-- <token-list :show="showTokenList" :close="onDenyClose" /> -->
-    <!-- <sell-token :show="showTokenList" :close="onDenyClose" /> -->
-    <submitting-to-marketplace :show="showTokenList" :close="onDenyClose" />
+    <sell-token :show="showTokenList" :close="onDenyClose" />
+    <!-- <submitting-to-marketplace :show="showTokenList" :close="onDenyClose" /> -->
   </div>
 </template>
 

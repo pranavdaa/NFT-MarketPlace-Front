@@ -92,6 +92,10 @@ export default {
       result = ZeroBalance
       try {
         const accountAddress = address || rootGetters["account/account"].address
+        console.log(accountAddress)
+
+        const a = await network.web3.eth.getBalance(accountAddress)
+        console.log(a)
 
         // Fetch balance
         let r = null
@@ -104,6 +108,7 @@ export default {
 
         result = new BigNumber(r)
       } catch (e) {
+        console.log(network)
         console.error("error::loadTokenBalance", e)
       }
 

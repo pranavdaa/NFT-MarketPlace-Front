@@ -7,7 +7,8 @@ export default {
 
   state: () => {
     return {
-      erc20Tokens: []
+      erc20Tokens: [],
+      selectedERC20Token: null,
     }
   },
 
@@ -15,14 +16,23 @@ export default {
     erc20Tokens(state, tokens) {
       state.erc20Tokens = tokens
     },
-
+    selectedERC20Token(state, token) {
+      state.selectedERC20Token = token
+    }
   },
 
   getters: {
     erc20Tokens(state) {
       return state.erc20Tokens
     },
+    selectedERC20Token(state) {
+      if (!state.selectedERC20Token && state.erc20Tokens) {
+        return state.erc20Tokens[0]
+      }
+      return state.selectedERC20Token
+    }
   },
+
   actions: {
     async fetchERC20Tokens({ commit }) {
       const response = await getAxios().get('erc20tokens/')

@@ -1,5 +1,5 @@
 <template>
-  <div class="input-container ps-4 d-flex">
+  <div class="input-container ps-4 d-flex" v-if="defaultSelectedToken">
     <input
       class="unstyle-input form-control align-self-center"
       :class="{'is-invalid': isInvalid}"
@@ -13,8 +13,14 @@
       :class="{'cursor-pointer': !disableToken}"
       @click="selectToken()"
     >
-      <img src="~/static/tokens/MATIC.svg" alt="Matic Network" class="token-icon align-self-center" />
-      <span class="font-body-small font-medium align-self-center ps-l-4">MATIC</span>
+      <img
+        :src="tokenImage(defaultSelectedToken.symbol)"
+        :alt="defaultSelectedToken.name"
+        class="token-icon align-self-center"
+      />
+      <span
+        class="font-body-small font-medium align-self-center ps-l-4"
+      >{{defaultSelectedToken.symbol}}</span>
       <svg-sprite-icon name="right-arrow" class="ms-l-8 align-self-center" v-if="!disableToken" />
     </div>
     <token-list :show="showTokenList" :close="onTokenClosed" />
@@ -24,12 +30,16 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
-import TokenList from "~/components/lego/modals/token-list";
-
 import app from "~/plugins/app";
+import { mapGetters } from "vuex";
+import BigNumber from "~/plugins/bignumber";
 
+import TokenList from "~/components/lego/modals/token-list";
 // mixins
 import { VueDebounce, VueWatch } from "~/components/decorator";
+
+const ZERO = new BigNumber(0);
+const TEN = new BigNumber(10);
 
 @Component({
   props: {
@@ -63,9 +73,11 @@ import { VueDebounce, VueWatch } from "~/components/decorator";
   },
   components: { TokenList },
   mixins: [],
-  computed: {}
+  computed: {
+    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"])
+  }
 })
-export default class InputMaticView extends Vue {
+export default class InputToken extends Vue {
   inputAmount = null;
   showTokenList = false;
 
@@ -84,6 +96,10 @@ export default class InputMaticView extends Vue {
     this.change && this.change(this.amount);
   }
 
+  tokenImage(token) {
+    return require("~/static/tokens/" + token.toUpperCase() + ".svg");
+  }
+
   get amount() {
     let result = null;
     if (
@@ -91,13 +107,22 @@ export default class InputMaticView extends Vue {
       this.inputAmount !== null &&
       this.inputAmount.toString().trim() !== ""
     ) {
-      // this.inputAmount = new BigNumber(parseFloat(this.inputAmount));
-      // const decimals = new BigNumber(app.maticDecimals);
-      // result = this.inputAmount.times(TenBalance.pow(decimals));
-      result = this.inputAmount;
+      this.inputAmount = new BigNumber(parseFloat(this.inputAmount));
+      const decimals = new BigNumber(this.defaultSelectedToken.decimals);
+      result = this.inputAmount.times(TEN.pow(decimals));
     }
 
     return result;
+  }
+
+  get defaultSelectedToken() {
+    if (this.selectedERC20Token) {
+      return this.selectedERC20Token;
+    } else if (this.erc20Tokens && this.erc20Tokens.length > 0) {
+      return this.erc20Tokens[0];
+    }
+
+    return null;
   }
 
   selectToken() {

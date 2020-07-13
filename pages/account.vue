@@ -44,80 +44,11 @@ import ActivityTab from "~/components/lego/account/activity-tab";
   mixins: []
 })
 export default class Index extends Vue {
-  orders = [
-    {
-      id: 0,
-      title: "Kitty Kitten cat",
-      timeleft: "",
-      img: "/_nuxt/static/img/dummy-kitty.png",
-      price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
-      }
-    },
-    {
-      id: 0,
-      title: "Kitty Kitten cat",
-      timeleft: "2 days",
-      onSale: true,
-      img: "/_nuxt/static/img/dummy-kitty.png",
-      price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
-      }
-    },
-    {
-      id: 0,
-      title: "Kitty Kitten cat",
-      timeleft: "2 days",
-      img: "/_nuxt/static/img/dummy-kitty.png",
-      price: "0.113",
-      category: {
-        title: "Cryptokitty",
-        img: "~/static/img/cryptokitty.svg"
-      },
-      erc20Token: {
-        symbol: "ETH"
-      }
-    }
-  ];
-
-  sortItems = [
-    {
-      id: 0,
-      name: "Popular"
-    },
-    {
-      id: 1,
-      name: "Newest"
-    },
-    {
-      id: 2,
-      name: "Oldest"
-    },
-    {
-      id: 3,
-      name: "Price low to high"
-    },
-    {
-      id: 4,
-      name: "Price high to low"
-    }
-  ];
-
   tabs = [
     { id: 0, title: "Items on Matic", count: 12 },
     { id: 1, title: "Items on Ethereum", count: 4 },
-    { id: 2, title: "Activities", count: 6 },
-    { id: 3, title: "Favorites" }
+    { id: 2, title: "Favorites", count: 6 },
+    { id: 3, title: "Activities" }
   ];
 
   activeTab = 3;

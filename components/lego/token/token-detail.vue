@@ -96,6 +96,12 @@
           </h3>
           <p class="font-body-medium ps-t-20" v-if="showProperties">{{order.token.properties}}</p>
         </div>
+        <div class="d-flex flex-column ps-y-16 ps-y-md-32 bids" v-if="true">
+          <h3 class="font-heading-medium font-semibold category">Bidding history</h3>
+          <p class="font-body-medium ps-t-20">
+            <bidder-row />
+          </p>
+        </div>
       </div>
       <div class="col-md-4 d-none d-lg-flex">
         <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
@@ -142,6 +148,7 @@ import { mapGetters } from "vuex";
 
 import TokenShortInfo from "~/components/lego/token/token-short-info";
 import WishlistButton from "~/components/lego/wishlist-button";
+import BidderRow from "~/components/lego/bidder-row";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -154,7 +161,7 @@ const colorThief = new ColorThief();
       required: false
     }
   },
-  components: { TokenShortInfo, WishlistButton },
+  components: { TokenShortInfo, WishlistButton, BidderRow },
   computed: {
     ...mapGetters("category", ["categories"]),
     ...mapGetters("token", ["erc20Tokens"])
