@@ -108,7 +108,7 @@ export default class InputToken extends Vue {
       this.inputAmount.toString().trim() !== ""
     ) {
       this.inputAmount = new BigNumber(parseFloat(this.inputAmount));
-      const decimals = new BigNumber(this.defaultSelectedToken.decimals);
+      const decimals = new BigNumber(this.defaultSelectedToken.decimal);
       result = this.inputAmount.times(TEN.pow(decimals));
     }
 
@@ -133,6 +133,7 @@ export default class InputToken extends Vue {
 
   onTokenClosed() {
     this.showTokenList = false;
+    this.amount;
   }
 }
 </script>
