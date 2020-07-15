@@ -4,8 +4,6 @@ import BigNumber from "~/plugins/bignumber"
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
 
-import getBaseAxios from "~/plugins/axios"
-
 import { parseBalance, parseUSDBalance } from "~/plugins/helpers/token-utils"
 
 const ZERO = new BigNumber(0)
@@ -25,7 +23,12 @@ export default class Token extends Model {
     let addresses = {}
     if (this.erc20tokensaddresses) {
       this.erc20tokensaddresses.forEach(address => {
-        addresses[address.chain_id] = address.address
+        if (address.chain_id == "8001") {
+          addresses["80001"] = address.address
+        } else {
+          addresses[address.chain_id] = address.address
+        }
+
       })
     }
     return addresses
@@ -45,7 +48,11 @@ export default class Token extends Model {
   }
 
   get isEther() {
-    return this.id === app.uiconfig.ethDBUID
+    return this.id == app.uiconfig.ethDBID
+  }
+
+  get isMatic() {
+    return this.id == app.uiconfig.maticDBID
   }
 
   get fullUSDBalance() {
@@ -69,12 +76,17 @@ export default class Token extends Model {
       return ZERO
     }
 
-    return parseBalance(this.fullBalance, this.decimals)
+    return parseBalance(this.fullBalance, this.decimal)
   }
 
   get formattedBalance() {
     return this.balance.toFixed(2)
   }
+
+  get formattedFullUSDBalance() {
+    return parseUSDBalance(this.balance, this.usd).toFixed(2)
+  }
+
 
   getFormattedBalance(networkId) {
     return this.getBalance(networkId).toFixed(3)
@@ -125,7 +137,7 @@ export default class Token extends Model {
       networkId
     )
 
-    return parseBalance(value, this.decimals)
+    return parseBalance(value, this.decimal)
   }
 
   getFullBalance(networkId) {
@@ -138,7 +150,7 @@ export default class Token extends Model {
   }
 
   convertBalanceToAmount(amount) {
-    const decimals = new BigNumber(this.decimals)
+    const decimals = new BigNumber(this.decimal)
     return new BigNumber(amount).multipliedBy(TEN.pow(decimals))
   }
   convertToFormattedUSDBalance(amount) {

@@ -46,8 +46,12 @@
                         </div>
                         <div class="table-column col ml-auto ms-r-md-8 ms-r-0 justify-content-end">
                           <div class="text-right d-flex flex-column">
-                            <span class="font-body-medium font-medium">${{"120.4"}}</span>
-                            <span class="text-gray font-body-medium mt-1">{{"2.2"}} {{token.symbol}}</span>
+                            <span
+                              class="font-body-medium font-medium"
+                            >${{token.formattedFullUSDBalance}}</span>
+                            <span
+                              class="text-gray font-body-medium mt-1"
+                            >{{token.formattedBalance}} {{token.symbol}}</span>
                           </div>
                         </div>
                       </div>
@@ -91,7 +95,7 @@ export default class TokenList extends Vue {
     return require("~/static/tokens/" + token.toUpperCase() + ".svg");
   }
 
-  onTokenSelect(token) {
+  async onTokenSelect(token) {
     this.$store.commit("token/selectedERC20Token", token);
     this.close();
   }

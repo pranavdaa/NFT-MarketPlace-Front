@@ -2,7 +2,12 @@
   <div class="container-fluid ps-y-16" v-if="order">
     <div class="row ps-y-16 ps-x-md-16">
       <div class="col-md-7 d-flex">
-        <token-short-info class="align-self-center" :order="order" :category="category" />
+        <token-short-info
+          class="align-self-center"
+          :order="order"
+          :category="category"
+          v-if="category"
+        />
       </div>
       <div class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end">
         <wishlist-button :onClick="addToWishlist" />
@@ -56,8 +61,9 @@
           <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">Listed for</div>
           <div
             class="font-heading-large font-semibold ps-b-20"
+            v-if="erc20Token"
           >{{order.price}} {{erc20Token.symbol}}</div>
-          <button class="btn btn-primary">Buy Now</button>
+          <button class="btn btn-primary" @click="buyOrder()">Buy Now</button>
         </div>
         <div class="d-flex flex-column ps-y-16 ps-y-md-32">
           <h3 class="font-heading-medium font-semibold category">
@@ -96,7 +102,7 @@
           </h3>
           <p class="font-body-medium ps-t-20" v-if="showProperties">{{order.token.properties}}</p>
         </div>
-        <div class="d-flex flex-column ps-y-16 ps-y-md-32 bids" v-if="true">
+        <div class="d-flex flex-column ps-y-16 ps-y-md-32 bids" v-if="false">
           <h3 class="font-heading-medium font-semibold category">Bidding history</h3>
           <p class="font-body-medium ps-t-20">
             <bidder-row />
@@ -131,11 +137,13 @@
           <div class="font-body-small text-gray-300 mt-auto ps-y-4">Listed for</div>
           <div
             class="font-heading-large font-semibold ps-b-20"
+            v-if="erc20Tokens"
           >{{order.price}} {{erc20Token.symbol}}</div>
-          <button class="btn btn-primary">Buy Now</button>
+          <button class="btn btn-primary" @click="buyOrder()">Buy Now</button>
         </div>
       </div>
     </div>
+    <buy-token :show="showBuyToken" :order="order" :close="onBuyTokenClose" v-if="showBuyToken" />
   </div>
 </template>
 
@@ -149,6 +157,7 @@ import { mapGetters } from "vuex";
 import TokenShortInfo from "~/components/lego/token/token-short-info";
 import WishlistButton from "~/components/lego/wishlist-button";
 import BidderRow from "~/components/lego/bidder-row";
+import BuyToken from "~/components/lego/modals/buy-token";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -161,10 +170,11 @@ const colorThief = new ColorThief();
       required: false
     }
   },
-  components: { TokenShortInfo, WishlistButton, BidderRow },
+  components: { TokenShortInfo, WishlistButton, BidderRow, BuyToken },
   computed: {
     ...mapGetters("category", ["categories"]),
-    ...mapGetters("token", ["erc20Tokens"])
+    ...mapGetters("token", ["erc20Tokens"]),
+    ...mapGetters("account", ["account"])
   },
   middleware: [],
   mixins: []
@@ -174,16 +184,25 @@ export default class TokenDetail extends Vue {
   showMore = false;
   showCategoryInfo = true;
   showProperties = true;
+  showBuyToken = false;
+
+  limit = app.uiconfig.defaultPageSize;
+  bidsFullList = [];
+  hasNextPage = true;
+  isLoadingBids = false;
 
   order = {
     id: 1,
     price: "0.113",
     categories_id: 1,
     erc20tokens_id: 1,
+    type: "FIXED",
     token: {
       name: "Kitty Kitten cat",
       img_url: "/_nuxt/static/img/dummy-kitty.png",
-      owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e"
+      owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e",
+      description:
+        "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it."
     }
   };
 
@@ -216,6 +235,16 @@ export default class TokenDetail extends Vue {
     )[0];
   }
 
+  get isOwnersToken() {
+    if (this.account.address) {
+      return (
+        this.account.address.toLowerCase() ===
+        this.order.token.owner.toLowerCase()
+      );
+    }
+    return false;
+  }
+
   // async
   async fetchOrder() {
     // if (!this.tokenId || this.isLoading) {
@@ -224,8 +253,15 @@ export default class TokenDetail extends Vue {
   }
 
   // actions
+  buyOrder() {
+    this.showBuyToken = true;
+  }
+  onBuyTokenClose() {
+    this.showBuyToken = false;
+  }
+
   async addToWishlist() {
-    // Add current order to users wishlist if not wishlisted
+    // Add current order to users wishlist if not wishlisted or if it is then remove it
     try {
       const response = await getAxios().post("users/favourites", {
         orderId: this.order.id
@@ -239,6 +275,29 @@ export default class TokenDetail extends Vue {
             type: "info"
           }
         );
+      }
+    }
+  }
+
+  async fetchBidders() {
+    if (this.isOwnersToken) {
+      if (this.isLoadingBids || this.hasNextPage) {
+        return;
+      }
+      try {
+        let response;
+        let offset = this.bidsFullList.length;
+
+        response = await getAxios().get(
+          `orders.bids/?offset=${offset}&limit=${this.limit}`
+        );
+
+        if (response.status === 200 && response.data.data.bids) {
+          this.hasNextPage = response.data.data.has_next_page;
+          this.bidsFullList = [...this.bidsFullList, ...response.data.data];
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
   }
