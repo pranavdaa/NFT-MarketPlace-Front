@@ -167,7 +167,7 @@ export default class Login extends Vue {
         host: "https://rpc-mumbai.matic.today",
         version: "1",
         verifyingContract: "0x0",
-        chainId: ""
+        chainId: 80001
       },
       primaryType: "Test",
       message: {
@@ -197,13 +197,14 @@ export default class Login extends Vue {
     }
 
     const from = await getDefaultAccount();
+
     if (from) {
       this.loading = true;
       try {
         const timestamp = moment().unix();
         const result = await signTypedData(
-          from,
-          this.getLoginTypedData(from, timestamp),
+          from.toLowerCase(),
+          this.getLoginTypedData(from.toLowerCase(), timestamp),
           window.ethereum
         );
 
@@ -231,8 +232,8 @@ export default class Login extends Vue {
     this.loading = true;
 
     // to be removed
-    signature =
-      "0x51df797904019a4eba658305beecabc1b5efdb20269d6a775d59dfc59c8457306313bba0e1d898aef51b74875f78a1cdb58ab0b6d47f2577aad50da6df33811a1c";
+    // signature =
+    //   "0x51df797904019a4eba658305beecabc1b5efdb20269d6a775d59dfc59c8457306313bba0e1d898aef51b74875f78a1cdb58ab0b6d47f2577aad50da6df33811a1c";
 
     try {
       // login

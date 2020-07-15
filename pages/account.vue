@@ -51,7 +51,7 @@ export default class Index extends Vue {
     { id: 3, title: "Activities" }
   ];
 
-  activeTab = 3;
+  activeTab = 0;
 
   allOrSale = true;
 

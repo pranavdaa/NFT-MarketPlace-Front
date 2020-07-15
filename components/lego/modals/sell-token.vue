@@ -12,7 +12,7 @@
                   :class="{'active font-medium': activeTab === tab.id}"
                   v-for="tab in tabs"
                   :key="tab.id"
-                  @click="changeTab(tab.id)"
+                  @click.prevent="changeTab(tab.id)"
                 >{{tab.title}}</a>
               </nav>
               <div class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border">
@@ -24,7 +24,7 @@
                 >{{tabs[activeTab].description}}</div>
 
                 <div class="col-md-12 p-0">
-                  <input-token :placeholder="'0.00'" :integer="true" :change="changeAmount" />
+                  <input-token :placeholder="'0.00'" :integer="true" :change="changePrice" />
                 </div>
 
                 <div
@@ -53,7 +53,7 @@
                       <input-token
                         :placeholder="'0.00'"
                         :integer="true"
-                        :change="changeAmount"
+                        :change="changeMinPrice"
                         :disableToken="true"
                       />
                     </div>
@@ -127,6 +127,10 @@ import InputToken from "~/components/lego/input-token";
       type: Boolean,
       required: true
     },
+    nftToken: {
+      type: Object,
+      required: true
+    },
     close: {
       type: Function,
       required: true
@@ -141,6 +145,9 @@ export default class SellToken extends Vue {
   duration = 0;
   negotiation = false;
   isLoading = false;
+
+  price = 0;
+  minPrice = 0;
 
   tabs = [
     {
@@ -164,15 +171,16 @@ export default class SellToken extends Vue {
   ];
   mounted() {}
 
+  // Handlers
   changeTab(num) {
     this.activeTab = num;
   }
-  tokenImage(token) {
-    return require("~/static/tokens/" + token.toUpperCase() + ".svg");
-  }
 
-  changeAmount(value) {
-    console.log("Amount: ", value);
+  changePrice(value) {
+    this.price = value;
+  }
+  changeMinPrice(value) {
+    this.minPrice = value;
   }
 
   // action

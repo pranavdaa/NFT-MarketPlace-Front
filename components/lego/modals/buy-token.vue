@@ -1,6 +1,6 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
+    <div class="modal-backdrop" v-bind:class="{ 'show': show }" @click="close()"></div>
     <div class="modal transaction-prog-modal" v-bind:class="{ 'show': show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
@@ -30,7 +30,10 @@
                       @click.prevent="showMore = false"
                     >Show less</a>
                   </p>
-                  <div class="mt-auto w-100 d-flex flex-column fixed-price" v-if="false">
+                  <div
+                    class="mt-auto w-100 d-flex flex-column fixed-price"
+                    v-if="order.type === orderTypes.FIXED"
+                  >
                     <div class="font-body-small text-gray-300 mt-auto ps-y-4">Listed for</div>
                     <div
                       class="font-heading-large font-semibold ps-b-20"
@@ -40,7 +43,7 @@
                   </div>
                   <div
                     class="mt-auto w-100 d-flex flex-column fixed-price-negotiation"
-                    v-if="false"
+                    v-if="order.type === orderTypes.NEGOTIATION"
                   >
                     <div class="d-flex justify-content-between">
                       <div class="font-body-small text-gray-300 ps-y-4">Listed for</div>
@@ -68,7 +71,7 @@
                 </div>
                 <div
                   class="mt-auto w-100 d-flex flex-column auction ps-x-16 ps-x-sm-32 ps-x-lg-40 ps-y-40"
-                  v-if="true"
+                  v-if="order.type === orderTypes.AUCTION"
                 >
                   <div class="d-flex justify-content-between">
                     <div class="font-body-small text-gray-300 ps-y-4">Minimum bid</div>
@@ -123,6 +126,8 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+
+import app from "~/plugins/app";
 
 import moment from "moment";
 
@@ -184,10 +189,15 @@ export default class BuyToken extends Vue {
     return require("~/static/tokens/" + token.toUpperCase() + ".svg");
   }
 
+  // get
   get erc20Token() {
     return this.erc20Tokens.filter(
       token => token.id === this.order.erc20tokens_id
     )[0];
+  }
+
+  get orderTypes() {
+    return app.orderTypes;
   }
 
   // action

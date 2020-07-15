@@ -22,7 +22,7 @@ export default class Token extends Vue {
   tokenId = null;
 
   mounted() {
-    this.tokenId = parseInt(this.$route.params.id, 10);
+    this.tokenId = this.$route.params.id;
   }
 }
 </script>

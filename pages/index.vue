@@ -163,13 +163,6 @@ export default class Index extends Vue {
   }
 
   // async
-  async searchHandler(v) {
-    this.loaded = false;
-    this.searchInput = v;
-    this.resetValidatorList();
-    await this.fetchValidators();
-    this.loaded = true;
-  }
 
   async fetchOrders(options = {}) {
     // Tobe removed
