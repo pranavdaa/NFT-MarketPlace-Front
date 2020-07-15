@@ -4,7 +4,7 @@
     class="sell-card text-center cursor-pointer"
     v-bind:style="{background: bg}"
   >
-    <on-sale-tag v-if="order.onSale" :time="order.timeleft" />
+    <on-sale-tag v-if="order.onSale && !onlyToken" :time="order.timeleft" />
 
     <div class="img-wrapper d-flex justify-content-center">
       <img
@@ -23,21 +23,24 @@
       <img :src="category.img_url" :alt="category.name" class="icon ms-2 ms-r-4 align-self-center" />
       <div class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1">{{category.name}}</div>
     </div>
-    <h3 class="w-100 title font-body-small font-medium ms-b-8">{{order.token.name}}</h3>
+    <h3
+      class="w-100 title font-body-small font-medium ms-b-8"
+      :class="{'ms-b-16': onlyToken}"
+    >{{order.token.name}}</h3>
     <div
       class="price font-body-small ms-b-20"
-      v-if="erc20Token"
+      v-if="erc20Token && !onlyToken"
     >{{order.price}} {{erc20Token.symbol}}</div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="isMyAccount"
+      v-if="isMyAccount && onlyToken"
     >
-      <a class="btn btn-transparent w-50 align-self-center" @click.prevent="sell()">Sell</a>
+      <a class="btn btn-transparent w-50 align-self-center" @click.prevent="sell(order.id)">Sell</a>
       <a class="btn btn-transparent w-50 align-self-center" @click.prevent="transfer()">Transfer</a>
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="isMyAccount"
+      v-if="false && isMyAccount"
     >
       <a
         class="btn btn-red btn-transparent w-100 align-self-center"
@@ -46,7 +49,7 @@
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="isMyAccount"
+      v-if="false && isMyAccount"
     >
       <a
         class="btn btn-transparent w-100 align-self-center"
@@ -55,7 +58,7 @@
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="isMyAccount"
+      v-if="false && isMyAccount"
     >
       <a
         class="btn btn-transparent w-100 align-self-center"
@@ -82,6 +85,16 @@ import OnSaleTag from "~/components/lego/token/on-sale-tag";
     order: {
       type: Object,
       required: true
+    },
+    onlyToken: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    sell: {
+      type: Function,
+      required: false,
+      default: () => {}
     }
   },
   components: { OnSaleTag },
@@ -120,20 +133,18 @@ export default class SellCard extends Vue {
   }
 
   get erc20Token() {
-    return this.erc20Tokens.filter(
+    return this.erc20Tokens.find(
       token => token.id === this.order.erc20tokens_id
-    )[0];
+    );
   }
 
   get category() {
-    return this.categories.filter(
-      item => item.id === this.order.categories_id
-    )[0];
+    return this.categories.find(item => item.id === this.order.categories_id);
   }
 
   get sellTagData() {
     // if order type AUCTION
-    if (order.type === app.orderStatus.AUCTION) {
+    if (order.type === app.orderTypes.AUCTION) {
       // if expiry time is less than
       if (order.expiry_date) {
       }
@@ -141,9 +152,6 @@ export default class SellCard extends Vue {
   }
 
   // Actions
-  sell() {
-    console.log("sell");
-  }
   transfer() {
     console.log("transfer");
   }
@@ -207,6 +215,7 @@ a {
     .icon {
       width: 20px;
       height: 20px;
+      border-radius: 50%;
     }
   }
   .title {
