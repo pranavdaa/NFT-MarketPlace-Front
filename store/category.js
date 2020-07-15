@@ -1,5 +1,6 @@
 /* eslint no-param-reassign: 0 */
 import getAxios from "~/plugins/axios"
+import CategoryModel from "~/components/model/Category"
 
 const uiconfig = JSON.parse(process.env.uiconfig)
 
@@ -33,7 +34,7 @@ export default {
 
           // dummy count to be removed
           item.count = 123;
-          return item;
+          return new CategoryModel(item);
         });
 
         commit('categories', categories);

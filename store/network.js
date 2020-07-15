@@ -72,7 +72,6 @@ export default {
       const main = new NetworkModel(networks.main)
       const matic = new NetworkModel(networks.matic)
 
-
       // commit networks
       commit("networks", {
         main,

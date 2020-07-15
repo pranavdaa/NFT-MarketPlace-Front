@@ -63,8 +63,8 @@ export default {
     },
 
     async reloadBalances({ dispatch }) {
-      await dispatch("trunk/resetBalances", {}, { root: true });
-      dispatch("fetchBalances");
+      dispatch("trunk/resetBalances", {}, { root: true });
+      await dispatch("fetchBalances");
     }
   }
 }

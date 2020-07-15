@@ -92,14 +92,10 @@ export default {
       result = ZeroBalance
       try {
         const accountAddress = address || rootGetters["account/account"].address
-        console.log(accountAddress)
-
-        const a = await network.web3.eth.getBalance(accountAddress)
-        console.log(a)
 
         // Fetch balance
         let r = null
-        if (token.isEther && !network.isMatic) {
+        if (token.isEther && !network.isMatic || token.isMatic && network.isMatic) {
           r = await getAccountBalancePromise(network, accountAddress)
         } else {
           const c = await token.getContract(network)
@@ -108,7 +104,6 @@ export default {
 
         result = new BigNumber(r)
       } catch (e) {
-        console.log(network)
         console.error("error::loadTokenBalance", e)
       }
 
@@ -133,7 +128,7 @@ export default {
 
       const networkMeta = rootGetters['network/networkMeta']
       const web3 = network.web3
-      result = new web3.eth.Contract(networkMeta.abi("ERC20"), address.toLowerCase())
+      result = new web3.eth.Contract(networkMeta.abi("ChildERC20"), address.toLowerCase())
       commit("setCache", {
         which: "contractObject",
         id: cacheId,

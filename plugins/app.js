@@ -7,6 +7,7 @@ import { initalizeAxios } from "./axios"
 
 import AccountModel from "~/components/model/account"
 import { registerAccountChange, getMetamaskProvider, registerNetworkChange } from "~/plugins/helpers/metamask-utils"
+import { getWalletProvider } from "~/plugins/helpers/providers"
 
 const uiconfig = JSON.parse(process.env.uiconfig)
 
@@ -23,7 +24,7 @@ const app = {
     WALLETCONNECT: "walletconnect",
     PORTIS: "portis"
   },
-  orderStatus: {
+  orderTypes: {
     FIXED: "FIXED",
     NEGOTIATION: "NEGOTIATION",
     AUCTION: "AUCTION"
@@ -41,22 +42,22 @@ const app = {
     // set and Initialise networks
     this.setNetworks(store)
 
+    // TODO: initialize Authentication
+    await this.initAuthentication(store)
+
     // Initialize Categories
     this.initCategories(store)
 
     // Initialize tokens
     this.initTokens(store)
 
-    // TODO: initialize Authentication
-    await this.initAuthentication(store)
-
   },
 
 
   async setNetworks(store) {
     const network = new MetaNetwork(
-      uiconfig.matic.deployment.network,
-      uiconfig.matic.deployment.version
+      this.uiconfig.matic.deployment.network,
+      this.uiconfig.matic.deployment.version
     )
 
     // Store meta to use ABIs and artifacts
@@ -74,7 +75,7 @@ const app = {
         name: main.NetworkName,
         historyHost: main.Explorer,
         childNetworkId: matic.ChainId,
-        rpc: uiconfig.mainRPC,
+        rpc: this.uiconfig.mainRPC,
         isMatic: false,
         syncerUrl: main.SyncerAPI,
         watcherUrl: main.WatcherAPI,
@@ -91,7 +92,7 @@ const app = {
         name: matic.NetworkName,
         parentNetworkId: main.ChainId,
         historyHost: matic.Explorer,
-        rpc: uiconfig.maticRPC,
+        rpc: this.uiconfig.maticRPC,
         isMatic: true,
         default: true,
         syncerUrl: matic.SyncerAPI,
@@ -117,11 +118,11 @@ const app = {
     if (this.isMetaMaskConnected()) {
       const metamaskNetworkChangeHandler = async () => {
         await store.dispatch("network/setProviders", {
-          main: getMetamaskProvider({
-            url: this.ethereumNetworks.main.rpc
+          main: getWalletProvider({
+            networks: this.ethereumNetworks, primaryProvider: 'main'
           }),
-          matic: getMetamaskProvider({
-            url: this.ethereumNetworks.matic.rpc
+          matic: getWalletProvider({
+            networks: this.ethereumNetworks, primaryProvider: 'matic'
           })
         })
       }
@@ -163,7 +164,7 @@ const app = {
     )
 
     // Load account balance
-    await store.dispatch("token/fetchBalances");
+    await store.dispatch("token/fetchBalances")
   },
 
   async initCategories(store) {
@@ -171,7 +172,7 @@ const app = {
   },
 
   async initTokens(store) {
-    await store.dispatch("token/fetchERC20Tokens");
+    await store.dispatch("token/fetchERC20Tokens")
   },
 
   getSelectedNetwork() {
