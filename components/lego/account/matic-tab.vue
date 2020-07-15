@@ -12,16 +12,29 @@
         <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="onSortSelect" />
       </div>
     </div>
-    <div class="row ps-x-16 d-flex justify-content-center text-center" v-if="true">
+    <div
+      class="row ps-x-16 d-flex justify-content-center text-center ps-b-60"
+      v-if="displayedTokens"
+    >
       <sell-card
-        v-for="order in orders"
+        v-for="order in displayedTokens"
         :key="order.id"
         :order="order"
+        :onlyToken="true"
         @click="orderDetails(order.id)"
+        :sell="sellToken"
       />
     </div>
 
-    <no-item :message="exmptyMsg" v-if="!orders" />
+    <no-item :message="exmptyMsg" v-if="!displayedTokens" />
+
+    <sell-token
+      class="text-left"
+      :show="showSellModal"
+      :close="onCloseSellModal"
+      :nftToken="selectedToken"
+      v-if="showSellModal"
+    />
   </div>
 </template>
 
@@ -29,6 +42,9 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import getAxios from "~/plugins/axios";
+
+import NFTTokenModel from "~/components/model/nft-token";
 
 import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
@@ -36,6 +52,8 @@ import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
 import SlideSwitch from "~/components/lego/slide-switch";
 import NoItem from "~/components/lego/no-item";
+
+import SellToken from "~/components/lego/modals/sell-token";
 
 @Component({
   props: {},
@@ -45,17 +63,20 @@ import NoItem from "~/components/lego/no-item";
     SearchBox,
     SortDropdown,
     SlideSwitch,
-    NoItem
+    NoItem,
+    SellToken
   },
   computed: {
-    ...mapGetters("page", ["selectedFilters"])
+    ...mapGetters("page", ["selectedFilters"]),
+    ...mapGetters("category", ["categories"]),
+    ...mapGetters("account", ["account"])
   },
   middleware: [],
   mixins: [],
   watch: {
     selectedFilters: {
       handler: async function() {
-        // await this.fetchNFTTokens({ filtering: true });
+        await this.fetchNFTTokens({ filtering: true });
       },
       deep: true
     }
@@ -68,19 +89,9 @@ export default class MaticTab extends Vue {
     img: true
   };
 
-  orders = [
-    {
-      id: 1,
-      price: "0.113",
-      categories_id: 1,
-      erc20tokens_id: 1,
-      token: {
-        name: "Kitty Kitten cat",
-        img_url: "/_nuxt/static/img/dummy-kitty.png",
-        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e"
-      }
-    }
-  ];
+  // Modals
+  showSellModal = false;
+  selectedToken = null;
 
   sortItems = [
     {
@@ -122,7 +133,15 @@ export default class MaticTab extends Vue {
       selected: false
     }
   ];
-  mounted() {}
+
+  tokensFullList = [];
+  hasNextPage = true;
+  displayTokens = 0;
+  isLoadingTokens = false;
+
+  mounted() {
+    this.fetchNFTTokens();
+  }
 
   // Handlers
   onSortSelect(item) {
@@ -134,7 +153,19 @@ export default class MaticTab extends Vue {
     this.switchItems[0].selected = !value;
   }
 
+  sellToken(id) {
+    this.selectedToken = this.tokensFullList.find(token => token.id == id);
+    this.showSellModal = true;
+  }
+  onCloseSellModal() {
+    this.showSellModal = false;
+  }
+
   // Get
+  get displayedTokens() {
+    return this.tokensFullList || [];
+  }
+
   get ifCategory() {
     return this.selectedFilters.selectedCategory
       ? `&categoryArray=[${this.selectedFilters.selectedCategory.id}]`
@@ -148,15 +179,13 @@ export default class MaticTab extends Vue {
 
   // async
   async fetchNFTTokens(options = {}) {
-    // Tobe removed
-    this.orders = [...this.orders, ...this.orders];
     // Do not remove data while fetching
-    if (this.isLoadingTokens || this.hasNextPage) {
+    if (this.isLoadingTokens) {
       return;
     }
     this.isLoadingTokens = true;
     let response;
-    let offset = this.orderFullList.length;
+    let offset = this.tokensFullList.length;
 
     if (options && options.filtering) {
       // Start from page one with new filter
@@ -164,25 +193,21 @@ export default class MaticTab extends Vue {
     }
 
     // Fetch tokens with pagination and filters
-    if (this.searchInput != null && this.searchInput.length > 0) {
-      // with search
-      response = await getAxios().get(
-        `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
-      );
-    } else {
-      // without search
-      response = await getAxios().get(
-        `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
-      );
-    }
+    response = await getAxios().get(`tokens/?owner=${this.account.address}`);
 
-    if (response.status === 200 && response.data.data.order) {
-      this.hasNextPage = response.data.data.has_next_page;
+    if (response.status === 200 && response.data.data) {
+      let tokens = [];
+      let i = 0;
+      response.data.data.forEach(token => {
+        i++;
+        token.id = i;
+        tokens.push(new NFTTokenModel(token));
+      });
       if (options && options.filtering) {
-        this.orderFullList = response.data.data.order;
+        this.tokensFullList = tokens;
         return;
       }
-      this.orderFullList = [...this.orderFullList, ...response.data.data];
+      this.tokensFullList = [...this.tokensFullList, ...tokens];
     }
   }
 }
