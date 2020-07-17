@@ -12,9 +12,6 @@ export default class NFTToken extends Model {
   }
 
   get category() {
-    const selectedNetwork = app.getSelectedNetwork()
-    let networkId = selectedNetwork.id
-
     const category = app.vuexStore.getters['category/categories'].find(
       c => c.address.toLowerCase() == this.contract.toLowerCase()
     )

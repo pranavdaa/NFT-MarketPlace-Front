@@ -2,6 +2,8 @@
  * Expose
  */
 
+let { BigNumber } = require('@0x/utils');
+
 const debug = !process.env.NODE_ENV || process.env.NODE_ENV === "development"
 
 module.exports = {
@@ -26,4 +28,15 @@ module.exports = {
   pageIncrementSize: process.env.PAGE_INCREMENT_SIZE || 50,
   mainRPC: process.env.MAIN_RPC || 'https://mainnet.infura.io/v3/73d0b3b9a4b2499da81c71a2b2a473a9',
   maticRPC: process.env.MATIC_RPC || 'https://rpc-mainnet.matic.network',
+
+  // 0x
+  ONE_SECOND_MS: 1000,
+  ONE_MINUTE_MS: 1000 * 60,
+  TEN_MINUTES_MS: 60000 * 10,
+  UNLIMITED_ALLOWANCE_IN_BASE_UNITS: new BigNumber(2).pow(256).minus(1),
+  NULL_ADDRESS: '0x0000000000000000000000000000000000000000',
+  NULL_BYTES: '0x',
+  TX_DEFAULTS: process.env.TX_DEFAULTS || { gas: 800000, gasPrice: 1000000000 },
+  BASE_DERIVATION_PATH: `44'/60'/0'/0`,
+
 }

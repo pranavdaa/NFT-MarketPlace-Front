@@ -25,10 +25,13 @@
 
                 <div class="col-md-12 p-0">
                   <input-token :placeholder="'0.00'" :integer="true" :change="changePrice" />
+                  <div
+                    class="w-100 font-caption error-text ps-t-4"
+                    v-if="dirty && !validation['price']"
+                  >Valid amount required</div>
                 </div>
-
                 <div
-                  class="col-md-12 font-body-small ps-t-12 text-gray-300"
+                  class="col-md-12 font-body-small ps-t-12 text-gray-300 ps-x-0"
                 >0% commission of Matic Marketplace, you’ll get 0.00 Matic</div>
               </div>
 
@@ -57,6 +60,10 @@
                         :disableToken="true"
                       />
                     </div>
+                    <div
+                      class="w-100 font-caption error-text ps-t-4"
+                      v-if="dirty && !validation['minPrice']"
+                    >Valid amount it required for minimum price</div>
                   </div>
                 </transition>
               </div>
@@ -73,23 +80,36 @@
                 <div class="d-flex ml-auto align-self-center">
                   <span
                     class="time-pill font-body-small"
-                    :class="{'active': duration === 0}"
-                    @click="duration=0"
+                    :class="{'active': duration === EXPIRY_DURATION.ONE_WEEK}"
+                    @click="changeDuration(EXPIRY_DURATION.ONE_WEEK)"
                   >1 week</span>
                   <span
                     class="time-pill font-body-small"
-                    :class="{'active': duration === 1}"
-                    @click="duration=1"
+                    :class="{'active': duration === EXPIRY_DURATION.ONE_MONTH}"
+                    @click="changeDuration(EXPIRY_DURATION.ONE_MONTH)"
                   >1 month</span>
                   <span
                     class="time-pill font-body-small"
-                    :class="{'active': duration === 2}"
-                    @click="duration=2"
-                  >custom</span>
+                    :class="{'active': duration === EXPIRY_DURATION.CUSTOM}"
+                    @click="changeDuration(EXPIRY_DURATION.CUSTOM)"
+                  >Custom</span>
                 </div>
                 <div class="col-md-12 ps-x-0 ps-t-24">
-                  <input class="form-control form-control-inline float-left w-50" type="date" />
-                  <input class="form-control form-control-inline float-right w-25" type="time" />
+                  <input
+                    class="form-control form-control-inline float-left w-auto"
+                    type="date"
+                    :min="minimumDate"
+                    v-model="auction_date"
+                    :change="onAuctionDateTimeChange()"
+                    @click="toCustom()"
+                  />
+                  <input
+                    class="form-control form-control-inline float-right w-auto"
+                    type="time"
+                    v-model="auction_time"
+                    :change="onAuctionDateTimeChange()"
+                    @click="toCustom()"
+                  />
                 </div>
               </div>
               <div class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 d-flex">
@@ -116,10 +136,37 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
-
+import { mapGetters } from "vuex";
+import Web3 from "web3";
 import moment from "moment";
 
+import app from "~/plugins/app";
+import getAxios from "~/plugins/axios";
+
+import { FormValidator } from "~/components/mixin";
 import InputToken from "~/components/lego/input-token";
+
+// 0X
+let {
+  ContractWrappers,
+  ERC721TokenContract,
+  OrderStatus
+} = require("@0x/contract-wrappers");
+let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
+let { BigNumber } = require("@0x/utils");
+let { Web3Wrapper } = require("@0x/web3-wrapper");
+import { getRandomFutureDateInSeconds } from "~/plugins/helpers/0x-utils";
+
+import { providerEngine } from "~/plugins/helpers/provider-engine";
+
+const EXPIRY_DURATION = {
+  ONE_WEEK: 0,
+  ONE_MONTH: 1,
+  CUSTOM: 2
+};
+
+const ZERO = BigNumber(0);
+const TEN = BigNumber(10);
 
 @Component({
   props: {
@@ -137,14 +184,27 @@ import InputToken from "~/components/lego/input-token";
     }
   },
   components: { InputToken },
+  computed: {
+    ...mapGetters("token", ["selectedERC20Token"]),
+    ...mapGetters("account", ["account"]),
+    ...mapGetters("auth", ["user"]),
+    ...mapGetters("network", ["networks"])
+  },
   methods: {},
-  mixins: []
+  mixins: [FormValidator]
 })
 export default class SellToken extends Vue {
   activeTab = 0;
   duration = 0;
   negotiation = false;
   isLoading = false;
+  dirty = false;
+  expiry_date_time = "";
+  auction_time = moment().format("HH:mm");
+  auction_date = moment()
+    .add(1, "days")
+    .format("YYYY-MM-DD");
+  minimumDate = this.auction_date;
 
   price = 0;
   minPrice = 0;
@@ -169,22 +229,235 @@ export default class SellToken extends Vue {
       btnTitle: "Submit to Marketplace"
     }
   ];
-  mounted() {}
+
+  mounted() {
+    // initialize duration
+    this.changeDuration(this.EXPIRY_DURATION.ONE_WEEK);
+  }
 
   // Handlers
   changeTab(num) {
     this.activeTab = num;
   }
 
+  toCustom() {
+    // Set current time to minimum
+    if (this.duration !== this.EXPIRY_DURATION.CUSTOM) {
+      this.changeDuration(EXPIRY_DURATION.CUSTOM);
+    }
+  }
+  onAuctionDateTimeChange() {
+    this.expiry_date_time = moment(`${this.auction_date} ${this.auction_time}`);
+    return false;
+  }
+
+  changeDuration(num) {
+    this.duration = num;
+    let date;
+    // Change the date and time according
+    if (num === this.EXPIRY_DURATION.ONE_WEEK) {
+      date = moment().add(7, "days");
+    } else if (num === this.EXPIRY_DURATION.ONE_MONTH) {
+      date = moment().add(30, "days");
+    } else {
+      date = moment().add(15, "days");
+    }
+    this.auction_date = date.format("YYYY-MM-DD");
+    this.auction_time = date.format("HH:mm");
+  }
+
   changePrice(value) {
+    this.dirty = false;
     this.price = value;
   }
   changeMinPrice(value) {
+    this.dirty = false;
     this.minPrice = value;
   }
 
   // action
-  submitToMarketplace() {}
+  async submitToMarketplace() {
+    this.isLoading = true;
+    if (!this.isValid) {
+      this.dirty = true;
+      this.isLoading = false;
+      return;
+    }
+    this.dirty = true;
+
+    // try {
+    const nftContract = this.nftToken.category.address;
+    const nftTokenId = this.nftToken.token_id;
+    const erc20Address = this.selectedERC20Token.address;
+    const makerAddress = this.account.address;
+    const makerAssetAmount = this.price;
+    const takerAssetAmount = this.price;
+    const chainId = this.networks.matic.chainId;
+    const minPrice = this.minPrice;
+    const decimalnftTokenId = Web3.utils.toDecimal(nftTokenId);
+    const contractWrappers = new ContractWrappers(providerEngine(), {
+      chainId: chainId
+    });
+
+    // ERC721 contract
+    const erc721TokenCont = new ERC721TokenContract(
+      nftContract,
+      providerEngine()
+    );
+
+    // Owner of current token
+    const owner = await erc721TokenCont
+      .ownerOf(new BigNumber(decimalnftTokenId))
+      .callAsync();
+    const isOwnerOfToken =
+      owner.toLowerCase() === this.account.address.toLowerCase();
+    if (!isOwnerOfToken) {
+      console.log("You are no longer owner of this token");
+      return;
+    }
+
+    // Check Approve 0x, Approve if not
+    const isApproved = await this.approve0x(
+      erc721TokenCont,
+      contractWrappers,
+      makerAddress
+    );
+
+    if (isApproved) {
+      const makerAssetData = await contractWrappers.devUtils
+        .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
+        .callAsync();
+      const takerAssetData = await contractWrappers.devUtils
+        .encodeERC20AssetData(erc20Address)
+        .callAsync();
+      const randomExpiration = getRandomFutureDateInSeconds();
+      const exchangeAddress = contractWrappers.contractAddresses.exchange;
+
+      const orderTemplate = {
+        chainId: chainId,
+        exchangeAddress,
+        makerAddress: makerAddress,
+        takerAddress: app.uiconfig.NULL_ADDRESS,
+        senderAddress: app.uiconfig.NULL_ADDRESS,
+        feeRecipientAddress: app.uiconfig.NULL_ADDRESS,
+        expirationTimeSeconds: randomExpiration,
+        salt: generatePseudoRandomSalt(),
+        makerAssetAmount,
+        takerAssetAmount,
+        makerAssetData,
+        takerAssetData,
+        makerFeeAssetData: app.uiconfig.NULL_BYTES,
+        takerFeeAssetData: app.uiconfig.NULL_BYTES,
+        makerFee: ZERO,
+        takerFee: ZERO
+      };
+      console.log(orderTemplate);
+
+      const signedOrder = await signatureUtils.ecSignOrderAsync(
+        providerEngine(),
+        orderTemplate,
+        makerAddress
+      );
+
+      if (signedOrder) {
+        // Update table
+        console.log("Signed Order", signedOrder);
+        await this.handleSellSign(signedOrder, orderTemplate);
+      }
+    }
+    // } catch (e) {
+    //   raise(e);
+    // }
+    this.isLoading = false;
+  }
+
+  async approve0x(erc721TokenCont, contractWrappers, makerAddress) {
+    // Check if token is approved to 0x
+    const isApprovedForAll = await erc721TokenCont
+      .isApprovedForAll(
+        makerAddress,
+        contractWrappers.contractAddresses.erc721Proxy
+      )
+      .callAsync();
+
+    if (!isApprovedForAll) {
+      const makerERC721ApprovalTxHash = await erc721TokenCont
+        .setApprovalForAll(contractWrappers.contractAddresses.erc721Proxy, true)
+        .sendTransactionAsync({
+          from: makerAddress,
+          gas: 8000000,
+          gasPrice: 1000000000
+        });
+      console.log("Approve Hash", makerERC721ApprovalTxHash);
+      if (makerERC721ApprovalTxHash) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  async cancelOrder(contractWrappers, orderTemplate) {
+    const txHashCancel = await contractWrappers.exchange
+      .cancelOrder(orderTemplate)
+      .awaitTransactionSuccessAsync({ from: maker, gasPrice: 0, gas: 8000000 });
+    console.log("Order canceled", txHashCancel);
+  }
+
+  async handleSellSign(signedOrder, data) {
+    // Create Object to pass as data to post request
+    let formData = {
+      maker_address: this.user.id,
+      maker_token: this.nftToken.categories_id,
+      maker_token_id: this.nftToken.token_id,
+      taker_token: this.selectedERC20Token.id,
+      price: this.price.toString(10) || "",
+      signature: JSON.stringify(signedOrder),
+      type: this.orderType,
+      chain_id: this.networks.matic.chainId
+    };
+    if (this.orderType === app.orderTypes.AUCTION) {
+      formData.expiry_date = this.expiry_date_time.format("x");
+      formData.min_price = this.minPrice.toString(10);
+    } else if (this.orderType === app.orderTypes.NEGOTIATION) {
+      formData.min_price = this.minPrice.toString(10);
+    }
+
+    try {
+      console.log(formData);
+      console.log(JSON.stringify(formData));
+      let response = await getAxios().post("orders", formData);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Get
+  get validation() {
+    return {
+      owner:
+        this.nftToken.owner.toLowerCase() ===
+        this.account.address.toLowerCase(),
+      price: !!this.price,
+      minPrice: this.negotiation
+        ? !!this.minPrice && this.minPrice.lte(this.price)
+        : true
+    };
+  }
+  get EXPIRY_DURATION() {
+    return EXPIRY_DURATION;
+  }
+
+  get orderType() {
+    if (this.activeTab === 0 && this.negotiation) {
+      return app.orderTypes.NEGOTIATION;
+    } else if (this.activeTab === 0 && !this.negotiation) {
+      return app.orderTypes.FIXED;
+    } else if (this.activeTab === 1) {
+      return app.orderTypes.AUCTION;
+    }
+  }
 }
 </script>
 
@@ -235,6 +508,10 @@ export default class SellToken extends Vue {
     position: relative;
     border-radius: $default-card-box-border-radius;
   }
+}
+
+.error-text {
+  color: red-color("400");
 }
 
 @media (max-width: 570px) {
