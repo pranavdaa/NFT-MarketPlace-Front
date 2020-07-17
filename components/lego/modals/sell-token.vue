@@ -414,7 +414,7 @@ export default class SellToken extends Vue {
       price: this.price.toString(10) || "",
       signature: JSON.stringify(signedOrder),
       type: this.orderType,
-      chain_id: this.networks.matic.chainId
+      chain_id: `${this.networks.matic.chainId}`
     };
     if (this.orderType === app.orderTypes.AUCTION) {
       formData.expiry_date = this.expiry_date_time.format("x");
@@ -424,12 +424,25 @@ export default class SellToken extends Vue {
     }
 
     try {
-      console.log(formData);
-      console.log(JSON.stringify(formData));
       let response = await getAxios().post("orders", formData);
+      app.addToast(
+        "Sell order added successfully",
+        "Your NFT token successfully added on sale",
+        {
+          type: "success"
+        }
+      );
       console.log(response);
+      this.close();
     } catch (error) {
       console.error(error);
+      app.addToast(
+        "Sell order failed to add",
+        "Failed to add you NFT on sale",
+        {
+          type: "failure"
+        }
+      );
     }
   }
 
