@@ -3,6 +3,7 @@ import { toChecksumAddress } from "ethereumjs-util"
 import BigNumber from "~/plugins/bignumber"
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
+import getBaseAxios from "~/plugins/axios"
 
 import { parseBalance, parseUSDBalance } from "~/plugins/helpers/token-utils"
 
@@ -84,6 +85,10 @@ export default class Token extends Model {
   }
 
   get formattedFullUSDBalance() {
+    if (this.usd) {
+      return parseUSDBalance(this.balance, this.usd).toFixed(2)
+    }
+    this.getUSD()
     return parseUSDBalance(this.balance, this.usd).toFixed(2)
   }
 
@@ -125,6 +130,18 @@ export default class Token extends Model {
     return null
   }
 
+  async getUSD() {
+    if (this.usd) {
+      return this.usd
+    }
+    const symbol = this.symbol == "TEST" ? "MATIC" : this.symbol
+    const response = await getBaseAxios().get(`erc20tokens/price?symbol=${symbol}`)
+    if (response.status === 200 && response.data.data) {
+      this.usd = parseFloat(response.data.data)
+    }
+    return this.usd
+  }
+
   getBalance(networkId) {
     const address = this.getAddress(networkId)
 
@@ -153,7 +170,8 @@ export default class Token extends Model {
     const decimals = new BigNumber(this.decimal)
     return new BigNumber(amount).multipliedBy(TEN.pow(decimals))
   }
-  convertToFormattedUSDBalance(amount) {
+
+  async convertToFormattedUSDBalance(amount) {
     return amount.times(new BigNumber(this.usd || "0.00")).dp(2);
   }
 }
