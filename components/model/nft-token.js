@@ -1,10 +1,11 @@
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
+import Web3 from "web3"
 
 export default class NFTToken extends Model {
 
   get name() {
-    return `Token ${this.id}`
+    return `Token ${Web3.utils.hexToNumberString(this.token_id)}`
   }
 
   get img_url() {
