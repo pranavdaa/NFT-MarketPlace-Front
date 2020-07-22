@@ -431,14 +431,8 @@ export default class SellToken extends Vue {
     return true;
   }
 
-  async cancelOrder(contractWrappers, orderTemplate) {
-    const txHashCancel = await contractWrappers.exchange
-      .cancelOrder(orderTemplate)
-      .awaitTransactionSuccessAsync({ from: maker, gasPrice: 0, gas: 8000000 });
-    console.log("Order canceled", txHashCancel);
-  }
-
   async handleSellSign(data, signedOrder) {
+    console.log(signedOrder);
     // Create Object to pass as data to post request
     let formData = {
       type: data.orderType,

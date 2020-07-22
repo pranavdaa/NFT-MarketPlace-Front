@@ -22,25 +22,22 @@
       <svg-sprite-icon name="profile" class="profile-logo d-none d-md-block align-self-center"></svg-sprite-icon>
       <div class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16">
         <div class="font-body-small">
-          <a class="account-name">Account 84d</a> transferred
-          <a class="nft-token">golden kitty</a> to you
+          <!-- <a class="account-name">Account 84d</a> transferred
+          <a class="nft-token">golden kitty</a> to you-->
+          {{activity.message}}
         </div>
         <div class="font-caption text-gray-300">2 days ago</div>
       </div>
-      <div class="d-flex ml-auto ms-r-16" v-if="false">
+      <div class="d-flex ml-auto ms-r-16" v-if="true">
         <button class="btn btn-light align-self-center">View details</button>
       </div>
-      <div class="d-flex ml-auto ms-r-16" v-if="true">
+      <div class="d-flex ml-auto ms-r-16" v-if="false">
         <button class="btn btn-light btn-deny align-self-center ms-r-12" @click="onDeny()">Deny</button>
         <button class="btn btn-light align-self-center" @click="onAccept()">Accept</button>
       </div>
     </div>
 
     <accept-bid :show="showAcceptBid" :close="onAcceptClose" />
-    <!-- <in-process :show="showInProcess" :close="onDenyClose" /> -->
-    <!-- <token-list :show="showTokenList" :close="onDenyClose" /> -->
-    <sell-token :show="showTokenList" :close="onDenyClose" />
-    <!-- <submitting-to-marketplace :show="showTokenList" :close="onDenyClose" /> -->
   </div>
 </template>
 
@@ -49,23 +46,20 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 
 import AcceptBid from "~/components/lego/modals/accept-bid";
-import InProcess from "~/components/lego/modals/in-process";
-import TokenList from "~/components/lego/modals/token-list";
-import SellToken from "~/components/lego/modals/sell-token";
-import SubmittingToMarketplace from "~/components/lego/modals/submitting-to-marketplace";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
 const colorThief = new ColorThief();
 
 @Component({
-  props: {},
+  props: {
+    activity: {
+      type: Object,
+      required: true
+    }
+  },
   components: {
-    AcceptBid,
-    InProcess,
-    TokenList,
-    SellToken,
-    SubmittingToMarketplace
+    AcceptBid
   }
 })
 export default class ActivityRow extends Vue {

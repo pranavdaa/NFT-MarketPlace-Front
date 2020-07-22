@@ -1,13 +1,16 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }" @click="close()"></div>
-    <div class="modal transaction-prog-modal" v-bind:class="{ 'show': show }">
+    <div class="modal-backdrop" v-bind:class="{ 'show': show && displayed }"></div>
+    <div class="modal transaction-prog-modal" v-bind:class="{ 'show': show && displayed }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
           <div class="box-body">
+            <div class="close-wrapper" @click="close()">
+              <svg-sprite-icon name="close-modal" class="close" />
+            </div>
             <div class="container-fluid">
               <div class="row ps-y-32">
-                <div class="feature-info d-flex flex-column ps-x-16 ps-x-sm-32 ps-x-lg-40">
+                <div class="w-100 d-flex flex-column ps-x-16 ps-x-sm-32 ps-x-lg-40">
                   <h3 class="font-heading-medium font-semibold">About {{order.token.name}}</h3>
                   <p
                     class="font-body-medium"
@@ -34,17 +37,40 @@
                     class="mt-auto w-100 d-flex flex-column fixed-price"
                     v-if="order.type === orderTypes.FIXED"
                   >
+                    <div
+                      class="error-text font-caption ps-y-16"
+                      v-if="dirty && !validation['balance']"
+                    >{{errorMessage}}</div>
+
                     <div class="font-body-small text-gray-300 mt-auto ps-y-4">Listed for</div>
                     <div
                       class="font-heading-large font-semibold ps-b-20"
                       v-if="erc20Token"
                     >{{order.price}} {{erc20Token.symbol}}</div>
-                    <button class="btn btn-primary ps-y-20">Buy Now</button>
+                    <!-- <div
+                      class="font-heading-large font-semibold ps-b-20"
+                      v-if="erc20Token"
+                    >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
+                    <button-loader
+                      class
+                      :loading="isLoading"
+                      :loadingText="'Buying'"
+                      :text="'Buy now'"
+                      block
+                      primary
+                      lg
+                      color="primary"
+                      :click="buyFixedOrder"
+                    ></button-loader>
                   </div>
                   <div
                     class="mt-auto w-100 d-flex flex-column fixed-price-negotiation"
                     v-if="order.type === orderTypes.NEGOTIATION"
                   >
+                    <div
+                      class="error-text font-caption ps-y-16"
+                      v-if="dirty && !validation['balance']"
+                    >{{errorMessage}}</div>
                     <div class="d-flex justify-content-between">
                       <div class="font-body-small text-gray-300 ps-y-4">Listed for</div>
                       <div class="font-body-small text-gray-300 ml-auto ps-y-4">Last offer</div>
@@ -54,17 +80,39 @@
                         class="font-heading-large font-semibold ps-b-20"
                         v-if="erc20Token"
                       >{{order.price}} {{erc20Token.symbol}}</div>
+                      <!-- <div
+                        class="font-heading-large font-semibold ps-b-20"
+                        v-if="erc20Token"
+                      >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
                       <div
                         class="font-heading-large font-semibold ps-b-20 ml-auto"
                         v-if="erc20Token"
-                      >{{order.minprice}} {{erc20Token.symbol}}</div>
+                      >{{order.min_price}} {{erc20Token.symbol}}</div>
+                      <!-- <div
+                        class="font-heading-large font-semibold ps-b-20 ml-auto"
+                        v-if="erc20Token"
+                      >{{order.getMinPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
                     </div>
                     <div class="d-flex">
-                      <div class="w-50 ps-r-12">
-                        <button class="btn btn-primary btn-block ps-y-20">Buy Now</button>
-                      </div>
-                      <div class="w-50 ps-l-12">
-                        <button class="btn btn-light btn-block ps-y-20">Make an offer</button>
+                      <!-- <div class="w-50 ps-r-12"> -->
+                      <!-- <button class="btn btn-primary btn-block ps-y-20">Buy Now</button> -->
+                      <!-- <button-loader
+                          class
+                          :loading="isLoading"
+                          :loadingText="'Buying'"
+                          :text="'Buy now'"
+                          block
+                          primary
+                          lg
+                          color="primary"
+                          :click="buyFixedOrder"
+                        ></button-loader>
+                      </div>-->
+                      <div class="w-100">
+                        <button
+                          class="btn btn-primary btn-block btn-lg"
+                          @click="makeOffer()"
+                        >Make an offer</button>
                       </div>
                     </div>
                   </div>
@@ -73,6 +121,10 @@
                   class="mt-auto w-100 d-flex flex-column auction ps-x-16 ps-x-sm-32 ps-x-lg-40 ps-y-40"
                   v-if="order.type === orderTypes.AUCTION"
                 >
+                  <div
+                    class="error-text font-caption ps-y-16"
+                    v-if="dirty && !validation['balance']"
+                  >{{errorMessage}}</div>
                   <div class="d-flex justify-content-between">
                     <div class="font-body-small text-gray-300 ps-y-4">Minimum bid</div>
                     <div class="font-body-small text-gray-300 ml-auto ps-y-4">Highest bid</div>
@@ -85,28 +137,39 @@
                     <div
                       class="font-heading-large font-semibold ps-b-20 ml-auto"
                       v-if="erc20Token"
-                    >{{order.minprice}} {{erc20Token.symbol}}</div>
+                    >{{order.min_price}} {{erc20Token.symbol}}</div>
+                    <!-- <div
+                      class="font-heading-large font-semibold ps-b-20"
+                      v-if="erc20Token"
+                    >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>
+                    <div
+                      class="font-heading-large font-semibold ps-b-20 ml-auto"
+                      v-if="erc20Token"
+                    >{{order.getMinPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
                   </div>
                   <div class="d-flex time-wrapper ps-8 justify-content-between">
                     <div class="d-flex flex-column text-center align-self-center ps-x-8">
-                      <div class="font-heading-small font-semibold">10</div>
+                      <div class="font-heading-small font-semibold">{{timeRemaining.days}}</div>
                       <div class="font-caption">Days</div>
                     </div>
                     <div class="d-flex flex-column text-center align-self-center ps-x-8">
-                      <div class="font-heading-small font-semibold">7</div>
+                      <div class="font-heading-small font-semibold">{{timeRemaining.hours}}</div>
                       <div class="font-caption">Hrs</div>
                     </div>
                     <div class="d-flex flex-column text-center align-self-center ps-x-8">
-                      <div class="font-heading-small font-semibold">23</div>
+                      <div class="font-heading-small font-semibold">{{timeRemaining.mins}}</div>
                       <div class="font-caption">Mins</div>
                     </div>
                     <div class="d-flex flex-column text-center align-self-center ps-x-8">
-                      <div class="font-heading-small font-semibold">32</div>
+                      <div class="font-heading-small font-semibold">{{timeRemaining.secs}}</div>
                       <div class="font-caption">Secs</div>
                     </div>
 
                     <div class="d-flex">
-                      <button class="btn btn-light btn-block ps-x-24 ps-x-sm-40">Bid Now</button>
+                      <button
+                        class="btn btn-light btn-block ps-x-24 ps-x-sm-40"
+                        @click="makeOffer()"
+                      >Bid Now</button>
                     </div>
                   </div>
                   <div
@@ -119,6 +182,14 @@
         </div>
       </div>
     </div>
+    <place-bid
+      v-if="showMakeOffer"
+      :show="showMakeOffer"
+      :executeBidOrOffer="executeBidOrOffer"
+      :order="order"
+      :bid="isBid"
+      :close="closeMakeOffer"
+    />
   </div>
 </template>
 
@@ -126,12 +197,35 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import Web3 from "web3";
 
 import app from "~/plugins/app";
-
 import moment from "moment";
-
+import { FormValidator } from "~/components/mixin";
 import InputToken from "~/components/lego/input-token";
+import getAxios from "~/plugins/axios";
+
+import { parseBalance } from "~/plugins/helpers/token-utils";
+import PlaceBid from "~/components/lego/modals/place-bid";
+
+// 0X
+let {
+  ContractWrappers,
+  ERC20TokenContract,
+  OrderStatus
+} = require("@0x/contract-wrappers");
+let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
+let { BigNumber } = require("@0x/utils");
+let { Web3Wrapper } = require("@0x/web3-wrapper");
+import {
+  getRandomFutureDateInSeconds,
+  calculateProtocolFee
+} from "~/plugins/helpers/0x-utils";
+
+import { providerEngine } from "~/plugins/helpers/provider-engine";
+
+const ZERO = BigNumber(0);
+const TEN = BigNumber(10);
 
 @Component({
   props: {
@@ -148,12 +242,15 @@ import InputToken from "~/components/lego/input-token";
       required: true
     }
   },
-  components: { InputToken },
+  components: { InputToken, PlaceBid },
   computed: {
-    ...mapGetters("token", ["erc20Tokens"])
+    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
+    ...mapGetters("network", ["networks"]),
+    ...mapGetters("account", ["account"]),
+    ...mapGetters("auth", ["user"])
   },
   methods: {},
-  mixins: []
+  mixins: [FormValidator]
 })
 export default class BuyToken extends Vue {
   activeTab = 0;
@@ -161,6 +258,15 @@ export default class BuyToken extends Vue {
   negotiation = false;
   isLoading = false;
   showMore = false;
+  displayed = true;
+
+  showMakeOffer = false;
+
+  dirty = false;
+  errorMessages = {
+    noBalance: "You don't have sufficient balance to buy this order"
+  };
+  errorMessage = "You don't have sufficient balance to buy this order";
 
   tabs = [
     {
@@ -200,8 +306,304 @@ export default class BuyToken extends Vue {
     return app.orderTypes;
   }
 
+  get isBid() {
+    if (this.order.type === app.orderTypes.AUCTION) {
+      return true;
+    }
+    return false;
+  }
+
+  get timeRemaining() {
+    if (this.order.type !== app.orderTypes.AUCTION) {
+      return {};
+    }
+
+    const expiry = moment(this.order.expiry_date);
+    const current = moment();
+    const diff = moment.duration(expiry.diff(current));
+
+    return {
+      days: diff.days(),
+      hours: diff.hours(),
+      mins: diff.minutes(),
+      secs: diff.seconds()
+    };
+  }
+
   // action
-  submitToMarketplace() {}
+  get validation() {
+    return {
+      balance: this.erc20Token.balance.gte(this.order.getPrice())
+    };
+  }
+
+  async executeBidOrOffer(maker_amount) {
+    try {
+      const yearInSec = moment()
+        .add(365, "days")
+        .format("x");
+      const chainId = this.networks.matic.chainId;
+      const nftContract = this.order.categories.categoriesaddresses[0].address;
+      const nftTokenId = this.order.tokens_id;
+      const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
+        .address;
+
+      const makerAddress = this.account.address;
+      // const takerAddress = this.account.address;
+      const makerAssetAmount = maker_amount;
+      const takerAssetAmount = new BigNumber(1);
+      const decimalnftTokenId = Web3.utils.hexToNumberString(nftTokenId);
+      const contractWrappers = new ContractWrappers(providerEngine(), {
+        chainId
+      });
+
+      let expirationTimeSeconds = new BigNumber(yearInSec);
+      if (this.order.expiry_date) {
+        expirationTimeSeconds = new BigNumber(
+          moment(this.order.expiry_date).format("x")
+        );
+      }
+
+      const isApproved = this.approve0x(
+        contractWrappers,
+        erc20Address,
+        makerAddress
+      );
+
+      if (isApproved) {
+        const exchangeAddress = contractWrappers.contractAddresses.exchange;
+        const erc20TokenCont = new ERC20TokenContract(
+          erc20Address,
+          providerEngine()
+        );
+
+        const makerAssetData = await contractWrappers.devUtils
+          .encodeERC20AssetData(erc20Address)
+          .callAsync();
+        const takerAssetData = await contractWrappers.devUtils
+          .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
+          .callAsync();
+
+        const orderTemplate = {
+          chainId: chainId,
+          exchangeAddress,
+          makerAddress: makerAddress,
+          takerAddress: app.uiconfig.NULL_ADDRESS,
+          senderAddress: app.uiconfig.NULL_ADDRESS,
+          feeRecipientAddress: app.uiconfig.NULL_ADDRESS,
+          expirationTimeSeconds: expirationTimeSeconds,
+          salt: generatePseudoRandomSalt(),
+          makerAssetAmount,
+          takerAssetAmount,
+          makerAssetData,
+          takerAssetData,
+          makerFeeAssetData: app.uiconfig.NULL_BYTES,
+          takerFeeAssetData: app.uiconfig.NULL_BYTES,
+          makerFee: ZERO,
+          takerFee: ZERO
+        };
+
+        const signedOrder = await signatureUtils.ecSignOrderAsync(
+          providerEngine(),
+          orderTemplate,
+          makerAddress
+        );
+
+        if (signedOrder) {
+          let data = {};
+          data.bid = parseBalance(
+            makerAssetAmount,
+            this.order.erc20tokens.decimal
+          ).toString(10);
+          data.signature = JSON.stringify(signedOrder);
+          console.log(data);
+
+          let response = await getAxios().patch(
+            `orders/${this.order.id}/buy`,
+            data
+          );
+          if (response.status === 200 && response.data) {
+            app.addToast(
+              "Offered successfully",
+              "Your offer has been succeffully submitted",
+              {
+                type: "success"
+              }
+            );
+          }
+        }
+      } else {
+        app.addToast(
+          "Failed to submit",
+          "You need to trust 0x contact to submit offer or bid",
+          {
+            type: "failure"
+          }
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      app.addToast("Failed to submit", error.response.data.message, {
+        type: "failure"
+      });
+    }
+    this.closeMakeOffer();
+    this.close();
+  }
+
+  makeOffer() {
+    this.$store.commit("token/selectedERC20Token", this.erc20Token);
+    this.showMakeOffer = true;
+    this.displayed = false;
+  }
+  closeMakeOffer() {
+    this.showMakeOffer = false;
+    this.displayed = true;
+  }
+
+  async buyFixedOrder() {
+    this.isLoading = true;
+    this.dirty = false;
+    if (this.order.type !== app.orderTypes.FIXED) {
+      this.isLoading = false;
+      return;
+    }
+
+    if (!this.isValid) {
+      this.isLoading = false;
+      this.dirty = true;
+      return;
+    }
+
+    try {
+      const chainId = this.networks.matic.chainId;
+      const takerAddress = this.account.address;
+      const erc20Address = this.erc20Token.address;
+      const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
+        new BigNumber(this.order.price),
+        this.erc20Token.decimal
+      );
+      let signedOrder = JSON.parse(this.order.signature);
+      const contractWrappers = new ContractWrappers(providerEngine(), {
+        chainId: signedOrder.chainId
+      });
+
+      signedOrder["makerAssetAmount"] = BigNumber(signedOrder.makerAssetAmount);
+      signedOrder["takerAssetAmount"] = takerAssetAmount;
+      signedOrder["expirationTimeSeconds"] = BigNumber(
+        signedOrder.expirationTimeSeconds
+      );
+      signedOrder["makerFee"] = BigNumber(signedOrder.makerFee);
+      signedOrder["salt"] = BigNumber(signedOrder.salt);
+      signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
+      console.log(signedOrder);
+
+      // Check Approve 0x, Approve if not
+      const isApproved = await this.approve0x(
+        contractWrappers,
+        erc20Address,
+        takerAddress
+      );
+
+      if (isApproved) {
+        const [
+          { orderStatus, orderHash },
+          remainingFillableAmount,
+          isValidSignature
+        ] = await contractWrappers.devUtils
+          .getOrderRelevantState(signedOrder, signedOrder.signature)
+          .callAsync();
+        console.log("is fillable", {
+          orderStatus,
+          orderHash,
+          remainingFillableAmount,
+          isValidSignature,
+          fill: OrderStatus.Fillable
+        });
+        if (
+          orderStatus === OrderStatus.Fillable &&
+          remainingFillableAmount.isGreaterThan(0) &&
+          isValidSignature
+        ) {
+          console.log("Fillable");
+
+          const txHash = await contractWrappers.exchange
+            .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
+            .awaitTransactionSuccessAsync({
+              from: takerAddress,
+              gas: 8000000,
+              gasPrice: 10000000000,
+              value: calculateProtocolFee([signedOrder])
+            });
+          if (txHash) {
+            console.log(txHash);
+            await this.handleBuyTxhash(txHash);
+          }
+        } else {
+          console.log("Order is already sold");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    this.isLoading = false;
+  }
+
+  async approve0x(contractWrappers, erc20Address, takerAddress) {
+    const erc20TokenCont = new ERC20TokenContract(
+      erc20Address,
+      providerEngine()
+    );
+
+    let allowance = await erc20TokenCont
+      .allowance(takerAddress, contractWrappers.contractAddresses.erc20Proxy)
+      .callAsync();
+
+    if (!allowance.gt(ZERO)) {
+      const erc20ApprovalTxHash = await erc20TokenCont
+        .approve(
+          contractWrappers.contractAddresses.erc20Proxy,
+          new BigNumber(app.uiconfig.UNLIMITED_ALLOWANCE_IN_BASE_UNITS)
+        )
+        .sendTransactionAsync({ from: takerAddress });
+      if (erc20ApprovalTxHash) {
+        console.log("approve erc20 to 0x", erc20ApprovalTxHash);
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  async handleBuyTxhash(txHash) {
+    try {
+      let data = {
+        tx_hash: txHash.transactionHash
+      };
+      let response = await getAxios().patch(
+        `orders/${this.order.id}/buy`,
+        data
+      );
+      if (response.status === 200) {
+        app.addToast(
+          "Order bought successfully",
+          "You bought the order successfully",
+          {
+            type: "success"
+          }
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      app.addToast(
+        "Failed to buy order",
+        "Something went wrong while buying order",
+        {
+          type: "failure"
+        }
+      );
+    }
+  }
 }
 </script>
 
@@ -279,6 +681,9 @@ export default class BuyToken extends Vue {
     padding-top: 4px;
   }
 }
+.error-text {
+  color: red-color("500");
+}
 
 .box {
   max-width: 446px;
@@ -292,6 +697,17 @@ export default class BuyToken extends Vue {
   .box-body {
     position: relative;
     border-radius: $default-card-box-border-radius;
+    .close-wrapper {
+      top: 20px;
+      right: 20px;
+      z-index: 1;
+      position: absolute;
+      cursor: pointer;
+      .close {
+        width: 38px !important;
+        height: 38px !important;
+      }
+    }
   }
 }
 

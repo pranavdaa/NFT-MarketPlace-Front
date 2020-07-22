@@ -14,6 +14,7 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import { mapGetters } from "vuex";
 
 import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
@@ -41,7 +42,8 @@ import ActivityTab from "~/components/lego/account/activity-tab";
     ActivityTab
   },
   middleware: ["auth"],
-  mixins: []
+  mixins: [],
+  computed: {}
 })
 export default class Index extends Vue {
   tabs = [
@@ -55,7 +57,7 @@ export default class Index extends Vue {
 
   allOrSale = true;
 
-  mounted() {}
+  async mounted() {}
 
   changeTab(num) {
     this.activeTab = num;

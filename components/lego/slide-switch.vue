@@ -47,9 +47,15 @@ import Component from "nuxt-class-component";
       type: Array,
       required: true
     },
+    onOff: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     onChange: {
       type: Function,
-      required: true
+      required: false,
+      default: value => {}
     }
   },
   components: {},
