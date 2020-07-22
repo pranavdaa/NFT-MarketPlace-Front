@@ -24,7 +24,13 @@
                 >{{tabs[activeTab].description}}</div>
 
                 <div class="col-md-12 p-0">
-                  <input-token :placeholder="'0.00'" :integer="true" :change="changePrice" />
+                  <input-token
+                    :placeholder="'0.00'"
+                    :integer="true"
+                    :change="changePrice"
+                    :disableToken="isLoading"
+                    :disabled="isLoading"
+                  />
                   <div
                     class="w-100 font-caption error-text ps-t-4"
                     v-if="dirty && !validation['price']"
@@ -58,6 +64,7 @@
                         :integer="true"
                         :change="changeMinPrice"
                         :disableToken="true"
+                        :disabled="isLoading"
                       />
                     </div>
                     <div
@@ -112,8 +119,16 @@
                   />
                 </div>
               </div>
+              <div class="row ps-x-16 ps-x-md-32 ps-x-lg-40 d-flex error" v-if="dirty && false"></div>
               <div class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 d-flex">
-                <button-loader :text="$t('cancel')" :click="close" block lg color="light"></button-loader>
+                <button-loader
+                  :text="$t('cancel')"
+                  :click="close"
+                  block
+                  lg
+                  color="light"
+                  :disabled="isLoading"
+                ></button-loader>
                 <button-loader
                   class="ml-auto"
                   :loading="isLoading"
@@ -142,9 +157,11 @@ import moment from "moment";
 
 import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
+import BigNumber from "~/plugins/bignumber";
 
 import { FormValidator } from "~/components/mixin";
 import InputToken from "~/components/lego/input-token";
+import { parseBalance } from "~/plugins/helpers/token-utils";
 
 // 0X
 let {
@@ -153,7 +170,7 @@ let {
   OrderStatus
 } = require("@0x/contract-wrappers");
 let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
-let { BigNumber } = require("@0x/utils");
+// let { BigNumber } = require("@0x/utils");
 let { Web3Wrapper } = require("@0x/web3-wrapper");
 import { getRandomFutureDateInSeconds } from "~/plugins/helpers/0x-utils";
 
@@ -199,6 +216,7 @@ export default class SellToken extends Vue {
   negotiation = false;
   isLoading = false;
   dirty = false;
+  error = "";
   expiry_date_time = "";
   auction_time = moment().format("HH:mm");
   auction_date = moment()
@@ -283,91 +301,107 @@ export default class SellToken extends Vue {
       this.isLoading = false;
       return;
     }
-    this.dirty = true;
+    this.dirty = false;
+    let c = console.log;
 
-    // try {
-    const nftContract = this.nftToken.category.address;
-    const nftTokenId = this.nftToken.token_id;
-    const erc20Address = this.selectedERC20Token.address;
-    const makerAddress = this.account.address;
-    const makerAssetAmount = this.price;
-    const takerAssetAmount = this.price;
-    const chainId = this.networks.matic.chainId;
-    const minPrice = this.minPrice;
-    const decimalnftTokenId = Web3.utils.toDecimal(nftTokenId);
-    const contractWrappers = new ContractWrappers(providerEngine(), {
-      chainId: chainId
-    });
+    try {
+      const yearInSec = moment()
+        .add(365, "days")
+        .format("x");
+      const expiry_date_time = this.expiry_date_time
+        ? this.expiry_date_time.format("x")
+        : 0;
+      const orderType = this.orderType;
+      const nftContract = this.nftToken.category.address;
+      const nftTokenId = this.nftToken.token_id;
+      const erc20Address = this.selectedERC20Token.address;
+      const makerAddress = this.account.address;
+      const makerAssetAmount = new BigNumber(1);
+      const takerAssetAmount = this.price;
+      const chainId = this.networks.matic.chainId;
+      const minPrice = this.minPrice;
+      const decimalnftTokenId = Web3.utils.hexToNumberString(nftTokenId);
+      const contractWrappers = new ContractWrappers(providerEngine(), {
+        chainId: chainId
+      });
 
-    // ERC721 contract
-    const erc721TokenCont = new ERC721TokenContract(
-      nftContract,
-      providerEngine()
-    );
+      // ERC721 contract
+      const erc721TokenCont = new ERC721TokenContract(
+        nftContract,
+        providerEngine()
+      );
 
-    // Owner of current token
-    const owner = await erc721TokenCont
-      .ownerOf(new BigNumber(decimalnftTokenId))
-      .callAsync();
-    const isOwnerOfToken =
-      owner.toLowerCase() === this.account.address.toLowerCase();
-    if (!isOwnerOfToken) {
-      console.log("You are no longer owner of this token");
-      return;
-    }
-
-    // Check Approve 0x, Approve if not
-    const isApproved = await this.approve0x(
-      erc721TokenCont,
-      contractWrappers,
-      makerAddress
-    );
-
-    if (isApproved) {
-      const makerAssetData = await contractWrappers.devUtils
-        .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
+      // Owner of current token
+      const owner = await erc721TokenCont
+        .ownerOf(new BigNumber(decimalnftTokenId))
         .callAsync();
-      const takerAssetData = await contractWrappers.devUtils
-        .encodeERC20AssetData(erc20Address)
-        .callAsync();
-      const randomExpiration = getRandomFutureDateInSeconds();
-      const exchangeAddress = contractWrappers.contractAddresses.exchange;
+      const isOwnerOfToken =
+        owner.toLowerCase() === this.account.address.toLowerCase();
+      if (!isOwnerOfToken) {
+        console.log("You are no longer owner of this token");
+        return;
+      }
 
-      const orderTemplate = {
-        chainId: chainId,
-        exchangeAddress,
-        makerAddress: makerAddress,
-        takerAddress: app.uiconfig.NULL_ADDRESS,
-        senderAddress: app.uiconfig.NULL_ADDRESS,
-        feeRecipientAddress: app.uiconfig.NULL_ADDRESS,
-        expirationTimeSeconds: randomExpiration,
-        salt: generatePseudoRandomSalt(),
-        makerAssetAmount,
-        takerAssetAmount,
-        makerAssetData,
-        takerAssetData,
-        makerFeeAssetData: app.uiconfig.NULL_BYTES,
-        takerFeeAssetData: app.uiconfig.NULL_BYTES,
-        makerFee: ZERO,
-        takerFee: ZERO
-      };
-      console.log(orderTemplate);
-
-      const signedOrder = await signatureUtils.ecSignOrderAsync(
-        providerEngine(),
-        orderTemplate,
+      // Check Approve 0x, Approve if not
+      const isApproved = await this.approve0x(
+        erc721TokenCont,
+        contractWrappers,
         makerAddress
       );
 
-      if (signedOrder) {
-        // Update table
+      if (isApproved) {
+        const makerAssetData = await contractWrappers.devUtils
+          .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
+          .callAsync();
+        const takerAssetData = await contractWrappers.devUtils
+          .encodeERC20AssetData(erc20Address)
+          .callAsync();
+
+        const exchangeAddress = contractWrappers.contractAddresses.exchange;
+
+        let expirationTimeSeconds = new BigNumber(yearInSec);
+        if (orderType === app.orderTypes.AUCTION) {
+          // Set expiry date in seconds
+          expirationTimeSeconds = new BigNumber(expiry_date_time);
+        }
+
+        const orderTemplate = {
+          chainId: chainId,
+          exchangeAddress,
+          makerAddress: makerAddress,
+          takerAddress: app.uiconfig.NULL_ADDRESS,
+          senderAddress: app.uiconfig.NULL_ADDRESS,
+          feeRecipientAddress: app.uiconfig.NULL_ADDRESS,
+          expirationTimeSeconds: expirationTimeSeconds,
+          salt: generatePseudoRandomSalt(),
+          makerAssetAmount,
+          takerAssetAmount,
+          makerAssetData,
+          takerAssetData,
+          makerFeeAssetData: app.uiconfig.NULL_BYTES,
+          takerFeeAssetData: app.uiconfig.NULL_BYTES,
+          makerFee: ZERO,
+          takerFee: ZERO
+        };
+
+        console.log(orderTemplate);
+        let signedOrder = "";
+        if (orderType === app.orderTypes.FIXED) {
+          signedOrder = await signatureUtils.ecSignOrderAsync(
+            providerEngine(),
+            orderTemplate,
+            makerAddress
+          );
+        }
+        orderTemplate.orderType = orderType;
+        orderTemplate.expiry_date_time = expiry_date_time;
+
         console.log("Signed Order", signedOrder);
-        await this.handleSellSign(signedOrder, orderTemplate);
+        await this.handleSellSign(orderTemplate, signedOrder);
       }
+    } catch (error) {
+      console.log(error);
     }
-    // } catch (e) {
-    //   raise(e);
-    // }
     this.isLoading = false;
   }
 
@@ -404,23 +438,46 @@ export default class SellToken extends Vue {
     console.log("Order canceled", txHashCancel);
   }
 
-  async handleSellSign(signedOrder, data) {
+  async handleSellSign(data, signedOrder) {
     // Create Object to pass as data to post request
     let formData = {
-      maker_address: this.user.id,
-      maker_token: this.nftToken.categories_id,
-      maker_token_id: this.nftToken.token_id,
-      taker_token: this.selectedERC20Token.id,
-      price: this.price.toString(10) || "",
-      signature: JSON.stringify(signedOrder),
-      type: this.orderType,
+      type: data.orderType,
       chain_id: `${this.networks.matic.chainId}`
     };
-    if (this.orderType === app.orderTypes.AUCTION) {
-      formData.expiry_date = this.expiry_date_time.format("x");
-      formData.min_price = this.minPrice.toString(10);
-    } else if (this.orderType === app.orderTypes.NEGOTIATION) {
-      formData.min_price = this.minPrice.toString(10);
+
+    if (formData.type === app.orderTypes.FIXED) {
+      formData.maker_address = this.user.id;
+      formData.maker_token = this.nftToken.categories_id;
+      formData.maker_token_id = this.nftToken.token_id;
+      formData.taker_token = this.selectedERC20Token.id;
+      formData.signature = JSON.stringify(signedOrder);
+      formData.price = parseBalance(
+        this.price,
+        this.selectedERC20Token.decimal
+      ).toString(10);
+    } else if (formData.type === app.orderTypes.NEGOTIATION) {
+      formData.taker_address = this.user.id;
+      formData.taker_token = this.nftToken.categories_id;
+      formData.taker_token_id = this.nftToken.token_id;
+      formData.maker_token = this.selectedERC20Token.id;
+      formData.price = parseBalance(
+        this.price,
+        this.selectedERC20Token.decimal
+      ).toString(10);
+      formData.min_price = parseBalance(
+        this.minPrice,
+        this.selectedERC20Token.decimal
+      ).toString(10);
+    } else if (formData.type === app.orderTypes.AUCTION) {
+      formData.taker_address = this.user.id;
+      formData.taker_token = this.nftToken.categories_id;
+      formData.taker_token_id = this.nftToken.token_id;
+      formData.expiry_date = data.expiry_date_time;
+      formData.maker_token = this.selectedERC20Token.id;
+      formData.min_price = parseBalance(
+        this.price,
+        this.selectedERC20Token.decimal
+      ).toString(10);
     }
 
     try {
@@ -433,6 +490,7 @@ export default class SellToken extends Vue {
         }
       );
       console.log(response);
+      this.$store.dispatch("account/fetchMakerOrders");
       this.close();
     } catch (error) {
       console.error(error);
