@@ -51,6 +51,9 @@ const app = {
     // Initialize tokens
     this.initTokens(store)
 
+    // user profile data
+    this.initUserProfile(store)
+
   },
 
 
@@ -162,9 +165,6 @@ const app = {
         address: store.getters["auth/address"]
       })
     )
-
-    // Load account balance
-    await store.dispatch("token/fetchBalances")
   },
 
   async initCategories(store) {
@@ -173,6 +173,17 @@ const app = {
 
   async initTokens(store) {
     await store.dispatch("token/fetchERC20Tokens")
+
+    // Load account balance
+    await store.dispatch("token/fetchBalances")
+  },
+
+  async initUserProfile(store) {
+    const user = store.getters['auth/user']
+    if (user) {
+      store.dispatch('account/fetchMakerOrders')
+      store.dispatch('account/fetchFavoritesOrders')
+    }
   },
 
   getSelectedNetwork() {
