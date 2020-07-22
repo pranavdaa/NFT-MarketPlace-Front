@@ -8,20 +8,26 @@
         <search-box class="search-box w-100" placeholder="Search NFT..." :change="(val) => val" />
       </div>
       <div class="col-md d-flex justify-content-center justify-content-md-end">
-        <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="onSortSelect" />
+        <sort-dropdown
+          class="dropdown-filter"
+          :sortItems="sortItems"
+          :defaultID="1"
+          :change="onSortSelect"
+        />
       </div>
     </div>
 
     <div class="row ps-x-16 d-flex justify-content-center text-center">
-      <sell-card
-        v-for="order in orders"
-        :key="order.id"
-        :order="order"
-        @click="orderDetails(order.id)"
+      <sell-card v-for="order in orderFullList" :key="order.id" :order="order" />
+      <no-item
+        class="ps-b-120"
+        :message="exmptyMsg"
+        v-if="orderFullList.length <= 0 && !isLoadingTokens"
       />
     </div>
 
     <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
+      <!-- matic loader here -->
       <button-loader
         class="mx-auto"
         :loading="isLoadingTokens"
@@ -31,11 +37,9 @@
         lg
         v-if="hasNextPage"
         color="light"
-        :click="onModalShow"
+        :click="loadMore"
       ></button-loader>
     </div>
-    <!-- <buy-token :show="showModal" :close="onModalClose" :order="orders[0]" /> -->
-    <place-bid :show="showModal" :bid="true" :close="onModalClose" :order="orders[0]" />
   </div>
 </template>
 
@@ -45,13 +49,14 @@ import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
+import { VueWatch } from "~/components/decorator";
 
 import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
 import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
-import BuyToken from "~/components/lego/modals/buy-token";
-import PlaceBid from "~/components/lego/modals/place-bid";
+import OrderModel from "~/components/model/order";
+import NoItem from "~/components/lego/no-item";
 
 @Component({
   props: {},
@@ -60,42 +65,23 @@ import PlaceBid from "~/components/lego/modals/place-bid";
     CategoriesSelector,
     SearchBox,
     SortDropdown,
-    BuyToken,
-    PlaceBid
+    NoItem
   },
   computed: {
-    ...mapGetters("page", ["selectedFilters"])
+    ...mapGetters("page", ["selectedFilters"]),
+    ...mapGetters("category", ["categories"]),
+    ...mapGetters("token", ["erc20Tokens"])
   },
   middleware: [],
-  mixins: [],
-  watch: {
-    selectedFilters: {
-      handler: async function() {
-        await this.fetchOrders({ filtering: true });
-      },
-      deep: true
-    }
-  }
+  mixins: []
 })
 export default class Index extends Vue {
-  orders = [
-    {
-      id: 1,
-      price: "0.113",
-      minprice: "12.4",
-      categories_id: 1,
-      erc20tokens_id: 1,
-      token: {
-        name: "Kitty Kitten cat",
-        img_url: "/_nuxt/static/img/dummy-kitty.png",
-        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e",
-        description:
-          "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it."
-      }
-    }
-  ];
-
   limit = app.uiconfig.defaultPageSize;
+  exmptyMsg = {
+    title: "Oops! No item found.",
+    description: "We didn’t found any item that is on sale.",
+    img: true
+  };
 
   sortItems = [
     {
@@ -132,7 +118,16 @@ export default class Index extends Vue {
 
   showModal = false;
 
-  mounted() {}
+  mounted() {
+    this.fetchOrders();
+  }
+
+  // Wathers
+  @VueWatch("selectedFilters", { immediate: true, deep: true })
+  async onFilterChanged() {
+    this.hasNextPage = true;
+    await this.fetchOrders({ filtering: true });
+  }
 
   // handlers
   onSortSelect(item) {
@@ -155,6 +150,11 @@ export default class Index extends Vue {
     return this.selectedFilters.selectedCategory
       ? `&categoryArray=[${this.selectedFilters.selectedCategory.id}]`
       : "&categoryArray=[]";
+
+    // Multiple
+    // return `&categoryArray=[${this.categories
+    // .reduce((value, category) => `${value},${category.id}`, "")
+    // .substr(1)}]`; // selected category or all category
   }
   get ifSort() {
     return this.selectedFilters.selectedSort
@@ -165,10 +165,8 @@ export default class Index extends Vue {
   // async
 
   async fetchOrders(options = {}) {
-    // Tobe removed
-    this.orders = [...this.orders, ...this.orders];
     // Do not remove data while fetching
-    if (this.isLoadingTokens || this.hasNextPage) {
+    if (this.isLoadingTokens || !this.hasNextPage) {
       return;
     }
     this.isLoadingTokens = true;
@@ -195,12 +193,16 @@ export default class Index extends Vue {
 
     if (response.status === 200 && response.data.data.order) {
       this.hasNextPage = response.data.data.has_next_page;
+      let data = response.data.data.order.map(function(order) {
+        return new OrderModel(order);
+      });
       if (options && options.filtering) {
-        this.orderFullList = response.data.data.order;
-        return;
+        this.orderFullList = data;
+      } else {
+        this.orderFullList = [...this.orderFullList, ...data];
       }
-      this.orderFullList = [...this.orderFullList, ...response.data.data];
     }
+    this.isLoadingTokens = false;
   }
 
   async loadMore() {
