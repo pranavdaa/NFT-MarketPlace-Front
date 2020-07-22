@@ -25,7 +25,12 @@
                   <div class="font-heading-large title font-semibold">{{pruchaseType.title}}</div>
                   <div
                     class="font-body-medium text-gray-500 ps-t-4"
-                  >{{pruchaseType.subtitle}} 20 {{defaultSelectedToken.symbol}}</div>
+                    v-if="order"
+                  >{{pruchaseType.subtitle}} {{order.price}} {{defaultSelectedToken.symbol}}</div>
+                  <!-- <div
+                    class="font-body-medium text-gray-500 ps-t-4"
+                    v-if="order"
+                  >{{pruchaseType.subtitle}} {{order.getPrice().toString(10)}} {{defaultSelectedToken.symbol}}</div>-->
                 </div>
                 <div class="col-md-12 ps-t-32 ps-x-40">
                   <input-token
@@ -36,11 +41,22 @@
                   />
                 </div>
                 <div
+                  class="col-md-12 error text-left ps-t-4 ps-x-40"
+                  v-if="dirty && !validation['inputAmount']"
+                >Enter a valid amount</div>
+                <div
+                  class="col-md-12 error text-left ps-t-4 ps-x-40"
+                  v-if="dirty && !validation['hasBalance']"
+                >You don't have sufficient balance</div>
+                <div
                   class="col-md-12 ps-x-40 ps-y-8 ps-b-20 font-caption text-gray-300"
-                >Account balance: $234 = 234421.3455 {{defaultSelectedToken.symbol}}</div>
+                >Account balance: ${{defaultSelectedToken.formattedFullUSDBalance}} = {{defaultSelectedToken.formattedBalance}} {{defaultSelectedToken.symbol}}</div>
 
                 <div class="col-md-12 ps-t-8 ps-x-40">
-                  <button class="btn btn-block btn-primary ps-20">{{pruchaseType.btn}}</button>
+                  <button
+                    class="btn btn-block btn-primary ps-20"
+                    @click="makeOfferOrBid()"
+                  >{{pruchaseType.btn}}</button>
                 </div>
 
                 <div
@@ -64,7 +80,12 @@ import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
 const colorThief = new ColorThief();
 
+import { FormValidator } from "~/components/mixin";
 import InputToken from "~/components/lego/input-token";
+import BigNumber from "~/plugins/bignumber";
+
+const ZERO = new BigNumber(0);
+const TEN = new BigNumber(10);
 
 @Component({
   props: {
@@ -72,10 +93,18 @@ import InputToken from "~/components/lego/input-token";
       type: Boolean,
       required: true
     },
+    order: {
+      type: Object,
+      required: true
+    },
     bid: {
       type: Boolean,
       required: false,
       default: false
+    },
+    executeBidOrOffer: {
+      type: Function,
+      required: true
     },
     close: {
       type: Function,
@@ -84,11 +113,19 @@ import InputToken from "~/components/lego/input-token";
   },
   components: { InputToken },
   computed: {
-    ...mapGetters("token", ["selectedERC20Token", "erc20Tokens"])
-  }
+    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
+    ...mapGetters("network", ["networks"]),
+    ...mapGetters("account", ["account"]),
+    ...mapGetters("auth", ["user"])
+  },
+  mixins: [FormValidator]
 })
 export default class PlaceBid extends Vue {
   bg = "#000000";
+  inputAmount = "";
+  dirty = false;
+  isLoading = false;
+
   mounted() {}
 
   onImageLoad() {
@@ -105,16 +142,39 @@ export default class PlaceBid extends Vue {
   }
 
   changeAmount(value) {
-    console.log("Amount: ", value);
+    this.inputAmount = value;
+  }
+
+  async makeOfferOrBid() {
+    this.isLoading = true;
+    if (!this.isValid) {
+      this.dirty = true;
+      this.isLoading = false;
+
+      return;
+    }
+    this.dirty = false;
+
+    await this.executeBidOrOffer(this.inputAmount);
+
+    this.isLoading = false;
   }
 
   // get
-
+  get validation() {
+    return {
+      minAmount: true,
+      inputAmount: !!this.inputAmount,
+      hasBalance: this.defaultSelectedToken.fullBalance.gte(
+        this.inputAmount || ZERO
+      )
+    };
+  }
   get pruchaseType() {
     if (this.bid) {
       return {
         title: "Enter your bid",
-        subtitle: "Highest bid is",
+        subtitle: "Starting from",
         note:
           "By bidding, you will automatically pay for this item if you're the highest bidder when the auction expires.",
         btn: "Place Bid"
@@ -122,7 +182,7 @@ export default class PlaceBid extends Vue {
     }
     return {
       title: "Make an offer",
-      subtitle: "Last offer is",
+      subtitle: "Listed for",
       note:
         "By offering, you will automatically pay for this item if the owner accepts your offer, unless you cancel it.",
       btn: "Submit offer"
@@ -150,6 +210,9 @@ export default class PlaceBid extends Vue {
 }
 .text-gray-300 {
   color: dark-color("300");
+}
+.error {
+  color: red-color("400");
 }
 
 .box {

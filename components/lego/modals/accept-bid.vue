@@ -31,7 +31,16 @@
                 </div>
 
                 <div class="col-md-12 ps-t-8 ps-b-40 ps-x-40">
-                  <button class="btn btn-block btn-primary">Confirm</button>
+                  <button-loader
+                    class="ml-auto"
+                    :loading="isLoading"
+                    :loadingText="'Accepting...'"
+                    :text="'Confirm'"
+                    block
+                    lg
+                    color="primary"
+                    :click="accept"
+                  ></button-loader>
                 </div>
               </div>
             </div>
@@ -56,6 +65,18 @@ const colorThief = new ColorThief();
       type: Boolean,
       required: true
     },
+    isLoading: {
+      type: Boolean,
+      required: true
+    },
+    bid: {
+      type: Object,
+      required: true
+    },
+    accept: {
+      type: Function,
+      required: true
+    },
     close: {
       type: Function,
       required: true
@@ -65,6 +86,7 @@ const colorThief = new ColorThief();
 })
 export default class AcceptBidModal extends Vue {
   bg = "#000000";
+
   mounted() {}
 
   onImageLoad() {

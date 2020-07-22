@@ -48,6 +48,11 @@ import Component from "nuxt-class-component";
       type: Array,
       required: true
     },
+    defaultID: {
+      type: Number,
+      required: false,
+      default: 0
+    },
     change: {
       type: Function,
       required: true
@@ -61,7 +66,7 @@ export default class SortDropdown extends Vue {
   selectedItem = null;
 
   mounted() {
-    this.onChange(this.selectedItem || this.sortItems[0]);
+    this.onChange(this.selectedItem || this.sortItems[this.defaultID]);
   }
 
   onChange(value) {
