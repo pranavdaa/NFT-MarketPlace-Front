@@ -5,7 +5,7 @@
         class="col-12 col-lg cat-switch d-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
       >
         <categories-selector class="ms-r-16 category-wrapper" />
-        <slide-switch :options="switchItems" :onChange="onSwitched" />
+        <slide-switch :options="switchItems" :onOff="switchOnOff" :onChange="onSwitched" />
       </div>
       <div class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end">
         <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" />
@@ -20,13 +20,17 @@
         v-for="order in displayedTokens"
         :key="order.id"
         :order="order"
-        :onlyToken="true"
+        :onlyToken="!switchOnOff"
         @click="orderDetails(order.id)"
         :sell="sellToken"
       />
     </div>
 
-    <no-item :message="exmptyMsg" v-if="!displayedTokens" />
+    <no-item
+      class="ps-b-120"
+      :message="exmptyMsg"
+      v-if="displayedTokens.length <= 0 && !isLoadingTokens"
+    />
 
     <sell-token
       class="text-left"
@@ -69,7 +73,7 @@ import SellToken from "~/components/lego/modals/sell-token";
   computed: {
     ...mapGetters("page", ["selectedFilters"]),
     ...mapGetters("category", ["categories"]),
-    ...mapGetters("account", ["account"])
+    ...mapGetters("account", ["account", "makerOrders"])
   },
   middleware: [],
   mixins: [],
@@ -83,12 +87,6 @@ import SellToken from "~/components/lego/modals/sell-token";
   }
 })
 export default class MaticTab extends Vue {
-  exmptyMsg = {
-    title: "Oops! No item found on Matic chain.",
-    description: "We didn’t found any item on Matic chain.",
-    img: true
-  };
-
   // Modals
   showSellModal = false;
   selectedToken = null;
@@ -121,23 +119,11 @@ export default class MaticTab extends Vue {
     }
   ];
 
-  switchItems = [
-    {
-      title: "All items",
-      count: false,
-      selected: true
-    },
-    {
-      title: "On sale",
-      count: 12,
-      selected: false
-    }
-  ];
-
   tokensFullList = [];
   hasNextPage = true;
   displayTokens = 0;
   isLoadingTokens = false;
+  switchOnOff = false;
 
   mounted() {
     this.fetchNFTTokens();
@@ -149,8 +135,7 @@ export default class MaticTab extends Vue {
   }
 
   onSwitched(value) {
-    this.switchItems[1].selected = value;
-    this.switchItems[0].selected = !value;
+    this.switchOnOff = value;
   }
 
   sellToken(id) {
@@ -163,7 +148,55 @@ export default class MaticTab extends Vue {
 
   // Get
   get displayedTokens() {
+    if (this.switchOnOff === true) {
+      return this.makerOrders || [];
+    }
+    if (this.makerOrders && this.tokensFullList) {
+      const token_ids = [];
+      this.makerOrders.forEach(function(order) {
+        token_ids.push(order.tokens_id);
+      });
+      return this.tokensFullList.filter(
+        token => !token_ids.includes(token.token_id)
+      );
+    }
     return this.tokensFullList || [];
+  }
+
+  get totalUserOrders() {
+    if (this.makerOrders) {
+      return this.makerOrders.length;
+    }
+    return 0;
+  }
+  get switchItems() {
+    return [
+      {
+        title: "Tokens",
+        count: false,
+        selected: true
+      },
+      {
+        title: "On sale",
+        count: this.totalUserOrders,
+        selected: false
+      }
+    ];
+  }
+
+  get exmptyMsg() {
+    if (this.switchOnOff) {
+      return {
+        title: "Oops! No item on sale.",
+        description: "We didn’t find any item you put on sale.",
+        img: true
+      };
+    }
+    return {
+      title: "Oops! No item found on Matic chain.",
+      description: "We didn’t found any item on Matic chain.",
+      img: true
+    };
   }
 
   get ifCategory() {
@@ -200,6 +233,7 @@ export default class MaticTab extends Vue {
       let i = 0;
       response.data.data.forEach(token => {
         i++;
+        if (i == response.data.data.length) return;
         token.id = i;
         tokens.push(new NFTTokenModel(token));
       });
@@ -209,6 +243,7 @@ export default class MaticTab extends Vue {
       }
       this.tokensFullList = [...this.tokensFullList, ...tokens];
     }
+    this.isLoadingTokens = false;
   }
 }
 </script>
