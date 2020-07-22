@@ -95,7 +95,8 @@ export default {
 
         // Fetch balance
         let r = null
-        if (token.isEther && !network.isMatic || token.isMatic && network.isMatic) {
+        // if (token.isEther && !network.isMatic || token.isMatic && network.isMatic) {
+        if (token.isEther && !network.isMatic) {
           r = await getAccountBalancePromise(network, accountAddress)
         } else {
           const c = await token.getContract(network)
