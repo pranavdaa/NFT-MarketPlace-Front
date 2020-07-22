@@ -7,6 +7,7 @@
       :step="integer ? '1' : 'any'"
       :placeholder="placeholder"
       v-model="inputAmount"
+      :disabled="disabled"
     />
     <div
       class="token-btn font-caps font-medium d-flex align-self-center ps-12"
@@ -56,6 +57,11 @@ const TEN = new BigNumber(10);
       required: true
     },
     integer: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       required: false,
       default: false
