@@ -103,7 +103,7 @@
                 </div>
                 <div class="col-md-12 ps-x-0 ps-t-24">
                   <input
-                    class="form-control form-control-inline float-left w-auto"
+                    class="form-control form-control-inline float-left w-auto ps-y-0"
                     type="date"
                     :min="minimumDate"
                     v-model="auction_date"
@@ -111,7 +111,7 @@
                     @click="toCustom()"
                   />
                   <input
-                    class="form-control form-control-inline float-right w-auto"
+                    class="form-control form-control-inline float-right w-auto ps-y-0"
                     type="time"
                     v-model="auction_time"
                     :change="onAuctionDateTimeChange()"
@@ -167,7 +167,7 @@ import { parseBalance } from "~/plugins/helpers/token-utils";
 let {
   ContractWrappers,
   ERC721TokenContract,
-  OrderStatus
+  OrderStatus,
 } = require("@0x/contract-wrappers");
 let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
 // let { BigNumber } = require("@0x/utils");
@@ -179,7 +179,7 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
 const EXPIRY_DURATION = {
   ONE_WEEK: 0,
   ONE_MONTH: 1,
-  CUSTOM: 2
+  CUSTOM: 2,
 };
 
 const ZERO = BigNumber(0);
@@ -189,26 +189,26 @@ const TEN = BigNumber(10);
   props: {
     show: {
       type: Boolean,
-      required: true
+      required: true,
     },
     nftToken: {
       type: Object,
-      required: true
+      required: true,
     },
     close: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   components: { InputToken },
   computed: {
     ...mapGetters("token", ["selectedERC20Token"]),
     ...mapGetters("account", ["account"]),
     ...mapGetters("auth", ["user"]),
-    ...mapGetters("network", ["networks"])
+    ...mapGetters("network", ["networks"]),
   },
   methods: {},
-  mixins: [FormValidator]
+  mixins: [FormValidator],
 })
 export default class SellToken extends Vue {
   activeTab = 0;
@@ -219,9 +219,7 @@ export default class SellToken extends Vue {
   error = "";
   expiry_date_time = "";
   auction_time = moment().format("HH:mm");
-  auction_date = moment()
-    .add(1, "days")
-    .format("YYYY-MM-DD");
+  auction_date = moment().add(1, "days").format("YYYY-MM-DD");
   minimumDate = this.auction_date;
 
   price = 0;
@@ -235,7 +233,7 @@ export default class SellToken extends Vue {
       description:
         "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
-      btnTitle: "Submit to Marketplace"
+      btnTitle: "Submit to Marketplace",
     },
     {
       id: 1,
@@ -244,8 +242,8 @@ export default class SellToken extends Vue {
       description:
         "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
-      btnTitle: "Submit to Marketplace"
-    }
+      btnTitle: "Submit to Marketplace",
+    },
   ];
 
   mounted() {
@@ -302,12 +300,9 @@ export default class SellToken extends Vue {
       return;
     }
     this.dirty = false;
-    let c = console.log;
 
     try {
-      const yearInSec = moment()
-        .add(365, "days")
-        .format("x");
+      const yearInSec = moment().add(365, "days").format("x");
       const expiry_date_time = this.expiry_date_time
         ? this.expiry_date_time.format("x")
         : 0;
@@ -322,7 +317,7 @@ export default class SellToken extends Vue {
       const minPrice = this.minPrice;
       const decimalnftTokenId = Web3.utils.hexToNumberString(nftTokenId);
       const contractWrappers = new ContractWrappers(providerEngine(), {
-        chainId: chainId
+        chainId: chainId,
       });
 
       // ERC721 contract
@@ -338,7 +333,15 @@ export default class SellToken extends Vue {
       const isOwnerOfToken =
         owner.toLowerCase() === this.account.address.toLowerCase();
       if (!isOwnerOfToken) {
-        console.log("You are no longer owner of this token");
+        app.addToast(
+          "You are no owner of this token",
+          "You are no longer owner of this token, refresh to update the data",
+          {
+            type: "failure",
+          }
+        );
+        this.isLoading = false;
+        this.close();
         return;
       }
 
@@ -361,7 +364,6 @@ export default class SellToken extends Vue {
 
         let expirationTimeSeconds = new BigNumber(yearInSec);
         if (orderType === app.orderTypes.AUCTION) {
-          // Set expiry date in seconds
           expirationTimeSeconds = new BigNumber(expiry_date_time);
         }
 
@@ -381,10 +383,10 @@ export default class SellToken extends Vue {
           makerFeeAssetData: app.uiconfig.NULL_BYTES,
           takerFeeAssetData: app.uiconfig.NULL_BYTES,
           makerFee: ZERO,
-          takerFee: ZERO
+          takerFee: ZERO,
         };
 
-        console.log(orderTemplate);
+        // Sign if FIXED order
         let signedOrder = "";
         if (orderType === app.orderTypes.FIXED) {
           signedOrder = await signatureUtils.ecSignOrderAsync(
@@ -393,14 +395,17 @@ export default class SellToken extends Vue {
             makerAddress
           );
         }
+        // add extra info
         orderTemplate.orderType = orderType;
         orderTemplate.expiry_date_time = expiry_date_time;
 
-        console.log("Signed Order", signedOrder);
         await this.handleSellSign(orderTemplate, signedOrder);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      app.addToast("Something went wrong", error.message.substring(0, 60), {
+        type: "failure",
+      });
     }
     this.isLoading = false;
   }
@@ -420,23 +425,31 @@ export default class SellToken extends Vue {
         .sendTransactionAsync({
           from: makerAddress,
           gas: 8000000,
-          gasPrice: 1000000000
+          gasPrice: 1000000000,
         });
-      console.log("Approve Hash", makerERC721ApprovalTxHash);
       if (makerERC721ApprovalTxHash) {
+        console.log("Approve Hash", makerERC721ApprovalTxHash);
+        app.addToast("Approved", "You successfully approved", {
+          type: "success",
+        });
         return true;
       }
-      return false;
+      app.addToast(
+        "Failed to approve",
+        "You need to approve the transaction to sale the NFT",
+        {
+          type: "failure",
+        }
+      );
     }
     return true;
   }
 
   async handleSellSign(data, signedOrder) {
-    console.log(signedOrder);
     // Create Object to pass as data to post request
     let formData = {
       type: data.orderType,
-      chain_id: `${this.networks.matic.chainId}`
+      chain_id: `${this.networks.matic.chainId}`,
     };
 
     if (formData.type === app.orderTypes.FIXED) {
@@ -476,23 +489,24 @@ export default class SellToken extends Vue {
 
     try {
       let response = await getAxios().post("orders", formData);
-      app.addToast(
-        "Sell order added successfully",
-        "Your NFT token successfully added on sale",
-        {
-          type: "success"
-        }
-      );
-      console.log(response);
-      this.$store.dispatch("account/fetchMakerOrders");
-      this.close();
+      if (response.status === 200) {
+        app.addToast(
+          "Sell order added successfully",
+          "Your NFT successfully added on sale",
+          {
+            type: "success",
+          }
+        );
+        this.$store.dispatch("account/fetchActiveOrders");
+        this.close();
+      }
     } catch (error) {
       console.error(error);
       app.addToast(
         "Sell order failed to add",
         "Failed to add you NFT on sale",
         {
-          type: "failure"
+          type: "failure",
         }
       );
     }
@@ -504,10 +518,12 @@ export default class SellToken extends Vue {
       owner:
         this.nftToken.owner.toLowerCase() ===
         this.account.address.toLowerCase(),
-      price: !!this.price,
+      price: !!this.price && this.price.gt(ZERO),
       minPrice: this.negotiation
-        ? !!this.minPrice && this.minPrice.lte(this.price)
-        : true
+        ? !!this.minPrice &&
+          this.minPrice.lt(this.price) &&
+          this.minPrice.gt(ZERO)
+        : true,
     };
   }
   get EXPIRY_DURATION() {
@@ -577,6 +593,10 @@ export default class SellToken extends Vue {
 
 .error-text {
   color: red-color("400");
+}
+.ps-y-0 {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
 }
 
 @media (max-width: 570px) {
