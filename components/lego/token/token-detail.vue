@@ -188,18 +188,18 @@ const colorThief = new ColorThief();
   props: {
     tokenId: {
       type: [Number, String],
-      required: false
-    }
+      required: false,
+    },
   },
   components: { TokenShortInfo, WishlistButton, BidderRow, BuyToken },
   computed: {
     ...mapGetters("category", ["categories"]),
     ...mapGetters("token", ["erc20Tokens"]),
     ...mapGetters("account", ["account", "favouriteOrders"]),
-    ...mapGetters("auth", ["user"])
+    ...mapGetters("auth", ["user"]),
   },
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class TokenDetail extends Vue {
   bg = "#ffffff";
@@ -228,7 +228,7 @@ export default class TokenDetail extends Vue {
       let hsl = rgbToHsl({
         r: rgbColor[0],
         g: rgbColor[1],
-        b: rgbColor[2]
+        b: rgbColor[2],
       });
       this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
     } else this.bg = "#ffffff";
@@ -237,7 +237,7 @@ export default class TokenDetail extends Vue {
   // Get
   get category() {
     return this.categories.filter(
-      item => item.id === this.order.categories_id
+      (item) => item.id === this.order.categories_id
     )[0];
   }
 
@@ -247,14 +247,14 @@ export default class TokenDetail extends Vue {
 
   get erc20Token() {
     return this.erc20Tokens.filter(
-      token => token.id === this.order.erc20tokens_id
+      (token) => token.id === this.order.erc20tokens_id
     )[0];
   }
 
   get isFavorite() {
     if (this.user && this.favouriteOrders) {
       const order = this.favouriteOrders.filter(
-        order => order.order_id === this.order.id
+        (order) => order.order_id === this.order.id
       );
       return order.length !== 0;
     }
@@ -301,22 +301,38 @@ export default class TokenDetail extends Vue {
 
   async cancelOrder() {
     console.log("cancelOrder");
-    // contractWrappers, orderTemplate
-    // const txHashCancel = await contractWrappers.exchange
-    //   .cancelOrder(orderTemplate)
-    //   .awaitTransactionSuccessAsync({ from: maker, gasPrice: 0, gas: 8000000 });
-    // console.log("Order canceled", txHashCancel);
+    try {
+      if (this.order.type === app.orderTypes.FIXED) {
+        // contractWrappers, orderTemplate
+        // const txHashCancel = await contractWrappers.exchange
+        //   .cancelOrder(orderTemplate)
+        //   .awaitTransactionSuccessAsync({ from: maker, gasPrice: 0, gas: 8000000 });
+        // console.log("Order canceled", txHashCancel);
+      }
+      let data = {
+        tx_hash: "",
+      };
+      let response = await getAxios().patch(
+        `order/${this.order.id}/cancel`,
+        data
+      );
+      if (response.status === 200) {
+        app.addToast("Order cancelled", "");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
   async addToWishlist() {
     // Add current order to users wishlist if not wishlisted or if it is then remove it
     try {
       if (this.isFavorite) {
         const response = await getAxios().delete("users/favourites", {
-          orderId: this.order.id
+          orderId: this.order.id,
         });
       } else {
         const response = await getAxios().post("users/favourites", {
-          orderId: this.order.id
+          orderId: this.order.id,
         });
       }
     } catch (error) {
@@ -325,7 +341,7 @@ export default class TokenDetail extends Vue {
           "Need Login",
           "You need to login to add token to wishlist",
           {
-            type: "info"
+            type: "info",
           }
         );
       }
@@ -346,10 +362,9 @@ export default class TokenDetail extends Vue {
         response = await getAxios().get(`orders/bids/${this.order.id}`);
         if (response.status === 200 && response.data.data.order) {
           let bids = [];
-          response.data.data.order.forEach(function(bid) {
+          response.data.data.order.forEach(function (bid) {
             bid.erc20Token = this.erc20Token;
             bid.order = this.order;
-            console.log(JSON.parse(bid.signature));
             if (bid.status === 0) {
               // if bid is active
               bids.push(new BidModel(bid));

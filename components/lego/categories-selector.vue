@@ -41,7 +41,7 @@
               class="icon align-self-center ms-r-12"
             />
             <div class="font-body-small align-self-center font-medium">{{category.name}}</div>
-            <div class="count ps-l-12 font-body-medium ml-auto">{{category.count}}</div>
+            <div class="count ps-l-12 font-body-medium ml-auto">{{category.count || "0"}}</div>
           </div>
         </div>
       </div>
@@ -63,8 +63,8 @@ import getAxios from "~/plugins/axios";
   props: {},
   computed: {
     ...mapGetters("page", ["selectedCategory"]),
-    ...mapGetters("category", ["categories"])
-  }
+    ...mapGetters("category", ["categories"]),
+  },
 })
 export default class CategoriesSelector extends Vue {
   showCategory = false;
@@ -88,7 +88,7 @@ export default class CategoriesSelector extends Vue {
       name: "All Categories",
       img_url: require("~/static/img/category.svg"),
       isAll: true,
-      count: this.totalOrderCount
+      count: this.totalOrderCount,
     };
   }
 
@@ -101,7 +101,10 @@ export default class CategoriesSelector extends Vue {
 
   get totalOrderCount() {
     return (
-      this.categories.reduce((total, item) => total + item.count, 0) || "00"
+      this.categories.reduce(
+        (total, item) => total + parseInt(item.count),
+        0
+      ) || "0"
     );
   }
 }

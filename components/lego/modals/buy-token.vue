@@ -132,20 +132,20 @@
                   <div class="d-flex justify-content-between">
                     <div
                       class="font-heading-large font-semibold ps-b-20"
-                      v-if="erc20Token"
+                      v-if="erc20Token && order.lowest_bid"
+                    >{{order.lowest_bid}} {{erc20Token.symbol}}</div>
+                    <div
+                      class="font-heading-large font-semibold ps-b-20"
+                      v-if="erc20Token && !order.lowest_bid"
                     >{{order.price}} {{erc20Token.symbol}}</div>
                     <div
                       class="font-heading-large font-semibold ps-b-20 ml-auto"
-                      v-if="erc20Token"
-                    >{{order.min_price}} {{erc20Token.symbol}}</div>
-                    <!-- <div
-                      class="font-heading-large font-semibold ps-b-20"
-                      v-if="erc20Token"
-                    >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>
+                      v-if="erc20Token && order.highest_bid"
+                    >{{order.highest_bid}} {{erc20Token.symbol}}</div>
                     <div
                       class="font-heading-large font-semibold ps-b-20 ml-auto"
-                      v-if="erc20Token"
-                    >{{order.getMinPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
+                      v-if="erc20Token && !order.highest_bid"
+                    >{{order.price}} {{erc20Token.symbol}}</div>
                   </div>
                   <div class="d-flex time-wrapper ps-8 justify-content-between">
                     <div class="d-flex flex-column text-center align-self-center ps-x-8">
@@ -174,7 +174,7 @@
                   </div>
                   <div
                     class="font-body-small text-gray-500 ps-t-20 text-center"
-                  >The highest bidder will automatically win in 7 days.</div>
+                  >The highest bidder will automatically win in {{remainingTimeinWords}}.</div>
                 </div>
               </div>
             </div>
@@ -187,6 +187,7 @@
       :show="showMakeOffer"
       :executeBidOrOffer="executeBidOrOffer"
       :order="order"
+      :inProcess="isLoading"
       :bid="isBid"
       :close="closeMakeOffer"
     />
@@ -212,14 +213,14 @@ import PlaceBid from "~/components/lego/modals/place-bid";
 let {
   ContractWrappers,
   ERC20TokenContract,
-  OrderStatus
+  OrderStatus,
 } = require("@0x/contract-wrappers");
 let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
 let { BigNumber } = require("@0x/utils");
 let { Web3Wrapper } = require("@0x/web3-wrapper");
 import {
   getRandomFutureDateInSeconds,
-  calculateProtocolFee
+  calculateProtocolFee,
 } from "~/plugins/helpers/0x-utils";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
@@ -231,26 +232,26 @@ const TEN = BigNumber(10);
   props: {
     show: {
       type: Boolean,
-      required: true
+      required: true,
     },
     order: {
       type: Object,
-      require: true
+      require: true,
     },
     close: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   components: { InputToken, PlaceBid },
   computed: {
     ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
     ...mapGetters("network", ["networks"]),
     ...mapGetters("account", ["account"]),
-    ...mapGetters("auth", ["user"])
+    ...mapGetters("auth", ["user"]),
   },
   methods: {},
-  mixins: [FormValidator]
+  mixins: [FormValidator],
 })
 export default class BuyToken extends Vue {
   activeTab = 0;
@@ -264,7 +265,7 @@ export default class BuyToken extends Vue {
 
   dirty = false;
   errorMessages = {
-    noBalance: "You don't have sufficient balance to buy this order"
+    noBalance: "You don't have sufficient balance to buy this order",
   };
   errorMessage = "You don't have sufficient balance to buy this order";
 
@@ -276,7 +277,7 @@ export default class BuyToken extends Vue {
       description:
         "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
-      btnTitle: "Submit to Marketplace"
+      btnTitle: "Submit to Marketplace",
     },
     {
       id: 1,
@@ -285,8 +286,8 @@ export default class BuyToken extends Vue {
       description:
         "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
-      btnTitle: "Submit to Marketplace"
-    }
+      btnTitle: "Submit to Marketplace",
+    },
   ];
   mounted() {}
 
@@ -298,7 +299,7 @@ export default class BuyToken extends Vue {
   // get
   get erc20Token() {
     return this.erc20Tokens.filter(
-      token => token.id === this.order.erc20tokens_id
+      (token) => token.id === this.order.erc20tokens_id
     )[0];
   }
 
@@ -326,22 +327,37 @@ export default class BuyToken extends Vue {
       days: diff.days(),
       hours: diff.hours(),
       mins: diff.minutes(),
-      secs: diff.seconds()
+      secs: diff.seconds(),
     };
+  }
+
+  get remainingTimeinWords() {
+    let wordings = "";
+    if (this.timeRemaining) {
+      if (this.timeRemaining.days > 0) {
+        wordings = `${this.timeRemaining.days} days`;
+      } else if (this.timeRemaining.hours > 0) {
+        wordings = `${this.timeRemaining.hours} hours`;
+      } else if (this.timeRemaining.mins > 0) {
+        wordings = `${this.timeRemaining.mins} mins`;
+      } else if (this.timeRemaining.secs > 0) {
+        wordings = `${this.timeRemaining.secs} seconds`;
+      }
+    }
+    return wordings;
   }
 
   // action
   get validation() {
     return {
-      balance: this.erc20Token.balance.gte(this.order.getPrice())
+      balance: this.erc20Token.balance.gte(this.order.getPrice()),
     };
   }
 
   async executeBidOrOffer(maker_amount) {
+    this.isLoading = true;
     try {
-      const yearInSec = moment()
-        .add(365, "days")
-        .format("x");
+      const yearInSec = moment().add(365, "days").format("x");
       const chainId = this.networks.matic.chainId;
       const nftContract = this.order.categories.categoriesaddresses[0].address;
       const nftTokenId = this.order.tokens_id;
@@ -354,7 +370,7 @@ export default class BuyToken extends Vue {
       const takerAssetAmount = new BigNumber(1);
       const decimalnftTokenId = Web3.utils.hexToNumberString(nftTokenId);
       const contractWrappers = new ContractWrappers(providerEngine(), {
-        chainId
+        chainId,
       });
 
       let expirationTimeSeconds = new BigNumber(yearInSec);
@@ -400,7 +416,7 @@ export default class BuyToken extends Vue {
           makerFeeAssetData: app.uiconfig.NULL_BYTES,
           takerFeeAssetData: app.uiconfig.NULL_BYTES,
           makerFee: ZERO,
-          takerFee: ZERO
+          takerFee: ZERO,
         };
 
         const signedOrder = await signatureUtils.ecSignOrderAsync(
@@ -416,37 +432,31 @@ export default class BuyToken extends Vue {
             this.order.erc20tokens.decimal
           ).toString(10);
           data.signature = JSON.stringify(signedOrder);
-          console.log(data);
 
+          // Store bid with signature
           let response = await getAxios().patch(
             `orders/${this.order.id}/buy`,
             data
           );
+
           if (response.status === 200 && response.data) {
             app.addToast(
-              "Offered successfully",
-              "Your offer has been succeffully submitted",
+              "Offered/bided successfully",
+              "Your offer/bid has been successfully submitted",
               {
-                type: "success"
+                type: "success",
               }
             );
           }
         }
-      } else {
-        app.addToast(
-          "Failed to submit",
-          "You need to trust 0x contact to submit offer or bid",
-          {
-            type: "failure"
-          }
-        );
       }
     } catch (error) {
-      console.log(error);
-      app.addToast("Failed to submit", error.response.data.message, {
-        type: "failure"
+      console.error(error);
+      app.addToast("Something went wrong", error.message.substring(0, 60), {
+        type: "failure",
       });
     }
+    this.isLoading = true;
     this.closeMakeOffer();
     this.close();
   }
@@ -485,7 +495,7 @@ export default class BuyToken extends Vue {
       );
       let signedOrder = JSON.parse(this.order.signature);
       const contractWrappers = new ContractWrappers(providerEngine(), {
-        chainId: signedOrder.chainId
+        chainId: signedOrder.chainId,
       });
 
       signedOrder["makerAssetAmount"] = BigNumber(signedOrder.makerAssetAmount);
@@ -509,7 +519,7 @@ export default class BuyToken extends Vue {
         const [
           { orderStatus, orderHash },
           remainingFillableAmount,
-          isValidSignature
+          isValidSignature,
         ] = await contractWrappers.devUtils
           .getOrderRelevantState(signedOrder, signedOrder.signature)
           .callAsync();
@@ -518,7 +528,7 @@ export default class BuyToken extends Vue {
           orderHash,
           remainingFillableAmount,
           isValidSignature,
-          fill: OrderStatus.Fillable
+          fill: OrderStatus.Fillable,
         });
         if (
           orderStatus === OrderStatus.Fillable &&
@@ -533,7 +543,7 @@ export default class BuyToken extends Vue {
               from: takerAddress,
               gas: 8000000,
               gasPrice: 10000000000,
-              value: calculateProtocolFee([signedOrder])
+              value: calculateProtocolFee([signedOrder]),
             });
           if (txHash) {
             console.log(txHash);
@@ -567,9 +577,19 @@ export default class BuyToken extends Vue {
         )
         .sendTransactionAsync({ from: takerAddress });
       if (erc20ApprovalTxHash) {
-        console.log("approve erc20 to 0x", erc20ApprovalTxHash);
+        console.log("Approve Hash erc20 to 0x", erc20ApprovalTxHash);
+        app.addToast("Approved", "You successfully approved", {
+          type: "success",
+        });
         return true;
       }
+      app.addToast(
+        "Failed to approve",
+        "You need to approve the transaction to sale the NFT",
+        {
+          type: "failure",
+        }
+      );
       return false;
     }
     return true;
@@ -578,7 +598,7 @@ export default class BuyToken extends Vue {
   async handleBuyTxhash(txHash) {
     try {
       let data = {
-        tx_hash: txHash.transactionHash
+        tx_hash: txHash.transactionHash,
       };
       let response = await getAxios().patch(
         `orders/${this.order.id}/buy`,
@@ -589,7 +609,7 @@ export default class BuyToken extends Vue {
           "Order bought successfully",
           "You bought the order successfully",
           {
-            type: "success"
+            type: "success",
           }
         );
       }
@@ -599,7 +619,7 @@ export default class BuyToken extends Vue {
         "Failed to buy order",
         "Something went wrong while buying order",
         {
-          type: "failure"
+          type: "failure",
         }
       );
     }

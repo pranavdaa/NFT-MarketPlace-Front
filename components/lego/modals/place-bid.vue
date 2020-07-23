@@ -41,11 +41,19 @@
                   />
                 </div>
                 <div
-                  class="col-md-12 error text-left ps-t-4 ps-x-40"
+                  class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
                   v-if="dirty && !validation['inputAmount']"
                 >Enter a valid amount</div>
                 <div
-                  class="col-md-12 error text-left ps-t-4 ps-x-40"
+                  class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
+                  v-if="dirty && !validation['minAmount']"
+                >
+                  Minimum
+                  <i>{{this.order.min_price}} {{defaultSelectedToken.symbol}}</i>
+                  required
+                </div>
+                <div
+                  class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
                   v-if="dirty && !validation['hasBalance']"
                 >You don't have sufficient balance</div>
                 <div
@@ -53,10 +61,17 @@
                 >Account balance: ${{defaultSelectedToken.formattedFullUSDBalance}} = {{defaultSelectedToken.formattedBalance}} {{defaultSelectedToken.symbol}}</div>
 
                 <div class="col-md-12 ps-t-8 ps-x-40">
-                  <button
-                    class="btn btn-block btn-primary ps-20"
-                    @click="makeOfferOrBid()"
-                  >{{pruchaseType.btn}}</button>
+                  <button-loader
+                    class
+                    :loading="isLoading || inProcess"
+                    :loadingText="pruchaseType.loadingText"
+                    :text="pruchaseType.btn"
+                    block
+                    primary
+                    lg
+                    color="primary"
+                    :click="makeOfferOrBid"
+                  ></button-loader>
                 </div>
 
                 <div
@@ -91,34 +106,39 @@ const TEN = new BigNumber(10);
   props: {
     show: {
       type: Boolean,
-      required: true
+      required: true,
     },
     order: {
       type: Object,
-      required: true
+      required: true,
     },
     bid: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
+    },
+    inProcess: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     executeBidOrOffer: {
       type: Function,
-      required: true
+      required: true,
     },
     close: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   components: { InputToken },
   computed: {
     ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
     ...mapGetters("network", ["networks"]),
     ...mapGetters("account", ["account"]),
-    ...mapGetters("auth", ["user"])
+    ...mapGetters("auth", ["user"]),
   },
-  mixins: [FormValidator]
+  mixins: [FormValidator],
 })
 export default class PlaceBid extends Vue {
   bg = "#000000";
@@ -135,7 +155,7 @@ export default class PlaceBid extends Vue {
       let hsl = rgbToHsl({
         r: rgbColor[0],
         g: rgbColor[1],
-        b: rgbColor[2]
+        b: rgbColor[2],
       });
       this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
     } else this.bg = "#ffffff";
@@ -150,7 +170,6 @@ export default class PlaceBid extends Vue {
     if (!this.isValid) {
       this.dirty = true;
       this.isLoading = false;
-
       return;
     }
     this.dirty = false;
@@ -163,13 +182,14 @@ export default class PlaceBid extends Vue {
   // get
   get validation() {
     return {
-      minAmount: true,
-      inputAmount: !!this.inputAmount,
+      minAmount: this.inputAmount.gte(this.order.getMinPriceInBN()),
+      inputAmount: !!this.inputAmount && this.inputAmount.gt(ZERO),
       hasBalance: this.defaultSelectedToken.fullBalance.gte(
         this.inputAmount || ZERO
-      )
+      ),
     };
   }
+
   get pruchaseType() {
     if (this.bid) {
       return {
@@ -177,7 +197,8 @@ export default class PlaceBid extends Vue {
         subtitle: "Starting from",
         note:
           "By bidding, you will automatically pay for this item if you're the highest bidder when the auction expires.",
-        btn: "Place Bid"
+        btn: "Place Bid",
+        loadingText: "Placing bid",
       };
     }
     return {
@@ -185,7 +206,8 @@ export default class PlaceBid extends Vue {
       subtitle: "Listed for",
       note:
         "By offering, you will automatically pay for this item if the owner accepts your offer, unless you cancel it.",
-      btn: "Submit offer"
+      btn: "Submit offer",
+      loadingText: "Submintting offer",
     };
   }
 

@@ -27,6 +27,7 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import { mapGetters } from "vuex";
 
 import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
@@ -41,10 +42,13 @@ import NoItem from "~/components/lego/no-item";
     CategoriesSelector,
     SearchBox,
     SortDropdown,
-    NoItem
+    NoItem,
+  },
+  computed: {
+    ...mapGetters("account", ["favouriteOrders"]),
   },
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class FavoriteTab extends Vue {
   orders = [
@@ -56,43 +60,43 @@ export default class FavoriteTab extends Vue {
       token: {
         name: "Kitty Kitten cat",
         img_url: "/_nuxt/static/img/dummy-kitty.png",
-        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e"
-      }
-    }
+        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e",
+      },
+    },
   ];
 
   sortItems = [
     {
       id: 0,
       name: "Popular",
-      filter: "-views"
+      filter: "-views",
     },
     {
       id: 1,
       name: "Newest",
-      filter: "-created"
+      filter: "-created",
     },
     {
       id: 2,
       name: "Oldest",
-      filter: "+created"
+      filter: "+created",
     },
     {
       id: 3,
       name: "Price low to high",
-      filter: "+price"
+      filter: "+price",
     },
     {
       id: 4,
       name: "Price high to low",
-      filter: "-price"
-    }
+      filter: "-price",
+    },
   ];
 
   exmptyMsg = {
     title: "Oops! No favorite item found.",
     description: "We didn’t found any item in your favorite list.",
-    img: true
+    img: true,
   };
 
   mounted() {}

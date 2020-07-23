@@ -4,6 +4,7 @@
       class="unstyle-input form-control align-self-center"
       :class="{'is-invalid': isInvalid}"
       type="number"
+      min="0"
       :step="integer ? '1' : 'any'"
       :placeholder="placeholder"
       v-model="inputAmount"
@@ -46,42 +47,42 @@ const TEN = new BigNumber(10);
   props: {
     value: {
       type: Number,
-      default: null
+      default: null,
     },
     placeholder: {
       type: String,
-      default: "Amount"
+      default: "Amount",
     },
     change: {
       type: Function,
-      required: true
+      required: true,
     },
     integer: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     disabled: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     isInvalid: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     disableToken: {
       type: Boolean,
       required: false,
-      default: false
-    }
+      default: false,
+    },
   },
   components: { TokenList },
   mixins: [],
   computed: {
-    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"])
-  }
+    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
+  },
 })
 export default class InputToken extends Vue {
   inputAmount = null;
@@ -98,6 +99,10 @@ export default class InputToken extends Vue {
   @VueWatch("inputAmount")
   @VueDebounce()
   inputAmountChanged(amount) {
+    // not allow negative values
+    if (typeof amount == "object" && amount.lt(ZERO)) {
+      this.inputAmount = null;
+    }
     // notify parent
     this.change && this.change(this.amount);
   }

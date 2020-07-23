@@ -23,13 +23,8 @@
         <button
           class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
           @click="onDeny()"
-          v-if="showAction"
         >Deny</button>
-        <button
-          class="btn btn-light align-self-center ps-x-16"
-          @click="onAccept()"
-          v-if="showAction"
-        >Accept</button>
+        <button class="btn btn-light align-self-center ps-x-16" @click="onAccept()">Accept</button>
       </div>
     </div>
 
@@ -59,14 +54,14 @@ import AcceptBid from "~/components/lego/modals/accept-bid";
 let {
   ContractWrappers,
   ERC20TokenContract,
-  OrderStatus
+  OrderStatus,
 } = require("@0x/contract-wrappers");
 let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
 let { BigNumber } = require("@0x/utils");
 let { Web3Wrapper } = require("@0x/web3-wrapper");
 import {
   getRandomFutureDateInSeconds,
-  calculateProtocolFee
+  calculateProtocolFee,
 } from "~/plugins/helpers/0x-utils";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
@@ -78,20 +73,20 @@ const TEN = BigNumber(10);
   props: {
     bid: {
       type: BidModel,
-      required: true
+      required: true,
     },
     refreshBids: {
       type: Function,
       required: false,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   components: { AcceptBid },
   computed: {
     ...mapGetters("account", ["account"]),
     ...mapGetters("auth", ["user"]),
-    ...mapGetters("network", ["networks"])
-  }
+    ...mapGetters("network", ["networks"]),
+  },
 })
 export default class BidderRow extends Vue {
   showAcceptBid = false;
@@ -152,7 +147,7 @@ export default class BidderRow extends Vue {
         let signedOrder = JSON.parse(this.bid.signature);
         console.log(signedOrder);
         const contractWrappers = new ContractWrappers(providerEngine(), {
-          chainId: signedOrder.chainId
+          chainId: signedOrder.chainId,
         });
 
         signedOrder["makerAssetAmount"] = BigNumber(
@@ -170,7 +165,7 @@ export default class BidderRow extends Vue {
         const [
           { orderStatus, orderHash },
           remainingFillableAmount,
-          isValidSignature
+          isValidSignature,
         ] = await contractWrappers.devUtils
           .getOrderRelevantState(signedOrder, signedOrder.signature)
           .callAsync();
@@ -179,7 +174,7 @@ export default class BidderRow extends Vue {
           orderHash,
           remainingFillableAmount,
           isValidSignature,
-          fill: OrderStatus.Fillable
+          fill: OrderStatus.Fillable,
         });
 
         let txHash;
@@ -190,13 +185,13 @@ export default class BidderRow extends Vue {
             from: takerAddress,
             gas: 8000000,
             gasPrice: 10000000000,
-            value: calculateProtocolFee([signedOrder])
+            value: calculateProtocolFee([signedOrder]),
           });
         if (txHash) {
           console.log(txHash);
           const data = {
             maker_amount: this.bid.price,
-            tx_hash: txHash.transactionHash
+            tx_hash: txHash.transactionHash,
           };
           // On success
           let response = await getAxios().patch(
@@ -209,7 +204,7 @@ export default class BidderRow extends Vue {
               "Accepted successfully",
               "You accepted the bid for your order",
               {
-                type: "success"
+                type: "success",
               }
             );
           }
@@ -220,7 +215,7 @@ export default class BidderRow extends Vue {
           "Failed to accept",
           "Something went wrong while accepting bid",
           {
-            type: "failure"
+            type: "failure",
           }
         );
       }
@@ -244,7 +239,7 @@ export default class BidderRow extends Vue {
         .sendTransactionAsync({
           from: makerAddress,
           gas: 8000000,
-          gasPrice: 1000000000
+          gasPrice: 1000000000,
         });
       console.log("Approve Hash", makerERC721ApprovalTxHash);
       if (makerERC721ApprovalTxHash) {
@@ -258,18 +253,16 @@ export default class BidderRow extends Vue {
   async onDeny() {
     // Deny the users bid
     // check user is owner
-    if (this.bid.order.maker_address == this.user.id) {
-      try {
-        let response = await getAxios().patch(
-          `orders/bid/${this.bid.id}/cancel`
-        );
-        if (response.status === 200) {
-          this.refreshBids();
-        }
-      } catch (error) {
-        console.log(error);
+    // if (this.bid.order.maker_address == this.user.id) {
+    try {
+      let response = await getAxios().patch(`orders/bid/${this.bid.id}/cancel`);
+      if (response.status === 200) {
+        this.refreshBids();
       }
+    } catch (error) {
+      console.log(error);
     }
+    // }
   }
 }
 </script>

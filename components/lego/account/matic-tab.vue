@@ -68,23 +68,22 @@ import SellToken from "~/components/lego/modals/sell-token";
     SortDropdown,
     SlideSwitch,
     NoItem,
-    SellToken
+    SellToken,
   },
   computed: {
     ...mapGetters("page", ["selectedFilters"]),
     ...mapGetters("category", ["categories"]),
-    ...mapGetters("account", ["account", "makerOrders"])
+    ...mapGetters("account", ["account", "userOrders"]),
+    ...mapGetters("auth", ["user"]),
   },
   middleware: [],
   mixins: [],
   watch: {
     selectedFilters: {
-      handler: async function() {
-        await this.fetchNFTTokens({ filtering: true });
-      },
-      deep: true
-    }
-  }
+      handler: async function () {},
+      deep: true,
+    },
+  },
 })
 export default class MaticTab extends Vue {
   // Modals
@@ -95,28 +94,28 @@ export default class MaticTab extends Vue {
     {
       id: 0,
       name: "Popular",
-      filter: "-views"
+      filter: "-views",
     },
     {
       id: 1,
       name: "Newest",
-      filter: "-created"
+      filter: "-created",
     },
     {
       id: 2,
       name: "Oldest",
-      filter: "+created"
+      filter: "+created",
     },
     {
       id: 3,
       name: "Price low to high",
-      filter: "+price"
+      filter: "+price",
     },
     {
       id: 4,
       name: "Price high to low",
-      filter: "-price"
-    }
+      filter: "-price",
+    },
   ];
 
   tokensFullList = [];
@@ -139,7 +138,7 @@ export default class MaticTab extends Vue {
   }
 
   sellToken(id) {
-    this.selectedToken = this.tokensFullList.find(token => token.id == id);
+    this.selectedToken = this.tokensFullList.find((token) => token.id == id);
     this.showSellModal = true;
   }
   onCloseSellModal() {
@@ -149,23 +148,20 @@ export default class MaticTab extends Vue {
   // Get
   get displayedTokens() {
     if (this.switchOnOff === true) {
-      return this.makerOrders || [];
+      if (this.selectedFilters.selectedCategory) {
+        return this.userOrders;
+      }
+      return this.userOrders || [];
     }
-    if (this.makerOrders && this.tokensFullList) {
-      const token_ids = [];
-      this.makerOrders.forEach(function(order) {
-        token_ids.push(order.tokens_id);
-      });
-      return this.tokensFullList.filter(
-        token => !token_ids.includes(token.token_id)
-      );
+    if (this.tokensFullList) {
+      return this.tokensFullList.filter((token) => !token.active_order);
     }
     return this.tokensFullList || [];
   }
 
   get totalUserOrders() {
-    if (this.makerOrders) {
-      return this.makerOrders.length;
+    if (this.userOrders) {
+      return this.userOrders.length;
     }
     return 0;
   }
@@ -174,13 +170,13 @@ export default class MaticTab extends Vue {
       {
         title: "Tokens",
         count: false,
-        selected: true
+        selected: true,
       },
       {
         title: "On sale",
         count: this.totalUserOrders,
-        selected: false
-      }
+        selected: false,
+      },
     ];
   }
 
@@ -189,13 +185,13 @@ export default class MaticTab extends Vue {
       return {
         title: "Oops! No item on sale.",
         description: "We didn’t find any item you put on sale.",
-        img: true
+        img: true,
       };
     }
     return {
       title: "Oops! No item found on Matic chain.",
       description: "We didn’t found any item on Matic chain.",
-      img: true
+      img: true,
     };
   }
 
@@ -226,14 +222,15 @@ export default class MaticTab extends Vue {
     }
 
     // Fetch tokens with pagination and filters
-    response = await getAxios().get(`tokens/?owner=${this.account.address}`);
+    response = await getAxios().get(`tokens/matic?userId=${this.user.id}`);
 
     if (response.status === 200 && response.data.data) {
       let tokens = [];
       let i = 0;
-      response.data.data.forEach(token => {
+      response.data.data.forEach((token) => {
         i++;
-        if (i == response.data.data.length) return;
+        if (token.contract == "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6")
+          return;
         token.id = i;
         tokens.push(new NFTTokenModel(token));
       });
