@@ -134,11 +134,13 @@ export default class Token extends Model {
     if (this.usd) {
       return this.usd
     }
-    const symbol = this.symbol == "TEST" ? "MATIC" : this.symbol
-    const response = await getBaseAxios().get(`erc20tokens/price?symbol=${symbol}`)
-    if (response.status === 200 && response.data.data) {
-      this.usd = parseFloat(response.data.data)
-    }
+    this.usd = 1
+    // To be removed
+    // const symbol = this.symbol == "TEST" ? "MATIC" : this.symbol
+    // const response = await getBaseAxios().get(`erc20tokens/price?symbol=${symbol}`)
+    // if (response.status === 200 && response.data.data) {
+    //   this.usd = parseFloat(response.data.data)
+    // }
     return this.usd
   }
 

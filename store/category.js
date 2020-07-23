@@ -31,9 +31,6 @@ export default {
       if (response.status === 200 && response.data.data.categories) {
         let categories = response.data.data.categories.map(item => {
           item.img_url = `${uiconfig.apis.FILE_HOST}${item.img_url}`;
-
-          // dummy count to be removed
-          item.count = 123;
           return new CategoryModel(item);
         });
 

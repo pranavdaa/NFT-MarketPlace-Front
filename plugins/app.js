@@ -181,7 +181,7 @@ const app = {
   async initUserProfile(store) {
     const user = store.getters['auth/user']
     if (user) {
-      store.dispatch('account/fetchMakerOrders')
+      store.dispatch('account/fetchActiveOrders')
       store.dispatch('account/fetchFavoritesOrders')
     }
   },

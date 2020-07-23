@@ -8,7 +8,7 @@ export default {
   state: () => {
     return {
       account: null,
-      makerOrders: null,
+      userOrders: null,
       favouriteOrders: null,
     }
   },
@@ -17,8 +17,8 @@ export default {
     account(state) {
       return state.account
     },
-    makerOrders(state) {
-      return state.makerOrders;
+    userOrders(state) {
+      return state.userOrders;
     },
     favouriteOrders(state) {
       return state.favouriteOrders
@@ -29,8 +29,8 @@ export default {
     account(state, account) {
       state.account = account
     },
-    makerOrders(state, orders) {
-      state.makerOrders = orders
+    userOrders(state, orders) {
+      state.userOrders = orders
     },
     favouriteOrders(state, orders) {
       state.favouriteOrders = orders
@@ -38,16 +38,17 @@ export default {
   },
 
   actions: {
-    async fetchMakerOrders({ commit }) {
+    async fetchActiveOrders({ commit }) {
       try {
         const user = app.vuexStore.getters['auth/user']
-        let response = await getAxios().get(`users/${user.id}/makerorders`)
-        if (response.status === 200 && response.data.data.orders[0].maker_orders) {
+        let response = await getAxios().get(`users/${user.id}/activeorders`)
+        if (response.status === 200 && response.data.data.orders[0].seller_orders) {
+          console.log(response.data)
           let orders = [];
-          response.data.data.orders[0].maker_orders.forEach(
+          response.data.data.orders[0].seller_orders.forEach(
             order => orders.push(new OrderModel(order))
           )
-          commit('makerOrders', orders)
+          commit('userOrders', orders)
         }
       } catch (error) {
         console.log(error)
