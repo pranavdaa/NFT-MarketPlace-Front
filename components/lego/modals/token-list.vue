@@ -76,20 +76,23 @@ import { mapGetters } from "vuex";
   props: {
     show: {
       type: Boolean,
-      required: true
+      required: true,
     },
     close: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {},
   computed: {
-    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"])
-  }
+    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
+  },
 })
 export default class TokenList extends Vue {
-  mounted() {}
+  mounted() {
+    console.log(this.erc20Tokens);
+    console.log(this.selectedERC20Token);
+  }
 
   tokenImage(token) {
     return require("~/static/tokens/" + token.toUpperCase() + ".svg");

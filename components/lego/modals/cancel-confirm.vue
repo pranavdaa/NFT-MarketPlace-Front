@@ -11,7 +11,7 @@
             <div class="close-wrapper" @click="close()">
               <svg-sprite-icon name="close-modal" class="close" />
             </div>
-            <div class="container-fluid text-center">
+            <div class="container-fluid text-center" v-if="order">
               <div class="row">
                 <div class="col-md-12 ps-y-32">
                   <img
@@ -22,20 +22,25 @@
                   />
                 </div>
                 <div class="col-md-12">
-                  <div class="font-heading-large title font-semibold">Magical Cat Cryptokittie</div>
-                  <div class="font-body-medium last-offer ps-t-4">Last offer is 20 ETH</div>
+                  <div class="font-heading-large title font-semibold">{{order.token.name}}</div>
+                  <div
+                    v-if="order.highest_bid"
+                    class="font-body-medium last-offer ps-t-4"
+                  >Highest offer is {{order.highest_bid}} {{order.erc20tokens.symbol}}</div>
                 </div>
                 <div class="col-md-12 ps-y-32">
-                  <div class="font-body-small short-descr">Offer received</div>
-                  <div class="amount font-heading-large font-semibold ps-t-4">23.23 ETH</div>
+                  <div class="font-body-small short-descr">Selling for</div>
+                  <div
+                    class="amount font-heading-large font-semibold ps-t-4"
+                  >{{order.price}} {{order.erc20tokens.symbol}}</div>
                 </div>
 
                 <div class="col-md-12 ps-t-8 ps-b-40 ps-x-40">
                   <button-loader
                     class="ml-auto"
                     :loading="isLoading"
-                    :loadingText="'Accepting...'"
-                    :text="'Confirm'"
+                    :loadingText="btnTexts.loadingTitle"
+                    :text="btnTexts.title"
                     block
                     lg
                     color="primary"
@@ -63,31 +68,43 @@ const colorThief = new ColorThief();
   props: {
     show: {
       type: Boolean,
-      required: true
+      required: true,
     },
     isLoading: {
       type: Boolean,
-      required: true
+      required: true,
     },
-    bid: {
+    order: {
       type: Object,
-      required: true
+      required: true,
+    },
+    btnTexts: {
+      type: Object,
+      required: false,
+      default: () => {
+        return { title: "Cancel", loadingTitle: "Canceling..." };
+      },
     },
     accept: {
       type: Function,
-      required: true
+      required: false,
+      default: () => {},
     },
     close: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
-  components: {}
+  components: {},
 })
-export default class AcceptBidModal extends Vue {
+export default class CancelConfirm extends Vue {
   bg = "#000000";
 
-  mounted() {}
+  mounted() {
+    console.log("mounted");
+    console.log(this.order);
+    console.log(this.order.erc20tokens);
+  }
 
   onImageLoad() {
     const img = this.$el.querySelector(".asset-img");
@@ -96,7 +113,7 @@ export default class AcceptBidModal extends Vue {
       let hsl = rgbToHsl({
         r: rgbColor[0],
         g: rgbColor[1],
-        b: rgbColor[2]
+        b: rgbColor[2],
       });
       this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
     } else this.bg = "#ffffff";

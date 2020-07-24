@@ -172,13 +172,17 @@ const app = {
 
   async initTokens(store) {
     await store.dispatch("token/fetchERC20Tokens")
+
+    const user = store.getters['auth/user']
+    if (user) {
+      // Load account balance
+      await store.dispatch("token/reloadBalances")
+    }
   },
 
   async initUserProfile(store) {
     const user = store.getters['auth/user']
     if (user) {
-      // Load account balance
-      store.dispatch("token/fetchBalances")
       store.dispatch('account/fetchActiveOrders')
       store.dispatch('account/fetchFavoritesOrders')
     }

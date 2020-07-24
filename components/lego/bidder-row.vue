@@ -12,7 +12,7 @@
             :title="bid.users.address"
           >{{shortChecksumAddress}}</a>
         </div>
-        <div class="font-caption text-gray-300">2 days ago</div>
+        <div class="font-caption text-gray-300">{{remainingTimeinWords}} ago</div>
       </div>
       <div class="d-flex ml-auto ms-r-16 ps-t-16 ps-t-sm-0">
         <div class="ps-y-12 ps-x-16">
@@ -22,18 +22,31 @@
         </div>
         <button
           class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
+          v-if="this.bid.order.status === 0"
           @click="onDeny()"
         >Deny</button>
-        <button class="btn btn-light align-self-center ps-x-16" @click="onAccept()">Accept</button>
+        <button
+          v-if="this.bid.order.status === 0"
+          class="btn btn-light align-self-center ps-x-16"
+          @click="onAccept()"
+        >Accept</button>
       </div>
     </div>
 
-    <accept-bid
+    <bid-confirmation
       :show="showAcceptBid"
       :bid="bid"
       :isLoading="isLoading"
       :accept="acceptBid"
       :close="onAcceptClose"
+    />
+    <bid-confirmation
+      :show="showDenyBid"
+      :bid="bid"
+      :isLoading="isLoading"
+      :accept="denyBid"
+      :close="onDenyClose"
+      :btnTexts="denyButtonTexts"
     />
   </div>
 </template>
@@ -44,16 +57,18 @@ import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import BidModel from "~/components/model/bid";
 import { toChecksumAddress } from "ethereumjs-util";
-import app from "~/plugins/app";
+import moment from "moment";
 
+import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
 
-import AcceptBid from "~/components/lego/modals/accept-bid";
+import BidConfirmation from "~/components/lego/modals/bid-confirmation";
 
 // 0X
 let {
   ContractWrappers,
   ERC20TokenContract,
+  ERC721TokenContract,
   OrderStatus,
 } = require("@0x/contract-wrappers");
 let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
@@ -81,7 +96,7 @@ const TEN = BigNumber(10);
       default: () => {},
     },
   },
-  components: { AcceptBid },
+  components: { BidConfirmation },
   computed: {
     ...mapGetters("account", ["account"]),
     ...mapGetters("auth", ["user"]),
@@ -90,7 +105,9 @@ const TEN = BigNumber(10);
 })
 export default class BidderRow extends Vue {
   showAcceptBid = false;
+  showDenyBid = false;
   isLoading = false;
+  denyButtonTexts = { title: "Deny", loadingTitle: "Denying..." };
   mounted() {}
 
   // Get
@@ -116,12 +133,47 @@ export default class BidderRow extends Vue {
     }
   }
 
+  get timeRemaining() {
+    const expiry = moment(this.bid.updated);
+    const current = moment();
+    const diff = moment.duration(expiry.diff(current));
+
+    return {
+      days: Math.abs(diff.days()),
+      hours: Math.abs(diff.hours()),
+      mins: Math.abs(diff.minutes()),
+      secs: Math.abs(diff.seconds()),
+    };
+  }
+
+  get remainingTimeinWords() {
+    let wordings = "";
+    if (this.timeRemaining) {
+      if (this.timeRemaining.days > 0) {
+        wordings = `${this.timeRemaining.days} days`;
+      } else if (this.timeRemaining.hours > 0) {
+        wordings = `${this.timeRemaining.hours} hours`;
+      } else if (this.timeRemaining.mins > 0) {
+        wordings = `${this.timeRemaining.mins} mins`;
+      } else if (this.timeRemaining.secs > 0) {
+        wordings = `${this.timeRemaining.secs} seconds`;
+      }
+    }
+    return wordings;
+  }
+
   // Actions
   onAccept() {
     this.showAcceptBid = true;
   }
   onAcceptClose() {
     this.showAcceptBid = false;
+  }
+  onDeny() {
+    this.showDenyBid = true;
+  }
+  onDenyClose() {
+    this.showDenyBid = false;
   }
 
   async acceptBid() {
@@ -145,7 +197,6 @@ export default class BidderRow extends Vue {
         //   this.order.erc20tokens.decimal
         // );
         let signedOrder = JSON.parse(this.bid.signature);
-        console.log(signedOrder);
         const contractWrappers = new ContractWrappers(providerEngine(), {
           chainId: signedOrder.chainId,
         });
@@ -160,7 +211,41 @@ export default class BidderRow extends Vue {
         signedOrder["makerFee"] = BigNumber(signedOrder.makerFee);
         signedOrder["salt"] = BigNumber(signedOrder.salt);
         signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
-        console.log(signedOrder);
+
+        // ERC721 contract
+        const erc721TokenCont = new ERC721TokenContract(
+          nftContract,
+          providerEngine()
+        );
+
+        // Owner of current token
+        const owner = await erc721TokenCont
+          .ownerOf(new BigNumber(nftTokenId))
+          .callAsync();
+        const isOwnerOfToken =
+          owner.toLowerCase() === this.account.address.toLowerCase();
+        if (!isOwnerOfToken) {
+          app.addToast(
+            "You are no owner of this token",
+            "You are no longer owner of this token, refresh to update the data",
+            {
+              type: "failure",
+            }
+          );
+          this.isLoading = false;
+          this.close();
+          return;
+        }
+
+        // Check Approve 0x, Approve if not
+        const isApproved = await this.approve0x(
+          erc721TokenCont,
+          contractWrappers,
+          makerAddress
+        );
+        if (!isApproved) {
+          return;
+        }
 
         const [
           { orderStatus, orderHash },
@@ -169,6 +254,7 @@ export default class BidderRow extends Vue {
         ] = await contractWrappers.devUtils
           .getOrderRelevantState(signedOrder, signedOrder.signature)
           .callAsync();
+
         console.log("is fillable", {
           orderStatus,
           orderHash,
@@ -177,51 +263,58 @@ export default class BidderRow extends Vue {
           fill: OrderStatus.Fillable,
         });
 
-        let txHash;
-        // is user is owner then do accept the bid
-        txHash = await contractWrappers.exchange
-          .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
-          .awaitTransactionSuccessAsync({
-            from: takerAddress,
-            gas: 8000000,
-            gasPrice: 10000000000,
-            value: calculateProtocolFee([signedOrder]),
-          });
-        if (txHash) {
-          console.log(txHash);
-          const data = {
-            maker_amount: this.bid.price,
-            tx_hash: txHash.transactionHash,
-          };
-          // On success
-          let response = await getAxios().patch(
-            `orders/${this.bid.id}/execute`,
-            data
-          );
-          if (response.status === 200) {
-            this.refreshBids();
-            app.addToast(
-              "Accepted successfully",
-              "You accepted the bid for your order",
-              {
-                type: "success",
-              }
-            );
+        if (
+          orderStatus === OrderStatus.Fillable &&
+          remainingFillableAmount.isGreaterThan(0) &&
+          isValidSignature
+        ) {
+          console.log("Fillable");
+          let txHash;
+          // Tobe removed
+          return;
+          txHash = await contractWrappers.exchange
+            .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
+            .awaitTransactionSuccessAsync({
+              from: takerAddress,
+              gas: 8000000,
+              gasPrice: 10000000000,
+              value: calculateProtocolFee([signedOrder]),
+            });
+          if (txHash) {
+            console.log("transaction", txHash);
+            this.handleBidAccept(txhash);
           }
         }
       } catch (error) {
-        console.log(error);
-        app.addToast(
-          "Failed to accept",
-          "Something went wrong while accepting bid",
-          {
-            type: "failure",
-          }
-        );
+        console.error(error);
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
       }
     }
     this.isLoading = false;
     this.onAcceptClose();
+  }
+
+  async handleBidAccept(txHash) {
+    const data = {
+      maker_amount: this.bid.price,
+      tx_hash: txHash.transactionHash,
+    };
+    let response = await getAxios().patch(
+      `orders/${this.bid.id}/execute`,
+      data
+    );
+    if (response.status === 200) {
+      this.refreshBids();
+      app.addToast(
+        "Accepted successfully",
+        "You accepted the bid for your order",
+        {
+          type: "success",
+        }
+      );
+    }
   }
 
   async approve0x(erc721TokenCont, contractWrappers, makerAddress) {
@@ -241,28 +334,47 @@ export default class BidderRow extends Vue {
           gas: 8000000,
           gasPrice: 1000000000,
         });
-      console.log("Approve Hash", makerERC721ApprovalTxHash);
       if (makerERC721ApprovalTxHash) {
+        console.log("Approve Hash", makerERC721ApprovalTxHash);
+        app.addToast("Approved", "You successfully approved", {
+          type: "success",
+        });
         return true;
       }
-      return false;
+      app.addToast(
+        "Failed to approve",
+        "You need to approve the transaction to sale the NFT",
+        {
+          type: "failure",
+        }
+      );
     }
     return true;
   }
 
-  async onDeny() {
-    // Deny the users bid
-    // check user is owner
-    // if (this.bid.order.maker_address == this.user.id) {
-    try {
-      let response = await getAxios().patch(`orders/bid/${this.bid.id}/cancel`);
-      if (response.status === 200) {
-        this.refreshBids();
+  async denyBid() {
+    if (this.bid.order.taker_address == this.user.id) {
+      try {
+        let response = await getAxios().patch(
+          `orders/bid/${this.bid.id}/cancel`
+        );
+        if (response.status === 200) {
+          app.addToast(
+            "Bid declined successfully",
+            "You declined bid successfully",
+            {
+              type: "success",
+            }
+          );
+          this.refreshBids();
+        }
+      } catch (error) {
+        console.error(error);
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
       }
-    } catch (error) {
-      console.log(error);
     }
-    // }
   }
 }
 </script>

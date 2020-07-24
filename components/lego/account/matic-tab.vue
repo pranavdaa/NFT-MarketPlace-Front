@@ -8,7 +8,7 @@
         <slide-switch :options="switchItems" :onOff="switchOnOff" :onChange="onSwitched" />
       </div>
       <div class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end">
-        <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" />
+        <!-- <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" /> -->
         <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="onSortSelect" />
       </div>
     </div>
@@ -225,6 +225,9 @@ export default class MaticTab extends Vue {
     response = await getAxios().get(`tokens/matic?userId=${this.user.id}`);
 
     if (response.status === 200 && response.data.data) {
+      // Update total token number
+      this.$store.commit("account/totalMaticNft", response.data.count);
+
       let tokens = [];
       let i = 0;
       response.data.data.forEach((token) => {

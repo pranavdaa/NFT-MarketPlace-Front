@@ -350,7 +350,7 @@ export default class BuyToken extends Vue {
   // action
   get validation() {
     return {
-      balance: this.erc20Token.balance.gte(this.order.getPrice()),
+      balance: this.erc20Token.balance.gte(this.order.price),
     };
   }
 
@@ -535,9 +535,8 @@ export default class BuyToken extends Vue {
           remainingFillableAmount.isGreaterThan(0) &&
           isValidSignature
         ) {
-          console.log("Fillable");
-
-          const txHash = await contractWrappers.exchange
+          let txHash;
+          txHash = await contractWrappers.exchange
             .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
             .awaitTransactionSuccessAsync({
               from: takerAddress,

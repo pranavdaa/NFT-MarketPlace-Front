@@ -56,6 +56,10 @@ export default class Token extends Model {
     return this.id == app.uiconfig.maticDBID
   }
 
+  get usd() {
+    return this.market_price
+  }
+
   get fullUSDBalance() {
     return parseUSDBalance(this.balance, this.usd).dp(0)
   }
@@ -88,8 +92,7 @@ export default class Token extends Model {
     if (this.usd) {
       return parseUSDBalance(this.balance, this.usd).toFixed(2)
     }
-    this.getUSD()
-    return parseUSDBalance(this.balance, this.usd).toFixed(2)
+    return ZERO
   }
 
 
@@ -128,20 +131,6 @@ export default class Token extends Model {
     }
 
     return null
-  }
-
-  async getUSD() {
-    if (this.usd) {
-      return this.usd
-    }
-    this.usd = 1
-    // To be removed
-    // const symbol = this.symbol == "TEST" ? "MATIC" : this.symbol
-    // const response = await getBaseAxios().get(`erc20tokens/price?symbol=${symbol}`)
-    // if (response.status === 200 && response.data.data) {
-    //   this.usd = parseFloat(response.data.data)
-    // }
-    return this.usd
   }
 
   getBalance(networkId) {

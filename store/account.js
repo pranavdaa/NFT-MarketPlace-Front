@@ -10,6 +10,7 @@ export default {
       account: null,
       userOrders: null,
       favouriteOrders: null,
+      totalMaticNft: 0,
     }
   },
 
@@ -22,6 +23,9 @@ export default {
     },
     favouriteOrders(state) {
       return state.favouriteOrders
+    },
+    totalMaticNft(state) {
+      return state.totalMaticNft
     }
   },
 
@@ -34,6 +38,9 @@ export default {
     },
     favouriteOrders(state, orders) {
       state.favouriteOrders = orders
+    },
+    totalMaticNft(state, num) {
+      state.totalMaticNft = num
     }
   },
 
@@ -43,7 +50,6 @@ export default {
         const user = app.vuexStore.getters['auth/user']
         let response = await getAxios().get(`users/${user.id}/activeorders`)
         if (response.status === 200 && response.data.data.orders[0].seller_orders) {
-          console.log(response.data)
           let orders = [];
           response.data.data.orders[0].seller_orders.forEach(
             order => orders.push(new OrderModel(order))
@@ -58,8 +64,13 @@ export default {
       try {
         const user = app.vuexStore.getters['auth/user']
         let response = await getAxios().get(`users/${user.id}/favourites`)
-        if (response.status === 200 && response.data.data.favourites[0].favourites) {
-          commit('favouriteOrders', response.data.data.favourites[0].favourites)
+        if (response.status === 200 && response.data.data.favourites) {
+          let orders = [];
+          response.data.data.favourites.forEach(function (fav) {
+            fav.order = new OrderModel(fav.orders)
+            orders.push(fav)
+          })
+          commit('favouriteOrders', response.data.data.favourites)
         }
       } catch (error) {
         console.log(error)

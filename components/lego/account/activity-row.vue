@@ -26,10 +26,13 @@
           <a class="nft-token">golden kitty</a> to you-->
           {{activity.message}}
         </div>
-        <div class="font-caption text-gray-300">2 days ago</div>
+        <div class="font-caption text-gray-300">{{remainingTimeinWords}} ago</div>
       </div>
       <div class="d-flex ml-auto ms-r-16" v-if="true">
-        <button class="btn btn-light align-self-center">View details</button>
+        <nuxt-link
+          :to="{name: 'tokens-id', params: { id: activity.order_id } }"
+          class="btn btn-light align-self-center"
+        >View details</nuxt-link>
       </div>
       <div class="d-flex ml-auto ms-r-16" v-if="false">
         <button class="btn btn-light btn-deny align-self-center ms-r-12" @click="onDeny()">Deny</button>
@@ -37,15 +40,16 @@
       </div>
     </div>
 
-    <accept-bid :show="showAcceptBid" :close="onAcceptClose" />
+    <!-- <accept-bid :show="showAcceptBid" :close="onAcceptClose" /> -->
   </div>
 </template>
 
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import moment from "moment";
 
-import AcceptBid from "~/components/lego/modals/accept-bid";
+import AcceptBid from "~/components/lego/modals/bid-confirmation";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -55,12 +59,12 @@ const colorThief = new ColorThief();
   props: {
     activity: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
-    AcceptBid
-  }
+    AcceptBid,
+  },
 })
 export default class ActivityRow extends Vue {
   bg = "#ffffff";
@@ -77,10 +81,39 @@ export default class ActivityRow extends Vue {
       let hsl = rgbToHsl({
         r: rgbColor[0],
         g: rgbColor[1],
-        b: rgbColor[2]
+        b: rgbColor[2],
       });
       this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
     } else this.bg = "#ffffff";
+  }
+
+  get timeRemaining() {
+    const expiry = moment(this.activity.created);
+    const current = moment();
+    const diff = moment.duration(expiry.diff(current));
+
+    return {
+      days: Math.abs(diff.days()),
+      hours: Math.abs(diff.hours()),
+      mins: Math.abs(diff.minutes()),
+      secs: Math.abs(diff.seconds()),
+    };
+  }
+
+  get remainingTimeinWords() {
+    let wordings = "";
+    if (this.timeRemaining) {
+      if (this.timeRemaining.days > 0) {
+        wordings = `${this.timeRemaining.days} days`;
+      } else if (this.timeRemaining.hours > 0) {
+        wordings = `${this.timeRemaining.hours} hours`;
+      } else if (this.timeRemaining.mins > 0) {
+        wordings = `${this.timeRemaining.mins} mins`;
+      } else if (this.timeRemaining.secs > 0) {
+        wordings = `${this.timeRemaining.secs} seconds`;
+      }
+    }
+    return wordings;
   }
 
   onAccept() {

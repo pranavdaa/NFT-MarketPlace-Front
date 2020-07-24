@@ -67,8 +67,16 @@
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
           >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
-          <button class="btn btn-primary" v-if="!isOwnersToken" @click="buyOrder()">Buy Now</button>
-          <button class="btn btn-light" v-if="isOwnersToken" @click="cancelOrder()">Cancel</button>
+          <button
+            class="btn btn-primary"
+            v-if="!isOwnersToken && order.status === 0"
+            @click="buyOrder()"
+          >Buy Now</button>
+          <button
+            class="btn btn-light"
+            v-if="isOwnersToken && order.status === 0"
+            @click="onCancelOrder()"
+          >Cancel</button>
         </div>
         <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
           <h3 class="font-heading-medium font-semibold category">
@@ -156,12 +164,33 @@
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
           >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
-          <button class="btn btn-primary" v-if="!isOwnersToken" @click="buyOrder()">Buy Now</button>
-          <button class="btn btn-light" v-if="isOwnersToken" @click="cancelOrder()">Cancel</button>
+          <button
+            class="btn btn-primary"
+            v-if="!isOwnersToken && order.status === 0"
+            @click="buyOrder()"
+          >Buy Now</button>
+          <button
+            class="btn btn-light"
+            v-if="isOwnersToken && order.status === 0"
+            @click="onCancelOrder()"
+          >Cancel</button>
         </div>
       </div>
     </div>
-    <buy-token :show="showBuyToken" :order="order" :close="onBuyTokenClose" v-if="showBuyToken" />
+    <buy-token
+      :show="showBuyToken"
+      :order="order"
+      :close="onBuyTokenClose"
+      v-if="showBuyToken && order"
+    />
+    <cancel-confirm
+      :show="showCancelConfirm"
+      :order="order"
+      :isLoading="isLoading"
+      :accept="cancelOrder"
+      :close="onCancelOrderClose"
+      v-if="showCancelConfirm"
+    />
   </div>
 </template>
 
@@ -179,10 +208,30 @@ import TokenShortInfo from "~/components/lego/token/token-short-info";
 import WishlistButton from "~/components/lego/wishlist-button";
 import BidderRow from "~/components/lego/bidder-row";
 import BuyToken from "~/components/lego/modals/buy-token";
+import CancelConfirm from "~/components/lego/modals/cancel-confirm";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
 const colorThief = new ColorThief();
+
+// 0X
+let {
+  ContractWrappers,
+  ERC20TokenContract,
+  OrderStatus,
+} = require("@0x/contract-wrappers");
+let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
+let { BigNumber } = require("@0x/utils");
+let { Web3Wrapper } = require("@0x/web3-wrapper");
+import {
+  getRandomFutureDateInSeconds,
+  calculateProtocolFee,
+} from "~/plugins/helpers/0x-utils";
+
+import { providerEngine } from "~/plugins/helpers/provider-engine";
+
+const ZERO = BigNumber(0);
+const TEN = BigNumber(10);
 
 @Component({
   props: {
@@ -191,7 +240,13 @@ const colorThief = new ColorThief();
       required: false,
     },
   },
-  components: { TokenShortInfo, WishlistButton, BidderRow, BuyToken },
+  components: {
+    TokenShortInfo,
+    WishlistButton,
+    BidderRow,
+    BuyToken,
+    CancelConfirm,
+  },
   computed: {
     ...mapGetters("category", ["categories"]),
     ...mapGetters("token", ["erc20Tokens"]),
@@ -207,12 +262,14 @@ export default class TokenDetail extends Vue {
   showCategoryInfo = true;
   showProperties = true;
   showBuyToken = false;
+  showCancelConfirm = false;
 
   limit = app.uiconfig.defaultPageSize;
   bidsFullList = [];
   hasNextPage = true;
   isLoadingBids = false;
   isLoadingDetails = false;
+  isLoading = false;
 
   order = {};
 
@@ -261,8 +318,20 @@ export default class TokenDetail extends Vue {
     return false;
   }
 
+  get isFavoriteId() {
+    if (this.user && this.favouriteOrders) {
+      const order = this.favouriteOrders.filter(
+        (order) => order.order_id === this.order.id
+      );
+      return order[0].id;
+    }
+    return false;
+  }
+
   get isOwnersToken() {
     if (this.user && this.order.type !== app.orderTypes.FIXED) {
+      return this.user.id === this.order.taker_address;
+    } else if (this.user && this.order.type === app.orderTypes.FIXED) {
       return this.user.id === this.order.maker_address;
     }
     return false;
@@ -297,46 +366,116 @@ export default class TokenDetail extends Vue {
     this.showBuyToken = false;
   }
 
+  onCancelOrder() {
+    this.showCancelConfirm = true;
+  }
+  onCancelOrderClose() {
+    this.showCancelConfirm = false;
+  }
+
   async cancelOrder() {
-    console.log("cancelOrder");
+    this.isLoading = true;
     try {
       if (this.order.type === app.orderTypes.FIXED) {
-        // contractWrappers, orderTemplate
-        // const txHashCancel = await contractWrappers.exchange
-        //   .cancelOrder(orderTemplate)
-        //   .awaitTransactionSuccessAsync({ from: maker, gasPrice: 0, gas: 8000000 });
-        // console.log("Order canceled", txHashCancel);
-      }
-      let data = {
-        tx_hash: "",
-      };
-      let response = await getAxios().patch(
-        `order/${this.order.id}/cancel`,
-        data
-      );
-      if (response.status === 200) {
-        app.addToast("Order cancelled", "");
+        let signedOrder = JSON.parse(this.order.signature);
+        const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
+          new BigNumber(this.order.price),
+          this.erc20Token.decimal
+        );
+        signedOrder["makerAssetAmount"] = BigNumber(
+          signedOrder.makerAssetAmount
+        );
+        signedOrder["takerAssetAmount"] = takerAssetAmount;
+        signedOrder["expirationTimeSeconds"] = BigNumber(
+          signedOrder.expirationTimeSeconds
+        );
+        signedOrder["makerFee"] = BigNumber(signedOrder.makerFee);
+        signedOrder["salt"] = BigNumber(signedOrder.salt);
+        signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
+
+        const orderTemplate = {
+          chainId: signedOrder.chainId,
+          exchangeAddress: signedOrder.exchangeAddress,
+          makerAddress: signedOrder.makerAddress,
+          takerAddress: signedOrder.takerAddress,
+          senderAddress: signedOrder.senderAddress,
+          feeRecipientAddress: signedOrder.feeRecipientAddress,
+          expirationTimeSeconds: signedOrder.expirationTimeSeconds,
+          salt: signedOrder.salt,
+          makerAssetAmount: signedOrder.makerAssetAmount,
+          takerAssetAmount: signedOrder.takerAssetAmount,
+          makerAssetData: signedOrder.makerAssetData,
+          takerAssetData: signedOrder.takerAssetData,
+          makerFeeAssetData: signedOrder.makerFeeAssetData,
+          takerFeeAssetData: signedOrder.takerFeeAssetData,
+          makerFee: signedOrder.makerFee,
+          takerFee: signedOrder.takerFee,
+        };
+        console.log(orderTemplate);
+
+        const txHash = await contractWrappers.exchange
+          .cancelOrder(orderTemplate)
+          .awaitTransactionSuccessAsync({
+            from: orderTemplate.makerAddress,
+            gasPrice: 0,
+            gas: 8000000,
+          });
+
+        if (txHash) {
+          console.log("Order canceled", txHash);
+          await this.handleCancelOrder(txHash);
+        }
+      } else {
+        await this.handleCancelOrder();
       }
     } catch (error) {
       console.log(error);
     }
+    this.isLoading = false;
+    this.onCancelOrderClose();
   }
+  async handleCancelOrder(txHash = null) {
+    let data = {};
+    if (txHash) {
+      data = {
+        tx_hash: txHash.transaction,
+      };
+    }
+    try {
+      let response = await getAxios().patch(
+        `orders/${this.order.id}/cancel`,
+        data
+      );
+      if (response.status === 200) {
+        app.addToast("Order canceled", "You canceled the order successfully", {
+          type: "success",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      app.addToast("Something went wrong", error.message.substring(0, 60), {
+        type: "failure",
+      });
+    }
+  }
+
   async addToWishlist() {
     // Add current order to users wishlist if not wishlisted or if it is then remove it
     try {
       if (this.isFavorite) {
-        const response = await getAxios().delete("users/favourites", {
-          orderId: this.order.id,
-        });
+        const response = await getAxios().delete(
+          `users/favourites/${this.isFavoriteId}`
+        );
       } else {
         const response = await getAxios().post("users/favourites", {
           orderId: this.order.id,
         });
       }
+      this.$store.dispatch("account/fetchFavoritesOrders");
     } catch (error) {
       if (error.response.status === 401) {
         app.addToast(
-          "Need Login",
+          "Signin to add to favourites",
           "You need to login to add token to wishlist",
           {
             type: "info",

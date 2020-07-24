@@ -7,20 +7,23 @@
         <categories-selector class="ms-r-16 category-wrapper" />
       </div>
       <div class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end">
-        <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" />
-        <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="(val) => val" />
+        <!-- <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" /> -->
+        <!-- <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="(val) => val" /> -->
       </div>
     </div>
-    <div class="row ps-x-16 d-flex justify-content-center text-center" v-if="true">
+    <div
+      class="row ps-x-16 d-flex justify-content-center text-center"
+      v-if="favouriteOrders && favouriteOrders.length"
+    >
       <sell-card
-        v-for="order in orders"
-        :key="order.id"
-        :order="order"
-        @click="orderDetails(order.id)"
+        v-for="fav in favouriteOrders"
+        :key="fav.id"
+        :order="fav.order"
+        @click="orderDetails(fav.order.id)"
       />
     </div>
 
-    <no-item :message="exmptyMsg" v-if="!orders" />
+    <no-item :message="exmptyMsg" v-if="!favouriteOrders" />
   </div>
 </template>
 
@@ -51,48 +54,6 @@ import NoItem from "~/components/lego/no-item";
   mixins: [],
 })
 export default class FavoriteTab extends Vue {
-  orders = [
-    {
-      id: 1,
-      price: "0.113",
-      categories_id: 1,
-      erc20tokens_id: 1,
-      token: {
-        name: "Kitty Kitten cat",
-        img_url: "/_nuxt/static/img/dummy-kitty.png",
-        owner: "0x840d3719dea3615bcD137a88c2215B3dd4B6330e",
-      },
-    },
-  ];
-
-  sortItems = [
-    {
-      id: 0,
-      name: "Popular",
-      filter: "-views",
-    },
-    {
-      id: 1,
-      name: "Newest",
-      filter: "-created",
-    },
-    {
-      id: 2,
-      name: "Oldest",
-      filter: "+created",
-    },
-    {
-      id: 3,
-      name: "Price low to high",
-      filter: "+price",
-    },
-    {
-      id: 4,
-      name: "Price high to low",
-      filter: "-price",
-    },
-  ];
-
   exmptyMsg = {
     title: "Oops! No favorite item found.",
     description: "We didn’t found any item in your favorite list.",
