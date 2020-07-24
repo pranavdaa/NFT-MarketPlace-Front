@@ -308,14 +308,14 @@ export default class SellToken extends Vue {
         : 0;
       const orderType = this.orderType;
       const nftContract = this.nftToken.category.address;
-      const nftTokenId = this.nftToken.token_id;
+      // const nftTokenId = this.nftToken.token_id;
       const erc20Address = this.selectedERC20Token.address;
       const makerAddress = this.account.address;
       const makerAssetAmount = new BigNumber(1);
       const takerAssetAmount = this.price;
       const chainId = this.networks.matic.chainId;
       const minPrice = this.minPrice;
-      const decimalnftTokenId = Web3.utils.hexToNumberString(nftTokenId);
+      const decimalnftTokenId = this.nftToken.token_id;
       const contractWrappers = new ContractWrappers(providerEngine(), {
         chainId: chainId,
       });

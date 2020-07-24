@@ -109,7 +109,7 @@
         </div>
         <div
           class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
-          v-if="isOwnersToken && order.type !== app.orderTypes.FIXED"
+          v-if="isOwnersToken && order.type !== app.orderTypes.FIXED && bidsFullList && bidsFullList.length"
         >
           <h3 class="font-heading-medium font-semibold category">Bidding history</h3>
           <p class="font-body-medium ps-t-20">
@@ -262,10 +262,8 @@ export default class TokenDetail extends Vue {
   }
 
   get isOwnersToken() {
-    if (this.user && this.order.type === app.orderTypes.FIXED) {
+    if (this.user && this.order.type !== app.orderTypes.FIXED) {
       return this.user.id === this.order.maker_address;
-    } else {
-      return this.user.id === this.order.taker_address;
     }
     return false;
   }

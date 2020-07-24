@@ -5,7 +5,7 @@ import Web3 from "web3"
 export default class NFTToken extends Model {
 
   get name() {
-    return `Token ${Web3.utils.hexToNumberString(this.token_id)}`
+    return `Token ${this.token_id}`
   }
 
   get img_url() {

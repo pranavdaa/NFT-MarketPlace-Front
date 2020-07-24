@@ -50,10 +50,6 @@ const app = {
 
     // Initialize tokens
     this.initTokens(store)
-
-    // user profile data
-    this.initUserProfile(store)
-
   },
 
 
@@ -165,6 +161,9 @@ const app = {
         address: store.getters["auth/address"]
       })
     )
+
+    // user profile data
+    this.initUserProfile(store)
   },
 
   async initCategories(store) {
@@ -173,14 +172,13 @@ const app = {
 
   async initTokens(store) {
     await store.dispatch("token/fetchERC20Tokens")
-
-    // Load account balance
-    await store.dispatch("token/fetchBalances")
   },
 
   async initUserProfile(store) {
     const user = store.getters['auth/user']
     if (user) {
+      // Load account balance
+      store.dispatch("token/fetchBalances")
       store.dispatch('account/fetchActiveOrders')
       store.dispatch('account/fetchFavoritesOrders')
     }

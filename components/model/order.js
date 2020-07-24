@@ -17,7 +17,7 @@ export default class Order extends Model {
 
   get token() {
     return {
-      name: `Token ${Web3.utils.hexToNumberString(this.tokens_id)}`,
+      name: `Token ${this.tokens_id}`,
       img_url: "/_nuxt/static/img/dummy-kitty.png",
       owner: this.makerAddress || "",
       description: ""
