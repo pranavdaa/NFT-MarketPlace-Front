@@ -16,11 +16,23 @@ export default class Order extends Model {
   }
 
   get token() {
+    let img = "/_nuxt/static/img/dummy-kitty.png"
+    let name = `Token ${this.tokens_id}`
+    let description = ''
+    if (this.image) {
+      img = this.image
+    }
+    if (this.name) {
+      name = this.name
+    }
+    if (this.description) {
+      description = this.description
+    }
     return {
-      name: `Token ${this.tokens_id}`,
-      img_url: "/_nuxt/static/img/dummy-kitty.png",
+      name: name,
+      img_url: img,
       owner: this.makerAddress || "",
-      description: ""
+      description: description
     }
   }
 

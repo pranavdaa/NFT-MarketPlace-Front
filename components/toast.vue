@@ -28,7 +28,7 @@
         <div class="mr-3">
           <svg-sprite-icon name="dummy" class="tt-icon align-self-center" :class="item.type"></svg-sprite-icon>
         </div>
-        <div class="tt-body-container">
+        <div class="tt-body-container w-100">
           <div class="font-semibold mb-2">{{ item.title }}</div>
           <div class="mb-4">{{ item.details }}</div>
           <div class="d-flex justify-content-end">
@@ -52,7 +52,7 @@ import app from "~/plugins/app";
 
 @Component({
   props: {},
-  components: {}
+  components: {},
 })
 export default class Toast extends Vue {
   toasts = null;

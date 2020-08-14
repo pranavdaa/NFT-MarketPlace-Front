@@ -611,6 +611,8 @@ export default class BuyToken extends Vue {
             type: "success",
           }
         );
+        this.$router.push({ name: "account" });
+        this.close();
       }
     } catch (error) {
       console.log(error);

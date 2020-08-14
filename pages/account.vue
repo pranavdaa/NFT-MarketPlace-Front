@@ -44,7 +44,11 @@ import ActivityTab from "~/components/lego/account/activity-tab";
   middleware: ["auth"],
   mixins: [],
   computed: {
-    ...mapGetters("account", ["favouriteOrders", "totalMaticNft"]),
+    ...mapGetters("account", [
+      "favouriteOrders",
+      "totalMaticNft",
+      "totalMainNft",
+    ]),
   },
 })
 export default class Index extends Vue {
@@ -61,7 +65,7 @@ export default class Index extends Vue {
   get tabs() {
     return [
       { id: 0, title: "Items on Matic", count: this.totalMaticNft },
-      { id: 1, title: "Items on Ethereum", count: 0 },
+      { id: 1, title: "Items on Ethereum", count: this.totalMainNft },
       { id: 2, title: "Favorites", count: this.favCount },
       { id: 3, title: "Activities" },
     ];

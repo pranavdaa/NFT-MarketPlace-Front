@@ -149,16 +149,18 @@ export default class PlaceBid extends Vue {
   mounted() {}
 
   onImageLoad() {
-    const img = this.$el.querySelector(".asset-img");
-    let rgbColor = colorThief.getColor(img);
-    if (rgbColor) {
-      let hsl = rgbToHsl({
-        r: rgbColor[0],
-        g: rgbColor[1],
-        b: rgbColor[2],
-      });
-      this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-    } else this.bg = "#ffffff";
+    try {
+      const img = this.$el.querySelector(".asset-img");
+      let rgbColor = colorThief.getColor(img);
+      if (rgbColor) {
+        let hsl = rgbToHsl({
+          r: rgbColor[0],
+          g: rgbColor[1],
+          b: rgbColor[2],
+        });
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+      } else this.bg = "#ffffff";
+    } catch (error) {}
   }
 
   changeAmount(value) {
@@ -182,7 +184,8 @@ export default class PlaceBid extends Vue {
   // get
   get validation() {
     return {
-      minAmount: this.inputAmount.gte(this.order.getMinPriceInBN()),
+      minAmount:
+        this.inputAmount && this.inputAmount.gte(this.order.getMinPriceInBN()),
       inputAmount: !!this.inputAmount && this.inputAmount.gt(ZERO),
       hasBalance: this.defaultSelectedToken.fullBalance.gte(
         this.inputAmount || ZERO

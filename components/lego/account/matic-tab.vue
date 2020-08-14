@@ -14,7 +14,7 @@
     </div>
     <div
       class="row ps-x-16 d-flex justify-content-center text-center ps-b-60"
-      v-if="displayedTokens"
+      v-if="displayedTokens && displayedTokens.length > 0"
     >
       <sell-card
         v-for="order in displayedTokens"
@@ -75,6 +75,7 @@ import SellToken from "~/components/lego/modals/sell-token";
     ...mapGetters("category", ["categories"]),
     ...mapGetters("account", ["account", "userOrders"]),
     ...mapGetters("auth", ["user"]),
+    ...mapGetters("network", ["networks"]),
   },
   middleware: [],
   mixins: [],
@@ -213,37 +214,47 @@ export default class MaticTab extends Vue {
       return;
     }
     this.isLoadingTokens = true;
-    let response;
-    let offset = this.tokensFullList.length;
+    try {
+      let response;
+      let offset = this.tokensFullList.length;
 
-    if (options && options.filtering) {
-      // Start from page one with new filter
-      offset = 0;
-    }
-
-    // Fetch tokens with pagination and filters
-    response = await getAxios().get(`tokens/matic?userId=${this.user.id}`);
-
-    if (response.status === 200 && response.data.data) {
-      // Update total token number
-      this.$store.commit("account/totalMaticNft", response.data.count);
-
-      let tokens = [];
-      let i = 0;
-      response.data.data.forEach((token) => {
-        i++;
-        if (token.contract == "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6")
-          return;
-        token.id = i;
-        tokens.push(new NFTTokenModel(token));
-      });
       if (options && options.filtering) {
-        this.tokensFullList = tokens;
-        return;
+        // Start from page one with new filter
+        offset = 0;
       }
-      this.tokensFullList = [...this.tokensFullList, ...tokens];
+
+      // Fetch tokens with pagination and filters
+      response = await getAxios().get(
+        `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}`
+      );
+
+      if (response.status === 200 && response.data.data) {
+        // Update total token number
+        this.$store.commit("account/totalMaticNft", response.data.count);
+
+        let tokens = [];
+        let i = 0;
+        response.data.data.forEach((token) => {
+          i++;
+          if (token.contract == "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6")
+            return;
+          token.id = i;
+          token.chainId = this.networks.matic.chainId;
+          tokens.push(new NFTTokenModel(token));
+        });
+        if (options && options.filtering) {
+          this.tokensFullList = tokens;
+          return;
+        }
+        this.tokensFullList = [...this.tokensFullList, ...tokens];
+      }
+    } catch (error) {
+      console.log(error);
     }
     this.isLoadingTokens = false;
+  }
+  get chainId() {
+    return this.networks.matic.chainId;
   }
 }
 </script>

@@ -279,16 +279,18 @@ export default class TokenDetail extends Vue {
   }
 
   onImageLoad() {
-    const img = this.$el.querySelector(".asset-img");
-    let rgbColor = colorThief.getColor(img);
-    if (rgbColor) {
-      let hsl = rgbToHsl({
-        r: rgbColor[0],
-        g: rgbColor[1],
-        b: rgbColor[2],
-      });
-      this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-    } else this.bg = "#ffffff";
+    try {
+      const img = this.$el.querySelector(".asset-img");
+      let rgbColor = colorThief.getColor(img);
+      if (rgbColor) {
+        let hsl = rgbToHsl({
+          r: rgbColor[0],
+          g: rgbColor[1],
+          b: rgbColor[2],
+        });
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+      } else this.bg = "#ffffff";
+    } catch (error) {}
   }
 
   // Get
@@ -360,7 +362,16 @@ export default class TokenDetail extends Vue {
 
   // actions
   buyOrder() {
-    this.showBuyToken = true;
+    if (this.user) {
+      this.showBuyToken = true;
+    } else {
+      app.addToast(
+        "Login to buy",
+        "Please login to your account to buy this order",
+        { type: "info" }
+      );
+      // this.$router.push({ name: "login" });
+    }
   }
   onBuyTokenClose() {
     this.showBuyToken = false;
@@ -447,6 +458,7 @@ export default class TokenDetail extends Vue {
         data
       );
       if (response.status === 200) {
+        this.$router.push({ name: "account" });
         app.addToast("Order canceled", "You canceled the order successfully", {
           type: "success",
         });
@@ -527,7 +539,7 @@ export default class TokenDetail extends Vue {
   min-height: 500px;
   border-radius: $default-card-box-border-radius;
   .asset-img {
-    min-width: 34%;
+    max-width: 90%;
     max-height: 380px;
   }
 }

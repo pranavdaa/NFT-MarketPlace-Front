@@ -65,50 +65,50 @@ import NoItem from "~/components/lego/no-item";
     CategoriesSelector,
     SearchBox,
     SortDropdown,
-    NoItem
+    NoItem,
   },
   computed: {
     ...mapGetters("page", ["selectedFilters"]),
     ...mapGetters("category", ["categories"]),
-    ...mapGetters("token", ["erc20Tokens"])
+    ...mapGetters("token", ["erc20Tokens"]),
   },
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class Index extends Vue {
   limit = app.uiconfig.defaultPageSize;
   exmptyMsg = {
     title: "Oops! No item found.",
     description: "We didn’t found any item that is on sale.",
-    img: true
+    img: true,
   };
 
   sortItems = [
     {
       id: 0,
       name: "Popular",
-      filter: "-views"
+      filter: "-views",
     },
     {
       id: 1,
       name: "Newest",
-      filter: "-created"
+      filter: "-created",
     },
     {
       id: 2,
       name: "Oldest",
-      filter: "+created"
+      filter: "+created",
     },
     {
       id: 3,
       name: "Price low to high",
-      filter: "+price"
+      filter: "+price",
     },
     {
       id: 4,
       name: "Price high to low",
-      filter: "-price"
-    }
+      filter: "-price",
+    },
   ];
 
   orderFullList = [];
@@ -170,37 +170,41 @@ export default class Index extends Vue {
       return;
     }
     this.isLoadingTokens = true;
-    let response;
-    let offset = this.orderFullList.length;
+    try {
+      let response;
+      let offset = this.orderFullList.length;
 
-    if (options && options.filtering) {
-      // Start from page one with new filter
-      offset = 0;
-    }
-
-    // Fetch tokens with pagination and filters
-    if (this.searchInput != null && this.searchInput.length > 0) {
-      // with search
-      response = await getAxios().get(
-        `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
-      );
-    } else {
-      // without search
-      response = await getAxios().get(
-        `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
-      );
-    }
-
-    if (response.status === 200 && response.data.data.order) {
-      this.hasNextPage = response.data.data.has_next_page;
-      let data = response.data.data.order.map(function(order) {
-        return new OrderModel(order);
-      });
       if (options && options.filtering) {
-        this.orderFullList = data;
-      } else {
-        this.orderFullList = [...this.orderFullList, ...data];
+        // Start from page one with new filter
+        offset = 0;
       }
+
+      // Fetch tokens with pagination and filters
+      if (this.searchInput != null && this.searchInput.length > 0) {
+        // with search
+        response = await getAxios().get(
+          `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
+        );
+      } else {
+        // without search
+        response = await getAxios().get(
+          `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
+        );
+      }
+
+      if (response.status === 200 && response.data.data.order) {
+        this.hasNextPage = response.data.data.has_next_page;
+        let data = response.data.data.order.map(function (order) {
+          return new OrderModel(order);
+        });
+        if (options && options.filtering) {
+          this.orderFullList = data;
+        } else {
+          this.orderFullList = [...this.orderFullList, ...data];
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
     this.isLoadingTokens = false;
   }

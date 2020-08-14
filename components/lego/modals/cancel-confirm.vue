@@ -107,16 +107,18 @@ export default class CancelConfirm extends Vue {
   }
 
   onImageLoad() {
-    const img = this.$el.querySelector(".asset-img");
-    let rgbColor = colorThief.getColor(img);
-    if (rgbColor) {
-      let hsl = rgbToHsl({
-        r: rgbColor[0],
-        g: rgbColor[1],
-        b: rgbColor[2],
-      });
-      this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-    } else this.bg = "#ffffff";
+    try {
+      const img = this.$el.querySelector(".asset-img");
+      let rgbColor = colorThief.getColor(img);
+      if (rgbColor) {
+        let hsl = rgbToHsl({
+          r: rgbColor[0],
+          g: rgbColor[1],
+          b: rgbColor[2],
+        });
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+      } else this.bg = "#ffffff";
+    } catch (error) {}
   }
 }
 </script>

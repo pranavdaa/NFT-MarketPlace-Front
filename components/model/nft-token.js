@@ -9,14 +9,16 @@ export default class NFTToken extends Model {
   }
 
   get img_url() {
+    if (this.image) {
+      return this.image
+    }
     return "/_nuxt/static/img/dummy-kitty.png";
   }
 
   get category() {
     const category = app.vuexStore.getters['category/categories'].find(
-      c => c.address.toLowerCase() == this.contract.toLowerCase()
+      c => c.getAddress(this.chainId).toLowerCase() == this.contract.toLowerCase()
     )
-
     return category
   }
 

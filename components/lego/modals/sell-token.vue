@@ -429,9 +429,13 @@ export default class SellToken extends Vue {
         });
       if (makerERC721ApprovalTxHash) {
         console.log("Approve Hash", makerERC721ApprovalTxHash);
-        app.addToast("Approved", "You successfully approved", {
-          type: "success",
-        });
+        app.addToast(
+          "Approved successfully",
+          "You successfully approved the token to put on sale",
+          {
+            type: "success",
+          }
+        );
         return true;
       }
       app.addToast(

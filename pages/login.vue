@@ -92,6 +92,10 @@
             </div>
           </div>
         </div>
+        <div
+          class="metamask-network-error m-2"
+          v-if="metamaskNetworkError"
+        >Select {{selectedNetwork.name}} network in metamask</div>
       </div>
     </div>
     <connecting-metamask :loaded="metamaskLoading" />
@@ -112,7 +116,7 @@ import {
   getDefaultAccount,
   personalSign,
   signTypedData,
-  isMetamaskLocked
+  isMetamaskLocked,
 } from "~/plugins/helpers/metamask-utils";
 import app from "~/plugins/app";
 import { config as configStore } from "~/plugins/localstore";
@@ -127,10 +131,12 @@ import ConnectingMetamask from "~/components/lego/connecting-metamask";
   layout: "blank",
   components: {
     // WalletConnectModal,
-    ConnectingMetamask
+    ConnectingMetamask,
   },
   mixins: [NextNavigation],
-  computed: {}
+  computed: {
+    ...mapGetters("network", ["networks", "selectedNetwork"]),
+  },
 })
 export default class Login extends Vue {
   loading = false;
@@ -139,6 +145,7 @@ export default class Login extends Vue {
   error = false;
   sessionData = null;
   sessionCreated = false;
+  metamaskNetworkError = false;
 
   // query params
   queryParams = {};
@@ -158,21 +165,21 @@ export default class Login extends Vue {
           { name: "host", type: "string" },
           { name: "version", type: "string" },
           { name: "chainId", type: "uint256" },
-          { name: "verifyingContract", type: "address" }
+          { name: "verifyingContract", type: "address" },
         ],
-        Test: [{ name: "owner", type: "string" }]
+        Test: [{ name: "owner", type: "string" }],
       },
       domain: {
         name: "Ether Mail",
-        host: "https://rpc-mumbai.matic.today",
+        host: this.networks.matic.rpc,
         version: "1",
         verifyingContract: "0x0",
-        chainId: 80001
+        chainId: this.networks.matic.chainId,
       },
       primaryType: "Test",
       message: {
-        owner: address
-      }
+        owner: address,
+      },
     };
   }
 
@@ -195,6 +202,16 @@ export default class Login extends Vue {
       this.metamaskLoading = false;
       return;
     }
+    if (
+      window.ethereum.chainId !=
+      "0x" + this.networks.matic.chainId.toString(16)
+    ) {
+      this.metamaskNetworkError = true;
+      this.metamaskLoading = false;
+      return;
+    } else {
+      this.metamaskNetworkError = false;
+    }
 
     const from = await getDefaultAccount();
 
@@ -210,7 +227,7 @@ export default class Login extends Vue {
 
         if (result.result) {
           const options = {
-            strategy: app.strategies.METAMASK
+            strategy: app.strategies.METAMASK,
           };
 
           // set login strategy
@@ -239,7 +256,7 @@ export default class Login extends Vue {
       // login
       await this.$store.dispatch("auth/doLogin", {
         address,
-        signature
+        signature,
       });
 
       this.moveToNext();
@@ -289,5 +306,8 @@ export default class Login extends Vue {
   padding: 32px 10px;
   color: dark-color("100");
   @include font-setting("body-medium", "medium");
+}
+.metamask-network-error {
+  color: red-color("600");
 }
 </style>

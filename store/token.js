@@ -1,6 +1,10 @@
 /* eslint no-param-reassign: 0 */
 import getAxios from "~/plugins/axios"
 import TokenModel from "~/components/model/token"
+import BigNumber from "~/plugins/bignumber"
+
+const ZERO = new BigNumber(0)
+const TEN = new BigNumber(10)
 
 export default {
   namespaced: true,
@@ -30,7 +34,19 @@ export default {
         return state.erc20Tokens[0]
       }
       return state.selectedERC20Token
-    }
+    },
+    totalCurrencyBalance(state, getters, rootState, rootGetters) {
+      const network = rootGetters['network/selectedNetwork']
+      const tokens = state.erc20Tokens
+      if (tokens.length > 0) {
+        return tokens.reduce((a, t) => {
+          const v = t.getBalance(network.chainId).times(new BigNumber(t.usd || '0.00'))
+          return a.plus(v)
+        }, ZERO)
+      }
+
+      return ZERO
+    },
   },
 
   actions: {

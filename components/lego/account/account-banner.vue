@@ -17,11 +17,11 @@
     >
       <div class="d-flex flex-column align-self-center ms-r-32 justify-content-start">
         <div class="name ps-b-4 font-heading-small font-semibold">Total NFT</div>
-        <div class="amount font-body-medium">34</div>
+        <div class="amount font-body-medium">{{totalMaticNft+totalMainNft}}</div>
       </div>
       <div class="d-flex flex-column align-self-center ms-r-32 justify-content-start">
         <div class="name ps-b-4 font-heading-small font-semibold">Wallet Balance</div>
-        <div class="amount font-body-medium">$544</div>
+        <div class="amount font-body-medium">${{formattedFullUSDBalance}}</div>
       </div>
       <div class="align-self-center">
         <a
@@ -42,11 +42,20 @@ import { mapGetters } from "vuex";
 @Component({
   props: {},
   computed: {
-    ...mapGetters("account", ["account"])
-  }
+    ...mapGetters("account", ["account", "totalMaticNft", "totalMainNft"]),
+    ...mapGetters("token", ["totalCurrencyBalance"]),
+    ...mapGetters("network", ["networkMeta"]),
+  },
 })
 export default class AccountBanner extends Vue {
   mounted() {}
+
+  get formattedFullUSDBalance() {
+    if (this.totalCurrencyBalance) {
+      return parseFloat(this.totalCurrencyBalance.toFixed(3));
+    }
+    return "00.00";
+  }
 }
 </script>
 

@@ -89,10 +89,7 @@ import { mapGetters } from "vuex";
   },
 })
 export default class TokenList extends Vue {
-  mounted() {
-    console.log(this.erc20Tokens);
-    console.log(this.selectedERC20Token);
-  }
+  mounted() {}
 
   tokenImage(token) {
     return require("~/static/tokens/" + token.toUpperCase() + ".svg");

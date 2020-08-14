@@ -14,12 +14,7 @@ export default class Category extends Model {
     let addresses = {}
     if (this.categoriesaddresses) {
       this.categoriesaddresses.forEach(address => {
-        if (address.chain_id == "8001") {
-          addresses["80001"] = address.address
-        } else {
-          addresses[address.chain_id] = address.address
-        }
-
+        addresses[address.chain_id] = address.address
       })
     }
     return addresses

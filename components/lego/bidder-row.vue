@@ -233,7 +233,7 @@ export default class BidderRow extends Vue {
             }
           );
           this.isLoading = false;
-          this.close();
+          this.onAcceptClose();
           return;
         }
 
@@ -241,7 +241,7 @@ export default class BidderRow extends Vue {
         const isApproved = await this.approve0x(
           erc721TokenCont,
           contractWrappers,
-          makerAddress
+          takerAddress
         );
         if (!isApproved) {
           return;
@@ -270,8 +270,6 @@ export default class BidderRow extends Vue {
         ) {
           console.log("Fillable");
           let txHash;
-          // Tobe removed
-          return;
           txHash = await contractWrappers.exchange
             .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
             .awaitTransactionSuccessAsync({
@@ -282,10 +280,11 @@ export default class BidderRow extends Vue {
             });
           if (txHash) {
             console.log("transaction", txHash);
-            this.handleBidAccept(txhash);
+            this.handleBidAccept(txHash);
           }
         }
       } catch (error) {
+        throw error;
         console.error(error);
         app.addToast("Something went wrong", error.message.substring(0, 60), {
           type: "failure",
@@ -297,59 +296,77 @@ export default class BidderRow extends Vue {
   }
 
   async handleBidAccept(txHash) {
-    const data = {
-      maker_amount: this.bid.price,
-      tx_hash: txHash.transactionHash,
-    };
-    let response = await getAxios().patch(
-      `orders/${this.bid.id}/execute`,
-      data
-    );
-    if (response.status === 200) {
-      this.refreshBids();
-      app.addToast(
-        "Accepted successfully",
-        "You accepted the bid for your order",
-        {
-          type: "success",
-        }
+    try {
+      const data = {
+        maker_amount: this.bid.price,
+        tx_hash: txHash.transactionHash,
+      };
+      let response = await getAxios().patch(
+        `orders/${this.bid.id}/execute`,
+        data
       );
-    }
+      if (response.status === 200) {
+        this.refreshBids();
+        app.addToast(
+          "Accepted successfully",
+          "You accepted the bid for your order",
+          {
+            type: "success",
+          }
+        );
+        this.$router.push({ name: "account" });
+      }
+    } catch (error) {}
   }
 
   async approve0x(erc721TokenCont, contractWrappers, makerAddress) {
-    // Check if token is approved to 0x
-    const isApprovedForAll = await erc721TokenCont
-      .isApprovedForAll(
-        makerAddress,
-        contractWrappers.contractAddresses.erc721Proxy
-      )
-      .callAsync();
-
-    if (!isApprovedForAll) {
-      const makerERC721ApprovalTxHash = await erc721TokenCont
-        .setApprovalForAll(contractWrappers.contractAddresses.erc721Proxy, true)
-        .sendTransactionAsync({
-          from: makerAddress,
-          gas: 8000000,
-          gasPrice: 1000000000,
+    try {
+      // Check if token is approved to 0x
+      const isApprovedForAll = await erc721TokenCont
+        .isApprovedForAll(
+          makerAddress,
+          contractWrappers.contractAddresses.erc721Proxy
+        )
+        .callAsync();
+      console.log("Approving 1", isApprovedForAll);
+      if (!isApprovedForAll) {
+        console.log("Approving 2", {
+          isApprovedForAll,
+          erc721TokenCont: erc721TokenCont,
+          erc721Proxy: contractWrappers.contractAddresses.erc721Proxy,
+          makerAddress: makerAddress,
         });
-      if (makerERC721ApprovalTxHash) {
-        console.log("Approve Hash", makerERC721ApprovalTxHash);
-        app.addToast("Approved", "You successfully approved", {
-          type: "success",
-        });
-        return true;
-      }
-      app.addToast(
-        "Failed to approve",
-        "You need to approve the transaction to sale the NFT",
-        {
-          type: "failure",
+        const makerERC721ApprovalTxHash = await erc721TokenCont
+          .setApprovalForAll(
+            contractWrappers.contractAddresses.erc721Proxy,
+            true
+          )
+          .sendTransactionAsync({
+            from: makerAddress,
+            gas: 8000000,
+            gasPrice: 1000000000,
+          });
+        console.log("Approving 2");
+        if (makerERC721ApprovalTxHash) {
+          console.log("Approve Hash", makerERC721ApprovalTxHash);
+          app.addToast("Approved", "You successfully approved", {
+            type: "success",
+          });
+          return true;
         }
-      );
+        app.addToast(
+          "Failed to approve",
+          "You need to approve the transaction to sale the NFT",
+          {
+            type: "failure",
+          }
+        );
+      }
+      return true;
+    } catch (error) {
+      throw error;
+      return false;
     }
-    return true;
   }
 
   async denyBid() {

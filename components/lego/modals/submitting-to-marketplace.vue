@@ -67,16 +67,16 @@ const colorThief = new ColorThief();
     show: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     close: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {},
   methods: {},
-  mixins: []
+  mixins: [],
 })
 export default class SubmittingToMarketplace extends Vue {
   submitted = false;
@@ -84,16 +84,18 @@ export default class SubmittingToMarketplace extends Vue {
   mounted() {}
 
   onImageLoad() {
-    const img = this.$el.querySelector(".asset-img");
-    let rgbColor = colorThief.getColor(img);
-    if (rgbColor) {
-      let hsl = rgbToHsl({
-        r: rgbColor[0],
-        g: rgbColor[1],
-        b: rgbColor[2]
-      });
-      this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-    } else this.bg = "#ffffff";
+    try {
+      const img = this.$el.querySelector(".asset-img");
+      let rgbColor = colorThief.getColor(img);
+      if (rgbColor) {
+        let hsl = rgbToHsl({
+          r: rgbColor[0],
+          g: rgbColor[1],
+          b: rgbColor[2],
+        });
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+      } else this.bg = "#ffffff";
+    } catch (error) {}
   }
 }
 </script>
