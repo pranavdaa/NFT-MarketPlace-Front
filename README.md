@@ -8,7 +8,7 @@
 # install dependencies
 $ npm install
 
-A small tweak is needed to be done after you finish installing the dependencies. Instructions can be found here. 
+A small tweak is needed to be done after you finish installing the dependencies. 
 https://gist.github.com/rahuldamodar94/eee63b75ae24f63297667fd7d88eb5f5
 
 # serve with hot reload at localhost:3000
