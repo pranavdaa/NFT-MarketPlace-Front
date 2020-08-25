@@ -1,6 +1,6 @@
 /* eslint no-param-reassign: 0 */
 import getAxios from "~/plugins/axios"
-import CategoryModel from "~/components/model/Category"
+import CategoryModel from "~/components/model/category"
 
 const uiconfig = JSON.parse(process.env.uiconfig)
 
