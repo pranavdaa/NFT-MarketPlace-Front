@@ -239,7 +239,7 @@ export default class MaticTab extends Vue {
           if (token.contract == "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6")
             return;
           token.id = i;
-          token.chainId = this.networks.matic.chainId;
+          token.chainId = this.chainId;
           tokens.push(new NFTTokenModel(token));
         });
         if (options && options.filtering) {

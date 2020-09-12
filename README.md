@@ -6,10 +6,13 @@
 
 ```bash
 # install dependencies
+$ nvm use
 $ npm install
 
 A small tweak is needed to be done after you finish installing the dependencies. 
 https://gist.github.com/rahuldamodar94/eee63b75ae24f63297667fd7d88eb5f5
+
+Create config.env in the root directory, refer config.env.template
 
 # serve with hot reload at localhost:3000
 $ npm run dev
