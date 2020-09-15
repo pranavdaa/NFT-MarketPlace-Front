@@ -30,7 +30,7 @@
           data-wapp-id="yPq84g46Vphe8P9aA3Ky"
         >Matic Widget</button>
         <script
-          src="http://192.168.43.201:51654/embeds/widget-button.min.js"
+          src="https://wallet.matic.today/embeds/widget-button.min.js"
           data-script-name="matic-embeds"
         ></script>
       </div>
