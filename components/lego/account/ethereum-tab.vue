@@ -34,6 +34,7 @@
       v-if="showMoveToMatic"
       :token="selectedToken"
       :close="closeMoveToMatic"
+      :refreshNFTTokens="refreshNFTTokens"
     />
   </div>
 </template>
@@ -154,6 +155,10 @@ export default class EthereumTab extends Vue {
   }
 
   // async
+  async refreshNFTTokens() {
+    await this.fetchNFTTokens();
+  }
+
   async fetchNFTTokens(options = {}) {
     // Do not remove data while fetching
     if (this.isLoadingTokens) {
@@ -192,7 +197,7 @@ export default class EthereumTab extends Vue {
           this.tokensFullList = tokens;
           return;
         }
-        this.tokensFullList = [...this.tokensFullList, ...tokens];
+        this.tokensFullList = [...tokens];
       }
     } catch (error) {
       console.log(error);
