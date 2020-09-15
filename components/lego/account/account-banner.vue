@@ -24,11 +24,15 @@
         <div class="amount font-body-medium">${{formattedFullUSDBalance}}</div>
       </div>
       <div class="align-self-center">
-        <a
-          href="https://wallet.matic.today"
-          target="_blank"
-          class="btn btn-light ml-auto"
-        >View Wallet</a>
+        <button
+          class="btn btn-light ml-auto matic-widget-button matic-widget-button"
+          data-default-page="home"
+          data-wapp-id="yPq84g46Vphe8P9aA3Ky"
+        >Matic Widget</button>
+        <script
+          src="http://192.168.43.201:51654/embeds/widget-button.min.js"
+          data-script-name="matic-embeds"
+        ></script>
       </div>
     </div>
   </div>
