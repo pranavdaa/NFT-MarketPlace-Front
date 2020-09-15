@@ -80,6 +80,8 @@ export default class Index extends Vue {
       if (maticNftResponse.status === 200 && maticNftResponse.data.data) {
         this.$store.commit("account/totalMaticNft", maticNftResponse.data.count);
       }
+
+      this.$store.dispatch("token/fetchBalances");
     } catch (error) {
       console.log(error);
     }
