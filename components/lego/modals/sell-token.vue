@@ -199,6 +199,11 @@ const TEN = BigNumber(10);
       type: Function,
       required: true,
     },
+    refreshNFTTokens: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
   },
   components: { InputToken },
   computed: {
@@ -494,6 +499,7 @@ export default class SellToken extends Vue {
     try {
       let response = await getAxios().post("orders", formData);
       if (response.status === 200) {
+        this.refreshNFTTokens();
         app.addToast(
           "Sell order added successfully",
           "Your NFT successfully added on sale",
