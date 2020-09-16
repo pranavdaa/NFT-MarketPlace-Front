@@ -117,7 +117,7 @@
         </div>
         <div
           class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
-          v-if="isOwnersToken && order.type !== app.orderTypes.FIXED && bidsFullList && bidsFullList.length"
+          v-if="order.type !== app.orderTypes.FIXED && bidsFullList && bidsFullList.length"
         >
           <h3 class="font-heading-medium font-semibold category">Bidding history</h3>
           <p class="font-body-medium ps-t-20">
@@ -126,6 +126,7 @@
               :key="bid.id"
               :bid="bid"
               :refreshBids="refreshBids"
+              :isOwnersToken="isOwnersToken"
             />
           </p>
         </div>
@@ -180,6 +181,7 @@
     <buy-token
       :show="showBuyToken"
       :order="order"
+      :refreshBids="refreshBids"
       :close="onBuyTokenClose"
       v-if="showBuyToken && order"
     />
@@ -252,6 +254,7 @@ const TEN = BigNumber(10);
     ...mapGetters("token", ["erc20Tokens"]),
     ...mapGetters("account", ["account", "favouriteOrders"]),
     ...mapGetters("auth", ["user"]),
+    ...mapGetters("network", ["networks"]),
   },
   middleware: [],
   mixins: [],
@@ -355,7 +358,7 @@ export default class TokenDetail extends Vue {
       console.log(error);
     }
     this.isLoadingDetails = false;
-    if (this.isOwnersToken && this.order.type !== app.orderTypes.FIXED) {
+    if (this.order.type !== app.orderTypes.FIXED) {
       await this.fetchBidders();
     }
   }
@@ -404,6 +407,11 @@ export default class TokenDetail extends Vue {
         signedOrder["salt"] = BigNumber(signedOrder.salt);
         signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
 
+        const chainId = this.networks.matic.chainId;
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId: chainId,
+        });
+
         const orderTemplate = {
           chainId: signedOrder.chainId,
           exchangeAddress: signedOrder.exchangeAddress,
@@ -428,7 +436,6 @@ export default class TokenDetail extends Vue {
           .cancelOrder(orderTemplate)
           .awaitTransactionSuccessAsync({
             from: orderTemplate.makerAddress,
-            gasPrice: 0,
             gas: 8000000,
           });
 
@@ -502,29 +509,27 @@ export default class TokenDetail extends Vue {
   }
 
   async fetchBidders() {
-    if (this.isOwnersToken) {
-      if (this.isLoadingBids || this.order.type === app.orderTypes.FIXED) {
-        return;
+    if (this.isLoadingBids || this.order.type === app.orderTypes.FIXED) {
+      return;
+    }
+    try {
+      let response;
+      response = await getAxios().get(`orders/bids/${this.order.id}`);
+      if (response.status === 200 && response.data.data.order) {
+        let bids = [];
+        response.data.data.order.forEach(function (bid) {
+          bid.erc20Token = this.erc20Token;
+          bid.order = this.order;
+          if (bid.status === 0) {
+            // if bid is active
+            bids.push(new BidModel(bid));
+          }
+        }, this);
+        this.hasNextPage = response.data.data.has_next_page;
+        this.bidsFullList = bids;
       }
-      try {
-        let response;
-        response = await getAxios().get(`orders/bids/${this.order.id}`);
-        if (response.status === 200 && response.data.data.order) {
-          let bids = [];
-          response.data.data.order.forEach(function (bid) {
-            bid.erc20Token = this.erc20Token;
-            bid.order = this.order;
-            if (bid.status === 0) {
-              // if bid is active
-              bids.push(new BidModel(bid));
-            }
-          }, this);
-          this.hasNextPage = response.data.data.has_next_page;
-          this.bidsFullList = bids;
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    } catch (error) {
+      console.log(error);
     }
   }
 }
