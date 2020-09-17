@@ -36,6 +36,21 @@
       :close="closeMoveToMatic"
       :refreshNFTTokens="refreshNFTTokens"
     />
+
+    <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
+      <!-- ethereum loader here -->
+      <button-loader
+        class="mx-auto"
+        :loading="isLoadingTokens"
+        :loadingText="$t('loading')"
+        :text="$t('loadMore')"
+        block
+        lg
+        v-if="hasNextPage"
+        color="light"
+        :click="loadMore"
+      ></button-loader>
+    </div>
   </div>
 </template>
 
@@ -156,12 +171,13 @@ export default class EthereumTab extends Vue {
 
   // async
   async refreshNFTTokens() {
-    await this.fetchNFTTokens();
+    this.hasNextPage = true;
+    await this.fetchNFTTokens({ filtering: true });
   }
 
   async fetchNFTTokens(options = {}) {
     // Do not remove data while fetching
-    if (this.isLoadingTokens) {
+    if (this.isLoadingTokens || !this.hasNextPage) {
       return;
     }
     this.isLoadingTokens = true;
@@ -182,6 +198,9 @@ export default class EthereumTab extends Vue {
       if (response.status === 200 && response.data.data) {
         // Update total token number
         this.$store.commit("account/totalMainNft", response.data.count);
+        // Check for next page
+        // this.hasNextPage = response.data.data.has_next_page;
+        this.hasNextPage = false;
 
         let tokens = [];
         let i = 0;
@@ -197,7 +216,7 @@ export default class EthereumTab extends Vue {
           this.tokensFullList = tokens;
           return;
         }
-        this.tokensFullList = [...tokens];
+        this.tokensFullList = [...this.tokensFullList, ...tokens];
       }
     } catch (error) {
       console.log(error);
@@ -215,6 +234,10 @@ export default class EthereumTab extends Vue {
   }
   closeMoveToMatic() {
     this.showMoveToMatic = false;
+  }
+
+  async loadMore() {
+    await this.fetchNFTTokens();
   }
 }
 </script>
