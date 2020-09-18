@@ -1,74 +1,53 @@
 <template>
   <nuxt-link
-    :to="{name: 'tokens-id', params: { id: order.id } }"
-    class="sell-card text-center cursor-pointer"
+    :to="{name:'account'}"
+    class="nft-card text-center cursor-pointer"
     v-bind:style="{background: bg}"
   >
-    <on-sale-tag v-if="order.onSale && !onlyToken" :time="order.timeleft" />
-
+    <div
+      class="check-container d-flex"
+      v-if="!isAllCategories"
+      @click="toggleSelection(!isSelected)"
+    >
+      <input type="checkbox" :name="token.name" id="token.id" :checked="isSelected" />
+      <span class="checkmark align-self-center"></span>
+    </div>
     <div class="img-wrapper d-flex ps-t-12 justify-content-center">
       <img
-        :src="order.token.img_url"
+        :src="token.img_url"
         class="asset-img align-self-center"
-        :alt="order.token.name"
+        :alt="token.name"
         @load="onImageLoad"
       />
-      <!-- <img :src="order.img" class="asset-img" alt="kitty" @load="onImageLoad" /> -->
     </div>
     <div
       class="gradient"
       v-bind:style="{background: 'linear-gradient( 360deg,'+bg+'0%, rgba(236, 235, 223, 0) 100%)'}"
     ></div>
-    <div class="category-pill d-flex mx-auto ms-t-20 ms-b-16" v-if="category">
+    <div class="category-pill d-flex mx-auto ms-t-20 ms-b-16" v-if="token.category">
       <img
-        :src="category.img_url"
-        :alt="category.name"
+        :src="token.category.img_url"
+        :alt="token.category.name"
         class="icon ms-2 ms-l-4 ms-r-4 align-self-center"
       />
-      <div class="font-caps font-medium caps align-self-center ps-r-6">{{category.name}}</div>
+      <div class="font-caps font-medium caps align-self-center ps-r-6">{{token.category.name}}</div>
     </div>
     <h3
-      class="w-100 title font-body-small font-medium ms-b-8 ps-x-12"
-      :class="{'ms-b-16': onlyToken}"
-      :title="order.token.name"
-    >{{order.token.name}}</h3>
-    <div
-      class="price font-body-small ms-b-20"
-      v-if="erc20Token && !onlyToken"
-    >{{order.price}} {{erc20Token.symbol}}</div>
+      class="w-100 title font-body-small font-medium ms-b-8 ps-x-12 ms-b-16"
+      :title="token.name"
+    >{{token.name}}</h3>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="isMyAccount && !isMainToken && onlyToken"
+      v-if="!isMainToken"
     >
-      <a class="btn btn-transparent w-50 align-self-center" @click.prevent="sell(order.id)">Sell</a>
-      <a class="btn btn-transparent w-50 align-self-center" @click.prevent="transfer()">Transfer</a>
+      <a class="btn btn-transparent w-50 align-self-center">Sell</a>
+      <a class="btn btn-transparent w-50 align-self-center">Transfer</a>
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="false && isMyAccount"
+      v-if="isMainToken && isAllCategories"
     >
-      <a
-        class="btn btn-red btn-transparent w-100 align-self-center"
-        @click.prevent="removeFromMarketplace()"
-      >Remove from Marketplace</a>
-    </div>
-    <div
-      class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="isMainToken && isMyAccount"
-    >
-      <a
-        class="btn btn-transparent w-100 align-self-center"
-        @click.prevent="moveToMatic(order)"
-      >Move to Matic</a>
-    </div>
-    <div
-      class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="false && isMyAccount"
-    >
-      <a
-        class="btn btn-transparent w-100 align-self-center"
-        @click.prevent="moveToEthereum()"
-      >Move to Ethereum</a>
+      <a class="btn btn-transparent w-100 align-self-center">Move to Matic</a>
     </div>
   </nuxt-link>
 </template>
@@ -79,50 +58,45 @@ import Component from "nuxt-class-component";
 import app from "~/plugins/app";
 import { mapGetters } from "vuex";
 
+import { toDataURL } from "~/plugins/helpers/";
+
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
 const colorThief = new ColorThief();
 
-import OnSaleTag from "~/components/lego/token/on-sale-tag";
-
 @Component({
   props: {
-    order: {
+    token: {
       type: Object,
       required: true,
     },
-    onlyToken: {
+    isAllCategories: {
       type: Boolean,
       required: false,
       default: false,
     },
-    sell: {
-      type: Function,
-      required: false,
-      default: () => {},
-    },
-    moveToMatic: {
+    onSelectToken: {
       type: Function,
       required: false,
       default: () => {},
     },
   },
-  components: { OnSaleTag },
+  components: {},
   computed: {
     ...mapGetters("category", ["categories"]),
-    ...mapGetters("token", ["erc20Tokens"]),
     ...mapGetters("network", ["networks"]),
   },
   middleware: [],
   mixins: [],
 })
-export default class SellCard extends Vue {
+export default class NFTTokenCard extends Vue {
   bg = "#f3f4f7";
+  isSelected = false;
 
   // Initial
   mounted() {}
 
-  onImageLoad() {
+  async onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
       let rgbColor = colorThief.getColor(img);
@@ -139,52 +113,22 @@ export default class SellCard extends Vue {
     }
   }
 
+  // Handlers
+  toggleSelection(value) {
+    this.isSelected = value;
+    this.onSelectToken && this.onSelectToken(this.token);
+  }
+
   // Get
-  get isMyAccount() {
-    if (this.$route.name === "account") {
-      return true;
-    }
-    return false;
-  }
-
-  get erc20Token() {
-    return this.erc20Tokens.find(
-      (token) => token.id === this.order.erc20tokens_id
-    );
-  }
-
   get category() {
-    return this.categories.find((item) => item.id === this.order.categories_id);
-  }
-
-  get sellTagData() {
-    // if order type AUCTION
-    if (order.type === app.orderTypes.AUCTION) {
-      // if expiry time is less than
-      if (order.expiry_date) {
-      }
-    }
+    return this.token.category;
   }
 
   get isMainToken() {
-    if (this.order.chainId) {
-      return this.order.chainId === this.networks.main.chainId;
+    if (this.token.chainId) {
+      return this.token.chainId === this.networks.main.chainId;
     }
     return false;
-  }
-
-  // Actions
-  transfer() {
-    console.log("transfer");
-  }
-  moveToEthereum() {
-    console.log("moveToEthereum");
-  }
-  transfer() {
-    console.log("transfer");
-  }
-  removeFromMarketplace() {
-    console.log("removeFromMarketplace");
   }
 }
 </script>
@@ -197,7 +141,7 @@ a {
   text-decoration: inherit;
 }
 
-.sell-card {
+.nft-card {
   width: 258px;
   min-height: 380px;
   margin: 0.625rem;
@@ -247,8 +191,13 @@ a {
     color: dark-color("400");
   }
 }
-.sell-card:hover {
+.nft-card:hover {
   box-shadow: $default-card-box-shadow;
+}
+.check-container {
+  position: absolute;
+  top: 12px;
+  left: 12px;
 }
 .actions {
   height: 45px;
@@ -269,7 +218,7 @@ a {
   }
 }
 @media (max-width: 330px) {
-  .sell-card {
+  .nft-card {
     width: 100%;
     height: auto;
   }

@@ -1177,8 +1177,8 @@ input.na::-webkit-outer-spin-button {
   position: absolute;
   top: 0;
   left: 0;
-  height: 28px;
-  width: 28px;
+  height: 22px;
+  width: 22px;
   background: light-color("700");
 
   border: 1px solid light-color("400");
@@ -1192,7 +1192,7 @@ input.na::-webkit-outer-spin-button {
 }
 
 .check-container input:checked~.checkmark {
-  background-color: primary-color("600");
+  background-color: primary-color("500");
 }
 
 .checkmark:after {
@@ -1208,15 +1208,15 @@ input.na::-webkit-outer-spin-button {
 
 /* Style the checkmark/indicator */
 .check-container .checkmark:after {
-  left: 7px;
-  top: 6px;
-  width: 13px;
-  height: 9px;
+  background: url("/img/checkmark.svg");
+  left: 11%;
+  top: 12%;
+  height: 75%;
+  width: 75%;
 
-  border: solid light-color("700");
-  border-width: 0 0 2px 2px;
-  border-bottom-left-radius: 2px;
-  transform: rotate(-45deg);
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 1000;
 }
 
 // Custom Upload button

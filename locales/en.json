@@ -32,10 +32,21 @@
       "favorites": "Favorites"
     }
   },
+  "ethereumTab": {
+    "depositBtn": "Deposit {count} NFTs to Matic"
+  },
+  "collectibles": "Collectibles",
   "logout": {
     "title": "Logout",
     "logoutQuestion": "Are you sure want to logout?",
     "okay": "Yes, logout"
+  },
+  "sort": {
+    "popular": "Popular",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "priceLowtoHigh": "Price Low to High",
+    "priceHightoLow": "Price High to Low"
   },
   "token": {
     "onsale": "On sale"
