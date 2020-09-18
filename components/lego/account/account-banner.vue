@@ -23,11 +23,11 @@
         <div class="name ps-b-4 font-heading-small font-semibold">Wallet Balance</div>
         <div class="amount font-body-medium">${{formattedFullUSDBalance}}</div>
       </div>
-      <div class="align-self-center">
+      <div class="align-self-center" v-if="widgetKey">
         <button
           class="btn btn-light ml-auto matic-widget-button matic-widget-button"
           data-default-page="home"
-          data-wapp-id="yPq84g46Vphe8P9aA3Ky"
+          :data-wapp-id="widgetKey"
         >Matic Widget</button>
         <script
           src="https://wallet.matic.today/embeds/widget-button.min.js"
@@ -42,6 +42,8 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import app from "~/plugins/app";
+
 @Component({
   props: {},
   computed: {
@@ -75,6 +77,13 @@ export default class AccountBanner extends Vue {
       return parseFloat(this.totalCurrencyBalance.toFixed(3));
     }
     return "00.00";
+  }
+
+  get widgetKey() {
+    if (app.uiconfig && app.uiconfig.maticWidgetKey) {
+      return app.uiconfig.maticWidgetKey;
+    }
+    return null;
   }
 }
 </script>
