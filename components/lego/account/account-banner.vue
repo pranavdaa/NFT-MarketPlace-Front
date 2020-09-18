@@ -42,7 +42,6 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
-
 @Component({
   props: {},
   computed: {
@@ -52,7 +51,24 @@ import { mapGetters } from "vuex";
   },
 })
 export default class AccountBanner extends Vue {
-  mounted() {}
+  // Widget event listener
+  maticWidgetEventsListener = (event) => {
+    let targetedEvents = [
+      event.eventTypes.TRANSFER.onReceipt,
+      event.eventTypes.DEPOSIT.onReceipt,
+      event.eventTypes.WITHDRAW_INIT.onReceipt,
+      event.eventTypes.WITHDRAW_CONFIRM.onReceipt,
+      event.eventTypes.WITHDRAW_EXIT.onReceipt,
+    ];
+    if (targetedEvents.includes(event.data.type)) {
+      this.$store.dispatch("token/reloadBalances");
+    }
+  };
+
+  mounted() {
+    // Register widget event listner
+    window.maticWidgetEventsListener = this.maticWidgetEventsListener;
+  }
 
   get formattedFullUSDBalance() {
     if (this.totalCurrencyBalance) {
