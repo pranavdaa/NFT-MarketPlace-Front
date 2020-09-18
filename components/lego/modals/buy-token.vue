@@ -242,6 +242,11 @@ const TEN = BigNumber(10);
       type: Function,
       required: true,
     },
+    refreshBids: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
   },
   components: { InputToken, PlaceBid },
   computed: {
@@ -440,6 +445,7 @@ export default class BuyToken extends Vue {
           );
 
           if (response.status === 200 && response.data) {
+            this.refreshBids();
             app.addToast(
               "Offered/bided successfully",
               "Your offer/bid has been successfully submitted",

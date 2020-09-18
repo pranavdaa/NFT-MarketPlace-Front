@@ -142,7 +142,6 @@ export default {
       commit("resetCache", { which: "accountBalance" })
       commit("resetCache", { which: "tokenBalance" })
       commit("resetCache", { which: "contractObject" })
-
     },
 
     async fetchContractCode(

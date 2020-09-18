@@ -15,6 +15,7 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import getAxios from "~/plugins/axios";
 
 import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
@@ -49,6 +50,8 @@ import ActivityTab from "~/components/lego/account/activity-tab";
       "totalMaticNft",
       "totalMainNft",
     ]),
+    ...mapGetters("network", ["networks"]),
+    ...mapGetters("auth", ["user"])
   },
 })
 export default class Index extends Vue {
@@ -56,7 +59,41 @@ export default class Index extends Vue {
 
   allOrSale = true;
 
-  async mounted() {}
+  async mounted() {
+    this.fetchTotalTokens();
+  }
+
+  async fetchTotalTokens() {
+    try {
+      let mainNftResponse = await getAxios().get(
+        `tokens/balance?userId=${this.user.id}&chainId=${this.mainChainId}&offset=0&limit=1`
+      );
+
+      let maticNftResponse = await getAxios().get(
+        `tokens/balance?userId=${this.user.id}&chainId=${this.maticChainId}&offset=0&limit=1`
+      );
+
+      if (mainNftResponse.status === 200 && mainNftResponse.data.data) {
+        this.$store.commit("account/totalMainNft", mainNftResponse.data.count);
+      }
+
+      if (maticNftResponse.status === 200 && maticNftResponse.data.data) {
+        this.$store.commit("account/totalMaticNft", maticNftResponse.data.count);
+      }
+
+      this.$store.dispatch("token/fetchBalances");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  get mainChainId() {
+    return this.networks.main.chainId;
+  }
+
+  get maticChainId() {
+    return this.networks.matic.chainId;
+  }
 
   changeTab(num) {
     this.activeTab = num;

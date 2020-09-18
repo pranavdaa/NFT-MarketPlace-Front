@@ -20,13 +20,20 @@
             class="ps-y-8 ps-x-16 font-body-small font-medium price-pill text-nowrap"
           >{{bid.price}} {{bid.erc20Token.symbol}}</span>
         </div>
+
         <button
           class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
-          v-if="this.bid.order.status === 0"
+          v-if="isUsersBid && this.bid.order.status === 0"
+          @click="onCancel()"
+        >Cancel</button>
+
+        <button
+          class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
+          v-if="isOwnersToken && this.bid.order.status === 0"
           @click="onDeny()"
         >Deny</button>
         <button
-          v-if="this.bid.order.status === 0"
+          v-if="isOwnersToken && this.bid.order.status === 0"
           class="btn btn-light align-self-center ps-x-16"
           @click="onAccept()"
         >Accept</button>
@@ -47,6 +54,14 @@
       :accept="denyBid"
       :close="onDenyClose"
       :btnTexts="denyButtonTexts"
+    />
+    <bid-confirmation
+      :show="showCancelBid"
+      :bid="bid"
+      :isLoading="isLoading"
+      :accept="cancelBid"
+      :close="onCancelClose"
+      :btnTexts="cancelButtonTexts"
     />
   </div>
 </template>
@@ -95,6 +110,10 @@ const TEN = BigNumber(10);
       required: false,
       default: () => {},
     },
+    isOwnersToken: {
+      type: Boolean,
+      required: true
+    }
   },
   components: { BidConfirmation },
   computed: {
@@ -106,11 +125,21 @@ const TEN = BigNumber(10);
 export default class BidderRow extends Vue {
   showAcceptBid = false;
   showDenyBid = false;
+  showCancelBid = false;
   isLoading = false;
   denyButtonTexts = { title: "Deny", loadingTitle: "Denying..." };
+  cancelButtonTexts = { title: "Cancel", loadingTitle: "Cancelling..." };
   mounted() {}
 
   // Get
+  get isUsersBid() {
+    if (this.user && this.bid) {
+      return this.user.id === this.bid.users.id;
+    }
+
+    return false
+  }
+
   get shortChecksumAddress() {
     if (!this.bid.users.address) {
       return null;
@@ -174,6 +203,12 @@ export default class BidderRow extends Vue {
   }
   onDenyClose() {
     this.showDenyBid = false;
+  }
+  onCancel() {
+    this.showCancelBid = true
+  }
+  onCancelClose() {
+    this.showCancelBid = false
   }
 
   async acceptBid() {
@@ -379,6 +414,95 @@ export default class BidderRow extends Vue {
           app.addToast(
             "Bid declined successfully",
             "You declined bid successfully",
+            {
+              type: "success",
+            }
+          );
+          this.refreshBids();
+        }
+      } catch (error) {
+        console.error(error);
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
+      }
+    }
+  }
+
+  async cancelBid() {
+    this.isLoading = true;
+    try {
+      if (this.order.type === app.orderTypes.NEGOTIATION) {
+        let signedOrder = JSON.parse(this.bid.signature);
+        const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
+          new BigNumber(this.bid.price),
+          this.erc20Token.decimal
+        );
+        signedOrder["makerAssetAmount"] = BigNumber(
+          signedOrder.makerAssetAmount
+        );
+        signedOrder["takerAssetAmount"] = takerAssetAmount;
+        signedOrder["expirationTimeSeconds"] = BigNumber(
+          signedOrder.expirationTimeSeconds
+        );
+        signedOrder["makerFee"] = BigNumber(signedOrder.makerFee);
+        signedOrder["salt"] = BigNumber(signedOrder.salt);
+        signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
+
+        const chainId = this.networks.matic.chainId;
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId: chainId,
+        });
+
+        const bidTemplate = {
+          chainId: signedOrder.chainId,
+          exchangeAddress: signedOrder.exchangeAddress,
+          makerAddress: signedOrder.makerAddress,
+          takerAddress: signedOrder.takerAddress,
+          senderAddress: signedOrder.senderAddress,
+          feeRecipientAddress: signedOrder.feeRecipientAddress,
+          expirationTimeSeconds: signedOrder.expirationTimeSeconds,
+          salt: signedOrder.salt,
+          makerAssetAmount: signedOrder.makerAssetAmount,
+          takerAssetAmount: signedOrder.takerAssetAmount,
+          makerAssetData: signedOrder.makerAssetData,
+          takerAssetData: signedOrder.takerAssetData,
+          makerFeeAssetData: signedOrder.makerFeeAssetData,
+          takerFeeAssetData: signedOrder.takerFeeAssetData,
+          makerFee: signedOrder.makerFee,
+          takerFee: signedOrder.takerFee,
+        };
+
+        const txHash = await contractWrappers.exchange
+          .cancelOrder(bidTemplate)
+          .awaitTransactionSuccessAsync({
+            from: bidTemplate.makerAddress,
+            gas: 8000000,
+          });
+
+        if (txHash) {
+          console.log("Bid canceled", txHash);
+          await this.handleCancelBid(txHash);
+        }
+      } else {
+        await this.handleCancelBid();
+      }
+    } catch(error) {
+      console.log(error);
+    }
+    this.isLoading = false;
+    this.onCancelClose();
+  }
+  async handleCancelBid(txHash = null) {
+    if (this.bid.users.id == this.user.id) {
+      try {
+        let response = await getAxios().patch(
+          `orders/bid/${this.bid.id}/cancel`
+        );
+        if (response.status === 200) {
+          app.addToast(
+            "Bid cancelled successfully",
+            "You cancelled your bid successfully",
             {
               type: "success",
             }
