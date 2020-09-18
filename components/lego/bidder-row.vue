@@ -304,18 +304,32 @@ export default class BidderRow extends Vue {
           isValidSignature
         ) {
           console.log("Fillable");
-          let txHash;
-          txHash = await contractWrappers.exchange
-            .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
-            .awaitTransactionSuccessAsync({
-              from: takerAddress,
-              gas: 8000000,
-              gasPrice: 10000000000,
-              value: calculateProtocolFee([signedOrder]),
-            });
-          if (txHash) {
-            console.log("transaction", txHash);
-            this.handleBidAccept(txHash);
+
+          let dataVal = await getAxios().get(`orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=fillOrder`)
+
+          let zrx = {
+            salt: generatePseudoRandomSalt(),
+            expirationTimeSeconds: signedOrder.expirationTimeSeconds,
+            gasPrice: 10000000000,
+            signerAddress: takerAddress,
+            data: dataVal.data.data,
+            domain: {
+              name: "0x Protocol",
+              version: "3.0.0",
+              chainId: 80001,
+              verifyingContract: contractWrappers.contractAddresses.exchange,
+            },
+          };
+
+          const takerSign = await signatureUtils.ecSignTransactionAsync(
+            providerEngine(),
+            zrx,
+            takerAddress
+          );
+
+          if(takerSign) {
+            console.log("Taker Sign", takerSign);
+            await this.handleBidAccept(takerSign);
           }
         }
       } catch (error) {
@@ -330,28 +344,29 @@ export default class BidderRow extends Vue {
     this.onAcceptClose();
   }
 
-  async handleBidAccept(txHash) {
-    try {
-      const data = {
-        maker_amount: this.bid.price,
-        tx_hash: txHash.transactionHash,
-      };
-      let response = await getAxios().patch(
-        `orders/${this.bid.id}/execute`,
-        data
-      );
-      if (response.status === 200) {
-        this.refreshBids();
-        app.addToast(
-          "Accepted successfully",
-          "You accepted the bid for your order",
-          {
-            type: "success",
-          }
+  async handleBidAccept(takerSign) {
+    if (this.bid.users.id != this.user.id && takerSign) {
+      try {
+        let data = {
+          taker_signature: JSON.stringify(takerSign)
+        };
+        let response = await getAxios().patch(
+          `orders/${this.bid.id}/execute`,
+          data
         );
-        this.$router.push({ name: "account" });
-      }
-    } catch (error) {}
+        if (response.status === 200) {
+          this.refreshBids();
+          app.addToast(
+            "Accepted successfully",
+            "You accepted the bid for your order",
+            {
+              type: "success",
+            }
+          );
+          this.$router.push({ name: "account" });
+        }
+      } catch (error) {}
+    }
   }
 
   async approve0x(erc721TokenCont, contractWrappers, makerAddress) {
@@ -454,35 +469,31 @@ export default class BidderRow extends Vue {
           chainId: chainId,
         });
 
-        const bidTemplate = {
-          chainId: signedOrder.chainId,
-          exchangeAddress: signedOrder.exchangeAddress,
-          makerAddress: signedOrder.makerAddress,
-          takerAddress: signedOrder.takerAddress,
-          senderAddress: signedOrder.senderAddress,
-          feeRecipientAddress: signedOrder.feeRecipientAddress,
+        let dataVal = await getAxios().get(`orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=cancelOrder`)
+
+        let zrx = {
+          salt: generatePseudoRandomSalt(),
           expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-          salt: signedOrder.salt,
-          makerAssetAmount: signedOrder.makerAssetAmount,
-          takerAssetAmount: signedOrder.takerAssetAmount,
-          makerAssetData: signedOrder.makerAssetData,
-          takerAssetData: signedOrder.takerAssetData,
-          makerFeeAssetData: signedOrder.makerFeeAssetData,
-          takerFeeAssetData: signedOrder.takerFeeAssetData,
-          makerFee: signedOrder.makerFee,
-          takerFee: signedOrder.takerFee,
+          gasPrice: 10000000000,
+          signerAddress: signedOrder.makerAddress,
+          data: dataVal.data.data,
+          domain: {
+            name: "0x Protocol",
+            version: "3.0.0",
+            chainId: 80001,
+            verifyingContract: contractWrappers.contractAddresses.exchange,
+          },
         };
 
-        const txHash = await contractWrappers.exchange
-          .cancelOrder(bidTemplate)
-          .awaitTransactionSuccessAsync({
-            from: bidTemplate.makerAddress,
-            gas: 8000000,
-          });
+        const takerSign = await signatureUtils.ecSignTransactionAsync(
+          providerEngine(),
+          zrx,
+          signedOrder.makerAddress
+        );
 
-        if (txHash) {
-          console.log("Bid canceled", txHash);
-          await this.handleCancelBid(txHash);
+        if(takerSign) {
+          console.log("Taker Sign", takerSign);
+          await this.handleCancelBid(takerSign);
         }
       } else {
         await this.handleCancelBid();
@@ -493,11 +504,15 @@ export default class BidderRow extends Vue {
     this.isLoading = false;
     this.onCancelClose();
   }
-  async handleCancelBid(txHash = null) {
-    if (this.bid.users.id == this.user.id) {
+  async handleCancelBid(takerSign) {
+    if (this.bid.users.id == this.user.id && takerSign) {
       try {
+        let data = {
+          taker_signature: JSON.stringify(takerSign)
+        };
         let response = await getAxios().patch(
-          `orders/bid/${this.bid.id}/cancel`
+          `orders/bid/${this.bid.id}/cancel`,
+          data
         );
         if (response.status === 200) {
           app.addToast(

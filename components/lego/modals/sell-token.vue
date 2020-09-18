@@ -163,6 +163,9 @@ import { FormValidator } from "~/components/mixin";
 import InputToken from "~/components/lego/input-token";
 import { parseBalance } from "~/plugins/helpers/token-utils";
 
+const { getTypedData } = require("~/plugins/meta-tx")
+let matic = new Web3("https://rpc-mumbai.matic.today/")
+
 // 0X
 let {
   ContractWrappers,
@@ -211,6 +214,7 @@ const TEN = BigNumber(10);
     ...mapGetters("account", ["account"]),
     ...mapGetters("auth", ["user"]),
     ...mapGetters("network", ["networks"]),
+    ...mapGetters("category", ["categories"])
   },
   methods: {},
   mixins: [FormValidator],
@@ -294,6 +298,10 @@ export default class SellToken extends Vue {
   changeMinPrice(value) {
     this.dirty = false;
     this.minPrice = value;
+  }
+
+  get category() {
+    return this.categories.find((category) => category.address.toLowerCase() === this.nftToken.contract.toLowerCase());
   }
 
   // action
@@ -425,33 +433,91 @@ export default class SellToken extends Vue {
       .callAsync();
 
     if (!isApprovedForAll) {
-      const makerERC721ApprovalTxHash = await erc721TokenCont
-        .setApprovalForAll(contractWrappers.contractAddresses.erc721Proxy, true)
-        .sendTransactionAsync({
-          from: makerAddress,
-          gas: 8000000,
-          gasPrice: 1000000000,
-        });
-      if (makerERC721ApprovalTxHash) {
-        console.log("Approve Hash", makerERC721ApprovalTxHash);
-        app.addToast(
-          "Approved successfully",
-          "You successfully approved the token to put on sale",
+      let data = await matic.eth.abi.encodeFunctionCall({
+        name: 'setApprovalForAll', 
+        type: 'function', 
+        inputs: [
           {
-            type: "success",
+            "name": "operator",
+            "type": "address"
+          },
+          {
+            "name": "approved",
+            "type": "bool"
           }
-        );
-        return true;
+        ]
+      }, [contractWrappers.contractAddresses.erc721Proxy, true])
+
+      let { sig } = await this.executeMetaTx (data)
+
+      let tx = {
+        intent: sig, 
+        fnSig: data, 
+        from: this.account.address, 
+        contractAddress: matic.utils.toChecksumAddress(this.category.categoriesaddresses.find((category) => category.chain_id == this.networks.matic.chainId).address)
       }
-      app.addToast(
-        "Failed to approve",
-        "You need to approve the transaction to sale the NFT",
-        {
-          type: "failure",
+      console.log('TX ' + tx);
+
+      if (tx) {
+        try {
+          let response = await getAxios().post(
+            `orders/executeMetaTx`,
+            tx
+          );
+          if (response.status === 200) {
+            console.log("Approved");
+            app.addToast("Approved", "You successfully approved", {
+              type: "success",
+            });
+            return true;
+          }
+        } catch (error) {
+          console.log(error);
+          app.addToast(
+            "Failed to approve",
+            "You need to approve the transaction to sale the NFT",
+            {
+              type: "failure",
+            }
+          );
         }
-      );
+      }
+      return false;
     }
     return true;
+  }
+
+  async executeMetaTx(functionSig) {
+    let address = matic.utils.toChecksumAddress(this.account.address)
+    let data = await matic.eth.abi.encodeFunctionCall({
+      name: 'getNonce', 
+      type: 'function', 
+      inputs: [{
+          "name": "user",
+          "type": "address"
+        }]
+    }, [address])
+    let _nonce = await matic.eth.call ({
+      to: matic.utils.toChecksumAddress(this.category.categoriesaddresses.find((category) => category.chain_id == this.networks.matic.chainId).address),
+      data
+    });
+    const dataToSign = getTypedData({
+      name: this.category.name,
+      version: '1',
+      salt: '0x0000000000000000000000000000000000000000000000000000000000013881',
+      verifyingContract: matic.utils.toChecksumAddress(this.category.categoriesaddresses.find((category) => category.chain_id == this.networks.matic.chainId).address),
+      nonce: parseInt(_nonce),
+      from: address,
+      functionSignature: functionSig
+    })
+    const msgParams = [address, JSON.stringify(dataToSign)]
+    let sign = await window.ethereum.request ({
+      method: 'eth_signTypedData_v3', 
+      params: msgParams
+    })
+    return {
+      sig: sign,
+    };
   }
 
   async handleSellSign(data, signedOrder) {

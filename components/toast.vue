@@ -75,7 +75,7 @@ export default class Toast extends Vue {
         if (!options.sticky) {
           options._tid = setTimeout(
             this.removeToast,
-            options.timeout || 15000,
+            options.timeout || 3000,
             options
           );
         }
