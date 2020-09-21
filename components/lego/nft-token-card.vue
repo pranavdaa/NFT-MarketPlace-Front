@@ -3,6 +3,7 @@
     :to="{name:'account'}"
     class="nft-card text-center cursor-pointer"
     v-bind:style="{background: bg}"
+    v-if="!searchInput || fuzzysearch(searchInput, token.name) || fuzzysearch(searchInput, token.description) || fuzzysearch(searchInput, token.token_id) || fuzzysearch(searchInput, category.name)"
   >
     <div
       class="check-container"
@@ -73,7 +74,7 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import app from "~/plugins/app";
 import { mapGetters } from "vuex";
-
+import { fuzzysearch } from "~/plugins/helpers/index";
 import { toDataURL } from "~/plugins/helpers/";
 
 import MoreOptions from "~/components/lego/more-options";
@@ -92,6 +93,11 @@ const colorThief = new ColorThief();
       type: Boolean,
       required: false,
       default: false,
+    },
+    searchInput: {
+      type: String,
+      required: false,
+      default: null,
     },
     onSelectToken: {
       type: Function,
@@ -131,6 +137,7 @@ const colorThief = new ColorThief();
 export default class NFTTokenCard extends Vue {
   bg = "#f3f4f7";
   isSelected = false;
+  fuzzysearch = fuzzysearch;
 
   // Initial
   mounted() {}

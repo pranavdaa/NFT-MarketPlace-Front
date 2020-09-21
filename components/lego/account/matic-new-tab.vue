@@ -44,7 +44,7 @@
             <search-box
               class="search-box ms-l-20"
               placeholder="Search in items"
-              :change="(val) => val"
+              :change="(val) => searchInput = val"
               v-if="!selectedCategory"
             />
             <button
@@ -71,6 +71,7 @@
             :isAllCategories="!selectedCategory"
             :onSelectToken="onSelectToken"
             :onSell="onSellToken"
+            :searchInput="searchInput"
           />
         </div>
 
@@ -144,7 +145,9 @@ import SellToken from "~/components/lego/modals/sell-token";
   mixins: [],
   watch: {
     selectedFilters: {
-      handler: async function () {},
+      handler: async function () {
+        this.fetchNFTTokens({ filtering: true });
+      },
       deep: true,
     },
   },
@@ -154,6 +157,7 @@ export default class MaticNewTab extends Vue {
   showSellModal = false;
   selectedToken = null;
   selectedTokens = [];
+  searchInput = null;
 
   tokensFullList = [];
   hasNextPage = true;
@@ -191,7 +195,7 @@ export default class MaticNewTab extends Vue {
 
   // Async
   async fetchNFTTokens(options = {}) {
-    if (this.isLoadingTokens || !this.hasNextPage) {
+    if (this.isLoadingTokens || (!this.hasNextPage && !options.filtering)) {
       // ignore if already fetching
       return;
     }
@@ -207,7 +211,7 @@ export default class MaticNewTab extends Vue {
 
       // Fetch tokens with pagination and filters
       response = await getAxios().get(
-        `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}`
+        `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}${this.ifCategory}${this.ifSort}&offset=${offset}&limit=${this.limit}`
       );
 
       if (response.status === 200 && response.data.data) {
@@ -227,6 +231,7 @@ export default class MaticNewTab extends Vue {
         });
         if (options && options.filtering) {
           this.tokensFullList = tokens;
+          this.isLoadingTokens = false;
           return;
         }
         this.tokensFullList = [...this.tokensFullList, ...tokens];
@@ -240,6 +245,7 @@ export default class MaticNewTab extends Vue {
     this.hasNextPage = true;
     await this.fetchNFTTokens({ filtering: true });
   }
+
   // Getters
   get displayedTokens() {
     return this.tokensFullList || [];
@@ -280,16 +286,6 @@ export default class MaticNewTab extends Vue {
         id: 2,
         name: this.$t("sort.oldest"),
         filter: "+created",
-      },
-      {
-        id: 3,
-        name: this.$t("sort.priceLowtoHigh"),
-        filter: "+price",
-      },
-      {
-        id: 4,
-        name: this.$t("sort.priceHightoLow"),
-        filter: "-price",
       },
     ];
   }
