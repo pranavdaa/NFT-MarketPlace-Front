@@ -5,7 +5,8 @@
     v-bind:style="{background: bg}"
   >
     <div
-      class="check-container d-flex"
+      class="check-container"
+      :class="{'checked': isSelected}"
       v-if="!isAllCategories"
       @click="toggleSelection(!isSelected)"
     >
@@ -15,11 +16,16 @@
     <div class="img-wrapper d-flex ps-t-12 justify-content-center">
       <img
         :src="token.img_url"
-        class="asset-img align-self-center"
+        class="asset-img align-self-center ps-x-12"
         :alt="token.name"
         @load="onImageLoad"
       />
     </div>
+
+    <div class="more-actions" v-if="!isAllCategories">
+      <MoreOptions :options="moreOptions" />
+    </div>
+
     <div
       class="gradient"
       v-bind:style="{background: 'linear-gradient( 360deg,'+bg+'0%, rgba(236, 235, 223, 0) 100%)'}"
@@ -38,16 +44,26 @@
     >{{token.name}}</h3>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
-      v-if="!isMainToken"
+      v-if="!isMainToken && !order"
     >
-      <a class="btn btn-transparent w-50 align-self-center">Sell</a>
-      <a class="btn btn-transparent w-50 align-self-center">Transfer</a>
+      <a class="btn btn-transparent w-50 align-self-center" @click="sell()">{{$t('sell')}}</a>
+      <a class="btn btn-transparent w-50 align-self-center" @click="transfer()">{{$t('transfer')}}</a>
+    </div>
+
+    <div
+      class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
+      v-if="!isMainToken && order"
+    >
+      <NuxtLink
+        class="btn btn-transparent w-100 align-self-center"
+        :to="{name: 'tokens-id', params: { id: order.id } }"
+      >View Order</NuxtLink>
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
       v-if="isMainToken && isAllCategories"
     >
-      <a class="btn btn-transparent w-100 align-self-center">Move to Matic</a>
+      <a class="btn btn-transparent w-100 align-self-center">{{$t('moveToMatic')}}</a>
     </div>
   </nuxt-link>
 </template>
@@ -59,6 +75,8 @@ import app from "~/plugins/app";
 import { mapGetters } from "vuex";
 
 import { toDataURL } from "~/plugins/helpers/";
+
+import MoreOptions from "~/components/lego/more-options";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -80,11 +98,32 @@ const colorThief = new ColorThief();
       required: false,
       default: () => {},
     },
+    onSell: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
+    onSend: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
+    onDeposit: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
+    onWithdraw: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
   },
-  components: {},
+  components: { MoreOptions },
   computed: {
     ...mapGetters("category", ["categories"]),
     ...mapGetters("network", ["networks"]),
+    ...mapGetters("account", ["userOrders"]),
   },
   middleware: [],
   mixins: [],
@@ -119,6 +158,32 @@ export default class NFTTokenCard extends Vue {
     this.onSelectToken && this.onSelectToken(this.token);
   }
 
+  deposit() {
+    // Withdraw Action
+    this.onDeposit && this.onDeposit(this.token.token_id);
+  }
+
+  withdraw() {
+    // Withdraw Action
+    this.onWithdraw && this.onWithdraw(this.token.token_id);
+  }
+
+  transfer() {
+    // Send to friends
+    this.onSend && this.onSend(this.token.token_id);
+  }
+
+  sell() {
+    // sell token
+    this.onSell && this.onSell(this.token.token_id);
+  }
+
+  viewOrder() {
+    if (this.order) {
+      this.$router.push({ name: "tokens", parms: { id: this.order.id } });
+    }
+  }
+
   // Get
   get category() {
     return this.token.category;
@@ -129,6 +194,47 @@ export default class NFTTokenCard extends Vue {
       return this.token.chainId === this.networks.main.chainId;
     }
     return false;
+  }
+
+  get order() {
+    if (
+      !this.isMainToken &&
+      this.token.active_order &&
+      this.userOrders &&
+      this.userOrders.length > 0
+    ) {
+      let order = this.userOrders.find(
+        (t) => t.tokens_id == this.token.token_id
+      );
+      return order;
+    }
+    return null;
+  }
+
+  get moreOptions() {
+    if (this.isMainToken) {
+      return [
+        {
+          title: this.$t("moreOptions.deposit"),
+          action: this.deposit,
+        },
+      ];
+    }
+
+    return [
+      {
+        title: this.$t("moreOptions.withdraw"),
+        action: this.withdraw,
+      },
+      {
+        title: this.$t("moreOptions.sell"),
+        action: this.sell,
+      },
+      {
+        title: this.$t("moreOptions.send"),
+        action: this.transfer,
+      },
+    ];
   }
 }
 </script>
@@ -142,8 +248,8 @@ a {
 }
 
 .nft-card {
-  width: 258px;
-  min-height: 380px;
+  width: 240px;
+  min-height: 352px;
   margin: 0.625rem;
   position: relative;
 
@@ -151,9 +257,9 @@ a {
   border-radius: $default-card-box-border-radius;
   .img-wrapper {
     width: 100%;
-    max-width: 258px;
+    max-width: 240px;
     height: 100%;
-    max-height: 258px;
+    max-height: 240px;
     overflow: hidden;
     .asset-img {
       max-height: 100%;
@@ -194,10 +300,24 @@ a {
 .nft-card:hover {
   box-shadow: $default-card-box-shadow;
 }
+.nft-card:hover .check-container,
+.nft-card:hover .more-actions {
+  display: flex !important;
+}
 .check-container {
   position: absolute;
   top: 12px;
   left: 12px;
+  display: none;
+  &.checked {
+    display: flex !important;
+  }
+}
+.more-actions {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }
 .actions {
   height: 45px;

@@ -4,7 +4,7 @@
     <tab-switcher class="sticky-top" :tabs="tabs" :activeTab="activeTab" :onChangeTab="changeTab" />
     <div class="row">
       <matic-new-tab v-if="activeTab === 0" />
-      <ethereum-tab v-if="activeTab === 1" />
+      <ethereum-new-tab v-if="activeTab === 1" />
       <favorite-tab v-if="activeTab === 2" />
       <activity-tab v-if="activeTab === 3" />
     </div>
@@ -24,7 +24,7 @@ import SortDropdown from "~/components/lego/sort-dropdown";
 import AccountBanner from "~/components/lego/account/account-banner";
 import TabSwitcher from "~/components/lego/tab-switcher";
 import MaticNewTab from "~/components/lego/account/matic-new-tab";
-import EthereumTab from "~/components/lego/account/ethereum-tab";
+import EthereumNewTab from "~/components/lego/account/ethereum-new-tab";
 import FavoriteTab from "~/components/lego/account/favorite-tab";
 import ActivityTab from "~/components/lego/account/activity-tab";
 
@@ -38,7 +38,7 @@ import ActivityTab from "~/components/lego/account/activity-tab";
     AccountBanner,
     TabSwitcher,
     MaticNewTab,
-    EthereumTab,
+    EthereumNewTab,
     FavoriteTab,
     ActivityTab,
   },

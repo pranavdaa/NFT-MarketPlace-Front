@@ -23,7 +23,7 @@
               <div class="font-body-large align-self-center font-medium">{{allCategory.name}}</div>
               <div
                 class="count ps-l-12 font-body-large ml-auto"
-              >{{totalMaticNft}} {{$t("collectibles")}}</div>
+              >{{totalMainNft}} {{$t("collectibles")}}</div>
             </div>
             <div class="category d-flex ps-x-16 ps-y-8 cursor-pointer" v-if="selectedCategory">
               <img
@@ -70,18 +70,8 @@
             :token="token"
             :isAllCategories="!selectedCategory"
             :onSelectToken="onSelectToken"
-            :onSell="onSellToken"
           />
         </div>
-
-        <sell-token
-          class="text-left"
-          :show="showSellModal"
-          :close="onCloseSellModal"
-          :nftToken="selectedToken"
-          v-if="showSellModal"
-          :refreshNFTTokens="refreshNFTTokens"
-        />
 
         <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
           <!-- matic loader here -->
@@ -136,7 +126,7 @@ import SellToken from "~/components/lego/modals/sell-token";
   computed: {
     ...mapGetters("page", ["selectedFilters", "selectedCategory"]),
     ...mapGetters("category", ["categories", "allCategory"]),
-    ...mapGetters("account", ["account", "userOrders", "totalMaticNft"]),
+    ...mapGetters("account", ["account", "userOrders", "totalMainNft"]),
     ...mapGetters("auth", ["user"]),
     ...mapGetters("network", ["networks"]),
   },
@@ -149,7 +139,7 @@ import SellToken from "~/components/lego/modals/sell-token";
     },
   },
 })
-export default class MaticNewTab extends Vue {
+export default class EthereumNewTab extends Vue {
   // Modals
   showSellModal = false;
   selectedToken = null;
@@ -169,10 +159,8 @@ export default class MaticNewTab extends Vue {
   onSortSelect(item) {
     this.$store.commit("page/selectedSort", item.filter);
   }
-  onSellToken(token_id) {
-    this.selectedToken = this.tokensFullList.find(
-      (token) => token.token_id == token_id
-    );
+  sellToken(id) {
+    this.selectedToken = this.tokensFullList.find((token) => token.id == id);
     this.showSellModal = true;
   }
   onCloseSellModal() {
@@ -212,7 +200,7 @@ export default class MaticNewTab extends Vue {
 
       if (response.status === 200 && response.data.data) {
         // Update total token number
-        this.$store.commit("account/totalMaticNft", response.data.count);
+        this.$store.commit("account/totalMainNft", response.data.count);
         // Check for next page
         // this.hasNextPage = response.data.data.has_next_page;
         this.hasNextPage = false;
@@ -236,10 +224,7 @@ export default class MaticNewTab extends Vue {
     }
     this.isLoadingTokens = false;
   }
-  async refreshNFTTokens() {
-    this.hasNextPage = true;
-    await this.fetchNFTTokens({ filtering: true });
-  }
+
   // Getters
   get displayedTokens() {
     return this.tokensFullList || [];
@@ -255,12 +240,12 @@ export default class MaticNewTab extends Vue {
       : "";
   }
   get chainId() {
-    return this.networks.matic.chainId;
+    return this.networks.main.chainId;
   }
   get exmptyMsg() {
     return {
-      title: this.$t("maticTab.empty.title"),
-      description: this.$t("maticTab.empty.description"),
+      title: this.$t("ethereumTab.empty.title"),
+      description: this.$t("ethereumTab.empty.description"),
       img: true,
     };
   }

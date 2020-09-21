@@ -6,6 +6,9 @@
   "loadMore": "Load More",
   "loading": "Loading",
   "login": "Login",
+  "sell": "Sell",
+  "transfer": "Transfer",
+  "moveToMatic": "Move to Matic",
   "walletConnect": "WalletConnect",
   "walletConnectMsg": "Connect using mobile wallet",
   "metamask": {
@@ -32,8 +35,25 @@
       "favorites": "Favorites"
     }
   },
+  "moreOptions": {
+    "deposit": "Deposit to Matic",
+    "withdraw": "Withdraw to Ethereum",
+    "sell": "Sell",
+    "send": "Send to Friend"
+  },
   "ethereumTab": {
-    "depositBtn": "Deposit {count} NFTs to Matic"
+    "depositBtn": "Deposit {count} NFTs to Matic",
+    "empty": {
+      "title": "Oops! No item found on Ethereum chain.",
+      "description": "We didn’t found any item on Ethereum chain."
+    }
+  },
+  "maticTab": {
+    "withdrawBtn": "Withdraw {count} NFTs to Ethereum",
+    "empty": {
+      "title": "Oops! No item found on Matic chain.",
+      "description": "We didn’t found any item on Matic chain."
+    }
   },
   "collectibles": "Collectibles",
   "logout": {

@@ -15,7 +15,7 @@
           <div class="font-body-medium align-self-center ms-l-12">{{allCategory.name}}</div>
           <div
             class="count ps-l-12 font-body-medium ml-auto align-self-center"
-          >{{allCategory.count}}</div>
+          >{{allCategory.count||0}}</div>
         </div>
         <div
           class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
