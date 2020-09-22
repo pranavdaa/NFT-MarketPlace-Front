@@ -19,8 +19,67 @@
           </div>
           <div class="box-body">
             <div class="container">
+              <div class="row ps-y-10">
+                <div class="col-12 d-flex ps-t-12 ps-b-12 wrapper-top">
+                  <div class="left col-8 category" v-if="selectedCategory">
+                    <img
+                      :src="selectedCategory.img_url"
+                      :alt="selectedCategory.name"
+                      class="icon align-self-center ms-r-12"
+                    />
+                      {{ selectedTokens.length || 0 }} {{ selectedCategory.name }} Collectibles
+                  </div>
+                  <div class="right col-4">
+                    <div
+                      class="check-container"
+                      :class="{'checked': isSelected}"
+                      @click="toggleSelection(!isSelected), selectAll()"
+                    >
+                      <input type="checkbox" id="selectAllNft" :checked="isSelected" />
+                      <span class="checkmark align-self-center"></span>
+                      <label class="form-check-label" for="selectAllNft">Select all</label>
+                    </div>
+                  </div>
+                </div>
 
-              <token-verticle-list :tokens="tokens" />
+                <div class="col-12 card-wrapper">
+                  <token-verticle-list
+                    v-for="token in tokens" :key="token.id"
+                    :token="token"
+                    :onSelectNft="onSelectNft"
+                    :isSelectedAll="isSelectedAll"
+                  />
+                </div>
+
+                <div class="col-md-12 p-0 transaction-details">
+                <div class="top ps-t-12 ps-b-12 border-top">
+                  <div class="transaction-details__inner d-flex">
+                    <div class="left col-8" v-if="selectedCategory">
+                      <img
+                        :src="selectedCategory.img_url"
+                        :alt="selectedCategory.name"
+                        class="icon align-self-center ms-r-12"
+                      />
+                      Collectibles selected
+                    </div>
+                    <div class="right col-4">{{ selectedTokens.length || 0 }}</div>
+                  </div>
+                </div>
+                <div class="bottom ps-t-12 ps-b-12 border-top">
+                  <div class="transaction-details__inner d-flex">
+                    <div class="left col-8">
+                      <img
+                        src="~/static/img/est-bolt.svg"
+                        alt="Bolt"
+                        class="icon align-self-center ms-r-12"
+                      />
+                      Estimated Transacton fee
+                    </div>
+                    <div class="right col-4">$</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div class="row ps-x-32 ps-b-8" v-if="error">
                 <div
@@ -50,7 +109,6 @@
         </div>
       </div>
     </div>
-    <!-- <choose-token :show="selectToken" :cancel="onTokenClose" /> -->
     <withdraw-confirmation-modal
       :show="showWithdrawConfirmation"
       :cancel="() => {this.showWithdrawConfirmation = false}"
@@ -89,6 +147,11 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
       type: Array,
       required: true,
     },
+    selectedCategory: {
+      type: Object,
+      default: {},
+      required: true
+    }
   },
   components: {
     WithdrawConfirmationModal,
@@ -102,9 +165,11 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
   },
 })
 export default class Withdraw extends Vue {
-  selectToken = false;
   error = null;
   isLoading = false;
+  isSelected = false;
+  isSelectedAll = false;
+  selectedTokens = [];
 
   showWithdrawConfirmation = false;
 
@@ -147,6 +212,28 @@ export default class Withdraw extends Vue {
     return this.childNetwork.chainId;
   }
 
+  // Handlers
+  toggleSelection(value) {
+    this.isSelected = value;
+  }
+
+  selectAll() {
+    this.selectedTokens = [];
+    this.isSelectedAll = true;
+
+    if (this.isSelected === true) {
+      for (let token in this.tokens) {
+        let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
+        if (typeof exists == "undefined") {
+          this.selectedTokens.push(this.tokens[token]);
+        }
+      }
+    } else {
+      this.selectedTokens = [];
+      this.isSelectedAll = false;
+    }
+  }
+
   onCancel() {
     this.cancel();
   }
@@ -155,11 +242,28 @@ export default class Withdraw extends Vue {
     this.showWithdrawConfirmation = true
     this.cancel();
   }
+
+  onSelectNft(token, isSelected) {
+    let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
+    if (typeof exists == "undefined" && isSelected === true) {
+      this.selectedTokens.push(token);
+    } else if (isSelected === false) {
+      this.selectedTokens = this.selectedTokens.filter(
+        (t) => t.token_id !== token.token_id
+      );
+      this.isSelected = false
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
+
+.receive-modal-wrapper {
+  font-size: 14px;
+  line-height: 20px;
+}
 
 .withdraw-box {
   width: 446px;
@@ -179,6 +283,52 @@ export default class Withdraw extends Vue {
 
   .font-caption {
     opacity: 0.6;
+  }
+}
+
+.check-container {
+  display: flex !important;
+  display: none;
+  justify-content: flex-end;
+  &.checked {
+    display: flex !important;
+  }
+
+  .checkmark {
+    position: relative;
+    margin-right: 6px;
+  }
+}
+
+.transaction-details {
+  &__inner {
+    padding: 0 15px;
+  }
+
+  .icon {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+.left {
+  color: #6e798f;
+  line-height: 22px;
+  text-align: left;
+}
+
+.right {
+  color: #6e798f;
+  line-height: 22px;
+  text-align: right;
+}
+.category {
+  background-color: light-color("700");
+  box-sizing: border-box;
+
+  .icon {
+    width: 24px;
+    height: 24px;
   }
 }
 

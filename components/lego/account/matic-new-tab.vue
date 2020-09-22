@@ -85,7 +85,13 @@
           :refreshNFTTokens="refreshNFTTokens"
         />
 
-        <withdraw :show="showWithdrawModal" :visible="onWithdraw" :cancel="onWithdrawClose" :tokens="displayedTokens" />
+        <withdraw
+          :show="showWithdrawModal"
+          :visible="onWithdraw"
+          :cancel="onWithdrawClose"
+          :tokens="displayedTokens"
+          :selectedCategory="selectedCategory"
+        />
 
         <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
           <!-- matic loader here -->

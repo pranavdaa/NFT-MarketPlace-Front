@@ -1,72 +1,31 @@
 <template>
-  <div class="row ps-y-10">
-    <div class="col-12 d-flex ps-t-12 ps-b-12 wrapper-top">
-      <div class="left col-md-8">"count" Collectibles</div>
-      <div class="right col-md-4">
-        <div
-          class="check-container"
-          :class="{'checked': isSelected}"
-          @click="toggleSelection(!isSelected), selectAll()"
-        >
-          <input type="checkbox" id="selectAllNft" :checked="isSelected" />
-          <span class="checkmark align-self-center"></span>
-          <label class="form-check-label" for="selectAllNft">Select all</label>
-        </div>
-
+  <div class="row no-gutters card-container mt-1 mb-2">
+    <div class="col-3">
+      <div class="token-img">
+        <img
+          :src="token.category.img_url"
+          :alt="token.category.name"
+          class="asset-img mx-auto"
+          @load="onImageLoad"
+        />
       </div>
     </div>
-    <div class="col-12 card-wrapper">
-      <div class="row no-gutters card-container mt-1 mb-2" v-for="token in tokens" :key="token.id">
-        <div class="col-3">
-          <div class="token-img">
-            <img
-              :src="token.category.img_url"
-              :alt="token.category.name"
-              class="asset-img mx-auto"
-              @load="onImageLoad"
-            />
-          </div>
-        </div>
-        <div class="col-7 d-flex flex-column justify-content-center text-left">
-          <div class="card-name">{{ token.name }}</div>
-          <div class="card-category">{{ token.category.name }}</div>
-        </div>
-        <div class="col-2 d-flex justify-content-center align-items-center">
-          <div class="check-box">
-            <td>
-              <div
-                class="check-container"
-                :class="{'checked': isSelected}"
-                @click="toggleSelection(!isSelected)"
-              >
-                <input type="checkbox" :checked="isSelected" />
-                <span class="checkmark align-self-center"></span>
-              </div>
-            </td>
-          </div>
-        </div>
-      </div>
+    <div class="col-7 d-flex flex-column justify-content-center text-left">
+      <div class="card-name">{{ token.name }}</div>
+      <div class="card-category">{{ token.category.name }}</div>
     </div>
-    <div class="col-md-12 p-0 transaction-details">
-      <div class="top ps-t-12 ps-b-12 border-top">
-        <div class="transaction-details__inner d-flex">
-          <div class="left col-8">
-            <img 
-            src="tokens" 
-            class="icon align-self-center ms-r-12">
-            Collectibles selected
+    <div class="col-2 d-flex justify-content-center align-items-center">
+      <div class="check-box">
+        <td>
+          <div
+            class="check-container"
+            :class="{'checked': isSelected}"
+            @click="toggleSelection(!isSelected)"
+          >
+            <input type="checkbox" :checked="isSelected" />
+            <span class="checkmark align-self-center"></span>
           </div>
-          <div class="right col-4">"Count"</div>
-        </div>
-      </div>
-      <div class="bottom ps-t-12 ps-b-12 border-top">
-        <div class="transaction-details__inner d-flex">
-          <div class="left col-8">
-            <img src="~/static/img/est-bolt.svg" alt="Bolt" />
-            Estimated Transacton fee
-          </div>
-          <div class="right col-4">$</div>
-        </div>
+        </td>
       </div>
     </div>
   </div>
@@ -78,29 +37,44 @@ import { mapGetters } from "vuex";
 
 @Component({
   props: {
-    tokens: {
-      type: Array,
+    token: {
+      type: Object,
       required: true,
     },
+    onSelectNft: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
+    isSelectedAll: {
+      type: Boolean,
+      required: true,
+    }
   },
   data() {
     return {
       selectedTokens: [],
       allSelected: false,
-      selectedCategory: '',
     }
+  },
+  watch: {
+    isSelectedAll: function(newVal, oldVal) {
+      this.isSelected = newVal;
+    },
   },
   components: {
   },
   computed: {
     ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
+    isSelected() {
+      return this.isSelectedAll;
+    }
   },
   methods: {
   }
 })
 export default class TokenVerticleList extends Vue {
   isSelected = false;
-  userIds = [];
 
   async mounted() {}
 
@@ -122,13 +96,7 @@ export default class TokenVerticleList extends Vue {
   // Handlers
   toggleSelection(value) {
     this.isSelected = value;
-  }
-
-  selectAll() {
-    this.userIds = [];
-    for (let token in this.tokens) {
-      this.userIds.push(this.tokens[token]);
-    }
+    this.onSelectNft && this.onSelectNft(this.token, this.isSelected);
   }
 }
 </script>
@@ -167,17 +135,6 @@ export default class TokenVerticleList extends Vue {
 .wrapper-top {
   font-size: 14px;
   line-height: 20px;
-}
-
-.transaction-details {
-  &__inner {
-    padding: 0 15px;
-  }
-
-  img {
-    height: 24px;
-    width: 24px;
-  }
 }
 
 .card {
