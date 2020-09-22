@@ -72,5 +72,43 @@
     "onsale": "On sale"
   },
   "submitToMarketplace": "Submit to Marketplace",
-  "submittingToMarketplace": "Submitting to Marketplace"
+  "submittingToMarketplace": "Submitting to Marketplace",
+  "withdraw": {
+    "title": "Move Collectibles to Ethereum",
+    "testChallengePeriod": "~3-4 minutes",
+    "mainChallengePeriod": "7 days",
+    "steps": {
+      "preInit": "Withdraw Initializing...",
+      "init": "Withdraw initialized",
+      "checkpoint": "Exit transaction on ethereum",
+      "challengePeriod": "Challenge period",
+      "finished": "Withdraw completed"
+    },
+    "process": {
+      "checkpointWait": "Waiting for checkpoint ...",
+      "checkpointed": "Checkpoint received. Please confirm Withdraw now.",
+      "posCheckpointed": "Checkpoint received. Please finish the withdraw process now.",
+      "challengeWait": "Waiting for challenge period to end. Please check back after {challengePeriod}",
+      "challengeEnd": "Challenge period ended. Please finish the withdraw process."
+    }
+  },
+  "deposit": {
+    "title": "Move Collectibles to Matic",
+    "testChallengePeriod": "~3-4 minutes",
+    "mainChallengePeriod": "7 days",
+    "steps": {
+      "preInit": "Deposit Initializing...",
+      "init": "Deposit initialized",
+      "checkpoint": "Deposit on Ethereum Transaction",
+      "challengePeriod": "Challenge period",
+      "finished": "Deposit completed"
+    },
+    "process": {
+      "checkpointWait": "Waiting for checkpoint ...",
+      "checkpointed": "Checkpoint received. Please confirm Deposit now.",
+      "posCheckpointed": "Checkpoint received. Please finish the deposit process now.",
+      "challengeWait": "Waiting for challenge period to end. Please check back after {challengePeriod}",
+      "challengeEnd": "Challenge period ended. Please finish the deposit process."
+    }
+  }
 }
