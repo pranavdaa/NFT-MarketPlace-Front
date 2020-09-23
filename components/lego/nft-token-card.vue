@@ -8,7 +8,7 @@
     <div
       class="check-container"
       :class="{'checked': isSelected}"
-      v-if="!isAllCategories"
+      v-if="!isAllCategories && !order"
       @click="toggleSelection(!isSelected)"
     >
       <input type="checkbox" :name="token.name" id="token.id" :checked="isSelected" />
@@ -23,7 +23,7 @@
       />
     </div>
 
-    <div class="more-actions" v-if="!isAllCategories">
+    <div class="more-actions" v-if="!isAllCategories && !order">
       <MoreOptions :options="moreOptions" />
     </div>
 
