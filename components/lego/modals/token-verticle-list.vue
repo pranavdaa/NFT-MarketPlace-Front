@@ -1,48 +1,50 @@
 <template>
   <div class="row ps-y-10">
-    <div class="col-12 d-flex ps-t-12 ps-b-12 wrapper-top">
-      <div class="left col-md-8">"count" Collectibles</div>
-      <div class="right col-md-4">
-        <div
-          class="check-container"
-          :class="{'checked': isSelected}"
-          @click="toggleSelection(!isSelected), selectAll()"
-        >
-          <input type="checkbox" id="selectAllNft" :checked="isSelected" />
-          <span class="checkmark align-self-center"></span>
-          <label class="form-check-label" for="selectAllNft">Select all</label>
-        </div>
-
+    <div class="col-12 d-flex ps-y-16 font-body-small">
+      <div class="left d-flex col align-self-center">
+        <img
+          class="cate-icon align-self-center ms-r-8"
+          :src="category.img_url"
+          :alt="category.name"
+        />
+        <span
+          class="align-self-center ps-t-2"
+        >{{tokens && tokens.length || 0}} {{category.name}} Collectibles</span>
+      </div>
+      <div
+        class="right ms-x-16 check-container"
+        :class="{'checked': isAllSelected}"
+        @click="selectAll()"
+      >
+        <input type="checkbox" name="all" id="all" :checked="isAllSelected" />
+        <span class="checkmark align-self-center"></span>
+        <label class="form-check-label cursor-pointer align-self-center ps-l-28 ps-t-2">Select all</label>
       </div>
     </div>
-    <div class="col-12 card-wrapper">
-      <div class="row no-gutters card-container mt-1 mb-2" v-for="token in tokens" :key="token.id">
+    <div class="col-12 card-wrapper hide-scrollbar">
+      <div
+        class="row no-gutters card-container mt-1 mb-2"
+        v-for="token in allTokens"
+        :key="token.id"
+        :class="{ 'active': token.isSelected}"
+      >
         <div class="col-3">
-          <div class="token-img">
-            <img
-              :src="token.category.img_url"
-              :alt="token.category.name"
-              class="asset-img mx-auto"
-              @load="onImageLoad"
-            />
+          <div class="token-img d-flex justify-content-center">
+            <img :src="token.img_url" :alt="token.name" class="asset-img align-self-center" />
           </div>
         </div>
         <div class="col-7 d-flex flex-column justify-content-center text-left">
-          <div class="card-name">{{ token.name }}</div>
+          <div class="card-name font-medium">{{ token.name }}</div>
           <div class="card-category">{{ token.category.name }}</div>
         </div>
-        <div class="col-2 d-flex justify-content-center align-items-center">
-          <div class="check-box">
-            <td>
-              <div
-                class="check-container"
-                :class="{'checked': isSelected}"
-                @click="toggleSelection(!isSelected)"
-              >
-                <input type="checkbox" :checked="isSelected" />
-                <span class="checkmark align-self-center"></span>
-              </div>
-            </td>
+        <div class="col-2 d-flex justify-content-center">
+          <div
+            class="check-container align-self-center"
+            :class="{'checked': token.isSelected}"
+            @click="onChangeSelection(token)"
+          >
+            <input type="checkbox" :checked="token.isSelected" />
+            <span class="checkmark align-self-center"></span>
           </div>
         </div>
       </div>
@@ -51,15 +53,17 @@
       <div class="top ps-t-12 ps-b-12 border-top">
         <div class="transaction-details__inner d-flex">
           <div class="left col-8">
-            <img 
-            src="tokens" 
-            class="icon align-self-center ms-r-12">
-            Collectibles selected
+            <img
+              class="cate-icon align-self-center ms-r-8"
+              :src="category.img_url"
+              :alt="category.name"
+            />
+            <span class="align-self-center ps-t-2">Collectibles selected</span>
           </div>
-          <div class="right col-4">"Count"</div>
+          <div class="right count col-4">{{selectedTokenIds.length || 0}}</div>
         </div>
       </div>
-      <div class="bottom ps-t-12 ps-b-12 border-top">
+      <div class="bottom d-none ps-t-12 ps-b-12 border-top">
         <div class="transaction-details__inner d-flex">
           <div class="left col-8">
             <img src="~/static/img/est-bolt.svg" alt="Bolt" />
@@ -75,6 +79,7 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import { VueWatch } from "~/components/decorator";
 
 @Component({
   props: {
@@ -82,91 +87,129 @@ import { mapGetters } from "vuex";
       type: Array,
       required: true,
     },
+    category: {
+      type: Object,
+      required: true,
+    },
+    preSelectedTokens: {
+      type: Array,
+      required: false,
+      default: function () {
+        return [];
+      },
+    },
+    onSelectionChange: {
+      type: Function,
+      required: true,
+    },
   },
-  data() {
-    return {
-      selectedTokens: [],
-      allSelected: false,
-      selectedCategory: '',
-    }
-  },
-  components: {
-  },
+  components: {},
   computed: {
     ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
   },
-  methods: {
-  }
+  methods: {},
 })
 export default class TokenVerticleList extends Vue {
-  isSelected = false;
-  userIds = [];
+  isAllSelected = false;
+  allSelected = false;
+  selectedTokens = [];
 
   async mounted() {}
 
-  onImageLoad() {
-    try {
-      const img = this.$el.querySelector(".asset-img");
-      let rgbColor = colorThief.getColor(img);
-      if (rgbColor) {
-        let hsl = rgbToHsl({
-          r: rgbColor[0],
-          g: rgbColor[1],
-          b: rgbColor[2]
-        });
-        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
-    } catch (error) {}
-  }
-  
-  // Handlers
-  toggleSelection(value) {
-    this.isSelected = value;
+  @VueWatch("preSelectedTokens", { immediate: true, deep: true })
+  onPreselectedTokens(val) {
+    this.selectedTokens = this.preSelectedTokens;
   }
 
-  selectAll() {
-    this.userIds = [];
-    for (let token in this.tokens) {
-      this.userIds.push(this.tokens[token]);
+  notifyChange() {
+    if (this.onSelectionChange) this.onSelectionChange(this.selectedTokens);
+  }
+
+  // Getters
+  get selectedTokenIds() {
+    let token_ids = [];
+    if (this.selectedTokens && this.selectedTokens.length > 0) {
+      this.selectedTokens.forEach((token) => token_ids.push(token.token_id));
     }
+    return token_ids;
+  }
+  get allTokens() {
+    let tokens = [];
+    if (this.tokens) {
+      this.tokens.forEach((token) => {
+        token.isSelected = this.selectedTokenIds.includes(token.token_id);
+        tokens.push(token);
+      });
+      return tokens;
+    }
+  }
+
+  // Handlers
+  onChangeSelection(token) {
+    if (
+      this.selectedTokenIds &&
+      this.selectedTokenIds.length > 0 &&
+      this.selectedTokenIds.includes(token.token_id)
+    ) {
+      this.selectedTokens = this.selectedTokens.filter(
+        (t) => t.token_id != token.token_id
+      );
+    } else {
+      this.selectedTokens.push(token);
+    }
+
+    if (this.selectedTokens.length === this.tokens.length) {
+      this.isAllSelected = true;
+    } else {
+      this.isAllSelected = false;
+    }
+    this.notifyChange();
+  }
+  selectAll() {
+    this.isAllSelected = !this.isAllSelected;
+    if (this.tokens && this.isAllSelected) {
+      this.selectedTokens = this.tokens;
+    } else {
+      this.selectedTokens = [];
+    }
+    this.notifyChange();
   }
 }
 </script>
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
 .asset-img {
-  max-width: 112px;
-  max-height: 160px;
+  max-width: 76px;
+  max-height: 76px;
+  height: auto;
+  width: auto;
+}
+.cate-icon {
+  height: 24px;
+  width: 24px;
 }
 
 .left {
-  color: #6e798f;
+  color: dark-color("500");
   line-height: 22px;
   text-align: left;
 }
 .right {
-  color: #6e798f;
+  color: dark-color("500");
   line-height: 22px;
   text-align: right;
 }
-
-.check-container {
-  display: flex !important;
-  display: none;
-  justify-content: flex-end;
-  &.checked {
-    display: flex !important;
-  }
-
-  .checkmark {
-    position: relative;
-    margin-right: 6px;
-  }
+.count {
+  color: dark-color("700");
+}
+.border-top,
+.box-header {
+  border-color: light-color("500") !important;
 }
 
-.wrapper-top {
-  font-size: 14px;
-  line-height: 20px;
+.check-container {
+  min-height: 22px;
+  min-width: 22px;
 }
 
 .transaction-details {
@@ -187,43 +230,42 @@ export default class TokenVerticleList extends Vue {
   }
 
   &-container {
-    background: #f8f9fa;
+    background: light-color("600");
     border-radius: 12px;
     margin-left: 15px;
     margin-right: 15px;
+
+    &.active {
+      background: primary-color("100");
+    }
 
     .token-img {
       width: 76px;
       height: 76px;
       margin: 2px;
       border-radius: 10px;
-      background: white;
+      background: light-color("700");
 
       @media (max-width: 446px) {
         width: 55px;
         height: 55px;
       }
-      
+
       img {
         height: 100%;
-        width: 100%;
+        width: auto;
         padding: 5px;
-        margin: 0	;
+        margin: 0;
       }
     }
   }
-  
+
   &-name {
-    color: #061024;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
+    color: dark-color("700");
   }
-  
+
   &-category {
-    color: #6e798f;
-    font-size: 14px;
-    line-height: 20px;
+    color: dark-color("300");
   }
 }
 </style>

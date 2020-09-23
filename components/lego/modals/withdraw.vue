@@ -19,17 +19,11 @@
           </div>
           <div class="box-body">
             <div class="container">
-
-              <token-verticle-list :tokens="tokens" />
+              <token-verticle-list :tokens="tokens" :category="selectedCategory" />
 
               <div class="row ps-x-32 ps-b-8" v-if="error">
-                <div
-                  class="font-body-small text-danger text-center mx-auto"
-                  v-html="error"
-                ></div>
-                <div
-                  class="mx-auto text-gray-300 font-caption"
-                ></div>
+                <div class="font-body-small text-danger text-center mx-auto" v-html="error"></div>
+                <div class="mx-auto text-gray-300 font-caption"></div>
               </div>
               <div class="row p-0">
                 <div class="col-12 p-0 d-flex justify-content-space-between">
@@ -92,13 +86,13 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
   },
   components: {
     WithdrawConfirmationModal,
-    TokenVerticleList
+    TokenVerticleList,
   },
-  methods: {
-  },
+  methods: {},
   computed: {
     ...mapGetters("account", ["account"]),
     ...mapGetters("network", ["networks", "networkMeta"]),
+    ...mapGetters("page", ["selectedCategory"]),
   },
 })
 export default class Withdraw extends Vue {
@@ -121,12 +115,12 @@ export default class Withdraw extends Vue {
         let hsl = rgbToHsl({
           r: rgbColor[0],
           g: rgbColor[1],
-          b: rgbColor[2]
+          b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
       } else this.bg = "#f3f4f7";
     } catch (error) {}
-	}
+  }
 
   get maticToken() {
     if (this.userERC20Tokens) {
@@ -152,7 +146,7 @@ export default class Withdraw extends Vue {
   }
 
   onWithConfirmation() {
-    this.showWithdrawConfirmation = true
+    this.showWithdrawConfirmation = true;
     this.cancel();
   }
 }

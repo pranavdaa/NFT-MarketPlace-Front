@@ -85,7 +85,13 @@
           :refreshNFTTokens="refreshNFTTokens"
         />
 
-        <withdraw :show="showWithdrawModal" :visible="onWithdraw" :cancel="onWithdrawClose" :tokens="displayedTokens" />
+        <withdraw
+          v-if="selectedCategory"
+          :show="showWithdrawModal"
+          :visible="onWithdraw"
+          :cancel="onWithdrawClose"
+          :tokens="displayedTokens"
+        />
 
         <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
           <!-- matic loader here -->
@@ -189,10 +195,10 @@ export default class MaticNewTab extends Vue {
     this.showSellModal = false;
   }
   onWithdraw() {
-    this.showWithdrawModal = true
+    this.showWithdrawModal = true;
   }
   onWithdrawClose() {
-    this.showWithdrawModal = false
+    this.showWithdrawModal = false;
   }
   onSelectToken(token) {
     let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);

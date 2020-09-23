@@ -1356,6 +1356,16 @@ label.switch {
   }
 }
 
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
 // Hiding all canvas due to ColorThief
 // To be removed
 canvas {

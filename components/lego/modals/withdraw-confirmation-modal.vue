@@ -127,10 +127,7 @@
               </div>
               <div class="row">
                 <div class="col-12 ps-x-32 text-center text-red">
-                  <div
-                    class="font-body-small text-red text-center mx-auto"
-                    v-html="error"
-                  ></div>
+                  <div class="font-body-small text-red text-center mx-auto" v-html="error"></div>
                 </div>
               </div>
               <div class="row p-0">
@@ -219,14 +216,12 @@ const networkProfile = new MetaNetwork(
       challengePeriodEnded: 5,
       confirmed: 7,
       transactionStatus: 7,
-      isPoS: true
+      isPoS: true,
       //temp values
-    }
+    };
   },
   components: {},
-  methods: {
-
-  },
+  methods: {},
   computed: {
     ...mapGetters("account", ["account"]),
     ...mapGetters("network", ["networks", "networkMeta"]),
@@ -238,24 +233,16 @@ export default class WithdrawConfirmationModal extends Vue {
   isExited = false;
   error = null;
 
-  async mounted() {
-
-  }
+  async mounted() {}
 
   async confirmWithdraw() {
     try {
-
-    } catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   async PoSProcessExit() {
     try {
-
-    } catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   // Getter
@@ -357,7 +344,7 @@ export default class WithdrawConfirmationModal extends Vue {
   margin-right: 12px;
   border-radius: 10px;
   flex: none;
-  
+
   img {
     height: 100%;
     width: 100%;
