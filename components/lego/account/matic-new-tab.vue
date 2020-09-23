@@ -50,6 +50,7 @@
             <button
               v-if="selectedCategory"
               class="btn btn-primary ps-x-32 ms-l-sm-20 ms-t-16 ms-t-sm-0 text-nowrap"
+              @click.prevent="onWithdraw()"
             >{{$t('maticTab.withdrawBtn', {count: selectedTokens && selectedTokens.length || displayedTokens && displayedTokens.length || 0})}}</button>
           </div>
         </div>
@@ -82,6 +83,14 @@
           :nftToken="selectedToken"
           v-if="showSellModal"
           :refreshNFTTokens="refreshNFTTokens"
+        />
+
+        <withdraw
+          v-if="selectedCategory"
+          :show="showWithdrawModal"
+          :visible="onWithdraw"
+          :cancel="onWithdrawClose"
+          :tokens="displayedTokens"
         />
 
         <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
@@ -120,6 +129,7 @@ import CategorySidebar from "~/components/lego/account/category-sidebar";
 import NFTTokenCard from "~/components/lego/nft-token-card";
 
 import SellToken from "~/components/lego/modals/sell-token";
+import Withdraw from "~/components/lego/modals/withdraw";
 
 @Component({
   props: {},
@@ -133,6 +143,7 @@ import SellToken from "~/components/lego/modals/sell-token";
     NFTTokenCard,
     SellToken,
     CategorySidebar,
+    Withdraw,
   },
   computed: {
     ...mapGetters("page", ["selectedFilters", "selectedCategory"]),
@@ -155,6 +166,7 @@ import SellToken from "~/components/lego/modals/sell-token";
 export default class MaticNewTab extends Vue {
   // Modals
   showSellModal = false;
+  showWithdrawModal = false;
   selectedToken = null;
   selectedTokens = [];
   searchInput = null;
@@ -181,6 +193,12 @@ export default class MaticNewTab extends Vue {
   }
   onCloseSellModal() {
     this.showSellModal = false;
+  }
+  onWithdraw() {
+    this.showWithdrawModal = true;
+  }
+  onWithdrawClose() {
+    this.showWithdrawModal = false;
   }
   onSelectToken(token) {
     let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
