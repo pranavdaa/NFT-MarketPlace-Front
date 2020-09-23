@@ -51,7 +51,7 @@
               v-if="selectedCategory"
               class="btn btn-primary ps-x-32 ms-l-sm-20 ms-t-16 ms-t-sm-0 text-nowrap"
               @click.prevent="onWithdraw()"
-            >{{$t('maticTab.withdrawBtn', {count: selectedTokens && selectedTokens.length || displayedTokens && displayedTokens.length || 0})}}</button>
+            >{{$t('maticTab.withdrawBtn', {count: selectedTokens && selectedTokens.length || sellableTokens && sellableTokens.length || 0})}}</button>
           </div>
         </div>
 
@@ -90,7 +90,8 @@
           :show="showWithdrawModal"
           :visible="onWithdraw"
           :cancel="onWithdrawClose"
-          :tokens="displayedTokens"
+          :tokens="sellableTokens"
+          :preSelectedTokens="preSelectedTokens"
         />
 
         <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
@@ -267,6 +268,18 @@ export default class MaticNewTab extends Vue {
   // Getters
   get displayedTokens() {
     return this.tokensFullList || [];
+  }
+  get preSelectedTokens() {
+    if (this.selectedTokens && this.selectedTokens.length > 0) {
+      return this.selectedTokens;
+    }
+    return this.sellableTokens;
+  }
+  get sellableTokens() {
+    if (this.tokensFullList) {
+      return this.tokensFullList.filter((t) => !t.active_order);
+    }
+    return [];
   }
   get ifCategory() {
     return this.selectedFilters.selectedCategory
