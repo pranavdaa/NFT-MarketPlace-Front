@@ -52,7 +52,7 @@
     <div class="col-md-12 p-0 transaction-details">
       <div class="top ps-t-12 ps-b-12 border-top">
         <div class="transaction-details__inner d-flex">
-          <div class="left col-8">
+          <div class="left col-8 d-flex">
             <img
               class="cate-icon align-self-center ms-r-8"
               :src="category.img_url"
@@ -115,6 +115,8 @@ export default class TokenVerticleList extends Vue {
   isAllSelected = false;
   allSelected = false;
   selectedTokens = [];
+
+  // TODO : max selection allowed 20 for deposit and withdraw
 
   async mounted() {}
 

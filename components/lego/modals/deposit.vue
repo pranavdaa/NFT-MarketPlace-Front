@@ -1,6 +1,6 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal receive-modal-wrapper" v-bind:class="{ 'show': show }">
+    <div class="modal receive-modal-wrapper" v-bind:class="{ 'show': show && !hidden}">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box deposit-box">
           <div class="box-header justify-content-center">
@@ -19,19 +19,17 @@
           </div>
           <div class="box-body">
             <div class="container">
-              <div class="row ps-x-32 ps-y-20">
-                <div class="col-12 p-0">
-                  <!-- <div class="d-flex ps-4"></div> -->
-                </div>
-              </div>
-              <div class="row ps-x-32 ps-b-8">
-                <div
-                  class="font-body-small text-danger text-center mx-auto"
-                  v-html="error"
-                ></div>
-                <div
-                  class="mx-auto text-gray-300 font-caption"
-                ></div>
+              <token-verticle-list
+                :v-if="showTokenList"
+                :tokens="tokens"
+                :preSelectedTokens="preSelectedTokens"
+                :category="selectedCategory || {}"
+                :onSelectionChange="onSelectionChange"
+              />
+
+              <div class="row ps-x-32 ps-b-8" v-if="error">
+                <div class="font-body-small text-danger text-center mx-auto" v-html="error"></div>
+                <div class="mx-auto text-gray-300 font-caption"></div>
               </div>
               <div class="row p-0">
                 <div class="col-12 p-0 d-flex justify-content-space-between">
@@ -43,7 +41,7 @@
                     :loadingText="'Initializing deposit'"
                     :loading="isLoading"
                     :text="'Deposit to Ethereum Network'"
-                    :click="onDepositConfirmation"
+                    :click="approveForDeposit"
                   ></button-loader>
                 </div>
               </div>
@@ -55,7 +53,9 @@
     <!-- <choose-token :show="selectToken" :cancel="onTokenClose" /> -->
     <deposit-confirmation-modal
       :show="showDepositConfirmation"
-      :cancel="() => {this.showDepositConfirmation = false}"
+      :isApproving="isLoading"
+      :selectedTokens="selectedTokens"
+      :cancel="onCloseConfirmDeposit"
     />
     <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
   </div>
@@ -66,11 +66,15 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import app from "~/plugins/app";
 
 import getBaseAxios from "~/plugins/axios";
-// import { tokenImage } from "~/plugins/helpers/";
+import { getWalletProvider } from "~/plugins/helpers/providers";
+const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
 
 import DepositConfirmationModal from "~/components/lego/modals/deposit-confirmation-modal";
+import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
+
 @Component({
   props: {
     show: {
@@ -86,55 +90,119 @@ import DepositConfirmationModal from "~/components/lego/modals/deposit-confirmat
       type: Function,
       required: true,
     },
+    tokens: {
+      type: Array,
+      required: true,
+    },
+    preSelectedTokens: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
   components: {
     DepositConfirmationModal,
+    TokenVerticleList,
   },
-  methods: {
-  },
+  methods: {},
   computed: {
     ...mapGetters("account", ["account"]),
     ...mapGetters("network", ["networks", "networkMeta"]),
+    ...mapGetters("page", ["selectedCategory"]),
   },
 })
 export default class Deposit extends Vue {
-  selectToken = false;
   error = null;
   isLoading = false;
-
+  selectingTokens = false;
+  hidden = false;
+  selectedTokens = [];
   showDepositConfirmation = false;
 
-  async mounted() {}
-
-  // get tokenImage() {
-  //   return tokenImage;
-  // }
-
-  get maticToken() {
-    if (this.userERC20Tokens) {
-      return this.userERC20Tokens.find((token) => token.isMatic);
-    }
-    return null;
+  async mounted() {
+    this.selectedTokens = this.preSelectedTokens;
   }
 
+  // Getters
+  get showTokenList() {
+    return this.show && this.selectingTokens;
+  }
   get parentNetwork() {
     return this.networks.main;
   }
-
   get childNetwork() {
     return this.networks.matic;
   }
-
   get networkID() {
-    return this.childNetwork.chainId;
+    return this.parentNetwork.chainId;
   }
 
+  getMaticPOS() {
+    const maticProvider = getWalletProvider({
+      networks: this.networks,
+      primaryProvider: "child",
+    });
+    const parentProvider = getWalletProvider({
+      networks: this.networks,
+      primaryProvider: "main",
+    });
+
+    return new MaticPOSClient({
+      network: app.uiconfig.matic.deployment.network,
+      version: app.uiconfig.matic.deployment.version,
+      parentProvider,
+      maticProvider,
+    });
+  }
+
+  // Handlers
   onCancel() {
     this.cancel();
   }
+  onSelectionChange(tokens) {
+    this.selectedTokens = tokens;
+  }
+  async approveForDeposit() {
+    if (this.isLoading || this.selectedTokens.length <= 0) {
+      return;
+    }
 
-  onDepositConfirmation() {
-    this.showDepositConfirmation = true
+    try {
+      this.isLoading = true;
+      this.showDepositConfirmation = true;
+      this.hidden = true;
+
+      const maticPoS = this.getMaticPOS();
+      const ERC721 = this.selectedCategory.getAddress(this.networkID);
+
+      const isApproved = await maticPoS.isApprovedAllERC721ForDeposit(
+        ERC721,
+        this.account.address,
+        {
+          from: this.account.address,
+        }
+      );
+      if (isApproved) {
+        this.isLoading = false;
+      } else {
+        let txHash = await maticPoS.approveAllERC721ForDeposit(ERC721, {
+          from: this.account.address,
+        });
+        if (txHash) {
+          console.log("approve transaction", txHash);
+          this.isLoading = false;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      this.error = error.message;
+      this.isLoading = false;
+      this.showDepositConfirmation = false;
+      this.hidden = false;
+    }
+  }
+  onCloseConfirmDeposit() {
+    this.showDepositConfirmation = false;
     this.cancel();
   }
 }

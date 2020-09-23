@@ -86,7 +86,7 @@
         />
 
         <withdraw
-          v-if="selectedCategory"
+          v-if="selectedCategory && showWithdrawModal"
           :show="showWithdrawModal"
           :visible="onWithdraw"
           :cancel="onWithdrawClose"

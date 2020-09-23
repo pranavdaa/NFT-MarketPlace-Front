@@ -50,7 +50,8 @@
             <button
               v-if="selectedCategory"
               class="btn btn-primary ps-x-32 ms-l-sm-20 ms-t-16 ms-t-sm-0 text-nowrap"
-            >{{$t('maticTab.withdrawBtn', {count: selectedTokens && selectedTokens.length || displayedTokens && displayedTokens.length || 0})}}</button>
+              @click="onDeposit()"
+            >{{$t('ethereumTab.depositBtn', {count: selectedTokens && selectedTokens.length || displayedTokens && displayedTokens.length || 0})}}</button>
           </div>
         </div>
 
@@ -73,6 +74,15 @@
             :searchInput="searchInput"
           />
         </div>
+
+        <deposit
+          v-if="selectedCategory && showDepositModal"
+          :show="showDepositModal"
+          :visible="onDeposit"
+          :cancel="onDepositClose"
+          :tokens="this.displayedTokens"
+          :preSelectedTokens="preSelectedTokens"
+        />
 
         <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
           <!-- matic loader here -->
@@ -110,6 +120,7 @@ import CategorySidebar from "~/components/lego/account/category-sidebar";
 import NFTTokenCard from "~/components/lego/nft-token-card";
 
 import SellToken from "~/components/lego/modals/sell-token";
+import Deposit from "~/components/lego/modals/deposit";
 
 @Component({
   props: {},
@@ -122,6 +133,7 @@ import SellToken from "~/components/lego/modals/sell-token";
     NoItem,
     NFTTokenCard,
     SellToken,
+    Deposit,
     CategorySidebar,
   },
   computed: {
@@ -148,6 +160,7 @@ export default class EthereumNewTab extends Vue {
   selectedToken = null;
   selectedTokens = [];
   searchInput = null;
+  showDepositModal = false;
 
   tokensFullList = [];
   hasNextPage = true;
@@ -179,6 +192,12 @@ export default class EthereumNewTab extends Vue {
         (t) => t.token_id !== token.token_id
       );
     }
+  }
+  onDeposit() {
+    this.showDepositModal = true;
+  }
+  onDepositClose() {
+    this.showDepositModal = false;
   }
 
   // Async
@@ -234,6 +253,12 @@ export default class EthereumNewTab extends Vue {
   // Getters
   get displayedTokens() {
     return this.tokensFullList || [];
+  }
+  get preSelectedTokens() {
+    if (this.selectedTokens && this.selectedTokens.length > 0) {
+      return this.selectedTokens;
+    }
+    return this.displayedTokens;
   }
   get ifCategory() {
     return this.selectedFilters.selectedCategory

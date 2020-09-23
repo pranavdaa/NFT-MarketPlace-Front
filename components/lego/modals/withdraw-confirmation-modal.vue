@@ -19,10 +19,18 @@
           </div>
           <div class="box-body">
             <div class="container p-0">
-              <div class="col-12 ps-x-40 ps-b-20 ps-t-16 container-wrapper">
-                <div class="ps-b-20 ps-t-18 text-white">5 Collectibles selected</div>
-                <div class="container card-list d-flex p-0">
-                  <div class="token-img"></div>
+              <div class="col-12 ps-x-40 ps-b-20 ps-t-16 container-wrapper font-body-small">
+                <div
+                  class="ps-b-20 ps-t-18 text-white"
+                >{{selectedTokens.length || 0}} Collectibles selected</div>
+                <div class="container card-list hide-scrollbar d-flex p-0">
+                  <div
+                    class="token-img d-flex ms-x-6 ps-4 justify-content-center"
+                    v-for="token in selectedTokens"
+                    :key="token.token_id"
+                  >
+                    <img class="align-self-center" :src="token.img_url" :alt="token.name" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -49,7 +57,7 @@
                     />
                     <img
                       v-if="transactionStatus === initiated && transactionStatus !== inCheckpoint"
-                      src="~/static/img/yellow-tick.svg"
+                      src="~/static/img/yellow-check.svg"
                       alt="Green Check"
                     />
                   </div>
@@ -83,7 +91,7 @@
                   >
                     <img
                       v-if="transactionStatus === confirmed"
-                      src="~/static/img/yellow-tick.svg"
+                      src="~/static/img/yellow-check.svg"
                       alt="yellow Check"
                     />
                     <img
@@ -113,7 +121,7 @@
                   >
                     <img
                       v-if="isLoading && transactionStatus === challengePeriodEnded && !isExited"
-                      src="~/static/img/yellow-tick.svg"
+                      src="~/static/img/yellow-check.svg"
                       alt="yellow Check"
                     />
                     <img
@@ -187,14 +195,12 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import app from "~/plugins/app";
-import { getAxios } from "~/plugins/axios";
 
-import MetaNetwork from "@maticnetwork/meta/network";
-
-const networkProfile = new MetaNetwork(
-  app.uiconfig.matic.deployment.network,
-  app.uiconfig.matic.deployment.version
-);
+const status = {
+  INITIATED: 1,
+  CHECKPOINTED: 2,
+  EXITED: 3,
+};
 
 @Component({
   props: {
@@ -203,22 +209,14 @@ const networkProfile = new MetaNetwork(
       required: false,
       default: true,
     },
+    selectedTokens: {
+      type: Array,
+      required: true,
+    },
     cancel: {
       type: Function,
       required: true,
     },
-  },
-  data() {
-    return {
-      // temp values
-      initiated: 1,
-      inCheckpoint: 3,
-      challengePeriodEnded: 5,
-      confirmed: 7,
-      transactionStatus: 7,
-      isPoS: true,
-      //temp values
-    };
   },
   components: {},
   methods: {},
@@ -232,6 +230,12 @@ export default class WithdrawConfirmationModal extends Vue {
   isLoading = false;
   isExited = false;
   error = null;
+  initiated = 1;
+  inCheckpoint = 3;
+  challengePeriodEnded = 5;
+  confirmed = 7;
+  transactionStatus = 7;
+  isPoS = true;
 
   async mounted() {}
 
@@ -252,13 +256,6 @@ export default class WithdrawConfirmationModal extends Vue {
 
   onCancel() {
     this.cancel();
-  }
-
-  get challengePeriodInWords() {
-    if (app.uiconfig.matic.deployment.network === "testnet") {
-      return this.$t("withdraw.testChallengePeriod");
-    }
-    return this.$t("withdraw.mainChallengePeriod");
   }
 
   get parentNetwork() {
@@ -338,18 +335,18 @@ export default class WithdrawConfirmationModal extends Vue {
 }
 
 .token-img {
+  min-width: 76px;
+  min-height: 76px;
   width: 76px;
   height: 76px;
   background: white;
-  margin-right: 12px;
   border-radius: 10px;
-  flex: none;
 
   img {
+    max-height: 76px;
+    max-width: 76px;
     height: 100%;
-    width: 100%;
-    padding: 5px;
-    margin: 0;
+    width: auto;
   }
 }
 </style>

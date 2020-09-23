@@ -1,6 +1,6 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal receive-modal-wrapper" v-bind:class="{ 'show': show }">
+    <div class="modal receive-modal-wrapper" v-bind:class="{ 'show': show && !hidden }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box withdraw-box">
           <div class="box-header justify-content-center">
@@ -19,7 +19,13 @@
           </div>
           <div class="box-body">
             <div class="container">
-              <token-verticle-list :tokens="tokens" :category="selectedCategory || {}" />
+              <token-verticle-list
+                :v-if="showTokenList"
+                :tokens="tokens"
+                :preSelectedTokens="preSelectedTokens"
+                :category="selectedCategory || {}"
+                :onSelectionChange="onSelectionChange"
+              />
 
               <div class="row ps-x-32 ps-b-8" v-if="error">
                 <div class="font-body-small text-danger text-center mx-auto" v-html="error"></div>
@@ -35,7 +41,8 @@
                     :loadingText="'Initializing withdraw'"
                     :loading="isLoading"
                     :text="'Withdraw to Ethereum Network'"
-                    :click="onWithConfirmation"
+                    :click="initWithdraw"
+                    :disabled="selectedTokens.length <= 0"
                   ></button-loader>
                 </div>
               </div>
@@ -46,7 +53,9 @@
     </div>
     <withdraw-confirmation-modal
       :show="showWithdrawConfirmation"
-      :cancel="() => {this.showWithdrawConfirmation = false}"
+      :initialising="isLoading"
+      :selectedTokens="selectedTokens"
+      :cancel="onCloseConfirmWithdraw"
     />
     <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
   </div>
@@ -58,11 +67,9 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 
-import getBaseAxios from "~/plugins/axios";
-// import { tokenImage } from "~/plugins/helpers/";
-
 import WithdrawConfirmationModal from "~/components/lego/modals/withdraw-confirmation-modal";
 import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
+
 @Component({
   props: {
     show: {
@@ -82,6 +89,11 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
       type: Array,
       required: true,
     },
+    preSelectedTokens: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
   components: {
     WithdrawConfirmationModal,
@@ -97,94 +109,70 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
 export default class Withdraw extends Vue {
   error = null;
   isLoading = false;
-  isSelected = false;
-  isSelectedAll = false;
+  hidden = false;
+  selectingTokens = false;
   selectedTokens = [];
-
   showWithdrawConfirmation = false;
 
-  async mounted() {}
-
-  // get tokenImage() {
-  //   return tokenImage;
-  // }
-  onImageLoad() {
-    try {
-      const img = this.$el.querySelector(".asset-img");
-      let rgbColor = colorThief.getColor(img);
-      if (rgbColor) {
-        let hsl = rgbToHsl({
-          r: rgbColor[0],
-          g: rgbColor[1],
-          b: rgbColor[2],
-        });
-        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
-    } catch (error) {}
+  async mounted() {
+    this.selectedTokens = this.preSelectedTokens;
   }
 
-  get maticToken() {
-    if (this.userERC20Tokens) {
-      return this.userERC20Tokens.find((token) => token.isMatic);
-    }
-    return null;
+  // Getters
+  get showTokenList() {
+    return this.show && this.selectingTokens;
   }
-
   get parentNetwork() {
     return this.networks.main;
   }
-
   get childNetwork() {
     return this.networks.matic;
   }
-
   get networkID() {
     return this.childNetwork.chainId;
   }
 
   // Handlers
-  toggleSelection(value) {
-    this.isSelected = value;
-  }
-
-  selectAll() {
-    this.selectedTokens = [];
-    this.isSelectedAll = true;
-
-    if (this.isSelected === true) {
-      for (let token in this.tokens) {
-        let exists = this.selectedTokens.find(
-          (t) => t.token_id === token.token_id
-        );
-        if (typeof exists == "undefined") {
-          this.selectedTokens.push(this.tokens[token]);
-        }
-      }
-    } else {
-      this.selectedTokens = [];
-      this.isSelectedAll = false;
-    }
+  onSelectionChange(tokens) {
+    this.selectedTokens = tokens;
   }
 
   onCancel() {
     this.cancel();
   }
 
-  onWithConfirmation() {
-    this.showWithdrawConfirmation = true;
+  onCloseConfirmWithdraw() {
+    this.showWithdrawConfirmation = false;
     this.cancel();
   }
 
-  onSelectNft(token, isSelected) {
-    let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
-    if (typeof exists == "undefined" && isSelected === true) {
-      this.selectedTokens.push(token);
-    } else if (isSelected === false) {
-      this.selectedTokens = this.selectedTokens.filter(
-        (t) => t.token_id !== token.token_id
-      );
-      this.isSelected = false;
+  onShowWithdrawConfirmation() {
+    this.showWithdrawConfirmation = true;
+    this.hidden = true;
+  }
+
+  // withdraw init
+  async validation() {
+    // TODO : Check the metamask selected chain id
+    // TODO : Other validation
+    return true;
+  }
+
+  async initWithdraw() {
+    if (
+      this.isLoading ||
+      this.selectedTokens.length <= 0 ||
+      !(await this.validation())
+    ) {
+      return;
     }
+
+    this.isLoading = true;
+
+    // TODO : start bulk withdraw for selected tokens
+
+    // when process starts hide the token list and show the status on confirmation withdraw
+    this.onShowWithdrawConfirmation();
   }
 }
 </script>
