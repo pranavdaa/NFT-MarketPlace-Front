@@ -19,7 +19,7 @@
           </div>
           <div class="box-body">
             <div class="container">
-              <token-verticle-list :tokens="tokens" :category="selectedCategory" />
+              <token-verticle-list :tokens="tokens" :category="selectedCategory || {}" />
 
               <div class="row ps-x-32 ps-b-8" v-if="error">
                 <div class="font-body-small text-danger text-center mx-auto" v-html="error"></div>
@@ -44,7 +44,6 @@
         </div>
       </div>
     </div>
-    <!-- <choose-token :show="selectToken" :cancel="onTokenClose" /> -->
     <withdraw-confirmation-modal
       :show="showWithdrawConfirmation"
       :cancel="() => {this.showWithdrawConfirmation = false}"
@@ -96,9 +95,11 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
   },
 })
 export default class Withdraw extends Vue {
-  selectToken = false;
   error = null;
   isLoading = false;
+  isSelected = false;
+  isSelectedAll = false;
+  selectedTokens = [];
 
   showWithdrawConfirmation = false;
 
@@ -141,6 +142,30 @@ export default class Withdraw extends Vue {
     return this.childNetwork.chainId;
   }
 
+  // Handlers
+  toggleSelection(value) {
+    this.isSelected = value;
+  }
+
+  selectAll() {
+    this.selectedTokens = [];
+    this.isSelectedAll = true;
+
+    if (this.isSelected === true) {
+      for (let token in this.tokens) {
+        let exists = this.selectedTokens.find(
+          (t) => t.token_id === token.token_id
+        );
+        if (typeof exists == "undefined") {
+          this.selectedTokens.push(this.tokens[token]);
+        }
+      }
+    } else {
+      this.selectedTokens = [];
+      this.isSelectedAll = false;
+    }
+  }
+
   onCancel() {
     this.cancel();
   }
@@ -149,11 +174,28 @@ export default class Withdraw extends Vue {
     this.showWithdrawConfirmation = true;
     this.cancel();
   }
+
+  onSelectNft(token, isSelected) {
+    let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
+    if (typeof exists == "undefined" && isSelected === true) {
+      this.selectedTokens.push(token);
+    } else if (isSelected === false) {
+      this.selectedTokens = this.selectedTokens.filter(
+        (t) => t.token_id !== token.token_id
+      );
+      this.isSelected = false;
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
+
+.receive-modal-wrapper {
+  font-size: 14px;
+  line-height: 20px;
+}
 
 .withdraw-box {
   width: 446px;
@@ -176,113 +218,63 @@ export default class Withdraw extends Vue {
   }
 }
 
+.check-container {
+  display: flex !important;
+  display: none;
+  justify-content: flex-end;
+  &.checked {
+    display: flex !important;
+  }
+
+  .checkmark {
+    position: relative;
+    margin-right: 6px;
+  }
+}
+
+.transaction-details {
+  &__inner {
+    padding: 0 15px;
+  }
+
+  .icon {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+.left {
+  color: #6e798f;
+  line-height: 22px;
+  text-align: left;
+}
+
+.right {
+  color: #6e798f;
+  line-height: 22px;
+  text-align: right;
+}
+.category {
+  background-color: light-color("700");
+  box-sizing: border-box;
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 @media (max-width: 446px) {
   .withdraw-box {
     width: 100%;
   }
-  .currency-switch {
-    width: 100%;
-    margin-left: 0px;
-    margin-right: 0px;
-  }
 }
 
-.pill {
-  min-height: 26px;
-  border-radius: 13px;
-
-  &.ethereum-pill {
-    background-color: supportive-color("100");
-  }
-  &.matic-pill {
-    background-color: primary-color("200");
-  }
-}
-
-.address-line {
-  height: 56px;
-  border-radius: 8px;
-  padding: 0 6px;
-  border: 1px solid light-color("500");
-  display: flex;
-  background-color: light-color("700");
-  .form-control {
-    height: 44px;
-    border-width: 0px;
-    box-shadow: none;
-    outline: none;
-  }
-  .contact-person {
-    display: block;
-  }
-  .contact-person.active {
-    display: none;
-  }
-  &:hover {
-    .contact-person-box.active {
-      background: light-color("500");
-    }
-    .contact-person {
-      display: none;
-    }
-    .contact-person.active {
-      display: block;
-    }
-  }
-  .right-arrow {
-    margin-top: -2px;
-  }
-}
-
-.contact-person-box {
-  height: 44px;
-  width: 44px;
-  border-radius: $border-radius;
-}
-
-.currency-switch {
-  @extend .address-line;
-  height: 34px;
-  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.08);
-  .switch {
-    border-radius: 6px;
-    height: 26px;
-    width: 64px;
-    cursor: pointer;
-  }
-  .switch.active,
-  .switch:hover {
-    background-color: light-color("500");
-  }
-}
-
-.currency-switch.precent .switch {
-  padding-left: 8px;
-  padding-right: 8px;
-  width: 50px;
-}
-
-.text-currency {
-  color: dark-color("600");
-}
 .text-gray-300 {
   color: dark-color("300");
-}
-.xl-currency {
-  font-weight: 300;
-  font-size: 64px;
-  line-height: 110%;
-
-  letter-spacing: -0.01em;
 }
 
 .btn-pay {
   border-radius: 12px;
-}
-.powered-by {
-  .logo {
-    margin-top: -3px;
-    height: 14px;
-  }
 }
 </style>

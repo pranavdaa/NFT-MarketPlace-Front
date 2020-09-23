@@ -69,7 +69,6 @@
             <img src="~/static/img/est-bolt.svg" alt="Bolt" />
             Estimated Transacton fee
           </div>
-          <div class="right col-4">$</div>
         </div>
       </div>
     </div>
@@ -106,6 +105,9 @@ import { VueWatch } from "~/components/decorator";
   components: {},
   computed: {
     ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
+    isSelected() {
+      return this.isSelectedAll;
+    },
   },
   methods: {},
 })
@@ -210,17 +212,6 @@ export default class TokenVerticleList extends Vue {
 .check-container {
   min-height: 22px;
   min-width: 22px;
-}
-
-.transaction-details {
-  &__inner {
-    padding: 0 15px;
-  }
-
-  img {
-    height: 24px;
-    width: 24px;
-  }
 }
 
 .card {
