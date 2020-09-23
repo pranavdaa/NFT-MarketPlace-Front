@@ -133,6 +133,11 @@ export default class TokenVerticleList extends Vue {
     if (this.selectedTokens && this.selectedTokens.length > 0) {
       this.selectedTokens.forEach((token) => token_ids.push(token.token_id));
     }
+    if (token_ids.length === this.tokens.length) {
+      this.isAllSelected = true;
+    } else {
+      this.isAllSelected = false;
+    }
     return token_ids;
   }
   get allTokens() {
@@ -158,12 +163,6 @@ export default class TokenVerticleList extends Vue {
       );
     } else {
       this.selectedTokens.push(token);
-    }
-
-    if (this.selectedTokens.length === this.tokens.length) {
-      this.isAllSelected = true;
-    } else {
-      this.isAllSelected = false;
     }
     this.notifyChange();
   }
