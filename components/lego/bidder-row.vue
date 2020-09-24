@@ -316,7 +316,7 @@ export default class BidderRow extends Vue {
             domain: {
               name: "0x Protocol",
               version: "3.0.0",
-              chainId: 80001,
+              chainId: this.networks.matic.chainId,
               verifyingContract: contractWrappers.contractAddresses.exchange,
             },
           };
@@ -328,7 +328,6 @@ export default class BidderRow extends Vue {
           );
 
           if(takerSign) {
-            console.log("Taker Sign", takerSign);
             await this.handleBidAccept(takerSign);
           }
         }
@@ -480,7 +479,7 @@ export default class BidderRow extends Vue {
           domain: {
             name: "0x Protocol",
             version: "3.0.0",
-            chainId: 80001,
+            chainId: this.networks.matic.chainId,
             verifyingContract: contractWrappers.contractAddresses.exchange,
           },
         };
@@ -492,7 +491,6 @@ export default class BidderRow extends Vue {
         );
 
         if(takerSign) {
-          console.log("Taker Sign", takerSign);
           await this.handleCancelBid(takerSign);
         }
       } else {

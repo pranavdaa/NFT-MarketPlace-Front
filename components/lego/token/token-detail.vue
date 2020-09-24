@@ -423,7 +423,7 @@ export default class TokenDetail extends Vue {
           domain: {
             name: "0x Protocol",
             version: "3.0.0",
-            chainId: 80001,
+            chainId: this.networks.matic.chainId,
             verifyingContract: contractWrappers.contractAddresses.exchange,
           },
         };
@@ -435,7 +435,6 @@ export default class TokenDetail extends Vue {
         );
 
         if(takerSign) {
-          console.log("Taker Sign", takerSign);
           await this.handleCancelOrder(takerSign);
         }
       } else {

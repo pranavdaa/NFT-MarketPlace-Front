@@ -210,7 +210,6 @@ import { parseBalance } from "~/plugins/helpers/token-utils";
 import PlaceBid from "~/components/lego/modals/place-bid";
 
 const { getTypedData } = require("~/plugins/meta-tx")
-let matic = new Web3("https://rpc-mumbai.matic.today/")
 
 // 0X
 let {
@@ -556,7 +555,7 @@ export default class BuyToken extends Vue {
             domain: {
               name: "0x Protocol",
               version: "3.0.0",
-              chainId: 80001,
+              chainId: this.networks.matic.chainId,
               verifyingContract: contractWrappers.contractAddresses.exchange,
             },
           };
@@ -568,7 +567,6 @@ export default class BuyToken extends Vue {
           );
 
           if(takerSign) {
-            console.log("Taker Sign", takerSign);
             await this.handleBuyToken(takerSign);
           }
         } else {
@@ -582,6 +580,7 @@ export default class BuyToken extends Vue {
   }
 
   async approve0x(contractWrappers, erc20Address, takerAddress) {
+    let matic = new Web3(this.networks.matic.rpc);
     const erc20TokenCont = new ERC20TokenContract(
       erc20Address,
       providerEngine()
@@ -615,7 +614,6 @@ export default class BuyToken extends Vue {
         from: this.account.address, 
         contractAddress: matic.utils.toChecksumAddress(this.order.erc20tokens.erc20tokensaddresses[0].address)
       }
-      console.log('TX ' + tx);
 
       if (tx) {
         try {
@@ -647,6 +645,7 @@ export default class BuyToken extends Vue {
   }
 
   async executeMetaTx(functionSig) {
+    let matic = new Web3(this.networks.matic.rpc);
     let address = matic.utils.toChecksumAddress(this.account.address)
     let data = await matic.eth.abi.encodeFunctionCall({
       name: 'getNonce',

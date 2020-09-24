@@ -1,5 +1,6 @@
 exports.getTypedData = function ({ name, version, salt, verifyingContract, nonce, from, functionSignature }) {
 
+  if (name && version && salt && verifyingContract && nonce && from && functionSignature) {
     return {
       types: {
         EIP712Domain: [{
@@ -40,4 +41,4 @@ exports.getTypedData = function ({ name, version, salt, verifyingContract, nonce
       }
     }
   }
-  
+}

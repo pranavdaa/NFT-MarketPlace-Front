@@ -164,7 +164,6 @@ import InputToken from "~/components/lego/input-token";
 import { parseBalance } from "~/plugins/helpers/token-utils";
 
 const { getTypedData } = require("~/plugins/meta-tx")
-let matic = new Web3("https://rpc-mumbai.matic.today/")
 
 // 0X
 let {
@@ -425,6 +424,7 @@ export default class SellToken extends Vue {
 
   async approve0x(erc721TokenCont, contractWrappers, makerAddress) {
     // Check if token is approved to 0x
+    let matic = new Web3(this.networks.matic.rpc);
     const isApprovedForAll = await erc721TokenCont
       .isApprovedForAll(
         makerAddress,
@@ -456,7 +456,6 @@ export default class SellToken extends Vue {
         from: this.account.address, 
         contractAddress: matic.utils.toChecksumAddress(this.category.categoriesaddresses.find((category) => category.chain_id == this.networks.matic.chainId).address)
       }
-      console.log('TX ' + tx);
 
       if (tx) {
         try {
@@ -488,6 +487,7 @@ export default class SellToken extends Vue {
   }
 
   async executeMetaTx(functionSig) {
+    let matic = new Web3(this.networks.matic.rpc);
     let address = matic.utils.toChecksumAddress(this.account.address)
     let data = await matic.eth.abi.encodeFunctionCall({
       name: 'getNonce', 
