@@ -33,6 +33,19 @@ export default class Category extends Model {
     return null
   }
 
+  get maticAddress() {
+    if (app.ethereumNetworks) {
+      return this.addresses[app.ethereumNetworks.matic.chainId]
+    }
+    return null
+  }
+  get mainAddress() {
+    if (app.ethereumNetworks) {
+      return this.addresses[app.ethereumNetworks.main.chainId]
+    }
+    return null
+  }
+
   getAddress(networkId) {
     if (this.addresses) {
       if (networkId) {

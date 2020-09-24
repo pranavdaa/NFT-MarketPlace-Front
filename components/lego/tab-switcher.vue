@@ -26,11 +26,11 @@ import Component from "nuxt-class-component";
   props: {
     tabs: { type: Array, required: true },
     activeTab: { type: Number, required: false, default: 0 },
-    onChangeTab: { type: Function, required: true }
+    onChangeTab: { type: Function, required: true },
   },
   components: {},
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class TabSwitcher extends Vue {
   mounted() {}
@@ -47,6 +47,7 @@ export default class TabSwitcher extends Vue {
 
 .tabs-wrapper {
   border-bottom: 1px solid light-color("400");
+  background-color: light-color("700");
 }
 .tabs {
   margin-bottom: 2px !important;

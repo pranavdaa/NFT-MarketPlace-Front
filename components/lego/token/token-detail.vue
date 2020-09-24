@@ -9,7 +9,9 @@
           v-if="category"
         />
       </div>
-      <div class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end">
+      <div
+        class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end"
+      >
         <wishlist-button :wishlisted="isFavorite" :onClick="addToWishlist" />
         <a class="btn btn-light align-self-center action ms-l-16">
           <img
@@ -25,7 +27,7 @@
       <div class="col-md-8">
         <div
           class="feature-image d-flex d-lg-flex justify-content-center"
-          v-bind:style="{background: bg}"
+          v-bind:style="{ background: bg }"
         >
           <img
             class="asset-img align-self-center"
@@ -34,35 +36,45 @@
             @load="onImageLoad"
           />
         </div>
-        <div class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16">
-          <h3 class="font-heading-medium font-semibold">About {{order.token.name}}</h3>
+        <div
+          class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
+        >
+          <h3 class="font-heading-medium font-semibold">
+            About {{ order.token.name }}
+          </h3>
           <p
             class="font-body-medium"
-            :class="{'show-less': showMore, 'show-more': !showMore}"
+            :class="{ 'show-less': showMore, 'show-more': !showMore }"
             v-if="order.token.description"
           >
-            {{order.token.description}}
+            {{ order.token.description }}
             <span class="dots">...</span>
-            <span class="more">{{order.token.description}}</span>
+            <span class="more">{{ order.token.description }}</span>
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
               v-if="!showMore"
               @click.prevent="showMore = true"
-            >More info</a>
+              >More info</a
+            >
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
               v-if="showMore"
               @click.prevent="showMore = false"
-            >Show less</a>
+              >Show less</a
+            >
           </p>
 
-          <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">Listed for</div>
+          <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">
+            Listed for
+          </div>
           <div
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
-          >{{order.price}} {{erc20Token.symbol}}</div>
+          >
+            {{ order.price }} {{ erc20Token.symbol }}
+          </div>
           <!-- <div
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
@@ -71,26 +83,31 @@
             class="btn btn-primary"
             v-if="!isOwnersToken && order.status === 0"
             @click="buyOrder()"
-          >Buy Now</button>
+          >
+            Buy Now
+          </button>
           <button
             class="btn btn-light"
             v-if="isOwnersToken && order.status === 0"
             @click="onCancelOrder()"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
         </div>
         <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
           <h3 class="font-heading-medium font-semibold category">
-            About {{category.name}}
+            About {{ category.name }}
             <a
               class="ps-l-12"
               :href="category.url"
               target="_blank"
               rel="noopener noreferrer"
-            >Visit Website</a>
+              >Visit Website</a
+            >
 
             <span
               class="float-right cursor-pointer right-arrow"
-              :class="{'down-icon':showCategoryInfo}"
+              :class="{ 'down-icon': showCategoryInfo }"
               @click="showCategoryInfo = !showCategoryInfo"
               v-if="category.description"
             >
@@ -100,26 +117,39 @@
           <p
             class="font-body-medium ps-t-20"
             v-if="showCategoryInfo && category.description"
-          >{{category.description}}</p>
+          >
+            {{ category.description }}
+          </p>
         </div>
-        <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="order.token.properties">
+        <div
+          class="d-flex flex-column ps-y-16 ps-y-md-32"
+          v-if="order.token.properties"
+        >
           <h3 class="font-heading-medium font-semibold category">
             Properties
             <span
               class="float-right cursor-pointer right-arrow"
-              :class="{'down-icon':showProperties}"
+              :class="{ 'down-icon': showProperties }"
               @click="showProperties = !showProperties"
             >
               <svg-sprite-icon name="right-arrow" />
             </span>
           </h3>
-          <p class="font-body-medium ps-t-20" v-if="showProperties">{{order.token.properties}}</p>
+          <p class="font-body-medium ps-t-20" v-if="showProperties">
+            {{ order.token.properties }}
+          </p>
         </div>
         <div
           class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
-          v-if="order.type !== app.orderTypes.FIXED && bidsFullList && bidsFullList.length"
+          v-if="
+            order.type !== app.orderTypes.FIXED &&
+            bidsFullList &&
+            bidsFullList.length
+          "
         >
-          <h3 class="font-heading-medium font-semibold category">Bidding history</h3>
+          <h3 class="font-heading-medium font-semibold category">
+            Bidding history
+          </h3>
           <p class="font-body-medium ps-t-20">
             <bidder-row
               v-for="bid in bidsFullList"
@@ -133,34 +163,42 @@
       </div>
       <div class="col-md-4 d-none d-lg-flex">
         <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
-          <h3 class="font-heading-medium font-semibold">About {{order.token.name}}</h3>
+          <h3 class="font-heading-medium font-semibold">
+            About {{ order.token.name }}
+          </h3>
           <p
             class="font-body-medium"
-            :class="{'show-less': showMore, 'show-more': !showMore}"
+            :class="{ 'show-less': showMore, 'show-more': !showMore }"
             v-if="order.token.description"
           >
-            {{order.token.description}}
+            {{ order.token.description }}
             <span class="dots">...</span>
-            <span class="more">{{order.token.description}}</span>
+            <span class="more">{{ order.token.description }}</span>
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
               v-if="!showMore"
               @click.prevent="showMore = true"
-            >More info</a>
+              >More info</a
+            >
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
               v-if="showMore"
               @click.prevent="showMore = false"
-            >Show less</a>
+              >Show less</a
+            >
           </p>
 
-          <div class="font-body-small text-gray-300 mt-auto ps-y-4">Listed for</div>
+          <div class="font-body-small text-gray-300 mt-auto ps-y-4">
+            Listed for
+          </div>
           <div
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
-          >{{order.price}} {{erc20Token.symbol}}</div>
+          >
+            {{ order.price }} {{ erc20Token.symbol }}
+          </div>
           <!-- <div
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
@@ -169,12 +207,16 @@
             class="btn btn-primary"
             v-if="!isOwnersToken && order.status === 0"
             @click="buyOrder()"
-          >Buy Now</button>
+          >
+            Buy Now
+          </button>
           <button
             class="btn btn-light"
             v-if="isOwnersToken && order.status === 0"
             @click="onCancelOrder()"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -368,12 +410,10 @@ export default class TokenDetail extends Vue {
     if (this.user) {
       this.showBuyToken = true;
     } else {
-      app.addToast(
-        "Login to buy",
-        "Please login to your account to buy this order",
-        { type: "info" }
-      );
-      // this.$router.push({ name: "login" });
+      this.$router.push({
+        name: "login",
+        query: { next: `/tokens/${this.order.id}` },
+      });
     }
   }
   onBuyTokenClose() {

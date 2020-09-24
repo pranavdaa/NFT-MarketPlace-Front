@@ -37,6 +37,8 @@
       :refreshNFTTokens="refreshNFTTokens"
     />
 
+    <deposit :show="showDepositModal" :visible="onDeposit" :cancel="onDepositClose" />
+
     <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
       <!-- ethereum loader here -->
       <button-loader
@@ -68,6 +70,7 @@ import SearchBox from "~/components/lego/search-box";
 import NoItem from "~/components/lego/no-item";
 import ItemBanner from "~/components/lego/account/item-banner";
 import MoveToMatic from "~/components/lego/modals/move-to-matic";
+import Deposit from "~/components/lego/modals/deposit";
 
 import { getWalletProvider } from "~/plugins/helpers/providers";
 const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
@@ -81,6 +84,7 @@ const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
     NoItem,
     ItemBanner,
     MoveToMatic,
+    Deposit,
   },
   computed: {
     ...mapGetters("page", ["selectedFilters"]),
@@ -133,6 +137,7 @@ export default class EthereumTab extends Vue {
   isLoadingTokens = false;
 
   showMoveToMatic = false;
+  showDepositModal = false;
 
   exmptyMsg = {
     title: "Oops! No item found on Ethereum chain.",
@@ -235,6 +240,12 @@ export default class EthereumTab extends Vue {
   }
   closeMoveToMatic() {
     this.showMoveToMatic = false;
+  }
+  onDeposit() {
+    this.showDepositModal = true
+  }
+  onDepositClose() {
+    this.showDepositModal = false
   }
 
   async loadMore() {
