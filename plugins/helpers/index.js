@@ -166,3 +166,11 @@ export function toDataURL(url, callback) {
   xhr.responseType = 'blob';
   xhr.send();
 }
+export function tokenImage(token) {
+  let imgs = require.context('~/static/tokens/', false, /\.svg$/)
+  try {
+    return imgs('./' + token.toUpperCase() + '.svg')
+  } catch (error) {
+    return null
+  }
+}

@@ -2,7 +2,7 @@
   <div class="input-container ps-4 d-flex" v-if="defaultSelectedToken">
     <input
       class="unstyle-input form-control align-self-center"
-      :class="{'is-invalid': isInvalid}"
+      :class="{ 'is-invalid': isInvalid }"
       type="number"
       min="0"
       :step="integer ? '1' : 'any'"
@@ -12,18 +12,26 @@
     />
     <div
       class="token-btn font-caps font-medium d-flex align-self-center ps-12"
-      :class="{'cursor-pointer': !disableToken}"
+      :class="{ 'cursor-pointer': !disableToken }"
       @click="selectToken()"
     >
       <img
+        v-if="
+          !!tokenImage(defaultSelectedToken.symbol) &&
+          defaultSelectedToken.symbol
+        "
         :src="tokenImage(defaultSelectedToken.symbol)"
         :alt="defaultSelectedToken.name"
         class="token-icon align-self-center"
       />
-      <span
-        class="font-body-small font-medium align-self-center ps-l-4"
-      >{{defaultSelectedToken.symbol}}</span>
-      <svg-sprite-icon name="right-arrow" class="ms-l-8 align-self-center" v-if="!disableToken" />
+      <span class="font-body-small font-medium align-self-center ps-l-4">{{
+        defaultSelectedToken.symbol
+      }}</span>
+      <svg-sprite-icon
+        name="right-arrow"
+        class="ms-l-8 align-self-center"
+        v-if="!disableToken"
+      />
     </div>
     <token-list :show="showTokenList" :close="onTokenClosed" />
   </div>
@@ -37,7 +45,7 @@ import { mapGetters } from "vuex";
 import BigNumber from "~/plugins/bignumber";
 
 import TokenList from "~/components/lego/modals/token-list";
-// mixins
+import { tokenImage } from "~/plugins/helpers/";
 import { VueDebounce, VueWatch } from "~/components/decorator";
 
 const ZERO = new BigNumber(0);
@@ -87,6 +95,7 @@ const TEN = new BigNumber(10);
 export default class InputToken extends Vue {
   inputAmount = null;
   showTokenList = false;
+  tokenImage = tokenImage;
 
   @VueWatch("value", { immediate: true })
   valueChanged(value) {
@@ -105,10 +114,6 @@ export default class InputToken extends Vue {
     }
     // notify parent
     this.change && this.change(this.amount);
-  }
-
-  tokenImage(token) {
-    return require("~/static/tokens/" + token.toUpperCase() + ".svg");
   }
 
   get amount() {
