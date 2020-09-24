@@ -17,7 +17,7 @@
     "@0x/subproviders": "^6.0.8",
     "@0x/utils": "^5.4.1",
     "@0x/web3-wrapper": "^7.0.7",
-    "@maticnetwork/maticjs": "^2.0.2",
+    "@maticnetwork/maticjs": "git+https://github.com/maticnetwork/matic.js.git#9b7c0d91908bba2ba024c8d0904e199369ed2ffc",
     "@maticnetwork/meta": "^2.4.0",
     "@maticnetwork/metamask-provider": "^0.0.1",
     "@maticnetwork/walletconnect-provider": "0.0.1-beta.1",

@@ -4,9 +4,14 @@
       <div
         class="col-12 col-lg cat-switch d-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
       >
-        <categories-selector class="ms-r-16 category-wrapper" />
+        <categories-selector
+          v-if="favouriteOrders"
+          class="ms-r-16 category-wrapper"
+        />
       </div>
-      <div class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end">
+      <div
+        class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end"
+      >
         <!-- <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" /> -->
         <!-- <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="(val) => val" /> -->
       </div>

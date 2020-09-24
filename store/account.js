@@ -73,7 +73,6 @@ export default {
         let response = await getAxios().get(`users/${user.id}/favourites`)
         if (response.status === 200 && response.data.data.length > 0) {
           let orders = [];
-          console.log(response.data.data)
           response.data.data.forEach(function (fav) {
             fav.orders.image = fav.image
             fav.orders.name = fav.name

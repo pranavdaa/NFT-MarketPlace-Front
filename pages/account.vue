@@ -1,10 +1,10 @@
 <template>
   <div class="container-fluid">
     <account-banner />
-    <tab-switcher :tabs="tabs" :activeTab="activeTab" :onChangeTab="changeTab" />
+    <tab-switcher class="sticky-top" :tabs="tabs" :activeTab="activeTab" :onChangeTab="changeTab" />
     <div class="row">
-      <matic-tab v-if="activeTab === 0" />
-      <ethereum-tab v-if="activeTab === 1" />
+      <matic-new-tab v-if="activeTab === 0" />
+      <ethereum-new-tab v-if="activeTab === 1" />
       <favorite-tab v-if="activeTab === 2" />
       <activity-tab v-if="activeTab === 3" />
     </div>
@@ -23,8 +23,8 @@ import SearchBox from "~/components/lego/search-box";
 import SortDropdown from "~/components/lego/sort-dropdown";
 import AccountBanner from "~/components/lego/account/account-banner";
 import TabSwitcher from "~/components/lego/tab-switcher";
-import MaticTab from "~/components/lego/account/matic-tab";
-import EthereumTab from "~/components/lego/account/ethereum-tab";
+import MaticNewTab from "~/components/lego/account/matic-new-tab";
+import EthereumNewTab from "~/components/lego/account/ethereum-new-tab";
 import FavoriteTab from "~/components/lego/account/favorite-tab";
 import ActivityTab from "~/components/lego/account/activity-tab";
 
@@ -37,8 +37,8 @@ import ActivityTab from "~/components/lego/account/activity-tab";
     SortDropdown,
     AccountBanner,
     TabSwitcher,
-    MaticTab,
-    EthereumTab,
+    MaticNewTab,
+    EthereumNewTab,
     FavoriteTab,
     ActivityTab,
   },
@@ -51,7 +51,7 @@ import ActivityTab from "~/components/lego/account/activity-tab";
       "totalMainNft",
     ]),
     ...mapGetters("network", ["networks"]),
-    ...mapGetters("auth", ["user"])
+    ...mapGetters("auth", ["user"]),
   },
 })
 export default class Index extends Vue {
@@ -78,7 +78,10 @@ export default class Index extends Vue {
       }
 
       if (maticNftResponse.status === 200 && maticNftResponse.data.data) {
-        this.$store.commit("account/totalMaticNft", maticNftResponse.data.count);
+        this.$store.commit(
+          "account/totalMaticNft",
+          maticNftResponse.data.count
+        );
       }
 
       this.$store.dispatch("token/fetchBalances");
@@ -118,7 +121,9 @@ export default class Index extends Vue {
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
-
+.sticky-top {
+  top: $navbar-local-height !important;
+}
 .search-box {
   max-width: 264px;
   width: 100%;

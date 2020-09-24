@@ -9,12 +9,14 @@
         <div class="container-fluid d-flex justify-content-center">
           <div class="box ms-t-40 login-box">
             <div class="box-body">
-              <div class="font-heading-medium font-semibold ps-16 ps-md-32">{{ $t('login') }}</div>
+              <div class="font-heading-medium font-semibold ps-16 ps-md-32">
+                {{ $t("login") }}
+              </div>
               <div class="container">
                 <div class="row ps-x-32" v-if="false">
                   <div
                     class="col-12 login-with no-bottom-border-radius ps-16 ps-md-20"
-                    :class="{'cursor-pointer': !loading}"
+                    :class="{ 'cursor-pointer': !loading }"
                   >
                     <div class="d-flex">
                       <div class="logo-wallet-connect d-flex align-self-center">
@@ -24,9 +26,15 @@
                           class="align-self-center"
                         />
                       </div>
-                      <div class="d-flex flex-column text-left align-self-center ps-l-20">
-                        <span class="font-heading font-semibold">{{ $t('walletConnect') }}</span>
-                        <span class="font-body-small text-gray">{{ $t('walletConnectMsg') }}</span>
+                      <div
+                        class="d-flex flex-column text-left align-self-center ps-l-20"
+                      >
+                        <span class="font-heading font-semibold">{{
+                          $t("walletConnect")
+                        }}</span>
+                        <span class="font-body-small text-gray">{{
+                          $t("walletConnectMsg")
+                        }}</span>
                       </div>
                       <svg-sprite-icon
                         name="right-arrow"
@@ -38,7 +46,7 @@
                 <div class="row ps-x-32">
                   <div
                     class="col-12 login-with no-top-border-radius ps-16 ps-md-20"
-                    :class="{'cursor-pointer': !loading}"
+                    :class="{ 'cursor-pointer': !loading }"
                     @click="loginWithMetamask"
                   >
                     <div class="d-flex">
@@ -49,9 +57,15 @@
                           class="align-self-center"
                         />
                       </div>
-                      <div class="d-flex flex-column text-left align-self-center ps-l-20">
-                        <span class="font-heading font-semibold">{{ $t('metamask.title') }}</span>
-                        <span class="font-body-small text-gray">{{ $t('webConnectMsg') }}</span>
+                      <div
+                        class="d-flex flex-column text-left align-self-center ps-l-20"
+                      >
+                        <span class="font-heading font-semibold">{{
+                          $t("metamask.title")
+                        }}</span>
+                        <span class="font-body-small text-gray">{{
+                          $t("webConnectMsg")
+                        }}</span>
                       </div>
                       <svg-sprite-icon
                         name="right-arrow"
@@ -63,15 +77,25 @@
                 <div class="row ps-x-32" v-if="false">
                   <div
                     class="col-12 login-with no-top-border-radius ps-16 ps-md-20"
-                    :class="{'cursor-pointer': !loading}"
+                    :class="{ 'cursor-pointer': !loading }"
                   >
                     <div class="d-flex">
                       <div class="logo-portis d-flex align-self-center">
-                        <img src="~/assets/img/portis.svg" alt="portis" class="align-self-center" />
+                        <img
+                          src="~/assets/img/portis.svg"
+                          alt="portis"
+                          class="align-self-center"
+                        />
                       </div>
-                      <div class="d-flex flex-column text-left align-self-center ps-l-20">
-                        <span class="font-heading font-semibold">{{ $t('portis') }}</span>
-                        <span class="font-body-small text-gray">{{ $t('webConnectMsg') }}</span>
+                      <div
+                        class="d-flex flex-column text-left align-self-center ps-l-20"
+                      >
+                        <span class="font-heading font-semibold">{{
+                          $t("portis")
+                        }}</span>
+                        <span class="font-body-small text-gray">{{
+                          $t("webConnectMsg")
+                        }}</span>
                       </div>
                       <svg-sprite-icon
                         name="right-arrow"
@@ -80,22 +104,24 @@
                     </div>
                   </div>
                 </div>
-                <div class="row justify-content-center wallet-download-info ms-t-32">
-                  {{ $t('downloadWallet') }}
+                <div
+                  class="row justify-content-center wallet-download-info ms-t-32"
+                >
+                  {{ $t("downloadWallet") }}
                   <a
                     href="https://matic.network/wallet"
                     target="_blank"
                     class="link-color ps-l-4"
-                  >{{ $t('downloadHere') }}</a>
+                    >{{ $t("downloadHere") }}</a
+                  >
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div
-          class="metamask-network-error m-2"
-          v-if="metamaskNetworkError"
-        >Select {{selectedNetwork.name}} network in metamask</div>
+        <div class="metamask-network-error m-2" v-if="metamaskNetworkError">
+          Select the {{ networks.main.name }} Network in the Metamask
+        </div>
       </div>
     </div>
     <connecting-metamask :loaded="metamaskLoading" />
@@ -171,10 +197,10 @@ export default class Login extends Vue {
       },
       domain: {
         name: "Ether Mail",
-        host: this.networks.matic.rpc,
+        host: "",
         version: "1",
         verifyingContract: "0x0",
-        chainId: this.networks.matic.chainId,
+        chainId: this.networks.main.chainId,
       },
       primaryType: "Test",
       message: {
@@ -204,7 +230,7 @@ export default class Login extends Vue {
     }
     if (
       window.ethereum.chainId !=
-      "0x" + this.networks.matic.chainId.toString(16)
+      "0x" + this.networks.main.chainId.toString(16)
     ) {
       this.metamaskNetworkError = true;
       this.metamaskLoading = false;
@@ -247,10 +273,6 @@ export default class Login extends Vue {
 
   async login(address, signature, options) {
     this.loading = true;
-
-    // to be removed
-    // signature =
-    //   "0x51df797904019a4eba658305beecabc1b5efdb20269d6a775d59dfc59c8457306313bba0e1d898aef51b74875f78a1cdb58ab0b6d47f2577aad50da6df33811a1c";
 
     try {
       // login
