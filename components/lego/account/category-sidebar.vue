@@ -15,7 +15,10 @@
           <div class="font-body-medium align-self-center ms-l-12">
             {{ allCategory.name }}
           </div>
-          <div class="count ps-l-12 font-body-medium ml-auto align-self-center">
+          <div
+            class="count ps-l-12 font-body-medium ml-auto align-self-center"
+            v-if="!isLoading"
+          >
             {{ allCount }}
           </div>
         </div>
@@ -38,21 +41,17 @@
           </div>
           <div
             class="count ps-l-12 font-body-medium ml-auto align-self-center"
-            v-if="SHOW_COUNT.ORDER == countFor"
+            v-if="!isLoading"
           >
-            {{ category.count }}
-          </div>
-          <div
-            class="count ps-l-12 font-body-medium ml-auto align-self-center"
-            v-if="SHOW_COUNT.MAIN == countFor"
-          >
-            {{ category.mainCount }}
-          </div>
-          <div
-            class="count ps-l-12 font-body-medium ml-auto align-self-center"
-            v-if="SHOW_COUNT.MATIC == countFor"
-          >
-            {{ category.maticCount }}
+            <span v-if="SHOW_COUNT.ORDER == countFor">
+              {{ category.count }}
+            </span>
+            <span v-if="SHOW_COUNT.MAIN == countFor">
+              {{ category.mainCount }}
+            </span>
+            <span v-if="SHOW_COUNT.MATIC == countFor">
+              {{ category.maticCount }}
+            </span>
           </div>
         </div>
       </div>
@@ -65,7 +64,6 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 
 import { mapGetters } from "vuex";
-
 import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
 
@@ -77,6 +75,11 @@ const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 };
       type: Number,
       required: false,
       default: 0,
+    },
+    isLoading: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   computed: {
@@ -101,15 +104,19 @@ export default class CategoriesSelector extends Vue {
   }
 
   get allCount() {
-    if (this.SHOW_COUNT.MATIC == this.countFor) {
-      return this.categories.reduce(
-        (total, category) => total + parseInt(category.maticCount),
-        0
+    if (this.SHOW_COUNT.MATIC == this.countFor && !this.isLoading) {
+      return (
+        this.categories.reduce(
+          (total, category) => total + parseInt(category.maticCount),
+          0
+        ) || 0
       );
-    } else if (this.SHOW_COUNT.MAIN == this.countFor) {
-      return this.categories.reduce(
-        (total, category) => total + parseInt(category.mainCount),
-        0
+    } else if (this.SHOW_COUNT.MAIN == this.countFor && !this.isLoading) {
+      return (
+        this.categories.reduce(
+          (total, category) => total + parseInt(category.mainCount),
+          0
+        ) || 0
       );
     } else {
       return this.allCategory.count || 0;

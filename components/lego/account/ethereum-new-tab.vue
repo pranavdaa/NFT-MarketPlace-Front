@@ -4,7 +4,7 @@
       <div
         class="col container-fluid sidebar-container d-none d-md-block sticky-top"
       >
-        <category-sidebar :countFor="2" />
+        <category-sidebar :countFor="2" :isLoading="isLoadingTokens" />
       </div>
       <div class="col container-fluid content-container">
         <div class="row ps-y-16 ps-x-16 sticky-top tab-header">
