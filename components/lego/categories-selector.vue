@@ -9,12 +9,23 @@
         :alt="defaultSelectedCategory.name"
         class="icon align-self-center ms-r-12"
       />
-      <div class="font-body-small align-self-center font-medium">{{defaultSelectedCategory.name}}</div>
-      <span class="down-icon align-self-center d-flex justify-content-center ps-l-12 ml-auto">
-        <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
+      <div class="font-body-small align-self-center font-medium">
+        {{ defaultSelectedCategory.name }}
+      </div>
+      <span
+        class="down-icon align-self-center d-flex justify-content-center ps-l-12 ml-auto"
+      >
+        <svg-sprite-icon
+          class="align-self-center"
+          name="right-arrow"
+        ></svg-sprite-icon>
       </span>
     </div>
-    <div class="modal fade show" v-if="showCategory" @click="showCategory=false">
+    <div
+      class="modal fade show"
+      v-if="showCategory"
+      @click="showCategory = false"
+    >
       <div class="container-fluid ms-l-16 ms-l-lg-32 ms-t-32">
         <div class="row categories d-flex flex-column ps-12">
           <div
@@ -26,8 +37,12 @@
               :alt="allCategory.name"
               class="icon align-self-center ms-r-12"
             />
-            <div class="font-body-small align-self-center font-medium">{{allCategory.name}}</div>
-            <div class="count ps-l-12 font-body-medium ml-auto">{{allCategory.count}}</div>
+            <div class="font-body-small align-self-center font-medium">
+              {{ allCategory.name }}
+            </div>
+            <div class="count ps-l-12 font-body-medium ml-auto">
+              {{ allCount }}
+            </div>
           </div>
           <div
             class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
@@ -40,13 +55,32 @@
               :alt="category.name"
               class="icon align-self-center ms-r-12"
             />
-            <div class="font-body-small align-self-center font-medium">{{category.name}}</div>
-            <div class="count ps-l-12 font-body-medium ml-auto">{{category.count || "0"}}</div>
+            <div class="font-body-small align-self-center font-medium">
+              {{ category.name }}
+            </div>
+            <div
+              class="count ps-l-12 font-body-medium ml-auto"
+              v-if="SHOW_COUNT.ORDER == countFor"
+            >
+              {{ category.count }}
+            </div>
+            <div
+              class="count ps-l-12 font-body-medium ml-auto"
+              v-if="SHOW_COUNT.MAIN == countFor"
+            >
+              {{ category.mainCount }}
+            </div>
+            <div
+              class="count ps-l-12 font-body-medium ml-auto"
+              v-if="SHOW_COUNT.MATIC == countFor"
+            >
+              {{ category.maticCount }}
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ 'show': showCategory }"></div>
+    <div class="modal-backdrop" v-bind:class="{ show: showCategory }"></div>
   </div>
 </template>
 
@@ -58,16 +92,23 @@ import { mapGetters } from "vuex";
 
 import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
-
+const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 };
 @Component({
-  props: {},
+  props: {
+    countFor: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+  },
   computed: {
     ...mapGetters("page", ["selectedCategory"]),
-    ...mapGetters("category", ["categories"]),
+    ...mapGetters("category", ["categories", "allCategory"]),
   },
 })
 export default class CategoriesSelector extends Vue {
   showCategory = false;
+  SHOW_COUNT = SHOW_COUNT;
 
   async mounted() {}
 
@@ -83,13 +124,21 @@ export default class CategoriesSelector extends Vue {
   }
 
   // Getters
-  get allCategory() {
-    return {
-      name: "All Categories",
-      img_url: require("~/static/img/category.svg"),
-      isAll: true,
-      count: this.totalOrderCount,
-    };
+
+  get allCount() {
+    if (this.SHOW_COUNT.MATIC == this.countFor) {
+      return this.categories.reduce(
+        (total, category) => total + parseInt(category.maticCount),
+        0
+      );
+    } else if (this.SHOW_COUNT.MAIN == this.countFor) {
+      return this.categories.reduce(
+        (total, category) => total + parseInt(category.mainCount),
+        0
+      );
+    } else {
+      return this.totalOrderCount;
+    }
   }
 
   get defaultSelectedCategory() {

@@ -1,11 +1,17 @@
 <template>
   <div class="container-fluid">
     <div class="row ps-y-32 ps-x-16">
-      <div class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center justify-content-md-start">
+      <div
+        class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center justify-content-md-start"
+      >
         <categories-selector class="category-wrapper" />
       </div>
       <div class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center">
-        <search-box class="search-box w-100" placeholder="Search NFT..." :change="(val) => val" />
+        <search-box
+          class="search-box w-100"
+          placeholder="Search NFT..."
+          :change="(val) => (searchInput = val)"
+        />
       </div>
       <div class="col-md d-flex justify-content-center justify-content-md-end">
         <sort-dropdown
@@ -18,7 +24,12 @@
     </div>
 
     <div class="row ps-x-16 d-flex justify-content-center text-center">
-      <sell-card v-for="order in orderFullList" :key="order.id" :order="order" />
+      <sell-card
+        v-for="order in orderFullList"
+        :key="order.id"
+        :order="order"
+        :searchInput="searchInput"
+      />
       <no-item
         class="ps-b-120"
         :message="exmptyMsg"
@@ -77,6 +88,7 @@ import NoItem from "~/components/lego/no-item";
 })
 export default class Index extends Vue {
   limit = app.uiconfig.defaultPageSize;
+  searchInput = null;
   exmptyMsg = {
     title: "Oops! No item found.",
     description: "We didn’t found any item that is on sale.",
@@ -150,11 +162,6 @@ export default class Index extends Vue {
     return this.selectedFilters.selectedCategory
       ? `&categoryArray=[${this.selectedFilters.selectedCategory.id}]`
       : "&categoryArray=[]";
-
-    // Multiple
-    // return `&categoryArray=[${this.categories
-    // .reduce((value, category) => `${value},${category.id}`, "")
-    // .substr(1)}]`; // selected category or all category
   }
   get ifSort() {
     return this.selectedFilters.selectedSort

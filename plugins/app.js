@@ -162,6 +162,8 @@ const app = {
       })
     )
 
+    await store.dispatch("token/reloadBalances")
+
     // user profile data
     this.initUserProfile(store)
   },

@@ -20,13 +20,20 @@
             class="ps-y-8 ps-x-16 font-body-small font-medium price-pill text-nowrap"
           >{{bid.price}} {{bid.erc20Token.symbol}}</span>
         </div>
+
         <button
           class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
-          v-if="this.bid.order.status === 0"
+          v-if="isUsersBid && this.bid.order.status === 0"
+          @click="onCancel()"
+        >Cancel</button>
+
+        <button
+          class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
+          v-if="isOwnersToken && this.bid.order.status === 0"
           @click="onDeny()"
         >Deny</button>
         <button
-          v-if="this.bid.order.status === 0"
+          v-if="isOwnersToken && this.bid.order.status === 0"
           class="btn btn-light align-self-center ps-x-16"
           @click="onAccept()"
         >Accept</button>
@@ -47,6 +54,14 @@
       :accept="denyBid"
       :close="onDenyClose"
       :btnTexts="denyButtonTexts"
+    />
+    <bid-confirmation
+      :show="showCancelBid"
+      :bid="bid"
+      :isLoading="isLoading"
+      :accept="cancelBid"
+      :close="onCancelClose"
+      :btnTexts="cancelButtonTexts"
     />
   </div>
 </template>
@@ -95,6 +110,10 @@ const TEN = BigNumber(10);
       required: false,
       default: () => {},
     },
+    isOwnersToken: {
+      type: Boolean,
+      required: true
+    }
   },
   components: { BidConfirmation },
   computed: {
@@ -106,11 +125,21 @@ const TEN = BigNumber(10);
 export default class BidderRow extends Vue {
   showAcceptBid = false;
   showDenyBid = false;
+  showCancelBid = false;
   isLoading = false;
   denyButtonTexts = { title: "Deny", loadingTitle: "Denying..." };
+  cancelButtonTexts = { title: "Cancel", loadingTitle: "Cancelling..." };
   mounted() {}
 
   // Get
+  get isUsersBid() {
+    if (this.user && this.bid) {
+      return this.user.id === this.bid.users.id;
+    }
+
+    return false
+  }
+
   get shortChecksumAddress() {
     if (!this.bid.users.address) {
       return null;
@@ -174,6 +203,12 @@ export default class BidderRow extends Vue {
   }
   onDenyClose() {
     this.showDenyBid = false;
+  }
+  onCancel() {
+    this.showCancelBid = true
+  }
+  onCancelClose() {
+    this.showCancelBid = false
   }
 
   async acceptBid() {
@@ -269,18 +304,31 @@ export default class BidderRow extends Vue {
           isValidSignature
         ) {
           console.log("Fillable");
-          let txHash;
-          txHash = await contractWrappers.exchange
-            .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
-            .awaitTransactionSuccessAsync({
-              from: takerAddress,
-              gas: 8000000,
-              gasPrice: 10000000000,
-              value: calculateProtocolFee([signedOrder]),
-            });
-          if (txHash) {
-            console.log("transaction", txHash);
-            this.handleBidAccept(txHash);
+
+          let dataVal = await getAxios().get(`orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=fillOrder`)
+
+          let zrx = {
+            salt: generatePseudoRandomSalt(),
+            expirationTimeSeconds: signedOrder.expirationTimeSeconds,
+            gasPrice: 10000000000,
+            signerAddress: takerAddress,
+            data: dataVal.data.data,
+            domain: {
+              name: "0x Protocol",
+              version: "3.0.0",
+              chainId: this.networks.matic.chainId,
+              verifyingContract: contractWrappers.contractAddresses.exchange,
+            },
+          };
+
+          const takerSign = await signatureUtils.ecSignTransactionAsync(
+            providerEngine(),
+            zrx,
+            takerAddress
+          );
+
+          if(takerSign) {
+            await this.handleBidAccept(takerSign);
           }
         }
       } catch (error) {
@@ -295,28 +343,29 @@ export default class BidderRow extends Vue {
     this.onAcceptClose();
   }
 
-  async handleBidAccept(txHash) {
-    try {
-      const data = {
-        maker_amount: this.bid.price,
-        tx_hash: txHash.transactionHash,
-      };
-      let response = await getAxios().patch(
-        `orders/${this.bid.id}/execute`,
-        data
-      );
-      if (response.status === 200) {
-        this.refreshBids();
-        app.addToast(
-          "Accepted successfully",
-          "You accepted the bid for your order",
-          {
-            type: "success",
-          }
+  async handleBidAccept(takerSign) {
+    if (this.bid.users.id != this.user.id && takerSign) {
+      try {
+        let data = {
+          taker_signature: JSON.stringify(takerSign)
+        };
+        let response = await getAxios().patch(
+          `orders/${this.bid.id}/execute`,
+          data
         );
-        this.$router.push({ name: "account" });
-      }
-    } catch (error) {}
+        if (response.status === 200) {
+          this.refreshBids();
+          app.addToast(
+            "Accepted successfully",
+            "You accepted the bid for your order",
+            {
+              type: "success",
+            }
+          );
+          this.$router.push({ name: "account" });
+        }
+      } catch (error) {}
+    }
   }
 
   async approve0x(erc721TokenCont, contractWrappers, makerAddress) {
@@ -379,6 +428,94 @@ export default class BidderRow extends Vue {
           app.addToast(
             "Bid declined successfully",
             "You declined bid successfully",
+            {
+              type: "success",
+            }
+          );
+          this.refreshBids();
+        }
+      } catch (error) {
+        console.error(error);
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
+      }
+    }
+  }
+
+  async cancelBid() {
+    this.isLoading = true;
+    try {
+      if (this.order.type === app.orderTypes.NEGOTIATION) {
+        let signedOrder = JSON.parse(this.bid.signature);
+        const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
+          new BigNumber(this.bid.price),
+          this.erc20Token.decimal
+        );
+        signedOrder["makerAssetAmount"] = BigNumber(
+          signedOrder.makerAssetAmount
+        );
+        signedOrder["takerAssetAmount"] = takerAssetAmount;
+        signedOrder["expirationTimeSeconds"] = BigNumber(
+          signedOrder.expirationTimeSeconds
+        );
+        signedOrder["makerFee"] = BigNumber(signedOrder.makerFee);
+        signedOrder["salt"] = BigNumber(signedOrder.salt);
+        signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
+
+        const chainId = this.networks.matic.chainId;
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId: chainId,
+        });
+
+        let dataVal = await getAxios().get(`orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=cancelOrder`)
+
+        let zrx = {
+          salt: generatePseudoRandomSalt(),
+          expirationTimeSeconds: signedOrder.expirationTimeSeconds,
+          gasPrice: 10000000000,
+          signerAddress: signedOrder.makerAddress,
+          data: dataVal.data.data,
+          domain: {
+            name: "0x Protocol",
+            version: "3.0.0",
+            chainId: this.networks.matic.chainId,
+            verifyingContract: contractWrappers.contractAddresses.exchange,
+          },
+        };
+
+        const takerSign = await signatureUtils.ecSignTransactionAsync(
+          providerEngine(),
+          zrx,
+          signedOrder.makerAddress
+        );
+
+        if(takerSign) {
+          await this.handleCancelBid(takerSign);
+        }
+      } else {
+        await this.handleCancelBid();
+      }
+    } catch(error) {
+      console.log(error);
+    }
+    this.isLoading = false;
+    this.onCancelClose();
+  }
+  async handleCancelBid(takerSign) {
+    if (this.bid.users.id == this.user.id && takerSign) {
+      try {
+        let data = {
+          taker_signature: JSON.stringify(takerSign)
+        };
+        let response = await getAxios().patch(
+          `orders/bid/${this.bid.id}/cancel`,
+          data
+        );
+        if (response.status === 200) {
+          app.addToast(
+            "Bid cancelled successfully",
+            "You cancelled your bid successfully",
             {
               type: "success",
             }

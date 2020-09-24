@@ -24,11 +24,14 @@ module.exports = {
   displaySaleTagTime: process.env.DISPLAY_SALE_TAG_TIME || 2, // In days
   displayDecimals: process.env.DISPLAY_DECIMALS || 2,
   maticDecimals: process.env.MATIC_DECIMALS || 18,
-  defaultPageSize: process.env.DEFAULT_PAGE_SIZE || 50,
+  defaultPageSize: process.env.DEFAULT_PAGE_SIZE || 35,
   pageIncrementSize: process.env.PAGE_INCREMENT_SIZE || 50,
   mainRPC: process.env.MAIN_RPC || 'https://mainnet.infura.io/v3/73d0b3b9a4b2499da81c71a2b2a473a9',
   maticRPC: process.env.MATIC_RPC || 'https://rpc-mainnet.matic.network',
   maticWidgetKey: process.env.MATIC_WIDGET_KEY || 'kiLV4NOqXgk346wibvG4',
+  maxBulkDeposit: process.env.MAX_BULK_DEPOSIT || 20,
+  mainExplorer: process.env.MAIN_EXPLORER || "https://etherscan.io/",
+  maticExplorer: process.env.MATIC_EXPLORER || "http://explorer.matic.network/",
 
   // 0x
   ONE_SECOND_MS: 1000,

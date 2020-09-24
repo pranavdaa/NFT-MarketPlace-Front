@@ -6,6 +6,9 @@
   "loadMore": "Load More",
   "loading": "Loading",
   "login": "Login",
+  "sell": "Sell",
+  "transfer": "Transfer",
+  "moveToMatic": "Move to Matic",
   "walletConnect": "WalletConnect",
   "walletConnectMsg": "Connect using mobile wallet",
   "metamask": {
@@ -32,14 +35,78 @@
       "favorites": "Favorites"
     }
   },
+  "moreOptions": {
+    "deposit": "Deposit to Matic",
+    "withdraw": "Withdraw to Ethereum",
+    "sell": "Sell",
+    "send": "Send to Friend"
+  },
+  "ethereumTab": {
+    "depositBtn": "Deposit {count} NFTs to Matic",
+    "empty": {
+      "title": "Oops! No item found on Ethereum chain.",
+      "description": "We didn’t found any item on Ethereum chain."
+    }
+  },
+  "maticTab": {
+    "withdrawBtn": "Withdraw {count} NFTs to Ethereum",
+    "empty": {
+      "title": "Oops! No item found on Matic chain.",
+      "description": "We didn’t found any item on Matic chain."
+    }
+  },
+  "collectibles": "Collectibles",
   "logout": {
     "title": "Logout",
     "logoutQuestion": "Are you sure want to logout?",
     "okay": "Yes, logout"
   },
+  "sort": {
+    "popular": "Popular",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "priceLowtoHigh": "Price Low to High",
+    "priceHightoLow": "Price High to Low"
+  },
   "token": {
     "onsale": "On sale"
   },
   "submitToMarketplace": "Submit to Marketplace",
-  "submittingToMarketplace": "Submitting to Marketplace"
+  "submittingToMarketplace": "Submitting to Marketplace",
+  "withdraw": {
+    "title": "Move Collectibles to Ethereum",
+    "testChallengePeriod": "~3-4 minutes",
+    "mainChallengePeriod": "7 days",
+    "steps": {
+      "preInit": "Withdraw Initializing...",
+      "init": "Withdraw initialized",
+      "checkpoint": "Exit transaction on ethereum",
+      "challengePeriod": "Challenge period",
+      "finished": "Withdraw completed"
+    },
+    "process": {
+      "checkpointWait": "Waiting for checkpoint ...",
+      "checkpointed": "Checkpoint received. Please confirm Withdraw now.",
+      "posCheckpointed": "Checkpoint received. Please finish the withdraw process now.",
+      "challengeWait": "Waiting for challenge period to end. Please check back after {challengePeriod}",
+      "challengeEnd": "Challenge period ended. Please finish the withdraw process."
+    }
+  },
+  "viewOnEtherscan": "View on etherscan",
+  "nftSelected": "Collectibles selected",
+  "max": "Max",
+  "deposit": {
+    "title": "Move Collectibles to Matic",
+    "steps": {
+      "preInit": "Deposit Initializing...",
+      "init": "Deposit initialized",
+      "deposit": "Deposit on Ethereum Transaction",
+      "finished": "Deposit completed"
+    },
+    "process": {
+      "preDeposit": "Please confirm the transaction to complete the deposit.",
+      "depositing": "Waiting for 12 block confirmation. It may take upto 5 min.",
+      "deposited": "It will take ~2 minute to reflact in your account."
+    }
+  }
 }

@@ -89,11 +89,12 @@ export default {
       }
     },
 
-    async logout({ commit }) {
+    async logout({ commit, dispatch }) {
       commit("user", null)
       commit("userId", null)
       commit("authToken", null)
       commit("address", null)
+      dispatch("trunk/resetBalances", {}, { root: true });
       clearStore()
     },
 
@@ -109,6 +110,7 @@ export default {
         // Store auth token to local store and add user
         configStore.set("authToken", response.data.auth_token)
         dispatch('login', response.data.data)
+        app.initNetworks(app.vuexStore)
         app.initAccount(app.vuexStore)
       }
 

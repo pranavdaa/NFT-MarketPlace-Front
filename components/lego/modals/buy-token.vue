@@ -209,6 +209,8 @@ import getAxios from "~/plugins/axios";
 import { parseBalance } from "~/plugins/helpers/token-utils";
 import PlaceBid from "~/components/lego/modals/place-bid";
 
+const { getTypedData } = require("~/plugins/meta-tx")
+
 // 0X
 let {
   ContractWrappers,
@@ -241,6 +243,11 @@ const TEN = BigNumber(10);
     close: {
       type: Function,
       required: true,
+    },
+    refreshBids: {
+      type: Function,
+      required: false,
+      default: () => {},
     },
   },
   components: { InputToken, PlaceBid },
@@ -440,6 +447,7 @@ export default class BuyToken extends Vue {
           );
 
           if (response.status === 200 && response.data) {
+            this.refreshBids();
             app.addToast(
               "Offered/bided successfully",
               "Your offer/bid has been successfully submitted",
@@ -535,18 +543,31 @@ export default class BuyToken extends Vue {
           remainingFillableAmount.isGreaterThan(0) &&
           isValidSignature
         ) {
-          let txHash;
-          txHash = await contractWrappers.exchange
-            .fillOrder(signedOrder, takerAssetAmount, signedOrder.signature)
-            .awaitTransactionSuccessAsync({
-              from: takerAddress,
-              gas: 8000000,
-              gasPrice: 10000000000,
-              value: calculateProtocolFee([signedOrder]),
-            });
-          if (txHash) {
-            console.log(txHash);
-            await this.handleBuyTxhash(txHash);
+
+          let dataVal = await getAxios().get(`orders/exchangedata/encoded?orderId=${this.order.id}&functionName=fillOrder`)
+
+          let zrx = {
+            salt: generatePseudoRandomSalt(),
+            expirationTimeSeconds: signedOrder.expirationTimeSeconds,
+            gasPrice: 10000000000,
+            signerAddress: takerAddress,
+            data: dataVal.data.data,
+            domain: {
+              name: "0x Protocol",
+              version: "3.0.0",
+              chainId: this.networks.matic.chainId,
+              verifyingContract: contractWrappers.contractAddresses.exchange,
+            },
+          };
+
+          const takerSign = await signatureUtils.ecSignTransactionAsync(
+            providerEngine(),
+            zrx,
+            takerAddress
+          );
+
+          if(takerSign) {
+            await this.handleBuyToken(takerSign);
           }
         } else {
           console.log("Order is already sold");
@@ -559,6 +580,7 @@ export default class BuyToken extends Vue {
   }
 
   async approve0x(contractWrappers, erc20Address, takerAddress) {
+    let matic = new Web3(this.networks.matic.rpc);
     const erc20TokenCont = new ERC20TokenContract(
       erc20Address,
       providerEngine()
@@ -569,35 +591,97 @@ export default class BuyToken extends Vue {
       .callAsync();
 
     if (!allowance.gt(ZERO)) {
-      const erc20ApprovalTxHash = await erc20TokenCont
-        .approve(
-          contractWrappers.contractAddresses.erc20Proxy,
-          new BigNumber(app.uiconfig.UNLIMITED_ALLOWANCE_IN_BASE_UNITS)
-        )
-        .sendTransactionAsync({ from: takerAddress });
-      if (erc20ApprovalTxHash) {
-        console.log("Approve Hash erc20 to 0x", erc20ApprovalTxHash);
-        app.addToast("Approved", "You successfully approved", {
-          type: "success",
-        });
-        return true;
+      let data = await matic.eth.abi.encodeFunctionCall({
+        name: 'approve', 
+        type: 'function', 
+        inputs: [
+          {
+            "name": "spender",
+            "type": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256"
+          }
+        ]
+      }, [contractWrappers.contractAddresses.erc20Proxy, "115792089237316195423570985008687907853269984665640564039457584007913129639935"])
+
+      let { sig } = await this.executeMetaTx (data)
+
+      let tx = {
+        intent: sig, 
+        fnSig: data, 
+        from: this.account.address, 
+        contractAddress: matic.utils.toChecksumAddress(this.order.erc20tokens.erc20tokensaddresses[0].address)
       }
-      app.addToast(
-        "Failed to approve",
-        "You need to approve the transaction to sale the NFT",
-        {
-          type: "failure",
+
+      if (tx) {
+        try {
+          let response = await getAxios().post(
+            `orders/executeMetaTx`,
+            tx
+          );
+          if (response.status === 200) {
+            console.log("Approved");
+            app.addToast("Approved", "You successfully approved", {
+              type: "success",
+            });
+            return true;
+          }
+        } catch (error) {
+          console.log(error);
+          app.addToast(
+            "Failed to approve",
+            "You need to approve the transaction to sale the NFT",
+            {
+              type: "failure",
+            }
+          );
         }
-      );
+      }
       return false;
     }
     return true;
   }
 
-  async handleBuyTxhash(txHash) {
+  async executeMetaTx(functionSig) {
+    let matic = new Web3(this.networks.matic.rpc);
+    let address = matic.utils.toChecksumAddress(this.account.address)
+    let data = await matic.eth.abi.encodeFunctionCall({
+      name: 'getNonce',
+      type: 'function',
+      inputs: [{
+          "name": "user",
+          "type": "address"
+        }]
+    }, [address])
+    let _nonce = await matic.eth.call ({
+      to: matic.utils.toChecksumAddress(this.order.erc20tokens.erc20tokensaddresses[0].address),
+      data
+    });
+    const dataToSign = getTypedData({
+      name: this.order.erc20tokens.name,
+      version: '1',
+      salt: '0x0000000000000000000000000000000000000000000000000000000000013881',
+      verifyingContract: matic.utils.toChecksumAddress(this.order.erc20tokens.erc20tokensaddresses[0].address),
+      nonce: parseInt(_nonce),
+      from: address,
+      functionSignature: functionSig
+    })
+    const msgParams = [address, JSON.stringify(dataToSign)]
+    let sign = await window.ethereum.request ({
+      method: 'eth_signTypedData_v3', 
+      params: msgParams
+    })
+    return {
+      sig: sign,
+    };
+  }
+
+  async handleBuyToken(takerSign) {
     try {
       let data = {
-        tx_hash: txHash.transactionHash,
+        taker_signature: JSON.stringify(takerSign),
       };
       let response = await getAxios().patch(
         `orders/${this.order.id}/buy`,

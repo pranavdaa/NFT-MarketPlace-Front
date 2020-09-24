@@ -9,7 +9,9 @@
           v-if="category"
         />
       </div>
-      <div class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end">
+      <div
+        class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end"
+      >
         <wishlist-button :wishlisted="isFavorite" :onClick="addToWishlist" />
         <a class="btn btn-light align-self-center action ms-l-16">
           <img
@@ -25,7 +27,7 @@
       <div class="col-md-8">
         <div
           class="feature-image d-flex d-lg-flex justify-content-center"
-          v-bind:style="{background: bg}"
+          v-bind:style="{ background: bg }"
         >
           <img
             class="asset-img align-self-center"
@@ -34,35 +36,45 @@
             @load="onImageLoad"
           />
         </div>
-        <div class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16">
-          <h3 class="font-heading-medium font-semibold">About {{order.token.name}}</h3>
+        <div
+          class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
+        >
+          <h3 class="font-heading-medium font-semibold">
+            About {{ order.token.name }}
+          </h3>
           <p
             class="font-body-medium"
-            :class="{'show-less': showMore, 'show-more': !showMore}"
+            :class="{ 'show-less': showMore, 'show-more': !showMore }"
             v-if="order.token.description"
           >
-            {{order.token.description}}
+            {{ order.token.description }}
             <span class="dots">...</span>
-            <span class="more">{{order.token.description}}</span>
+            <span class="more">{{ order.token.description }}</span>
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
               v-if="!showMore"
               @click.prevent="showMore = true"
-            >More info</a>
+              >More info</a
+            >
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
               v-if="showMore"
               @click.prevent="showMore = false"
-            >Show less</a>
+              >Show less</a
+            >
           </p>
 
-          <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">Listed for</div>
+          <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">
+            Listed for
+          </div>
           <div
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
-          >{{order.price}} {{erc20Token.symbol}}</div>
+          >
+            {{ order.price }} {{ erc20Token.symbol }}
+          </div>
           <!-- <div
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
@@ -71,26 +83,31 @@
             class="btn btn-primary"
             v-if="!isOwnersToken && order.status === 0"
             @click="buyOrder()"
-          >Buy Now</button>
+          >
+            Buy Now
+          </button>
           <button
             class="btn btn-light"
             v-if="isOwnersToken && order.status === 0"
             @click="onCancelOrder()"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
         </div>
         <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
           <h3 class="font-heading-medium font-semibold category">
-            About {{category.name}}
+            About {{ category.name }}
             <a
               class="ps-l-12"
               :href="category.url"
               target="_blank"
               rel="noopener noreferrer"
-            >Visit Website</a>
+              >Visit Website</a
+            >
 
             <span
               class="float-right cursor-pointer right-arrow"
-              :class="{'down-icon':showCategoryInfo}"
+              :class="{ 'down-icon': showCategoryInfo }"
               @click="showCategoryInfo = !showCategoryInfo"
               v-if="category.description"
             >
@@ -100,66 +117,88 @@
           <p
             class="font-body-medium ps-t-20"
             v-if="showCategoryInfo && category.description"
-          >{{category.description}}</p>
+          >
+            {{ category.description }}
+          </p>
         </div>
-        <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="order.token.properties">
+        <div
+          class="d-flex flex-column ps-y-16 ps-y-md-32"
+          v-if="order.token.properties"
+        >
           <h3 class="font-heading-medium font-semibold category">
             Properties
             <span
               class="float-right cursor-pointer right-arrow"
-              :class="{'down-icon':showProperties}"
+              :class="{ 'down-icon': showProperties }"
               @click="showProperties = !showProperties"
             >
               <svg-sprite-icon name="right-arrow" />
             </span>
           </h3>
-          <p class="font-body-medium ps-t-20" v-if="showProperties">{{order.token.properties}}</p>
+          <p class="font-body-medium ps-t-20" v-if="showProperties">
+            {{ order.token.properties }}
+          </p>
         </div>
         <div
           class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
-          v-if="isOwnersToken && order.type !== app.orderTypes.FIXED && bidsFullList && bidsFullList.length"
+          v-if="
+            order.type !== app.orderTypes.FIXED &&
+            bidsFullList &&
+            bidsFullList.length
+          "
         >
-          <h3 class="font-heading-medium font-semibold category">Bidding history</h3>
+          <h3 class="font-heading-medium font-semibold category">
+            Bidding history
+          </h3>
           <p class="font-body-medium ps-t-20">
             <bidder-row
               v-for="bid in bidsFullList"
               :key="bid.id"
               :bid="bid"
               :refreshBids="refreshBids"
+              :isOwnersToken="isOwnersToken"
             />
           </p>
         </div>
       </div>
       <div class="col-md-4 d-none d-lg-flex">
         <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
-          <h3 class="font-heading-medium font-semibold">About {{order.token.name}}</h3>
+          <h3 class="font-heading-medium font-semibold">
+            About {{ order.token.name }}
+          </h3>
           <p
             class="font-body-medium"
-            :class="{'show-less': showMore, 'show-more': !showMore}"
+            :class="{ 'show-less': showMore, 'show-more': !showMore }"
             v-if="order.token.description"
           >
-            {{order.token.description}}
+            {{ order.token.description }}
             <span class="dots">...</span>
-            <span class="more">{{order.token.description}}</span>
+            <span class="more">{{ order.token.description }}</span>
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
               v-if="!showMore"
               @click.prevent="showMore = true"
-            >More info</a>
+              >More info</a
+            >
             <a
               class="font-body-small d-flex ps-t-8 font-medium"
               href="#more-info"
               v-if="showMore"
               @click.prevent="showMore = false"
-            >Show less</a>
+              >Show less</a
+            >
           </p>
 
-          <div class="font-body-small text-gray-300 mt-auto ps-y-4">Listed for</div>
+          <div class="font-body-small text-gray-300 mt-auto ps-y-4">
+            Listed for
+          </div>
           <div
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
-          >{{order.price}} {{erc20Token.symbol}}</div>
+          >
+            {{ order.price }} {{ erc20Token.symbol }}
+          </div>
           <!-- <div
             class="font-heading-large font-semibold ps-b-20"
             v-if="erc20Token"
@@ -168,18 +207,23 @@
             class="btn btn-primary"
             v-if="!isOwnersToken && order.status === 0"
             @click="buyOrder()"
-          >Buy Now</button>
+          >
+            Buy Now
+          </button>
           <button
             class="btn btn-light"
             v-if="isOwnersToken && order.status === 0"
             @click="onCancelOrder()"
-          >Cancel</button>
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>
     <buy-token
       :show="showBuyToken"
       :order="order"
+      :refreshBids="refreshBids"
       :close="onBuyTokenClose"
       v-if="showBuyToken && order"
     />
@@ -252,6 +296,7 @@ const TEN = BigNumber(10);
     ...mapGetters("token", ["erc20Tokens"]),
     ...mapGetters("account", ["account", "favouriteOrders"]),
     ...mapGetters("auth", ["user"]),
+    ...mapGetters("network", ["networks"]),
   },
   middleware: [],
   mixins: [],
@@ -355,7 +400,7 @@ export default class TokenDetail extends Vue {
       console.log(error);
     }
     this.isLoadingDetails = false;
-    if (this.isOwnersToken && this.order.type !== app.orderTypes.FIXED) {
+    if (this.order.type !== app.orderTypes.FIXED) {
       await this.fetchBidders();
     }
   }
@@ -365,12 +410,10 @@ export default class TokenDetail extends Vue {
     if (this.user) {
       this.showBuyToken = true;
     } else {
-      app.addToast(
-        "Login to buy",
-        "Please login to your account to buy this order",
-        { type: "info" }
-      );
-      // this.$router.push({ name: "login" });
+      this.$router.push({
+        name: "login",
+        query: { next: `/tokens/${this.order.id}` },
+      });
     }
   }
   onBuyTokenClose() {
@@ -404,37 +447,35 @@ export default class TokenDetail extends Vue {
         signedOrder["salt"] = BigNumber(signedOrder.salt);
         signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
 
-        const orderTemplate = {
-          chainId: signedOrder.chainId,
-          exchangeAddress: signedOrder.exchangeAddress,
-          makerAddress: signedOrder.makerAddress,
-          takerAddress: signedOrder.takerAddress,
-          senderAddress: signedOrder.senderAddress,
-          feeRecipientAddress: signedOrder.feeRecipientAddress,
+        const chainId = this.networks.matic.chainId;
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId: chainId,
+        });
+
+        let dataVal = await getAxios().get(`orders/exchangedata/encoded?orderId=${this.order.id}&functionName=cancelOrder`)
+
+        let zrx = {
+          salt: generatePseudoRandomSalt(),
           expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-          salt: signedOrder.salt,
-          makerAssetAmount: signedOrder.makerAssetAmount,
-          takerAssetAmount: signedOrder.takerAssetAmount,
-          makerAssetData: signedOrder.makerAssetData,
-          takerAssetData: signedOrder.takerAssetData,
-          makerFeeAssetData: signedOrder.makerFeeAssetData,
-          takerFeeAssetData: signedOrder.takerFeeAssetData,
-          makerFee: signedOrder.makerFee,
-          takerFee: signedOrder.takerFee,
+          gasPrice: 10000000000,
+          signerAddress: signedOrder.makerAddress,
+          data: dataVal.data.data,
+          domain: {
+            name: "0x Protocol",
+            version: "3.0.0",
+            chainId: this.networks.matic.chainId,
+            verifyingContract: contractWrappers.contractAddresses.exchange,
+          },
         };
-        console.log(orderTemplate);
 
-        const txHash = await contractWrappers.exchange
-          .cancelOrder(orderTemplate)
-          .awaitTransactionSuccessAsync({
-            from: orderTemplate.makerAddress,
-            gasPrice: 0,
-            gas: 8000000,
-          });
+        const takerSign = await signatureUtils.ecSignTransactionAsync(
+          providerEngine(),
+          zrx,
+          signedOrder.makerAddress
+        );
 
-        if (txHash) {
-          console.log("Order canceled", txHash);
-          await this.handleCancelOrder(txHash);
+        if(takerSign) {
+          await this.handleCancelOrder(takerSign);
         }
       } else {
         await this.handleCancelOrder();
@@ -445,11 +486,11 @@ export default class TokenDetail extends Vue {
     this.isLoading = false;
     this.onCancelOrderClose();
   }
-  async handleCancelOrder(txHash = null) {
+  async handleCancelOrder(takerSign = null) {
     let data = {};
-    if (txHash) {
+    if (takerSign) {
       data = {
-        tx_hash: txHash.transaction,
+        taker_signature: JSON.stringify(takerSign)
       };
     }
     try {
@@ -502,29 +543,27 @@ export default class TokenDetail extends Vue {
   }
 
   async fetchBidders() {
-    if (this.isOwnersToken) {
-      if (this.isLoadingBids || this.order.type === app.orderTypes.FIXED) {
-        return;
+    if (this.isLoadingBids || this.order.type === app.orderTypes.FIXED) {
+      return;
+    }
+    try {
+      let response;
+      response = await getAxios().get(`orders/bids/${this.order.id}`);
+      if (response.status === 200 && response.data.data.order) {
+        let bids = [];
+        response.data.data.order.forEach(function (bid) {
+          bid.erc20Token = this.erc20Token;
+          bid.order = this.order;
+          if (bid.status === 0) {
+            // if bid is active
+            bids.push(new BidModel(bid));
+          }
+        }, this);
+        this.hasNextPage = response.data.data.has_next_page;
+        this.bidsFullList = bids;
       }
-      try {
-        let response;
-        response = await getAxios().get(`orders/bids/${this.order.id}`);
-        if (response.status === 200 && response.data.data.order) {
-          let bids = [];
-          response.data.data.order.forEach(function (bid) {
-            bid.erc20Token = this.erc20Token;
-            bid.order = this.order;
-            if (bid.status === 0) {
-              // if bid is active
-              bids.push(new BidModel(bid));
-            }
-          }, this);
-          this.hasNextPage = response.data.data.has_next_page;
-          this.bidsFullList = bids;
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    } catch (error) {
+      console.log(error);
     }
   }
 }

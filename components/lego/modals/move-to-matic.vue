@@ -73,6 +73,11 @@ const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
       type: Function,
       required: true,
     },
+    refreshNFTTokens: {
+      type: Function,
+      required: false,
+      default: () => {},
+    },
   },
   components: {},
   computed: {
@@ -197,6 +202,7 @@ export default class MoveToMatic extends Vue {
             "Your token deposited successfully to matic network, it will take 3-5 minute to appear on matic network",
             { type: "success" }
           );
+          this.refreshNFTTokens();
           this.close();
         }
       }
