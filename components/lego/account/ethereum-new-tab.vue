@@ -11,7 +11,7 @@
           <div
             class="col-12 col-lg cat-switch d-flex d-md-none ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
           >
-            <categories-selector class="category-wrapper" />
+            <categories-selector :countFor="2" class="category-wrapper" />
           </div>
           <div
             class="col-12 col-lg cat-switch d-none d-md-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
