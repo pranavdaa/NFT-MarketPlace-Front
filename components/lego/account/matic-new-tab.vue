@@ -61,12 +61,12 @@
               class="dropdown-filter"
               :sortItems="sortItems"
               :change="onSortSelect"
+              v-if="false"
             />
             <search-box
               class="search-box ms-l-20"
               placeholder="Search in items"
               :change="(val) => (searchInput = val)"
-              v-if="!selectedCategory"
             />
             <button
               v-if="selectedCategory"

@@ -58,6 +58,7 @@
             class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end"
           >
             <sort-dropdown
+              v-if="false"
               class="dropdown-filter"
               :sortItems="sortItems"
               :change="onSortSelect"
@@ -66,7 +67,6 @@
               class="search-box ms-l-20"
               placeholder="Search in items"
               :change="(val) => (searchInput = val)"
-              v-if="!selectedCategory"
             />
             <button
               v-if="selectedCategory"
