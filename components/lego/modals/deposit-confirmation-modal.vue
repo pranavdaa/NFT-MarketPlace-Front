@@ -365,8 +365,7 @@ export default class DepositConfirmationModal extends Vue {
         category_id: category_id,
         type: "DEPOSIT",
       };
-      let res = await getAxios().post("assetmigrate", { data });
-      console.log(res);
+      let res = await getAxios().post("assetmigrate", data);
     } catch (error) {
       console.log(error);
     }

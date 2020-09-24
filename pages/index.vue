@@ -10,7 +10,7 @@
         <search-box
           class="search-box w-100"
           placeholder="Search NFT..."
-          :change="(val) => val"
+          :change="(val) => (searchInput = val)"
         />
       </div>
       <div class="col-md d-flex justify-content-center justify-content-md-end">
@@ -28,6 +28,7 @@
         v-for="order in orderFullList"
         :key="order.id"
         :order="order"
+        :searchInput="searchInput"
       />
       <no-item
         class="ps-b-120"
@@ -87,6 +88,7 @@ import NoItem from "~/components/lego/no-item";
 })
 export default class Index extends Vue {
   limit = app.uiconfig.defaultPageSize;
+  searchInput = null;
   exmptyMsg = {
     title: "Oops! No item found.",
     description: "We didn’t found any item that is on sale.",

@@ -3,6 +3,13 @@
     :to="{ name: 'tokens-id', params: { id: order.id } }"
     class="sell-card text-center cursor-pointer"
     v-bind:style="{ background: bg }"
+    v-if="
+      !searchInput ||
+      fuzzysearch(searchInput, order.name) ||
+      fuzzysearch(searchInput, order.tokens_id) ||
+      fuzzysearch(searchInput, category.name) ||
+      fuzzysearch(searchInput, erc20Token.name)
+    "
   >
     <on-sale-tag v-if="order.onSale && !onlyToken" :time="order.timeleft" />
 
@@ -13,7 +20,6 @@
         :alt="order.token.name"
         @load="onImageLoad"
       />
-      <!-- <img :src="order.img" class="asset-img" alt="kitty" @load="onImageLoad" /> -->
     </div>
     <div
       class="gradient"
@@ -94,6 +100,7 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import app from "~/plugins/app";
 import { mapGetters } from "vuex";
+import { fuzzysearch } from "~/plugins/helpers";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -117,6 +124,11 @@ import OnSaleTag from "~/components/lego/token/on-sale-tag";
       required: false,
       default: () => {},
     },
+    searchInput: {
+      type: String,
+      required: false,
+      default: null,
+    },
     moveToMatic: {
       type: Function,
       required: false,
@@ -134,6 +146,7 @@ import OnSaleTag from "~/components/lego/token/on-sale-tag";
 })
 export default class SellCard extends Vue {
   bg = "#f3f4f7";
+  fuzzysearch = fuzzysearch;
 
   // Initial
   mounted() {}
