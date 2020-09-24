@@ -23,12 +23,16 @@
         <div class="name ps-b-4 font-heading-small font-semibold">Wallet Balance</div>
         <div class="amount font-body-medium">${{formattedFullUSDBalance}}</div>
       </div>
-      <div class="align-self-center">
-        <a
-          href="https://wallet.matic.today"
-          target="_blank"
-          class="btn btn-light ml-auto"
-        >View Wallet</a>
+      <div class="align-self-center" v-if="widgetKey">
+        <button
+          class="btn btn-light ml-auto matic-widget-button matic-widget-button"
+          data-default-page="home"
+          :data-wapp-id="widgetKey"
+        >Matic Widget</button>
+        <script
+          src="https://wallet.matic.today/embeds/widget-button.min.js"
+          data-script-name="matic-embeds"
+        ></script>
       </div>
     </div>
   </div>
@@ -38,6 +42,7 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import app from "~/plugins/app";
 
 @Component({
   props: {},
@@ -48,13 +53,37 @@ import { mapGetters } from "vuex";
   },
 })
 export default class AccountBanner extends Vue {
-  mounted() {}
+  // Widget event listener
+  maticWidgetEventsListener = (event) => {
+    let targetedEvents = [
+      event.eventTypes.TRANSFER.onReceipt,
+      event.eventTypes.DEPOSIT.onReceipt,
+      event.eventTypes.WITHDRAW_INIT.onReceipt,
+      event.eventTypes.WITHDRAW_CONFIRM.onReceipt,
+      event.eventTypes.WITHDRAW_EXIT.onReceipt,
+    ];
+    if (targetedEvents.includes(event.data.type)) {
+      this.$store.dispatch("token/reloadBalances");
+    }
+  };
+
+  mounted() {
+    // Register widget event listner
+    window.maticWidgetEventsListener = this.maticWidgetEventsListener;
+  }
 
   get formattedFullUSDBalance() {
     if (this.totalCurrencyBalance) {
       return parseFloat(this.totalCurrencyBalance.toFixed(3));
     }
     return "00.00";
+  }
+
+  get widgetKey() {
+    if (app.uiconfig && app.uiconfig.maticWidgetKey) {
+      return app.uiconfig.maticWidgetKey;
+    }
+    return null;
   }
 }
 </script>

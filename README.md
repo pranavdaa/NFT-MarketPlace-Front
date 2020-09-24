@@ -2,6 +2,12 @@
 
 > Marketplace for crypto assets
 
+
+## Configure environment
+
+You need to configure your environment variables now. Copy `config.env.example` and rename as `config.env`. Now provide values for the keys mentioned there.
+
+
 ## Build Setup
 
 ```bash
