@@ -319,7 +319,7 @@ export default class SellToken extends Vue {
         ? this.expiry_date_time.format("x")
         : 0;
       const orderType = this.orderType;
-      const nftContract = this.nftToken.category.address;
+      const nftContract = this.nftToken.category.getAddress(this.networks.matic.chainId);
       // const nftTokenId = this.nftToken.token_id;
       const erc20Address = this.selectedERC20Token.address;
       const makerAddress = this.account.address;
@@ -337,6 +337,10 @@ export default class SellToken extends Vue {
         nftContract,
         providerEngine()
       );
+
+      console.log(nftContract)
+      console.log(providerEngine())
+      console.log(erc721TokenCont)
 
       // Owner of current token
       const owner = await erc721TokenCont
@@ -356,7 +360,6 @@ export default class SellToken extends Vue {
         this.close();
         return;
       }
-
       // Check Approve 0x, Approve if not
       const isApproved = await this.approve0x(
         erc721TokenCont,
@@ -431,7 +434,6 @@ export default class SellToken extends Vue {
         contractWrappers.contractAddresses.erc721Proxy
       )
       .callAsync();
-
     if (!isApprovedForAll) {
       let data = await matic.eth.abi.encodeFunctionCall({
         name: 'setApprovalForAll', 

@@ -171,10 +171,10 @@ export default class Login extends Vue {
       },
       domain: {
         name: "Ether Mail",
-        host: this.networks.matic.rpc,
+        host: '',
         version: "1",
         verifyingContract: "0x0",
-        chainId: this.networks.matic.chainId,
+        chainId: this.networks.main.chainId,
       },
       primaryType: "Test",
       message: {
@@ -204,7 +204,7 @@ export default class Login extends Vue {
     }
     if (
       window.ethereum.chainId !=
-      "0x" + this.networks.matic.chainId.toString(16)
+      "0x" + this.networks.main.chainId.toString(16)
     ) {
       this.metamaskNetworkError = true;
       this.metamaskLoading = false;
