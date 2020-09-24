@@ -23,6 +23,16 @@ export default {
     categories(state, categories) {
       state.categories = categories
     },
+    addUsersMaticCount(state, categories) {
+      for (let i = 0; i < state.categories.length; i++) {
+        state.categories[i].maticCount = categories[state.categories[i].maticAddress]
+      }
+    },
+    addUsersMainCount(state, categories) {
+      for (let i = 0; i < state.categories.length; i++) {
+        state.categories[i].mainCount = categories[state.categories[i].mainAddress]
+      }
+    }
   },
 
   getters: {
@@ -33,7 +43,19 @@ export default {
       const category = state.allCategory
       category.count = (
         state.categories.reduce(
-          (total, item) => total + parseInt(item.count),
+          (total, item) => total + (parseInt(item.count) || 0),
+          0
+        ) || "0"
+      )
+      category.maticCount = (
+        state.categories.reduce(
+          (total, item) => total + (parseInt(item.maticCount) || 0),
+          0
+        ) || "0"
+      )
+      category.mainCount = (
+        state.categories.reduce(
+          (total, item) => total + (parseInt(item.mainCount) || 0),
           0
         ) || "0"
       )

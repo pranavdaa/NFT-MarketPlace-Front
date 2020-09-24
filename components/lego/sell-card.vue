@@ -1,8 +1,8 @@
 <template>
   <nuxt-link
-    :to="{name: 'tokens-id', params: { id: order.id } }"
+    :to="{ name: 'tokens-id', params: { id: order.id } }"
     class="sell-card text-center cursor-pointer"
-    v-bind:style="{background: bg}"
+    v-bind:style="{ background: bg }"
   >
     <on-sale-tag v-if="order.onSale && !onlyToken" :time="order.timeleft" />
 
@@ -17,31 +17,44 @@
     </div>
     <div
       class="gradient"
-      v-bind:style="{background: 'linear-gradient( 360deg,'+bg+'0%, rgba(236, 235, 223, 0) 100%)'}"
+      v-bind:style="{
+        background:
+          'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
+      }"
     ></div>
     <div class="category-pill d-flex mx-auto ms-t-20 ms-b-16" v-if="category">
       <img
         :src="category.img_url"
-        :alt="category.name"
         class="icon ms-2 ms-l-4 ms-r-4 align-self-center"
       />
-      <div class="font-caps font-medium caps align-self-center ps-r-6">{{category.name}}</div>
+      <div class="font-caps font-medium caps align-self-center ps-r-6">
+        {{ category.name }}
+      </div>
     </div>
     <h3
       class="w-100 title font-body-small font-medium ms-b-8 ps-x-12"
-      :class="{'ms-b-16': onlyToken}"
+      :class="{ 'ms-b-16': onlyToken }"
       :title="order.token.name"
-    >{{order.token.name}}</h3>
-    <div
-      class="price font-body-small ms-b-20"
-      v-if="erc20Token && !onlyToken"
-    >{{order.price}} {{erc20Token.symbol}}</div>
+    >
+      {{ order.token.name }}
+    </h3>
+    <div class="price font-body-small ms-b-20" v-if="erc20Token && !onlyToken">
+      {{ order.price }} {{ erc20Token.symbol }}
+    </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
       v-if="isMyAccount && !isMainToken && onlyToken"
     >
-      <a class="btn btn-transparent w-50 align-self-center" @click.prevent="sell(order.id)">Sell</a>
-      <a class="btn btn-transparent w-50 align-self-center" @click.prevent="transfer()">Transfer</a>
+      <a
+        class="btn btn-transparent w-50 align-self-center"
+        @click.prevent="sell(order.id)"
+        >Sell</a
+      >
+      <a
+        class="btn btn-transparent w-50 align-self-center"
+        @click.prevent="transfer()"
+        >Transfer</a
+      >
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
@@ -50,7 +63,8 @@
       <a
         class="btn btn-red btn-transparent w-100 align-self-center"
         @click.prevent="removeFromMarketplace()"
-      >Remove from Marketplace</a>
+        >Remove from Marketplace</a
+      >
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
@@ -59,7 +73,8 @@
       <a
         class="btn btn-transparent w-100 align-self-center"
         @click.prevent="moveToMatic(order)"
-      >Move to Matic</a>
+        >Move to Matic</a
+      >
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
@@ -68,7 +83,8 @@
       <a
         class="btn btn-transparent w-100 align-self-center"
         @click.prevent="moveToEthereum()"
-      >Move to Ethereum</a>
+        >Move to Ethereum</a
+      >
     </div>
   </nuxt-link>
 </template>

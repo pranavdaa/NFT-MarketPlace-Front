@@ -1,12 +1,14 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal receive-modal-wrapper" v-bind:class="{ 'show': show }">
+    <div class="modal receive-modal-wrapper" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box deposit-box">
           <div class="box-header justify-content-center">
             <div
               class="font-heading-medium font-semibold align-self-center w-100 text-center"
-            >{{$t('deposit.title')}}</div>
+            >
+              {{ $t("deposit.title") }}
+            </div>
             <span
               @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
@@ -19,17 +21,23 @@
           </div>
           <div class="box-body">
             <div class="container p-0">
-              <div class="col-12 ps-x-40 ps-b-20 ps-t-16 container-wrapper font-body-small">
-                <div
-                  class="ps-b-20 ps-t-18 text-white"
-                >{{selectedTokens.length || 0}} Collectibles selected</div>
+              <div
+                class="col-12 ps-x-40 ps-b-20 ps-t-16 container-wrapper font-body-small"
+              >
+                <div class="ps-b-20 ps-t-18 text-white">
+                  {{ selectedTokens.length || 0 }} Collectibles selected
+                </div>
                 <div class="container card-list hide-scrollbar d-flex p-0">
                   <div
                     class="token-img d-flex ms-x-6 ps-4 justify-content-center"
                     v-for="token in selectedTokens"
                     :key="token.token_id"
                   >
-                    <img class="align-self-center" :src="token.img_url" :alt="token.name" />
+                    <img
+                      class="align-self-center"
+                      :src="token.img_url"
+                      :alt="token.name"
+                    />
                   </div>
                 </div>
               </div>
@@ -53,20 +61,24 @@
                     <span
                       class="ps-t-2"
                       v-if="transactionStatus === STATUS.INITIATING"
-                    >Deposit Initializing...</span>
+                      >Deposit Initializing...</span
+                    >
                     <span
                       class="ps-t-2"
                       v-if="transactionStatus >= STATUS.INITIATED"
-                    >Deposit Initialized</span>
+                      >Deposit Initialized</span
+                    >
                   </div>
                 </div>
                 <div class="col-12 p-0">
-                  <div class="float-left process-msg font-caption text-gray ms-l-12 ms-b-2 ps-l-24"></div>
+                  <div
+                    class="float-left process-msg font-caption text-gray ms-l-12 ms-b-2 ps-l-24"
+                  ></div>
                 </div>
                 <div class="col-12 p-0">
                   <div
                     class="mark-wrapper float-left"
-                    :class="{'check': transactionStatus >= STATUS.INITIATED}"
+                    :class="{ check: transactionStatus >= STATUS.INITIATED }"
                   >
                     <img
                       v-if="transactionStatus === STATUS.INITIATED"
@@ -85,31 +97,39 @@
                       alt="Green Check"
                     />
                   </div>
-                  <div
-                    class="float-left body-medium ps-2 ps-t-4 ms-l-12"
-                  >Deposit on Ethereum Transaction</div>
+                  <div class="float-left body-medium ps-2 ps-t-4 ms-l-12">
+                    Deposit on Ethereum Transaction
+                  </div>
                 </div>
                 <div class="col-12 p-0">
-                  <div class="float-left process-msg font-caption text-gray ms-l-12 ms-b-2 ps-l-24">
+                  <div
+                    class="float-left process-msg font-caption text-gray ms-l-12 ms-b-2 ps-l-24"
+                  >
                     <div class="ps-b-16">
-                      <span
-                        v-if="transactionStatus === STATUS.INITIATED"
-                      >Please confirm the transaction to complete the deposit.</span>
-                      <span
-                        v-if="transactionStatus === STATUS.DEPOSITING"
-                      >Waiting for 12 block confirmation. It may take upto 5 min.</span>
+                      <span v-if="transactionStatus === STATUS.INITIATED"
+                        >Please confirm the transaction to complete the
+                        deposit.</span
+                      >
+                      <span v-if="transactionStatus === STATUS.DEPOSITING"
+                        >Waiting for 12 block confirmation. It may take upto 5
+                        min.</span
+                      >
                       <a
-                        v-if="transactionStatus >= STATUS.DEPOSITING && transactionHash"
+                        v-if="
+                          transactionStatus >= STATUS.DEPOSITING &&
+                          transactionHash
+                        "
                         href="transactionHash"
                         :title="transactionHash"
-                      >View on etherscan</a>
+                        >View on etherscan</a
+                      >
                     </div>
                   </div>
                 </div>
                 <div class="col-12 p-0">
                   <div
                     class="mark-wrapper float-left"
-                    :class="{'check': transactionStatus >= STATUS.DEPOSITED }"
+                    :class="{ check: transactionStatus >= STATUS.DEPOSITED }"
                   >
                     <img
                       v-if="transactionStatus >= STATUS.DEPOSITED"
@@ -117,19 +137,26 @@
                       alt="Green Check"
                     />
                   </div>
-                  <div class="float-left body-medium ps-2 ms-l-12">Deposit Completed</div>
+                  <div class="float-left body-medium ps-2 ms-l-12">
+                    Deposit Completed
+                  </div>
                 </div>
                 <div class="col-12 p-0">
-                  <div class="float-left font-caption text-gray ms-l-12 ms-b-2 ps-l-24">
-                    <span
-                      v-if="transactionStatus >= STATUS.DEPOSITED"
-                    >It will take ~2 minute to reflate in your account.</span>
+                  <div
+                    class="float-left font-caption text-gray ms-l-12 ms-b-2 ps-l-24"
+                  >
+                    <span v-if="transactionStatus >= STATUS.DEPOSITED"
+                      >It will take ~2 minute to reflate in your account.</span
+                    >
                   </div>
                 </div>
               </div>
               <div class="row" v-if="error">
                 <div class="col-12 ps-x-32 text-center text-red">
-                  <div class="font-body-small text-red text-center mx-auto" v-html="error"></div>
+                  <div
+                    class="font-body-small text-red text-center mx-auto"
+                    v-html="error"
+                  ></div>
                 </div>
               </div>
               <div class="row p-0">
@@ -143,7 +170,10 @@
                     :loadingText="'Confirming deposit'"
                     :click="deposit"
                     :loading="isLoading"
-                    v-if="transactionStatus === STATUS.INITIATED || transactionStatus > STATUS.CONFIRMING"
+                    v-if="
+                      transactionStatus === STATUS.INITIATED ||
+                      transactionStatus > STATUS.CONFIRMING
+                    "
                   ></button-loader>
                 </div>
               </div>
@@ -152,7 +182,7 @@
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
   </div>
 </template>
 
@@ -287,7 +317,7 @@ export default class DepositConfirmationModal extends Vue {
       this.isLoading = true;
 
       const maticPoS = this.getMaticPOS();
-      const ERC721 = this.selectedCategory.getAddress(this.networkID);
+      const ERC721 = this.selectTokens[0].contract;
       const token_ids = this.selectedTokenIds;
 
       console.log(ERC721);

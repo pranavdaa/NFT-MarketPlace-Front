@@ -4,7 +4,7 @@
       <div class="row categories d-flex flex-column m-0 p-0">
         <div
           class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
-          :class="{'active': !selectedCategory}"
+          :class="{ active: !selectedCategory }"
           @click="selectCategory(allCategory)"
         >
           <img
@@ -12,23 +12,48 @@
             :alt="allCategory.name"
             class="icon-all align-self-center"
           />
-          <div class="font-body-medium align-self-center ms-l-12">{{allCategory.name}}</div>
-          <div
-            class="count ps-l-12 font-body-medium ml-auto align-self-center"
-          >{{allCategory.count||0}}</div>
+          <div class="font-body-medium align-self-center ms-l-12">
+            {{ allCategory.name }}
+          </div>
+          <div class="count ps-l-12 font-body-medium ml-auto align-self-center">
+            {{ allCount }}
+          </div>
         </div>
         <div
           class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
-          :class="{'active': selectedCategory && category.id == selectedCategory.id}"
+          :class="{
+            active: selectedCategory && category.id == selectedCategory.id,
+          }"
           v-for="category in categories"
           :key="category.name"
           @click="selectCategory(category)"
         >
-          <img :src="category.img_url" :alt="category.name" class="icon align-self-center ms-r-12" />
-          <div class="font-body-medium align-self-center">{{category.name}}</div>
+          <img
+            :src="category.img_url"
+            :alt="category.name"
+            class="icon align-self-center ms-r-12"
+          />
+          <div class="font-body-medium align-self-center">
+            {{ category.name }}
+          </div>
           <div
             class="count ps-l-12 font-body-medium ml-auto align-self-center"
-          >{{category.count || "0"}}</div>
+            v-if="SHOW_COUNT.ORDER == countFor"
+          >
+            {{ category.count }}
+          </div>
+          <div
+            class="count ps-l-12 font-body-medium ml-auto align-self-center"
+            v-if="SHOW_COUNT.MAIN == countFor"
+          >
+            {{ category.mainCount }}
+          </div>
+          <div
+            class="count ps-l-12 font-body-medium ml-auto align-self-center"
+            v-if="SHOW_COUNT.MATIC == countFor"
+          >
+            {{ category.maticCount }}
+          </div>
         </div>
       </div>
     </div>
@@ -44,8 +69,16 @@ import { mapGetters } from "vuex";
 import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
 
+const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 };
+
 @Component({
-  props: {},
+  props: {
+    countFor: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+  },
   computed: {
     ...mapGetters("page", ["selectedCategory"]),
     ...mapGetters("category", ["categories", "allCategory"]),
@@ -53,7 +86,7 @@ import getAxios from "~/plugins/axios";
 })
 export default class CategoriesSelector extends Vue {
   showCategory = false;
-
+  SHOW_COUNT = SHOW_COUNT;
   async mounted() {}
 
   // Actions
@@ -65,6 +98,22 @@ export default class CategoriesSelector extends Vue {
 
     this.$store.commit("page/selectedCategory", category);
     this.showCategory = false;
+  }
+
+  get allCount() {
+    if (this.SHOW_COUNT.MATIC == this.countFor) {
+      return this.categories.reduce(
+        (total, category) => total + parseInt(category.maticCount),
+        0
+      );
+    } else if (this.SHOW_COUNT.MAIN == this.countFor) {
+      return this.categories.reduce(
+        (total, category) => total + parseInt(category.mainCount),
+        0
+      );
+    } else {
+      return this.allCategory.count || 0;
+    }
   }
 
   // Getters

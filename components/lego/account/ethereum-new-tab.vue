@@ -1,8 +1,10 @@
 <template>
   <div class="container-fluid p-0 m-0 fixed">
     <div class="row p-0 m-0">
-      <div class="col container-fluid sidebar-container d-none d-md-block sticky-top">
-        <category-sidebar />
+      <div
+        class="col container-fluid sidebar-container d-none d-md-block sticky-top"
+      >
+        <category-sidebar :countFor="2" />
       </div>
       <div class="col container-fluid content-container">
         <div class="row ps-y-16 ps-x-16 sticky-top tab-header">
@@ -14,51 +16,81 @@
           <div
             class="col-12 col-lg cat-switch d-none d-md-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
           >
-            <div class="category d-flex ps-x-16 ps-y-8 cursor-pointer" v-if="!selectedCategory">
+            <div
+              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
+              v-if="!selectedCategory"
+            >
               <img
                 :src="allCategory.img_url"
                 :alt="allCategory.name"
                 class="icon align-self-center ms-r-12"
               />
-              <div class="font-body-large align-self-center font-medium">{{allCategory.name}}</div>
-              <div
-                class="count ps-l-12 font-body-large ml-auto"
-              >{{totalMainNft}} {{$t("collectibles")}}</div>
+              <div class="font-body-large align-self-center font-medium">
+                {{ allCategory.name }}
+              </div>
+              <div class="count ps-l-12 font-body-large ml-auto">
+                {{ totalMainNft }} {{ $t("collectibles") }}
+              </div>
             </div>
-            <div class="category d-flex ps-x-16 ps-y-8 cursor-pointer" v-if="selectedCategory">
+            <div
+              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
+              v-if="selectedCategory"
+            >
               <img
                 :src="selectedCategory.img_url"
                 :alt="selectedCategory.name"
                 class="icon align-self-center ms-r-12"
               />
-              <div class="font-body-large align-self-center font-medium">{{selectedCategory.name}}</div>
-              <div
-                class="count ps-l-12 font-body-large ml-auto"
-              >{{selectedCategory.count||displayedTokens && displayedTokens.length || 0}} {{$t("collectibles")}}</div>
+              <div class="font-body-large align-self-center font-medium">
+                {{ selectedCategory.name }}
+              </div>
+              <div class="count ps-l-12 font-body-large ml-auto">
+                {{
+                  selectedCategory.count ||
+                  (displayedTokens && displayedTokens.length) ||
+                  0
+                }}
+                {{ $t("collectibles") }}
+              </div>
             </div>
           </div>
           <div
             class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end"
           >
-            <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="onSortSelect" />
+            <sort-dropdown
+              class="dropdown-filter"
+              :sortItems="sortItems"
+              :change="onSortSelect"
+            />
             <search-box
               class="search-box ms-l-20"
               placeholder="Search in items"
-              :change="(val) => searchInput = val"
+              :change="(val) => (searchInput = val)"
               v-if="!selectedCategory"
             />
             <button
               v-if="selectedCategory"
               class="btn btn-primary ps-x-32 ms-l-sm-20 ms-t-16 ms-t-sm-0 text-nowrap"
               @click="onDeposit()"
-            >{{$t('ethereumTab.depositBtn', {count: selectedTokens && selectedTokens.length || displayedTokens && displayedTokens.length || 0})}}</button>
+            >
+              {{
+                $t("ethereumTab.depositBtn", {
+                  count:
+                    selectedTokens && selectedTokens.length
+                      ? selectedTokens.length
+                      : "",
+                })
+              }}
+            </button>
           </div>
         </div>
 
         <no-item
           class="ps-b-120"
           :message="exmptyMsg"
-          v-if="displayedTokens && displayedTokens.length <= 0 && !isLoadingTokens"
+          v-if="
+            displayedTokens && displayedTokens.length <= 0 && !isLoadingTokens
+          "
         />
 
         <div
@@ -72,6 +104,7 @@
             :isAllCategories="!selectedCategory"
             :onSelectToken="onSelectToken"
             :searchInput="searchInput"
+            :totalSelected="selectedTokens.length"
           />
         </div>
 
@@ -84,7 +117,9 @@
           :preSelectedTokens="preSelectedTokens"
         />
 
-        <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
+        <div
+          class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center"
+        >
           <!-- matic loader here -->
           <button-loader
             class="mx-auto"
@@ -93,7 +128,10 @@
             :text="$t('loadMore')"
             block
             lg
-            v-if="(hasNextPage && displayedTokens && displayedTokens.length > 0) || isLoadingTokens"
+            v-if="
+              (hasNextPage && displayedTokens && displayedTokens.length > 0) ||
+              isLoadingTokens
+            "
             color="light"
           ></button-loader>
         </div>
@@ -107,6 +145,7 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import getAxios from "~/plugins/axios";
+import app from "~/plugins/app";
 
 import NFTTokenModel from "~/components/model/nft-token";
 
@@ -161,6 +200,7 @@ export default class EthereumNewTab extends Vue {
   selectedTokens = [];
   searchInput = null;
   showDepositModal = false;
+  maxTokenSelection = app.uiconfig.maxBulkDeposit;
 
   tokensFullList = [];
   hasNextPage = true;
@@ -186,7 +226,12 @@ export default class EthereumNewTab extends Vue {
   onSelectToken(token) {
     let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
     if (typeof exists == "undefined") {
-      this.selectedTokens.push(token);
+      if (
+        this.selectedTokens &&
+        this.selectedTokens.length < this.maxTokenSelection
+      ) {
+        this.selectedTokens.push(token);
+      }
     } else {
       this.selectedTokens = this.selectedTokens.filter(
         (t) => t.token_id !== token.token_id
@@ -236,6 +281,10 @@ export default class EthereumNewTab extends Vue {
           token.chainId = this.chainId;
           tokens.push(new NFTTokenModel(token));
         });
+        this.$store.commit(
+          "category/addUsersMainCount",
+          response.data.balances
+        );
         if (options && options.filtering) {
           this.tokensFullList = tokens;
           this.isLoadingTokens = false;
@@ -252,6 +301,13 @@ export default class EthereumNewTab extends Vue {
 
   // Getters
   get displayedTokens() {
+    if (this.selectedCategory && this.tokensFullList) {
+      return this.tokensFullList.filter(
+        (t) =>
+          t.contract.toLowerCase() ===
+          this.selectedCategory.getAddress(this.mainChainId).toLowerCase()
+      );
+    }
     return this.tokensFullList || [];
   }
   get preSelectedTokens() {
@@ -279,6 +335,9 @@ export default class EthereumNewTab extends Vue {
       description: this.$t("ethereumTab.empty.description"),
       img: true,
     };
+  }
+  get mainChainId() {
+    return this.networks.main.chainId;
   }
   get sortItems() {
     return [

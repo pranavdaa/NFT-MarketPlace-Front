@@ -1,12 +1,17 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal receive-modal-wrapper" v-bind:class="{ 'show': show && !hidden}">
+    <div
+      class="modal receive-modal-wrapper"
+      v-bind:class="{ show: show && !hidden }"
+    >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box deposit-box">
           <div class="box-header justify-content-center">
             <div
               class="font-heading-medium font-semibold text-center align-self-center w-100"
-            >{{$t('deposit.title')}}</div>
+            >
+              {{ $t("deposit.title") }}
+            </div>
             <span
               @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
@@ -28,7 +33,10 @@
               />
 
               <div class="row ps-x-32 ps-b-8" v-if="error">
-                <div class="font-body-small text-danger text-center mx-auto" v-html="error"></div>
+                <div
+                  class="font-body-small text-danger text-center mx-auto"
+                  v-html="error"
+                ></div>
                 <div class="mx-auto text-gray-300 font-caption"></div>
               </div>
               <div class="row p-0">
@@ -57,7 +65,7 @@
       :selectedTokens="selectedTokens"
       :cancel="onCloseConfirmDeposit"
     />
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
   </div>
 </template>
 
@@ -173,7 +181,7 @@ export default class Deposit extends Vue {
       this.hidden = true;
 
       const maticPoS = this.getMaticPOS();
-      const ERC721 = this.selectedCategory.getAddress(this.networkID);
+      const ERC721 = this.selectedTokens[0].contract;
 
       const isApproved = await maticPoS.isApprovedAllERC721ForDeposit(
         ERC721,

@@ -1,24 +1,34 @@
 <template>
   <nuxt-link
-    :to="{name:'account'}"
+    :to="{ name: 'account' }"
     class="nft-card text-center cursor-pointer"
-    v-bind:style="{background: bg}"
-    v-if="!searchInput || fuzzysearch(searchInput, token.name) || fuzzysearch(searchInput, token.description) || fuzzysearch(searchInput, token.token_id) || fuzzysearch(searchInput, category.name)"
+    v-bind:style="{ background: bg }"
+    v-if="
+      !searchInput ||
+      fuzzysearch(searchInput, token.name) ||
+      fuzzysearch(searchInput, token.description) ||
+      fuzzysearch(searchInput, token.token_id) ||
+      fuzzysearch(searchInput, category.name)
+    "
   >
     <div
       class="check-container"
-      :class="{'checked': isSelected}"
+      :class="{ checked: isSelected }"
       v-if="!isAllCategories && !order"
       @click="toggleSelection(!isSelected)"
     >
-      <input type="checkbox" :name="token.name" id="token.id" :checked="isSelected" />
+      <input
+        type="checkbox"
+        :name="token.name"
+        id="token.id"
+        :checked="isSelected"
+      />
       <span class="checkmark align-self-center"></span>
     </div>
     <div class="img-wrapper d-flex ps-t-12 justify-content-center">
       <img
         :src="token.img_url"
         class="asset-img align-self-center ps-x-12"
-        :alt="token.name"
         @load="onImageLoad"
       />
     </div>
@@ -29,26 +39,42 @@
 
     <div
       class="gradient"
-      v-bind:style="{background: 'linear-gradient( 360deg,'+bg+'0%, rgba(236, 235, 223, 0) 100%)'}"
+      v-bind:style="{
+        background:
+          'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
+      }"
     ></div>
-    <div class="category-pill d-flex mx-auto ms-t-20 ms-b-16" v-if="token.category">
+    <div
+      class="category-pill d-flex mx-auto ms-t-20 ms-b-16"
+      v-if="token.category"
+    >
       <img
         :src="token.category.img_url"
-        :alt="token.category.name"
         class="icon ms-2 ms-l-4 ms-r-4 align-self-center"
       />
-      <div class="font-caps font-medium caps align-self-center ps-r-6">{{token.category.name}}</div>
+      <div class="font-caps font-medium caps align-self-center ps-r-6">
+        {{ token.category.name }}
+      </div>
     </div>
     <h3
       class="w-100 title font-body-small font-medium ms-b-8 ps-x-12 ms-b-16"
       :title="token.name"
-    >{{token.name}}</h3>
+    >
+      {{ token.name }}
+    </h3>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
       v-if="!isMainToken && !order"
     >
-      <a class="btn btn-transparent w-50 align-self-center" @click="sell()">{{$t('sell')}}</a>
-      <a class="btn btn-transparent w-50 align-self-center" @click="transfer()">{{$t('transfer')}}</a>
+      <a class="btn btn-transparent w-100 align-self-center" @click="sell()">{{
+        $t("sell")
+      }}</a>
+      <a
+        v-if="false"
+        class="btn btn-transparent w-50 align-self-center"
+        @click="transfer()"
+        >{{ $t("transfer") }}</a
+      >
     </div>
 
     <div
@@ -57,14 +83,17 @@
     >
       <NuxtLink
         class="btn btn-transparent w-100 align-self-center"
-        :to="{name: 'tokens-id', params: { id: order.id } }"
-      >View Order</NuxtLink>
+        :to="{ name: 'tokens-id', params: { id: order.id } }"
+        >View Order</NuxtLink
+      >
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
       v-if="isMainToken && isAllCategories"
     >
-      <a class="btn btn-transparent w-100 align-self-center">{{$t('moveToMatic')}}</a>
+      <a class="btn btn-transparent w-100 align-self-center">{{
+        $t("moveToMatic")
+      }}</a>
     </div>
   </nuxt-link>
 </template>
@@ -104,6 +133,11 @@ const colorThief = new ColorThief();
       required: false,
       default: () => {},
     },
+    totalSelected: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
     onSell: {
       type: Function,
       required: false,
@@ -138,6 +172,7 @@ export default class NFTTokenCard extends Vue {
   bg = "#f3f4f7";
   isSelected = false;
   fuzzysearch = fuzzysearch;
+  maxTokenSelection = app.uiconfig.maxBulkDeposit;
 
   // Initial
   mounted() {}
@@ -161,8 +196,13 @@ export default class NFTTokenCard extends Vue {
 
   // Handlers
   toggleSelection(value) {
-    this.isSelected = value;
-    this.onSelectToken && this.onSelectToken(this.token);
+    if (this.totalSelected !== this.maxTokenSelection) {
+      this.isSelected = value;
+      this.onSelectToken && this.onSelectToken(this.token);
+    } else if (!value) {
+      this.isSelected = value;
+      this.onSelectToken && this.onSelectToken(this.token);
+    }
   }
 
   deposit() {
