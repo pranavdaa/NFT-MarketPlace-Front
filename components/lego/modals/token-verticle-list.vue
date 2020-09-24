@@ -20,7 +20,9 @@
         <span class="checkmark align-self-center"></span>
         <label
           class="form-check-label cursor-pointer align-self-center ps-l-28 ps-t-2"
-          >Select Max</label
+          >Select
+          <span class="text-lowercase" v-if="isMax">{{ $t("max") }}</span>
+          <span v-if="!isMax">all</span></label
         >
       </div>
     </div>
@@ -65,10 +67,10 @@
               :src="category.img_url"
             />
             <span class="align-self-center ps-t-2">
-              <span v-if="selectedTokenIds.length === maxTokenSelection"
-                >Max</span
-              >
-              Collectibles selected</span
+              <span v-if="selectedTokenIds.length === maxTokenSelection">{{
+                $t("max")
+              }}</span>
+              {{ $t("nftSelected") }}</span
             >
           </div>
           <div class="right count col-4">
@@ -127,7 +129,6 @@ import app from "~/plugins/app";
 })
 export default class TokenVerticleList extends Vue {
   isAllSelected = false;
-  allSelected = false;
   selectedTokens = [];
   maxTokenSelection = app.uiconfig.maxBulkDeposit;
 
@@ -167,6 +168,9 @@ export default class TokenVerticleList extends Vue {
       this.isAllSelected = false;
     }
     return token_ids;
+  }
+  get isMax() {
+    return this.maxTokenSelection == this.selectedTokenIds.length;
   }
   get allTokens() {
     let tokens = [];

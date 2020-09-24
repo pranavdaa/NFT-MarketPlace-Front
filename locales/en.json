@@ -92,23 +92,21 @@
       "challengeEnd": "Challenge period ended. Please finish the withdraw process."
     }
   },
+  "viewOnEtherscan": "View on etherscan",
+  "nftSelected": "Collectibles selected",
+  "max": "Max",
   "deposit": {
     "title": "Move Collectibles to Matic",
-    "testChallengePeriod": "~3-4 minutes",
-    "mainChallengePeriod": "7 days",
     "steps": {
       "preInit": "Deposit Initializing...",
       "init": "Deposit initialized",
-      "checkpoint": "Deposit on Ethereum Transaction",
-      "challengePeriod": "Challenge period",
+      "deposit": "Deposit on Ethereum Transaction",
       "finished": "Deposit completed"
     },
     "process": {
-      "checkpointWait": "Waiting for checkpoint ...",
-      "checkpointed": "Checkpoint received. Please confirm Deposit now.",
-      "posCheckpointed": "Checkpoint received. Please finish the deposit process now.",
-      "challengeWait": "Waiting for challenge period to end. Please check back after {challengePeriod}",
-      "challengeEnd": "Challenge period ended. Please finish the deposit process."
+      "preDeposit": "Please confirm the transaction to complete the deposit.",
+      "depositing": "Waiting for 12 block confirmation. It may take upto 5 min.",
+      "deposited": "It will take ~2 minute to reflact in your account."
     }
   }
 }

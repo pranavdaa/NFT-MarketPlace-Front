@@ -30,7 +30,7 @@
                     :src="category.img_url"
                   />
                   <div class="text-white align-self-center">
-                    {{ selectedTokens.length || 0 }} Collectibles selected
+                    {{ selectedTokens.length || 0 }} {{ $t("nftSelected") }}
                   </div>
                 </div>
                 <div class="container card-list hide-scrollbar d-flex p-0">
@@ -65,14 +65,14 @@
                   </div>
                   <div class="float-left body-medium ps-2 ms-l-12 d-flex">
                     <span
-                      class="ps-t-2"
+                      class="ps-t-0"
                       v-if="transactionStatus === STATUS.INITIATING"
-                      >Deposit Initializing...</span
+                      >{{ this.$t("deposit.steps.preInit") }}</span
                     >
                     <span
                       class="ps-t-2"
                       v-if="transactionStatus >= STATUS.INITIATED"
-                      >Deposit Initialized</span
+                      >{{ this.$t("deposit.steps.init") }}</span
                     >
                   </div>
                 </div>
@@ -103,8 +103,8 @@
                       alt="Green Check"
                     />
                   </div>
-                  <div class="float-left body-medium ps-2 ps-t-4 ms-l-12">
-                    Deposit on Ethereum Transaction
+                  <div class="float-left body-medium ps-2 ps-t-0 ms-l-12">
+                    {{ this.$t("deposit.steps.deposit") }}
                   </div>
                 </div>
                 <div class="col-12 p-0">
@@ -112,14 +112,12 @@
                     class="float-left process-msg font-caption text-gray ms-l-12 ms-b-2 ps-l-24"
                   >
                     <div class="ps-b-16">
-                      <span v-if="transactionStatus === STATUS.INITIATED"
-                        >Please confirm the transaction to complete the
-                        deposit.</span
-                      >
-                      <span v-if="transactionStatus === STATUS.DEPOSITING"
-                        >Waiting for 12 block confirmation. It may take upto 5
-                        min.</span
-                      >
+                      <span v-if="transactionStatus === STATUS.INITIATED">
+                        {{ this.$t("deposit.process.preDeposit") }}
+                      </span>
+                      <span v-if="transactionStatus === STATUS.DEPOSITING">{{
+                        this.$t("deposit.process.depositing")
+                      }}</span>
                       <a
                         v-if="
                           transactionStatus >= STATUS.DEPOSITING &&
@@ -128,7 +126,7 @@
                         :href="explorerURL"
                         target="_blank"
                         :title="transactionHash"
-                        >View on etherscan</a
+                        >{{ this.$t("viewOnEtherscan") }}</a
                       >
                     </div>
                   </div>
@@ -145,16 +143,19 @@
                     />
                   </div>
                   <div class="float-left body-medium ps-2 ms-l-12">
-                    Deposit Completed
+                    {{ this.$t("deposit.steps.finished") }}
                   </div>
                 </div>
                 <div class="col-12 p-0">
                   <div
                     class="float-left font-caption text-gray ms-l-12 ms-b-2 ps-l-24"
                   >
-                    <span v-if="transactionStatus >= STATUS.DEPOSITED"
-                      >It will take ~2 minute to reflate in your account.</span
+                    <span
+                      class="ps-l-2"
+                      v-if="transactionStatus >= STATUS.DEPOSITED"
                     >
+                      {{ this.$t("deposit.process.deposited") }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -177,10 +178,7 @@
                     :loadingText="'Confirming deposit'"
                     :click="deposit"
                     :loading="isLoading"
-                    v-if="
-                      transactionStatus === STATUS.INITIATED ||
-                      transactionStatus > STATUS.CONFIRMING
-                    "
+                    v-if="transactionStatus >= STATUS.INITIATED && !isDeposited"
                   ></button-loader>
                 </div>
               </div>
@@ -266,7 +264,7 @@ export default class DepositConfirmationModal extends Vue {
   get transactionStatus() {
     if (this.isApproving) {
       return STATUS.INITIATING;
-    } else if (!this.isApproving && !this.isLoading) {
+    } else if (!this.isApproving && !this.isLoading && !this.isDeposited) {
       return STATUS.INITIATED;
     } else if (!this.isApproving && this.isLoading && !this.isDeposited) {
       return STATUS.DEPOSITING;
