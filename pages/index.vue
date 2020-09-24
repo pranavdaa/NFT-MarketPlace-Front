@@ -130,8 +130,9 @@ export default class Index extends Vue {
 
   showModal = false;
 
-  mounted() {
+  async mounted() {
     this.fetchOrders();
+    await this.$store.dispatch("token/reloadBalances");
   }
 
   // Wathers
