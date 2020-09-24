@@ -340,7 +340,8 @@ export default class DepositConfirmationModal extends Vue {
         }
       );
       if (txHash) {
-        this.handleDeposit(txHash, token_ids, this.category.id);
+        await this.handleDeposit(txHash, token_ids, this.category.id);
+        this.isLoading = false;
         this.isDeposited = true;
       }
     } catch (error) {
