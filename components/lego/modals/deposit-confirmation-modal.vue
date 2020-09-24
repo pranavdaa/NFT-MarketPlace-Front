@@ -24,8 +24,14 @@
               <div
                 class="col-12 ps-x-40 ps-b-20 ps-t-16 container-wrapper font-body-small"
               >
-                <div class="ps-b-20 ps-t-18 text-white">
-                  {{ selectedTokens.length || 0 }} Collectibles selected
+                <div class="d-flex ps-b-20 ps-t-18">
+                  <img
+                    class="cate-icon align-self-center ms-r-8"
+                    :src="category.img_url"
+                  />
+                  <div class="text-white align-self-center">
+                    {{ selectedTokens.length || 0 }} Collectibles selected
+                  </div>
                 </div>
                 <div class="container card-list hide-scrollbar d-flex p-0">
                   <div
@@ -119,7 +125,8 @@
                           transactionStatus >= STATUS.DEPOSITING &&
                           transactionHash
                         "
-                        href="transactionHash"
+                        :href="explorerURL"
+                        target="_blank"
                         :title="transactionHash"
                         >View on etherscan</a
                       >
@@ -192,7 +199,7 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import app from "~/plugins/app";
-
+import getAxios from "~/plugins/axios";
 import { getWalletProvider } from "~/plugins/helpers/providers";
 const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
 
@@ -219,6 +226,14 @@ const STATUS = {
       type: Array,
       required: true,
     },
+    category: {
+      type: Object,
+      required: true,
+    },
+    refreshBalance: {
+      type: Function,
+      required: true,
+    },
     cancel: {
       type: Function,
       required: true,
@@ -237,9 +252,9 @@ export default class DepositConfirmationModal extends Vue {
 
   selectToken = false;
   isLoading = false;
-  isExited = false;
   error = null;
   transactionHash = null;
+  isDeposited = false;
 
   async mounted() {}
 
@@ -253,9 +268,9 @@ export default class DepositConfirmationModal extends Vue {
       return STATUS.INITIATING;
     } else if (!this.isApproving && !this.isLoading) {
       return STATUS.INITIATED;
-    } else if (!this.isApproving && this.isLoading) {
+    } else if (!this.isApproving && this.isLoading && !this.isDeposited) {
       return STATUS.DEPOSITING;
-    } else return STATUS.DEPOSITED;
+    } else if (this.isDeposited) return STATUS.DEPOSITED;
   }
 
   get parentNetwork() {
@@ -287,13 +302,6 @@ export default class DepositConfirmationModal extends Vue {
       networks: this.networks,
       primaryProvider: "main",
     });
-    console.log({
-      posRootChainManager: this.networkMeta.Main.POSContracts
-        .RootChainManagerProxy,
-      posERC20Predicate: this.networkMeta.Main.POSContracts.ERC20PredicateProxy,
-      posERC721Predicate: this.networkMeta.Main.POSContracts
-        .ERC721PredicateProxy,
-    });
 
     return new MaticPOSClient({
       network: app.uiconfig.matic.deployment.network,
@@ -317,11 +325,8 @@ export default class DepositConfirmationModal extends Vue {
       this.isLoading = true;
 
       const maticPoS = this.getMaticPOS();
-      const ERC721 = this.selectTokens[0].contract;
+      const ERC721 = this.selectedTokens[0].contract;
       const token_ids = this.selectedTokenIds;
-
-      console.log(ERC721);
-      console.log(token_ids);
 
       let txHash = await maticPoS.depositBatchERC721ForUser(
         ERC721,
@@ -335,16 +340,38 @@ export default class DepositConfirmationModal extends Vue {
         }
       );
       if (txHash) {
-        handleDeposit(txHash);
+        this.handleDeposit(txHash, token_ids, this.category.id);
+        this.isDeposited = true;
       }
     } catch (error) {
       console.log(error);
+      this.isLoading = false;
       this.error = error.message;
     }
   }
 
-  handleDeposit(txHash) {
-    // API hit to store
+  get explorerURL() {
+    if (app.uiconfig.mainExplorer) {
+      return `${app.uiconfig.mainExplorer}tx/${this.transactionHash}`;
+    }
+    return null;
+  }
+
+  async handleDeposit(txHash, token_ids, category_id) {
+    console.log("Deposit transaction", txHash);
+    try {
+      let data = {
+        txhash: this.transactionHash,
+        token_array: token_ids,
+        category_id: category_id,
+        type: "DEPOSIT",
+      };
+      let res = await getAxios().post("assetmigrate", { data });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+    this.refreshBalance();
   }
 
   onCancel() {
@@ -364,6 +391,11 @@ export default class DepositConfirmationModal extends Vue {
   .deposit-box {
     width: 100%;
   }
+}
+.cate-icon {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
 }
 .label {
   color: dark-color("500");

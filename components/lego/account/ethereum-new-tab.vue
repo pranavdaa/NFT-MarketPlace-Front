@@ -119,6 +119,7 @@
           :cancel="onDepositClose"
           :tokens="selectedCateTokens"
           :preSelectedTokens="preSelectedTokens"
+          :refreshBalance="refreshBalance"
         />
 
         <div
@@ -250,6 +251,9 @@ export default class EthereumNewTab extends Vue {
   }
   onDepositClose() {
     this.showDepositModal = false;
+  }
+  refreshBalance() {
+    this.fetchNFTTokens({ filtering: true });
   }
 
   // Async

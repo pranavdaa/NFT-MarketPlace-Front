@@ -62,8 +62,10 @@
     <deposit-confirmation-modal
       :show="showDepositConfirmation"
       :isApproving="isLoading"
+      :category="category || lastCategory"
       :selectedTokens="selectedTokens"
       :cancel="onCloseConfirmDeposit"
+      :refreshBalance="refreshBalance"
     />
     <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
   </div>
@@ -100,6 +102,10 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
     },
     tokens: {
       type: Array,
+      required: true,
+    },
+    refreshBalance: {
+      type: Function,
       required: true,
     },
     preSelectedTokens: {

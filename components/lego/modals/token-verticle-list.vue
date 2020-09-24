@@ -229,6 +229,7 @@ export default class TokenVerticleList extends Vue {
 .cate-icon {
   height: 24px;
   width: 24px;
+  border-radius: 50%;
 }
 
 .left {
