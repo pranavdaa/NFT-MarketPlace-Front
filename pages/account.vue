@@ -65,12 +65,14 @@ export default class Index extends Vue {
 
   async fetchTotalTokens() {
     try {
+      this.$store.dispatch("token/reloadBalances");
+
       let mainNftResponse = await getAxios().get(
-        `tokens/balance?userId=${this.user.id}&chainId=${this.mainChainId}&offset=0&limit=1`
+        `tokens/balance?userId=${this.user.id}&chainId=${this.mainChainId}`
       );
 
       let maticNftResponse = await getAxios().get(
-        `tokens/balance?userId=${this.user.id}&chainId=${this.maticChainId}&offset=0&limit=1`
+        `tokens/balance?userId=${this.user.id}&chainId=${this.maticChainId}`
       );
 
       if (mainNftResponse.status === 200 && mainNftResponse.data.data) {
@@ -83,8 +85,6 @@ export default class Index extends Vue {
           maticNftResponse.data.count
         );
       }
-
-      this.$store.dispatch("token/fetchBalances");
     } catch (error) {
       console.log(error);
     }

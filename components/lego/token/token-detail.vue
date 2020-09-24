@@ -452,36 +452,30 @@ export default class TokenDetail extends Vue {
           chainId: chainId,
         });
 
-        const orderTemplate = {
-          chainId: signedOrder.chainId,
-          exchangeAddress: signedOrder.exchangeAddress,
-          makerAddress: signedOrder.makerAddress,
-          takerAddress: signedOrder.takerAddress,
-          senderAddress: signedOrder.senderAddress,
-          feeRecipientAddress: signedOrder.feeRecipientAddress,
+        let dataVal = await getAxios().get(`orders/exchangedata/encoded?orderId=${this.order.id}&functionName=cancelOrder`)
+
+        let zrx = {
+          salt: generatePseudoRandomSalt(),
           expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-          salt: signedOrder.salt,
-          makerAssetAmount: signedOrder.makerAssetAmount,
-          takerAssetAmount: signedOrder.takerAssetAmount,
-          makerAssetData: signedOrder.makerAssetData,
-          takerAssetData: signedOrder.takerAssetData,
-          makerFeeAssetData: signedOrder.makerFeeAssetData,
-          takerFeeAssetData: signedOrder.takerFeeAssetData,
-          makerFee: signedOrder.makerFee,
-          takerFee: signedOrder.takerFee,
+          gasPrice: 10000000000,
+          signerAddress: signedOrder.makerAddress,
+          data: dataVal.data.data,
+          domain: {
+            name: "0x Protocol",
+            version: "3.0.0",
+            chainId: this.networks.matic.chainId,
+            verifyingContract: contractWrappers.contractAddresses.exchange,
+          },
         };
-        console.log(orderTemplate);
 
-        const txHash = await contractWrappers.exchange
-          .cancelOrder(orderTemplate)
-          .awaitTransactionSuccessAsync({
-            from: orderTemplate.makerAddress,
-            gas: 8000000,
-          });
+        const takerSign = await signatureUtils.ecSignTransactionAsync(
+          providerEngine(),
+          zrx,
+          signedOrder.makerAddress
+        );
 
-        if (txHash) {
-          console.log("Order canceled", txHash);
-          await this.handleCancelOrder(txHash);
+        if(takerSign) {
+          await this.handleCancelOrder(takerSign);
         }
       } else {
         await this.handleCancelOrder();
@@ -492,11 +486,11 @@ export default class TokenDetail extends Vue {
     this.isLoading = false;
     this.onCancelOrderClose();
   }
-  async handleCancelOrder(txHash = null) {
+  async handleCancelOrder(takerSign = null) {
     let data = {};
-    if (txHash) {
+    if (takerSign) {
       data = {
-        tx_hash: txHash.transaction,
+        taker_signature: JSON.stringify(takerSign)
       };
     }
     try {

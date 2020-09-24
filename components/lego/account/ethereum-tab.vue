@@ -219,6 +219,7 @@ export default class EthereumTab extends Vue {
         });
         if (options && options.filtering) {
           this.tokensFullList = tokens;
+          this.isLoadingTokens = false;
           return;
         }
         this.tokensFullList = [...this.tokensFullList, ...tokens];

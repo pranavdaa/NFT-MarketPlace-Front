@@ -197,7 +197,7 @@ export default class Login extends Vue {
       },
       domain: {
         name: "Ether Mail",
-        host: "",
+        host: '',
         version: "1",
         verifyingContract: "0x0",
         chainId: this.networks.main.chainId,
