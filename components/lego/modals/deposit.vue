@@ -28,7 +28,7 @@
                 :v-if="showTokenList"
                 :tokens="tokens"
                 :preSelectedTokens="preSelectedTokens"
-                :category="selectedCategory || {}"
+                :category="category || lastCategory"
                 :onSelectionChange="onSelectionChange"
               />
 
@@ -126,6 +126,7 @@ export default class Deposit extends Vue {
   hidden = false;
   selectedTokens = [];
   showDepositConfirmation = false;
+  lastCategory = {};
 
   async mounted() {
     this.selectedTokens = this.preSelectedTokens;
@@ -143,6 +144,16 @@ export default class Deposit extends Vue {
   }
   get networkID() {
     return this.parentNetwork.chainId;
+  }
+  get category() {
+    if (this.selectedCategory) {
+      this.lastCategory = this.selectedCategory;
+      return this.selectedCategory;
+    } else if (this.selectedTokens && this.selectedTokens.length > 0) {
+      this.lastCategory = this.selectedTokens[0].category;
+      return this.selectedTokens[0].category;
+    }
+    return null;
   }
 
   getMaticPOS() {

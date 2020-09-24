@@ -225,10 +225,8 @@ export default class MaticNewTab extends Vue {
   onSortSelect(item) {
     this.$store.commit("page/selectedSort", item.filter);
   }
-  onSellToken(token_id) {
-    this.selectedToken = this.tokensFullList.find(
-      (token) => token.token_id == token_id
-    );
+  onSellToken(token) {
+    this.selectedToken = token;
     this.showSellModal = true;
   }
   onCloseSellModal() {

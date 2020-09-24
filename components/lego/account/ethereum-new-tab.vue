@@ -103,17 +103,21 @@
             :token="token"
             :isAllCategories="!selectedCategory"
             :onSelectToken="onSelectToken"
+            :onDeposit="onDeposit"
             :searchInput="searchInput"
             :totalSelected="selectedTokens.length"
           />
         </div>
 
         <deposit
-          v-if="selectedCategory && showDepositModal"
+          v-if="
+            (selectedCategory && showDepositModal) ||
+            (selectedTokens.length > 0 && showDepositModal)
+          "
           :show="showDepositModal"
           :visible="onDeposit"
           :cancel="onDepositClose"
-          :tokens="this.displayedTokens"
+          :tokens="selectedCateTokens"
           :preSelectedTokens="preSelectedTokens"
         />
 
@@ -238,7 +242,10 @@ export default class EthereumNewTab extends Vue {
       );
     }
   }
-  onDeposit() {
+  onDeposit(token = null) {
+    if (token) {
+      this.selectedTokens = [token];
+    }
     this.showDepositModal = true;
   }
   onDepositClose() {
@@ -310,11 +317,29 @@ export default class EthereumNewTab extends Vue {
     }
     return this.tokensFullList || [];
   }
+
+  get selectedCateTokens() {
+    if (this.selectedCategory && this.tokensFullList) {
+      return this.tokensFullList.filter(
+        (t) =>
+          t.contract.toLowerCase() ===
+          this.selectedCategory.getAddress(this.mainChainId).toLowerCase()
+      );
+    }
+    if (this.selectedTokens.length > 0) {
+      return this.tokensFullList.filter(
+        (t) =>
+          t.contract.toLowerCase() ===
+          this.selectedTokens[0].contract.toLowerCase()
+      );
+    }
+    return [];
+  }
   get preSelectedTokens() {
     if (this.selectedTokens && this.selectedTokens.length > 0) {
       return this.selectedTokens;
     }
-    return this.displayedTokens;
+    return this.selectedCateTokens;
   }
   get ifCategory() {
     return this.selectedFilters.selectedCategory

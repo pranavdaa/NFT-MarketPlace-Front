@@ -90,6 +90,7 @@
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
       v-if="isMainToken && isAllCategories"
+      @click="deposit(token)"
     >
       <a class="btn btn-transparent w-100 align-self-center">{{
         $t("moveToMatic")
@@ -207,22 +208,22 @@ export default class NFTTokenCard extends Vue {
 
   deposit() {
     // Withdraw Action
-    this.onDeposit && this.onDeposit(this.token.token_id);
+    this.onDeposit && this.onDeposit(this.token);
   }
 
   withdraw() {
     // Withdraw Action
-    this.onWithdraw && this.onWithdraw(this.token.token_id);
+    this.onWithdraw && this.onWithdraw(this.token);
   }
 
   transfer() {
     // Send to friends
-    this.onSend && this.onSend(this.token.token_id);
+    this.onSend && this.onSend(this.token);
   }
 
   sell() {
     // sell token
-    this.onSell && this.onSell(this.token.token_id);
+    this.onSell && this.onSell(this.token);
   }
 
   viewOrder() {
