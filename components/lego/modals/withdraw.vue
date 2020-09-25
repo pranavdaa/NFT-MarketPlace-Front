@@ -1,12 +1,17 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal receive-modal-wrapper" v-bind:class="{ 'show': show && !hidden }">
+    <div
+      class="modal receive-modal-wrapper"
+      v-bind:class="{ show: show && !hidden }"
+    >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box withdraw-box">
           <div class="box-header justify-content-center">
             <div
               class="font-heading-medium font-semibold text-center align-self-center w-100"
-            >{{$t('withdraw.title')}}</div>
+            >
+              {{ $t("withdraw.title") }}
+            </div>
             <span
               @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
@@ -23,12 +28,15 @@
                 :v-if="showTokenList"
                 :tokens="tokens"
                 :preSelectedTokens="preSelectedTokens"
-                :category="selectedCategory || {}"
+                :category="category || lastCategory"
                 :onSelectionChange="onSelectionChange"
               />
 
               <div class="row ps-x-32 ps-b-8" v-if="error">
-                <div class="font-body-small text-danger text-center mx-auto" v-html="error"></div>
+                <div
+                  class="font-body-small text-danger text-center mx-auto"
+                  v-html="error"
+                ></div>
                 <div class="mx-auto text-gray-300 font-caption"></div>
               </div>
               <div class="row p-0">
@@ -53,11 +61,13 @@
     </div>
     <withdraw-confirmation-modal
       :show="showWithdrawConfirmation"
-      :initialising="isLoading"
+      :isBurning="isLoading"
       :selectedTokens="selectedTokens"
+      :category="category || lastCategory"
       :cancel="onCloseConfirmWithdraw"
+      :refreshBalance="refreshBalance"
     />
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
   </div>
 </template>
 
@@ -66,6 +76,11 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import app from "~/plugins/app";
+
+import getAxios from "~/plugins/axios";
+import { getWalletProvider } from "~/plugins/helpers/providers";
+const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
 
 import WithdrawConfirmationModal from "~/components/lego/modals/withdraw-confirmation-modal";
 import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
@@ -87,6 +102,10 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
     },
     tokens: {
       type: Array,
+      required: true,
+    },
+    refreshBalance: {
+      type: Function,
       required: true,
     },
     preSelectedTokens: {
@@ -113,6 +132,7 @@ export default class Withdraw extends Vue {
   selectingTokens = false;
   selectedTokens = [];
   showWithdrawConfirmation = false;
+  lastCategory = {};
 
   async mounted() {
     this.selectedTokens = this.preSelectedTokens;
@@ -131,48 +151,94 @@ export default class Withdraw extends Vue {
   get networkID() {
     return this.childNetwork.chainId;
   }
-
-  // Handlers
-  onSelectionChange(tokens) {
-    this.selectedTokens = tokens;
+  get category() {
+    if (this.selectedCategory) {
+      this.lastCategory = this.selectedCategory;
+      return this.selectedCategory;
+    } else if (this.selectedTokens && this.selectedTokens.length > 0) {
+      this.lastCategory = this.selectedTokens[0].category;
+      return this.selectedTokens[0].category;
+    }
+    return null;
+  }
+  get selectedTokenIds() {
+    let token_ids = [];
+    if (this.selectedTokens && this.selectedTokens.length > 0) {
+      this.selectedTokens.forEach((token) => token_ids.push(token.token_id));
+    }
+    return token_ids;
   }
 
+  getMaticPOS() {
+    const maticProvider = getWalletProvider({
+      networks: this.networks,
+      primaryProvider: "child",
+    });
+    const parentProvider = getWalletProvider({
+      networks: this.networks,
+      primaryProvider: "main",
+    });
+
+    return new MaticPOSClient({
+      network: app.uiconfig.matic.deployment.network,
+      version: app.uiconfig.matic.deployment.version,
+      parentProvider,
+      maticProvider,
+      posRootChainManager: this.networkMeta.Main.POSContracts
+        .RootChainManagerProxy,
+      posERC20Predicate: this.networkMeta.Main.POSContracts.ERC20PredicateProxy,
+      posERC721Predicate: this.networkMeta.Main.POSContracts
+        .ERC721PredicateProxy,
+    });
+  }
+
+  // Handlers
   onCancel() {
     this.cancel();
   }
+  onSelectionChange(tokens) {
+    this.selectedTokens = tokens;
+  }
+  async initWithdraw() {
+    if (this.isLoading || this.selectedTokens.length <= 0) {
+      return;
+    }
+
+    try {
+      this.isLoading = true;
+      this.onShowWithdrawConfirmation();
+
+      const maticPoS = this.getMaticPOS();
+      const ERC721 = this.selectedTokens[0].contract;
+      const token_ids = this.selectedTokenIds;
+
+      let txHash = await maticPoS.burnBatchERC721(ERC721, token_ids, {
+        from: this.account.address,
+        onTransactionHash: (txHash) => {
+          this.burnTransactionHash = txHash;
+        },
+      });
+      if (txHash) {
+        console.log("Burn txhash", txHash);
+        await this.handleBurnTransaction(txHash);
+        this.isLoading = false;
+      }
+    } catch (error) {
+      console.log(error);
+      this.error = error.message;
+      this.isLoading = false;
+      this.showDepositConfirmation = false;
+      this.hidden = false;
+    }
+  }
+  handleBurnTransaction(txHash) {}
 
   onCloseConfirmWithdraw() {
     this.showWithdrawConfirmation = false;
     this.cancel();
   }
-
   onShowWithdrawConfirmation() {
     this.showWithdrawConfirmation = true;
-    this.hidden = true;
-  }
-
-  // withdraw init
-  async validation() {
-    // TODO : Check the metamask selected chain id
-    // TODO : Other validation
-    return true;
-  }
-
-  async initWithdraw() {
-    if (
-      this.isLoading ||
-      this.selectedTokens.length <= 0 ||
-      !(await this.validation())
-    ) {
-      return;
-    }
-
-    this.isLoading = true;
-
-    // TODO : start bulk withdraw for selected tokens
-
-    // when process starts hide the token list and show the status on confirmation withdraw
-    this.onShowWithdrawConfirmation();
   }
 }
 </script>

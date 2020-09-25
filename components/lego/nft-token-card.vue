@@ -15,12 +15,12 @@
       class="check-container"
       :class="{ checked: isSelected }"
       v-if="!isAllCategories && !order"
-      @click="toggleSelection(!isSelected)"
+      @click="toggleSelection()"
     >
       <input
         type="checkbox"
         :name="token.name"
-        id="token.id"
+        :id="token.id"
         :checked="isSelected"
       />
       <span class="checkmark align-self-center"></span>
@@ -134,6 +134,11 @@ const colorThief = new ColorThief();
       required: false,
       default: () => {},
     },
+    isSelected: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     totalSelected: {
       type: Number,
       required: false,
@@ -171,7 +176,6 @@ const colorThief = new ColorThief();
 })
 export default class NFTTokenCard extends Vue {
   bg = "#f3f4f7";
-  isSelected = false;
   fuzzysearch = fuzzysearch;
   maxTokenSelection = app.uiconfig.maxBulkDeposit;
 
@@ -198,10 +202,8 @@ export default class NFTTokenCard extends Vue {
   // Handlers
   toggleSelection(value) {
     if (this.totalSelected !== this.maxTokenSelection) {
-      this.isSelected = value;
       this.onSelectToken && this.onSelectToken(this.token);
     } else if (!value) {
-      this.isSelected = value;
       this.onSelectToken && this.onSelectToken(this.token);
     }
   }
@@ -278,10 +280,10 @@ export default class NFTTokenCard extends Vue {
         title: this.$t("moreOptions.sell"),
         action: this.sell,
       },
-      {
-        title: this.$t("moreOptions.send"),
-        action: this.transfer,
-      },
+      // {
+      //   title: this.$t("moreOptions.send"),
+      //   action: this.transfer,
+      // },
     ];
   }
 }

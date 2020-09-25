@@ -41,7 +41,7 @@
               {{ allCategory.name }}
             </div>
             <div class="count ps-l-12 font-body-medium ml-auto">
-              {{ allCount }}
+              {{ allCount || 0 }}
             </div>
           </div>
           <div
@@ -62,19 +62,19 @@
               class="count ps-l-12 font-body-medium ml-auto"
               v-if="SHOW_COUNT.ORDER == countFor"
             >
-              {{ category.count }}
+              {{ category.count || 0 }}
             </div>
             <div
               class="count ps-l-12 font-body-medium ml-auto"
               v-if="SHOW_COUNT.MAIN == countFor"
             >
-              {{ category.mainCount }}
+              {{ category.mainCount || 0 }}
             </div>
             <div
               class="count ps-l-12 font-body-medium ml-auto"
               v-if="SHOW_COUNT.MATIC == countFor"
             >
-              {{ category.maticCount }}
+              {{ category.maticCount || 0 }}
             </div>
           </div>
         </div>
@@ -106,7 +106,7 @@ const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 };
     ...mapGetters("category", ["categories", "allCategory"]),
   },
 })
-export default class CategoriesSelector extends Vue {
+export default class CategoriesSidebar extends Vue {
   showCategory = false;
   SHOW_COUNT = SHOW_COUNT;
 

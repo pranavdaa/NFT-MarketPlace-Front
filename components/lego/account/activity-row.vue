@@ -11,7 +11,10 @@
       <rect width="5" height="5" rx="2.5" fill="#003CB2" />
     </svg>-->
     <div class="d-flex align-self-center activity-wrapper">
-      <div class="img-wrapper justify-content-center" v-bind:style="{background: bg}">
+      <div
+        class="img-wrapper justify-content-center"
+        v-bind:style="{ background: bg }"
+      >
         <img
           class="asset-img align-self-center"
           src="~/static/img/dummy-kitty.png"
@@ -19,24 +22,37 @@
           @load="onImageLoad"
         />
       </div>
-      <svg-sprite-icon name="profile" class="profile-logo d-none d-md-block align-self-center"></svg-sprite-icon>
-      <div class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16">
+      <svg-sprite-icon
+        name="profile"
+        class="profile-logo d-none d-md-block align-self-center"
+      ></svg-sprite-icon>
+      <div
+        class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16"
+      >
         <div class="font-body-small">
-          <!-- <a class="account-name">Account 84d</a> transferred
-          <a class="nft-token">golden kitty</a> to you-->
-          {{activity.message}}
+          {{ activity.message }}
         </div>
-        <div class="font-caption text-gray-300">{{remainingTimeinWords}} ago</div>
+        <div class="font-caption text-gray-300">
+          {{ remainingTimeinWords }} ago
+        </div>
       </div>
       <div class="d-flex ml-auto ms-r-16" v-if="true">
         <nuxt-link
-          :to="{name: 'tokens-id', params: { id: activity.order_id } }"
+          :to="{ name: 'tokens-id', params: { id: activity.order_id } }"
           class="btn btn-light align-self-center"
-        >View details</nuxt-link>
+          >View details</nuxt-link
+        >
       </div>
       <div class="d-flex ml-auto ms-r-16" v-if="false">
-        <button class="btn btn-light btn-deny align-self-center ms-r-12" @click="onDeny()">Deny</button>
-        <button class="btn btn-light align-self-center" @click="onAccept()">Accept</button>
+        <button
+          class="btn btn-light btn-deny align-self-center ms-r-12"
+          @click="onDeny()"
+        >
+          Deny
+        </button>
+        <button class="btn btn-light align-self-center" @click="onAccept()">
+          Accept
+        </button>
       </div>
     </div>
 

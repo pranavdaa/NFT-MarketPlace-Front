@@ -17,7 +17,7 @@
     "@0x/subproviders": "^6.0.8",
     "@0x/utils": "^5.4.1",
     "@0x/web3-wrapper": "^7.0.7",
-    "@maticnetwork/maticjs": "git+https://github.com/maticnetwork/matic.js.git#9b7c0d91908bba2ba024c8d0904e199369ed2ffc",
+    "@maticnetwork/maticjs": "https://github.com/maticnetwork/matic.js.git#0980462121d6971675cc544e46744ea3fad114b4",
     "@maticnetwork/meta": "^2.4.0",
     "@maticnetwork/metamask-provider": "^0.0.1",
     "@maticnetwork/walletconnect-provider": "0.0.1-beta.1",
@@ -51,8 +51,8 @@
     "vue-class-component": "^6.3.2",
     "vue-i18n": "^8.6.0",
     "vue-lottie": "^0.2.1",
-    "web3": "1.2.4",
-    "vue-server-renderer": "2.6.11"
+    "vue-server-renderer": "2.6.11",
+    "web3": "1.2.4"
   },
   "devDependencies": {
     "@babel/node": "^7.2.2",

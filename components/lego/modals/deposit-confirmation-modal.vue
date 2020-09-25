@@ -257,10 +257,6 @@ export default class DepositConfirmationModal extends Vue {
   async mounted() {}
 
   // Getter
-  get status() {
-    return status;
-  }
-
   get transactionStatus() {
     if (this.isApproving) {
       return STATUS.INITIATING;
@@ -283,6 +279,13 @@ export default class DepositConfirmationModal extends Vue {
     return this.parentNetwork.chainId;
   }
 
+  get explorerURL() {
+    if (app.uiconfig.mainExplorer) {
+      return `${app.uiconfig.mainExplorer}tx/${this.transactionHash}`;
+    }
+    return null;
+  }
+
   get selectedTokenIds() {
     let token_ids = [];
     if (this.selectedTokens && this.selectedTokens.length > 0) {
@@ -291,6 +294,7 @@ export default class DepositConfirmationModal extends Vue {
     return token_ids;
   }
 
+  // Actions
   getMaticPOS() {
     const maticProvider = getWalletProvider({
       networks: this.networks,
@@ -347,13 +351,6 @@ export default class DepositConfirmationModal extends Vue {
       this.isLoading = false;
       this.error = error.message;
     }
-  }
-
-  get explorerURL() {
-    if (app.uiconfig.mainExplorer) {
-      return `${app.uiconfig.mainExplorer}tx/${this.transactionHash}`;
-    }
-    return null;
   }
 
   async handleDeposit(txHash, token_ids, category_id) {

@@ -1,55 +1,110 @@
 <template>
-  <div class="container-fluid">
-    <div class="row ps-y-32 ps-x-16">
+  <div class="container-fluid p-0 m-0 fixed">
+    <div class="row p-0 m-0">
       <div
-        class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center justify-content-md-start"
+        class="col container-fluid sidebar-container d-none d-lg-block sticky-top"
       >
-        <categories-selector class="category-wrapper" />
+        <category-sidebar :countFor="0" :isLoading="isLoadingTokens" />
       </div>
-      <div class="col-md d-flex ms-b-16 ms-b-md-0 justify-content-center">
-        <search-box
-          class="search-box w-100"
-          placeholder="Search NFT..."
-          :change="(val) => (searchInput = val)"
-        />
-      </div>
-      <div class="col-md d-flex justify-content-center justify-content-md-end">
-        <sort-dropdown
-          class="dropdown-filter"
-          :sortItems="sortItems"
-          :defaultID="1"
-          :change="onSortSelect"
-        />
-      </div>
-    </div>
+      <div class="col container-fluid content-container">
+        <div class="row ps-y-16 ps-x-16 sticky-top tab-header">
+          <div
+            class="col-12 col-lg cat-switch d-flex d-lg-none ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
+          >
+            <categories-selector :countFor="0" class="category-wrapper" />
+          </div>
+          <div
+            class="col-12 col-lg cat-switch d-none d-lg-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
+          >
+            <div
+              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
+              v-if="!selectedCategory"
+            >
+              <img
+                :src="allCategory.img_url"
+                :alt="allCategory.name"
+                class="icon align-self-center ms-r-12"
+              />
+              <div class="font-body-large align-self-center font-medium">
+                {{ allCategory.name }}
+              </div>
+              <div class="count ps-l-12 font-body-large ml-auto">
+                {{ allCategory.count }} {{ $t("collectibles") }}
+              </div>
+            </div>
+            <div
+              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
+              v-if="selectedCategory"
+            >
+              <img
+                :src="selectedCategory.img_url"
+                :alt="selectedCategory.name"
+                class="icon align-self-center ms-r-12"
+              />
+              <div class="font-body-large align-self-center font-medium">
+                {{ selectedCategory.name }}
+              </div>
+              <div class="count ps-l-12 font-body-large ml-auto">
+                {{
+                  selectedCategory.count ||
+                  (displayedTokens && displayedTokens.length) ||
+                  0
+                }}
+                {{ $t("collectibles") }}
+              </div>
+            </div>
+          </div>
+          <div
+            class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end"
+          >
+            <search-box
+              class="search-box ms-r-0 ms-r-sm-6"
+              placeholder="Search NFT..."
+              :change="(val) => (searchInput = val)"
+            />
+            <sort-dropdown
+              class="dropdown-filter ms-l-0 ms-l-sm-6"
+              :sortItems="sortItems"
+              :change="onSortSelect"
+            />
+          </div>
+        </div>
 
-    <div class="row ps-x-16 d-flex justify-content-center text-center">
-      <sell-card
-        v-for="order in orderFullList"
-        :key="order.id"
-        :order="order"
-        :searchInput="searchInput"
-      />
-      <no-item
-        class="ps-b-120"
-        :message="exmptyMsg"
-        v-if="orderFullList.length <= 0 && !isLoadingTokens"
-      />
-    </div>
-
-    <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
-      <!-- matic loader here -->
-      <button-loader
-        class="mx-auto"
-        :loading="isLoadingTokens"
-        :loadingText="$t('loading')"
-        :text="$t('loadMore')"
-        block
-        lg
-        v-if="hasNextPage"
-        color="light"
-        :click="loadMore"
-      ></button-loader>
+        <div
+          class="row ps-x-16 ps-y-40 d-flex justify-content-center justify-content-lg-start"
+        >
+          <no-item
+            class="ps-b-120"
+            :message="exmptyMsg"
+            v-if="orderFullList.length <= 0 && !isLoadingTokens"
+          />
+          <sell-card
+            v-for="order in orderFullList"
+            :key="order.id"
+            :order="order"
+            :searchInput="searchInput"
+          />
+        </div>
+        <div
+          class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center"
+        >
+          <!-- matic loader here -->
+          <button-loader
+            class="mx-auto"
+            :loading="isLoadingTokens"
+            :loadingText="$t('loading')"
+            :text="$t('loadMore')"
+            block
+            lg
+            v-if="
+              (hasNextPage && displayedTokens && displayedTokens.length > 0) ||
+              isLoadingTokens
+            "
+            color="light"
+            :click="loadMore"
+          ></button-loader>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -69,6 +124,8 @@ import SortDropdown from "~/components/lego/sort-dropdown";
 import OrderModel from "~/components/model/order";
 import NoItem from "~/components/lego/no-item";
 
+import CategorySidebar from "~/components/lego/account/category-sidebar";
+
 @Component({
   props: {},
   components: {
@@ -77,10 +134,11 @@ import NoItem from "~/components/lego/no-item";
     SearchBox,
     SortDropdown,
     NoItem,
+    CategorySidebar,
   },
   computed: {
-    ...mapGetters("page", ["selectedFilters"]),
-    ...mapGetters("category", ["categories"]),
+    ...mapGetters("page", ["selectedFilters", "selectedCategory"]),
+    ...mapGetters("category", ["categories", "allCategory"]),
     ...mapGetters("token", ["erc20Tokens"]),
   },
   middleware: [],
@@ -199,7 +257,7 @@ export default class Index extends Vue {
         );
       }
 
-      if (response.status === 200 && response.data.data.order) {
+      if (response && response.status === 200 && response.data.data.order) {
         this.hasNextPage = response.data.data.has_next_page;
         let data = response.data.data.order.map(function (order) {
           return new OrderModel(order);
@@ -222,18 +280,87 @@ export default class Index extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import "~assets/css/theme/_theme";
+
+.sticky-top {
+  &.tab-header {
+    top: $navbar-local-height !important;
+    background-color: light-color("700");
+  }
+  &.sidebar-container {
+    top: $navbar-local-height !important;
+    background-color: light-color("700");
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+}
+.category {
+  background-color: light-color("700");
+  box-sizing: border-box;
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+  .count {
+    color: dark-color("300") !important;
+  }
+}
 .search-box {
   max-width: 264px;
   width: 100%;
 }
+.dropdown-filter,
+.search-box {
+  height: 44px;
+}
+
+.sidebar-container {
+  padding: 12px !important;
+  max-width: 348px;
+  height: 100%;
+  border-right: 1px solid light-color("500");
+  max-height: 77vh;
+  min-height: 77vh;
+  border-right: 1px solid #f3f4f7;
+  overflow-y: scroll;
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 @media (max-width: 768px) {
+  .sticky-top {
+    &.tab-header {
+      position: relative;
+      top: 0 !important;
+      z-index: inherit;
+    }
+  }
+  .category-wrapper {
+    width: 100% !important;
+    // margin: 0 !important;
+  }
   .search-box {
     max-width: 100%;
     width: 100%;
   }
-  .category-wrapper {
-    width: 100%;
+}
+
+@media (max-width: 520px) {
+  .search-sort,
+  .cat-switch {
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .dropdown-filter {
+    margin-top: 16px;
   }
 }
 </style>
