@@ -12,6 +12,7 @@
     "
   >
     <on-sale-tag v-if="order.onSale && !onlyToken" :time="order.timeleft" />
+    <owned-tag v-if="isOwnersToken" />
 
     <div class="img-wrapper d-flex ps-t-12 justify-content-center">
       <img
@@ -107,6 +108,7 @@ import ColorThief from "color-thief";
 const colorThief = new ColorThief();
 
 import OnSaleTag from "~/components/lego/token/on-sale-tag";
+import OwnedTag from "~/components/lego/token/owned-tag";
 
 @Component({
   props: {
@@ -135,11 +137,12 @@ import OnSaleTag from "~/components/lego/token/on-sale-tag";
       default: () => {},
     },
   },
-  components: { OnSaleTag },
+  components: { OnSaleTag, OwnedTag },
   computed: {
     ...mapGetters("category", ["categories"]),
     ...mapGetters("token", ["erc20Tokens"]),
     ...mapGetters("network", ["networks"]),
+    ...mapGetters("auth", ["user"]),
   },
   middleware: [],
   mixins: [],
@@ -198,6 +201,15 @@ export default class SellCard extends Vue {
   get isMainToken() {
     if (this.order.chainId) {
       return this.order.chainId === this.networks.main.chainId;
+    }
+    return false;
+  }
+
+  get isOwnersToken() {
+    if (this.user && this.order.type !== app.orderTypes.FIXED) {
+      return this.user.id === this.order.taker_address;
+    } else if (this.user && this.order.type === app.orderTypes.FIXED) {
+      return this.user.id === this.order.maker_address;
     }
     return false;
   }

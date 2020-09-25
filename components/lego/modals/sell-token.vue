@@ -6,7 +6,7 @@
         <div class="box in-process-box">
           <div class="box-body">
             <div class="container-fluid">
-              <nav class="row tabs nav bottom-border no-border-radius d-flex col-md-12 px-0">
+              <nav class="row tabs nav bottom-border no-border-radius d-flex col-md-12 px-0 mx-0">
                 <a
                   class="nav-item col ps-y-24 px-0 text-center nav-link font-body-medium"
                   :class="{'active font-medium': activeTab === tab.id}"
@@ -238,15 +238,6 @@ export default class SellToken extends Vue {
       id: 0,
       title: "Fixed Price",
       subtitle: "Set price",
-      description:
-        "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
-      commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
-      btnTitle: "Submit to Marketplace",
-    },
-    {
-      id: 1,
-      title: "Sell in Auction",
-      subtitle: "Set minimum bid",
       description:
         "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
