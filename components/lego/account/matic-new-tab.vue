@@ -326,7 +326,7 @@ export default class MaticNewTab extends Vue {
         this.tokensFullList = [...this.tokensFullList, ...tokens];
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
     this.isLoadingTokens = false;
   }
