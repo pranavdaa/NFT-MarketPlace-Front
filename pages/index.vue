@@ -96,7 +96,10 @@
             :text="$t('loadMore')"
             block
             lg
-            v-if="hasNextPage"
+            v-if="
+              (hasNextPage && displayedTokens && displayedTokens.length > 0) ||
+              isLoadingTokens
+            "
             color="light"
             :click="loadMore"
           ></button-loader>
@@ -254,7 +257,7 @@ export default class Index extends Vue {
         );
       }
 
-      if (response.status === 200 && response.data.data.order) {
+      if (response && response.status === 200 && response.data.data.order) {
         this.hasNextPage = response.data.data.has_next_page;
         let data = response.data.data.order.map(function (order) {
           return new OrderModel(order);
