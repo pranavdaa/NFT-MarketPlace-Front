@@ -1,0 +1,311 @@
+<template>
+  <div class="container-fluid ps-y-16">
+    <div class="row ps-y-16 ps-x-md-16">
+      <div class="col-md-7 d-flex">
+        <token-short-info
+          class="align-self-center"
+          :order="token"
+          :category="category"
+          v-if="category"
+        />
+      </div>
+    </div>
+    <div class="row ps-y-16 ps-x-md-16 justify-content-center">
+      <div class="col-md-8">
+        <div
+          class="feature-image d-flex d-lg-flex justify-content-center"
+          v-bind:style="{background: bg}"
+        >
+          <img
+            class="asset-img align-self-center"
+            :src="token.img_url"
+            alt="Kitty"
+            @load="onImageLoad"
+          />
+        </div>
+        <div class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16">
+          <h2>{{token.description}}</h2>
+          <h3 class="font-heading-medium font-semibold">About {{token.name}}</h3>
+          <p
+            class="font-body-medium"
+            :class="{'show-less': showMore, 'show-more': !showMore}"
+            v-if="token.description"
+          >
+            {{token.description}}
+            <span class="dots">...</span>
+            <span class="more">{{token.description}}</span>
+            <a
+              class="font-body-small d-flex ps-t-8 font-medium"
+              href="#more-info"
+              v-if="!showMore"
+              @click.prevent="showMore = true"
+            >More info</a>
+            <a
+              class="font-body-small d-flex ps-t-8 font-medium"
+              href="#more-info"
+              v-if="showMore"
+              @click.prevent="showMore = false"
+            >Show less</a>
+          </p>
+        </div>
+        <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
+          <h3 class="font-heading-medium font-semibold category">
+            About {{category.name}}
+            <a
+              class="ps-l-12"
+              :href="category.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Visit Website</a>
+
+            <span
+              class="float-right cursor-pointer right-arrow"
+              :class="{'down-icon':showCategoryInfo}"
+              @click="showCategoryInfo = !showCategoryInfo"
+              v-if="category.description"
+            >
+              <svg-sprite-icon name="right-arrow" />
+            </span>
+          </h3>
+          <p
+            class="font-body-medium ps-t-20"
+            v-if="showCategoryInfo && category.description"
+          >{{category.description}}</p>
+        </div>
+        <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="token.properties">
+          <h3 class="font-heading-medium font-semibold category">
+            Properties
+            <span
+              class="float-right cursor-pointer right-arrow"
+              :class="{'down-icon':showProperties}"
+              @click="showProperties = !showProperties"
+            >
+              <svg-sprite-icon name="right-arrow" />
+            </span>
+          </h3>
+          <p class="font-body-medium ps-t-20" v-if="showProperties">{{token.properties}}</p>
+        </div>
+      </div>
+      <div class="col-md-4 d-none d-lg-flex">
+        <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
+          <h3 class="font-heading-medium font-semibold">About {{token.name}}</h3>
+          <p
+            class="font-body-medium"
+            :class="{'show-less': showMore, 'show-more': !showMore}"
+            v-if="token.description"
+          >
+            {{token.description}}
+            <span class="dots">...</span>
+            <span class="more">{{token.description}}</span>
+            <a
+              class="font-body-small d-flex ps-t-8 font-medium"
+              href="#more-info"
+              v-if="!showMore"
+              @click.prevent="showMore = true"
+            >More info</a>
+            <a
+              class="font-body-small d-flex ps-t-8 font-medium"
+              href="#more-info"
+              v-if="showMore"
+              @click.prevent="showMore = false"
+            >Show less</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import getAxios from "~/plugins/axios";
+import app from "~/plugins/app";
+import { mapGetters } from "vuex";
+
+import NFTTokenModel from "~/components/model/nft-token";
+
+import TokenShortInfo from "~/components/lego/token/token-short-info";
+import WishlistButton from "~/components/lego/wishlist-button";
+import BuyToken from "~/components/lego/modals/buy-token";
+import CancelConfirm from "~/components/lego/modals/cancel-confirm";
+
+import rgbToHsl from "~/plugins/helpers/color-algorithm";
+import ColorThief from "color-thief";
+const colorThief = new ColorThief();
+
+import { providerEngine } from "~/plugins/helpers/provider-engine";
+
+@Component({
+  props: {
+    tokenId: {
+      type: [Number, String],
+      required: false,
+    },
+  },
+  components: {
+    TokenShortInfo,
+    WishlistButton,
+    BuyToken,
+    CancelConfirm,
+  },
+  computed: {
+    ...mapGetters("category", ["categories"]),
+    ...mapGetters("token", ["erc20Tokens"]),
+    ...mapGetters("account", ["account", "favouriteOrders"]),
+    ...mapGetters("auth", ["user"]),
+    ...mapGetters("network", ["networks"]),
+  },
+  middleware: [],
+  mixins: [],
+})
+export default class NftDetail extends Vue {
+  bg = "#ffffff";
+  showMore = false;
+  showCategoryInfo = true;
+  showProperties = true;
+
+  isLoadingDetails = false;
+  isLoading = false;
+
+  token = {};
+
+  // initialize
+  async mounted() {
+    await this.fetchNFTTokens();
+  }
+
+  onImageLoad() {
+    try {
+      const img = this.$el.querySelector(".asset-img");
+      let rgbColor = colorThief.getColor(img);
+      if (rgbColor) {
+        let hsl = rgbToHsl({
+          r: rgbColor[0],
+          g: rgbColor[1],
+          b: rgbColor[2],
+        });
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+      } else this.bg = "#ffffff";
+    } catch (error) {}
+  }
+
+  // Get
+  get category() {
+    return this.categories.filter(
+      (item) => item.id === this.token.categories_id
+    )[0];
+  }
+
+  get app() {
+    return app;
+  }
+
+  get isOwnersToken() {
+    if (this.user && this.order.type !== app.orderTypes.FIXED) {
+      return this.user.id === this.order.taker_address;
+    } else if (this.user && this.order.type === app.orderTypes.FIXED) {
+      return this.user.id === this.order.maker_address;
+    }
+    return false;
+  }
+
+  get chainId() {
+    return this.networks.matic.chainId;
+  }
+
+  // async
+  async fetchNFTTokens() {
+    if (!this.tokenId || this.isLoadingDetails) {
+      return;
+    }
+    this.isLoadingDetails = true;
+    try {
+      let response = await getAxios().get(
+          `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}`
+      );
+      if (response.status === 200 && response.data.data) {
+        let allTokens = [];
+        response.data.data.forEach((token) => {
+          allTokens.push(new NFTTokenModel(token));
+        });
+
+        allTokens.forEach((token) => {
+          if (token.token_id == this.tokenId) {
+            this.token = token;
+          }
+        })
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    this.isLoadingDetails = false;
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import "~assets/css/theme/_theme";
+.feature-image {
+  width: 100%;
+  padding-top: 3.75rem;
+  padding-bottom: 3.75rem;
+  min-height: 500px;
+  border-radius: $default-card-box-border-radius;
+  .asset-img {
+    max-width: 90%;
+    max-height: 380px;
+  }
+}
+.feature-info {
+  &.mobile {
+    min-height: auto;
+  }
+  width: 100%;
+  max-height: 500px;
+  border: 1px solid #f3f4f7;
+  border-radius: $default-card-box-border-radius;
+}
+.action {
+  .option-icon {
+    margin-top: -3px;
+    margin-right: 4px;
+  }
+}
+.right-arrow {
+  width: 24px;
+  height: 24px;
+  .svg-sprite-icon {
+    width: 10px;
+    height: 14px;
+    fill: rgba(dark-color("700"), 0.4);
+  }
+  &.down-icon {
+    .svg-sprite-icon {
+      transform: rotate(90deg);
+    }
+  }
+}
+.show-more {
+  .dots {
+    display: inline;
+  }
+  .more {
+    display: none;
+  }
+}
+.show-less {
+  .dots {
+    display: none;
+  }
+  .more {
+    display: inline;
+  }
+}
+
+@media (max-width: 768px) {
+  .feature-image {
+    min-height: auto;
+  }
+}
+</style>
