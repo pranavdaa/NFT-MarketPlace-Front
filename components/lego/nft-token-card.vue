@@ -280,10 +280,10 @@ export default class NFTTokenCard extends Vue {
         title: this.$t("moreOptions.sell"),
         action: this.sell,
       },
-      {
-        title: this.$t("moreOptions.send"),
-        action: this.transfer,
-      },
+      // {
+      //   title: this.$t("moreOptions.send"),
+      //   action: this.transfer,
+      // },
     ];
   }
 }

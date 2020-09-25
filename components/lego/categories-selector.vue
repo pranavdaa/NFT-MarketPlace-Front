@@ -106,7 +106,7 @@ const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 };
     ...mapGetters("category", ["categories", "allCategory"]),
   },
 })
-export default class CategoriesSelector extends Vue {
+export default class CategoriesSidebar extends Vue {
   showCategory = false;
   SHOW_COUNT = SHOW_COUNT;
 

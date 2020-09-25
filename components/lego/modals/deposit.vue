@@ -50,6 +50,7 @@
                     :loading="isLoading"
                     :text="'Deposit to Ethereum Network'"
                     :click="approveForDeposit"
+                    :disabled="selectedTokens.length <= 0"
                   ></button-loader>
                 </div>
               </div>

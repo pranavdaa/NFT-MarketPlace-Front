@@ -101,8 +101,10 @@
             v-for="token in displayedTokens"
             :key="token.id"
             :token="token"
+            :isSelected="token.isSelected"
             :isAllCategories="!selectedCategory"
             :onSelectToken="onSelectToken"
+            :onWithdraw="onWithdraw"
             :onSell="onSellToken"
             :searchInput="searchInput"
             :totalSelected="selectedTokens.length"
@@ -119,12 +121,16 @@
         />
 
         <withdraw
-          v-if="selectedCategory && showWithdrawModal"
+          v-if="
+            (selectedCategory && showWithdrawModal) ||
+            (selectedTokens.length > 0 && showWithdrawModal)
+          "
           :show="showWithdrawModal"
           :visible="onWithdraw"
           :cancel="onWithdrawClose"
-          :tokens="sellableTokens"
+          :tokens="selectedCateTokens"
           :preSelectedTokens="preSelectedTokens"
+          :refreshBalance="refreshBalance"
         />
 
         <div
@@ -233,11 +239,21 @@ export default class MaticNewTab extends Vue {
   onCloseSellModal() {
     this.showSellModal = false;
   }
-  onWithdraw() {
+  onWithdraw(token = null) {
+    if (token) {
+      this.selectedTokens = [token];
+    }
     this.showWithdrawModal = true;
   }
   onWithdrawClose() {
+    this.selectedTokens = [];
+    if (this.tokens && this.tokens.length > 0) {
+      this.tokens.forEach((token) => (token.isSelected = false));
+    }
     this.showWithdrawModal = false;
+  }
+  refreshBalance() {
+    this.fetchNFTTokens({ filtering: true });
   }
   onSelectToken(token) {
     let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
@@ -310,6 +326,7 @@ export default class MaticNewTab extends Vue {
     }
     this.isLoadingTokens = false;
   }
+
   async refreshNFTTokens() {
     this.hasNextPage = true;
     await this.fetchNFTTokens({ filtering: true });
@@ -317,20 +334,62 @@ export default class MaticNewTab extends Vue {
 
   // Getters
   get displayedTokens() {
+    let tokens = [];
+    if (
+      this.selectedTokenIds &&
+      this.selectedTokenIds.length > 0 &&
+      this.tokensFullList &&
+      this.tokensFullList.length > 0
+    ) {
+      this.tokensFullList.forEach((token) => {
+        token.isSelected = this.selectedTokenIds.includes(token.token_id);
+        tokens.push(token);
+      });
+    } else {
+      tokens = [];
+      this.tokensFullList.forEach((token) => {
+        token.isSelected = false;
+        tokens.push(token);
+      });
+    }
     if (this.selectedCategory && this.tokensFullList) {
-      return this.tokensFullList.filter(
+      return tokens.filter(
         (t) =>
           t.contract.toLowerCase() ===
-          this.selectedCategory.getAddress(this.maticChainId).toLowerCase()
+          this.selectedCategory.maticAddress.toLowerCase()
       );
     }
-    return this.tokensFullList || [];
+    return tokens || [];
+  }
+  get selectedTokenIds() {
+    let token_ids = [];
+    if (this.selectedTokens && this.selectedTokens.length > 0) {
+      this.selectedTokens.forEach((token) => token_ids.push(token.token_id));
+    }
+    return token_ids;
+  }
+  get selectedCateTokens() {
+    if (this.selectedCategory && this.tokensFullList) {
+      return this.sellableTokens.filter(
+        (t) =>
+          t.contract.toLowerCase() ===
+          this.selectedCategory.maticAddress.toLowerCase()
+      );
+    }
+    if (this.selectedTokens.length > 0) {
+      return this.sellableTokens.filter(
+        (t) =>
+          t.contract.toLowerCase() ===
+          this.selectedTokens[0].contract.toLowerCase()
+      );
+    }
+    return [];
   }
   get preSelectedTokens() {
     if (this.selectedTokens && this.selectedTokens.length > 0) {
       return this.selectedTokens;
     }
-    return this.sellableTokens;
+    return this.selectedCateTokens;
   }
   get sellableTokens() {
     if (this.tokensFullList) {
@@ -357,9 +416,6 @@ export default class MaticNewTab extends Vue {
       description: this.$t("maticTab.empty.description"),
       img: true,
     };
-  }
-  get maticChainId() {
-    return this.networks.matic.chainId;
   }
   get sortItems() {
     return [

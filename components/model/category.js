@@ -20,6 +20,10 @@ export default class Category extends Model {
     return addresses
   }
 
+  get count() {
+    return this.orders || 0
+  }
+
   get address() {
     if (!this.addresses) {
       return null
