@@ -227,8 +227,8 @@ a {
 }
 
 .sell-card {
-  width: 258px;
-  min-height: 380px;
+  width: 240px;
+  min-height: 352px;
   margin: 0.625rem;
   position: relative;
 
@@ -236,9 +236,9 @@ a {
   border-radius: $default-card-box-border-radius;
   .img-wrapper {
     width: 100%;
-    max-width: 258px;
+    max-width: 240px;
     height: 100%;
-    max-height: 258px;
+    max-height: 240px;
     overflow: hidden;
     .asset-img {
       max-height: 100%;

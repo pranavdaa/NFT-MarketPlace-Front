@@ -12,7 +12,7 @@
             :alt="allCategory.name"
             class="icon-all align-self-center"
           />
-          <div class="font-body-medium align-self-center ms-l-12">
+          <div class="font-body-medium align-self-center text-nowrap ms-l-12">
             {{ allCategory.name }}
           </div>
           <div class="count ps-l-12 font-body-medium ml-auto align-self-center">
@@ -42,13 +42,13 @@
             v-if="!isLoading"
           >
             <span v-if="SHOW_COUNT.ORDER == countFor">
-              {{ category.count }}
+              {{ category.count || 0 }}
             </span>
             <span v-if="SHOW_COUNT.MAIN == countFor">
-              {{ category.mainCount }}
+              {{ category.mainCount || 0 }}
             </span>
             <span v-if="SHOW_COUNT.MATIC == countFor">
-              {{ category.maticCount }}
+              {{ category.maticCount || 0 }}
             </span>
           </div>
           <div
