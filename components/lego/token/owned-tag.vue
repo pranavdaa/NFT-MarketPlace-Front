@@ -1,6 +1,6 @@
 <template>
   <div class="pill-wrapper d-flex">
-    <div class="time-left-pill d-flex ms-r-8">
+    <div class="owned-token-pill d-flex ms-r-8">
       <div class="font-caps font-medium caps align-self-center ps-x-6 ps-t-1">{{$t('token.owned')}}</div>
     </div>
   </div>
@@ -11,13 +11,7 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 
 @Component({
-  props: {
-    time: {
-      type: String,
-      required: false,
-      default: ""
-    }
-  },
+  props: {},
   components: {},
   middleware: [],
   mixins: []
@@ -33,7 +27,7 @@ export default class OnSaleTag extends Vue {
   top: 10px;
   right: 10px;
 
-  .time-left-pill {
+  .owned-token-pill {
     width: fit-content;
     padding-left: 0.1rem;
     padding-right: 0.1rem;
