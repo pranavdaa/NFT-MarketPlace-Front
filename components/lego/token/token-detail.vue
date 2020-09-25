@@ -9,7 +9,8 @@
           v-if="category"
         />
       </div>
-      <div
+      <!-- Remove if condition when implementing -->
+      <div v-if="false"
         class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end"
       >
         <wishlist-button :wishlisted="isFavorite" :onClick="addToWishlist" />

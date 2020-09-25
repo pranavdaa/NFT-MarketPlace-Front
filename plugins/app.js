@@ -186,7 +186,7 @@ const app = {
     const user = store.getters['auth/user']
     if (user) {
       store.dispatch('account/fetchActiveOrders')
-      store.dispatch('account/fetchFavoritesOrders')
+      // store.dispatch('account/fetchFavoritesOrders')
     }
   },
 
