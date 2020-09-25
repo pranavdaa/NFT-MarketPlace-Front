@@ -16,8 +16,10 @@
             {{ allCategory.name }}
           </div>
           <div class="count ps-l-12 font-body-medium ml-auto align-self-center">
-            <span v-if="!isLoading">{{ allCount }}</span>
-            <span v-if="isLoading">0</span>
+            <span v-if="!isLoading || allCategory.count || !isTab">{{
+              allCount
+            }}</span>
+            <span v-if="isLoading && !allCategory.count && isTab">0</span>
           </div>
         </div>
         <div
@@ -39,7 +41,7 @@
           </div>
           <div
             class="count ps-l-12 font-body-medium ml-auto align-self-center"
-            v-if="!isLoading"
+            v-if="!isLoading || category.count || !isTab"
           >
             <span v-if="SHOW_COUNT.ORDER == countFor">
               {{ category.count || 0 }}
@@ -53,7 +55,7 @@
           </div>
           <div
             class="count ps-l-12 font-body-medium ml-auto align-self-center"
-            v-if="isLoading"
+            v-if="isLoading && !allCategory.count && isTab"
           >
             0
           </div>
@@ -79,6 +81,11 @@ const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 };
       type: Number,
       required: false,
       default: 0,
+    },
+    isTab: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     isLoading: {
       type: Boolean,
@@ -108,23 +115,32 @@ export default class CategoriesSelector extends Vue {
   }
 
   get allCount() {
-    if (this.SHOW_COUNT.MATIC == this.countFor && !this.isLoading) {
+    if (
+      this.SHOW_COUNT.MATIC == this.countFor &&
+      !this.isLoading &&
+      this.isTab
+    ) {
       return (
         this.categories.reduce(
           (total, category) => total + parseInt(category.maticCount),
           0
         ) || 0
       );
-    } else if (this.SHOW_COUNT.MAIN == this.countFor && !this.isLoading) {
+    } else if (
+      this.SHOW_COUNT.MAIN == this.countFor &&
+      !this.isLoading &&
+      this.isTab
+    ) {
       return (
         this.categories.reduce(
           (total, category) => total + parseInt(category.mainCount),
           0
         ) || 0
       );
-    } else {
+    } else if (!this.isTab) {
       return this.allCategory.count || 0;
     }
+    return 0;
   }
 
   // Getters
