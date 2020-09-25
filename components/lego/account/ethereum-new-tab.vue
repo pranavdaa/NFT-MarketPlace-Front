@@ -100,6 +100,7 @@
           <NFTTokenCard
             v-for="token in displayedTokens"
             :key="token.id"
+            :isSelected="token.isSelected"
             :token="token"
             :isAllCategories="!selectedCategory"
             :onSelectToken="onSelectToken"
@@ -192,7 +193,8 @@ import Deposit from "~/components/lego/modals/deposit";
   watch: {
     selectedFilters: {
       handler: async function () {
-        this.fetchNFTTokens({ filtering: true });
+        // disabled api call on category change
+        // this.fetchNFTTokens({ filtering: true });
       },
       deep: true,
     },
@@ -250,6 +252,10 @@ export default class EthereumNewTab extends Vue {
     this.showDepositModal = true;
   }
   onDepositClose() {
+    this.selectedTokens = [];
+    if (this.tokens && this.tokens.length > 0) {
+      this.tokens.forEach((token) => (token.isSelected = false));
+    }
     this.showDepositModal = false;
   }
   refreshBalance() {
@@ -312,16 +318,40 @@ export default class EthereumNewTab extends Vue {
 
   // Getters
   get displayedTokens() {
+    let tokens = [];
+    if (
+      this.selectedTokenIds &&
+      this.selectedTokenIds.length > 0 &&
+      this.tokensFullList &&
+      this.tokensFullList.length > 0
+    ) {
+      this.tokensFullList.forEach((token) => {
+        token.isSelected = this.selectedTokenIds.includes(token.token_id);
+        tokens.push(token);
+      });
+    } else {
+      tokens = [];
+      this.tokensFullList.forEach((token) => {
+        token.isSelected = false;
+        tokens.push(token);
+      });
+    }
     if (this.selectedCategory && this.tokensFullList) {
-      return this.tokensFullList.filter(
+      return tokens.filter(
         (t) =>
           t.contract.toLowerCase() ===
           this.selectedCategory.getAddress(this.mainChainId).toLowerCase()
       );
     }
-    return this.tokensFullList || [];
+    return tokens || [];
   }
-
+  get selectedTokenIds() {
+    let token_ids = [];
+    if (this.selectedTokens && this.selectedTokens.length > 0) {
+      this.selectedTokens.forEach((token) => token_ids.push(token.token_id));
+    }
+    return token_ids;
+  }
   get selectedCateTokens() {
     if (this.selectedCategory && this.tokensFullList) {
       return this.tokensFullList.filter(

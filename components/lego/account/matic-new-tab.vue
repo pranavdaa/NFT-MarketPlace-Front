@@ -196,7 +196,8 @@ import Withdraw from "~/components/lego/modals/withdraw";
   watch: {
     selectedFilters: {
       handler: async function () {
-        this.fetchNFTTokens({ filtering: true });
+        // disabled api call on category change
+        // this.fetchNFTTokens({ filtering: true });
       },
       deep: true,
     },

@@ -15,11 +15,9 @@
           <div class="font-body-medium align-self-center ms-l-12">
             {{ allCategory.name }}
           </div>
-          <div
-            class="count ps-l-12 font-body-medium ml-auto align-self-center"
-            v-if="!isLoading"
-          >
-            {{ allCount }}
+          <div class="count ps-l-12 font-body-medium ml-auto align-self-center">
+            <span v-if="!isLoading">{{ allCount }}</span>
+            <span v-if="isLoading">0</span>
           </div>
         </div>
         <div
@@ -52,6 +50,12 @@
             <span v-if="SHOW_COUNT.MATIC == countFor">
               {{ category.maticCount }}
             </span>
+          </div>
+          <div
+            class="count ps-l-12 font-body-medium ml-auto align-self-center"
+            v-if="isLoading"
+          >
+            0
           </div>
         </div>
       </div>
