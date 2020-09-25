@@ -5,8 +5,7 @@
     <div class="row">
       <matic-new-tab v-if="activeTab === 0" />
       <ethereum-new-tab v-if="activeTab === 1" />
-      <favorite-tab v-if="activeTab === 2" />
-      <activity-tab v-if="activeTab === 3" />
+      <activity-tab v-if="activeTab === 2" />
     </div>
   </div>
 </template>
@@ -25,7 +24,6 @@ import AccountBanner from "~/components/lego/account/account-banner";
 import TabSwitcher from "~/components/lego/tab-switcher";
 import MaticNewTab from "~/components/lego/account/matic-new-tab";
 import EthereumNewTab from "~/components/lego/account/ethereum-new-tab";
-import FavoriteTab from "~/components/lego/account/favorite-tab";
 import ActivityTab from "~/components/lego/account/activity-tab";
 
 @Component({
@@ -39,7 +37,6 @@ import ActivityTab from "~/components/lego/account/activity-tab";
     TabSwitcher,
     MaticNewTab,
     EthereumNewTab,
-    FavoriteTab,
     ActivityTab,
   },
   middleware: ["auth"],
@@ -106,8 +103,7 @@ export default class Index extends Vue {
     return [
       { id: 0, title: "Items on Matic", count: this.totalMaticNft },
       { id: 1, title: "Items on Ethereum", count: this.totalMainNft },
-      { id: 2, title: "Favorites", count: this.favCount },
-      { id: 3, title: "Activities" },
+      { id: 2, title: "Activities" },
     ];
   }
   get favCount() {

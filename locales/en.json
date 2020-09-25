@@ -69,7 +69,8 @@
     "priceHightoLow": "Price High to Low"
   },
   "token": {
-    "onsale": "On sale"
+    "onsale": "On sale",
+    "owned": "Owned"
   },
   "submitToMarketplace": "Submit to Marketplace",
   "submittingToMarketplace": "Submitting to Marketplace",

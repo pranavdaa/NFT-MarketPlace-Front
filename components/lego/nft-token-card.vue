@@ -25,14 +25,18 @@
       />
       <span class="checkmark align-self-center"></span>
     </div>
-    <div class="img-wrapper d-flex ps-t-12 justify-content-center">
-      <img
-        :src="token.img_url"
-        class="asset-img align-self-center ps-x-12"
-        @load="onImageLoad"
-      />
-    </div>
-
+    <NuxtLink
+      :to="{name: 'tokens-tokenId', params: { tokenId: token.token_id } }"
+    >
+      <div class="img-wrapper d-flex ps-t-12 justify-content-center">
+        <img
+          :src="token.img_url"
+          class="asset-img align-self-center ps-x-12"
+          :alt="token.name"
+          @load="onImageLoad"
+        />
+      </div>
+    </NuxtLink>
     <div class="more-actions" v-if="!isAllCategories && !order">
       <MoreOptions :options="moreOptions" />
     </div>
