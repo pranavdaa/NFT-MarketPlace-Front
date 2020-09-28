@@ -1,8 +1,13 @@
 <template>
   <div class="col-md-12 d-flex ps-x-0 ms-y-8">
     <div class="d-flex align-self-center bidder-wrapper ps-y-24">
-      <svg-sprite-icon name="profile" class="profile-logo align-self-center"></svg-sprite-icon>
-      <div class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16">
+      <svg-sprite-icon
+        name="profile"
+        class="profile-logo align-self-center"
+      ></svg-sprite-icon>
+      <div
+        class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16"
+      >
         <div class="font-body-small">
           Bid by
           <a
@@ -10,33 +15,43 @@
             href
             @click.prevent
             :title="bid.users.address"
-          >{{shortChecksumAddress}}</a>
+            >{{ shortChecksumAddress }}</a
+          >
         </div>
-        <div class="font-caption text-gray-300">{{remainingTimeinWords}} ago</div>
+        <div class="font-caption text-gray-300">
+          {{ remainingTimeinWords }} ago
+        </div>
       </div>
       <div class="d-flex ml-auto ms-r-16 ps-t-16 ps-t-sm-0">
         <div class="ps-y-12 ps-x-16">
           <span
             class="ps-y-8 ps-x-16 font-body-small font-medium price-pill text-nowrap"
-          >{{bid.price}} {{bid.erc20Token.symbol}}</span>
+            >{{ bid.price }} {{ bid.erc20Token.symbol }}</span
+          >
         </div>
 
         <button
           class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
           v-if="isUsersBid && this.bid.order.status === 0"
           @click="onCancel()"
-        >Cancel</button>
+        >
+          Cancel
+        </button>
 
         <button
           class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
           v-if="isOwnersToken && this.bid.order.status === 0"
           @click="onDeny()"
-        >Deny</button>
+        >
+          Deny
+        </button>
         <button
           v-if="isOwnersToken && this.bid.order.status === 0"
           class="btn btn-light align-self-center ps-x-16"
           @click="onAccept()"
-        >Accept</button>
+        >
+          Accept
+        </button>
       </div>
     </div>
 
@@ -112,8 +127,8 @@ const TEN = BigNumber(10);
     },
     isOwnersToken: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   components: { BidConfirmation },
   computed: {
@@ -137,7 +152,7 @@ export default class BidderRow extends Vue {
       return this.user.id === this.bid.users.id;
     }
 
-    return false
+    return false;
   }
 
   get shortChecksumAddress() {
@@ -205,10 +220,10 @@ export default class BidderRow extends Vue {
     this.showDenyBid = false;
   }
   onCancel() {
-    this.showCancelBid = true
+    this.showCancelBid = true;
   }
   onCancelClose() {
-    this.showCancelBid = false
+    this.showCancelBid = false;
   }
 
   async acceptBid() {
@@ -305,7 +320,9 @@ export default class BidderRow extends Vue {
         ) {
           console.log("Fillable");
 
-          let dataVal = await getAxios().get(`orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=fillOrder`)
+          let dataVal = await getAxios().get(
+            `orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=fillOrder`
+          );
 
           let zrx = {
             salt: generatePseudoRandomSalt(),
@@ -327,7 +344,7 @@ export default class BidderRow extends Vue {
             takerAddress
           );
 
-          if(takerSign) {
+          if (takerSign) {
             await this.handleBidAccept(takerSign);
           }
         }
@@ -347,14 +364,14 @@ export default class BidderRow extends Vue {
     if (this.bid.users.id != this.user.id && takerSign) {
       try {
         let data = {
-          taker_signature: JSON.stringify(takerSign)
+          taker_signature: JSON.stringify(takerSign),
         };
         let response = await getAxios().patch(
           `orders/${this.bid.id}/execute`,
           data
         );
         if (response.status === 200) {
-          this.refreshBids();
+          this.$store.dispatch("category/fetchCategories");
           app.addToast(
             "Accepted successfully",
             "You accepted the bid for your order",
@@ -468,7 +485,9 @@ export default class BidderRow extends Vue {
           chainId: chainId,
         });
 
-        let dataVal = await getAxios().get(`orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=cancelOrder`)
+        let dataVal = await getAxios().get(
+          `orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=cancelOrder`
+        );
 
         let zrx = {
           salt: generatePseudoRandomSalt(),
@@ -490,13 +509,13 @@ export default class BidderRow extends Vue {
           signedOrder.makerAddress
         );
 
-        if(takerSign) {
+        if (takerSign) {
           await this.handleCancelBid(takerSign);
         }
       } else {
         await this.handleCancelBid();
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
     this.isLoading = false;
@@ -506,7 +525,7 @@ export default class BidderRow extends Vue {
     if (this.bid.users.id == this.user.id && takerSign) {
       try {
         let data = {
-          taker_signature: JSON.stringify(takerSign)
+          taker_signature: JSON.stringify(takerSign),
         };
         let response = await getAxios().patch(
           `orders/bid/${this.bid.id}/cancel`,

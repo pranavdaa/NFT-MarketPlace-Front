@@ -1,7 +1,13 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ 'show': show && displayed }"></div>
-    <div class="modal transaction-prog-modal" v-bind:class="{ 'show': show && displayed }">
+    <div
+      class="modal-backdrop"
+      v-bind:class="{ show: show && displayed }"
+    ></div>
+    <div
+      class="modal transaction-prog-modal"
+      v-bind:class="{ show: show && displayed }"
+    >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
           <div class="box-body">
@@ -10,28 +16,34 @@
             </div>
             <div class="container-fluid">
               <div class="row ps-y-32">
-                <div class="w-100 d-flex flex-column ps-x-16 ps-x-sm-32 ps-x-lg-40">
-                  <h3 class="font-heading-medium font-semibold">About {{order.token.name}}</h3>
+                <div
+                  class="w-100 d-flex flex-column ps-x-16 ps-x-sm-32 ps-x-lg-40"
+                >
+                  <h3 class="font-heading-medium font-semibold">
+                    About {{ order.token.name }}
+                  </h3>
                   <p
                     class="font-body-medium"
-                    :class="{'show-less': showMore, 'show-more': !showMore}"
+                    :class="{ 'show-less': showMore, 'show-more': !showMore }"
                     v-if="order.token.description"
                   >
-                    {{order.token.description}}
+                    {{ order.token.description }}
                     <span class="dots">...</span>
-                    <span class="more">{{order.token.description}}</span>
+                    <span class="more">{{ order.token.description }}</span>
                     <a
                       class="font-body-small d-inline-flex ps-t-8 font-medium"
                       href="#more-info"
                       v-if="!showMore"
                       @click.prevent="showMore = true"
-                    >More info</a>
+                      >More info</a
+                    >
                     <a
                       class="font-body-small d-inline-flex ps-t-8 font-medium"
                       href="#more-info"
                       v-if="showMore"
                       @click.prevent="showMore = false"
-                    >Show less</a>
+                      >Show less</a
+                    >
                   </p>
                   <div
                     class="mt-auto w-100 d-flex flex-column fixed-price"
@@ -40,13 +52,19 @@
                     <div
                       class="error-text font-caption ps-y-16"
                       v-if="dirty && !validation['balance']"
-                    >{{errorMessage}}</div>
+                    >
+                      {{ errorMessage }}
+                    </div>
 
-                    <div class="font-body-small text-gray-300 mt-auto ps-y-4">Listed for</div>
+                    <div class="font-body-small text-gray-300 mt-auto ps-y-4">
+                      Listed for
+                    </div>
                     <div
                       class="font-heading-large font-semibold ps-b-20"
                       v-if="erc20Token"
-                    >{{order.price}} {{erc20Token.symbol}}</div>
+                    >
+                      {{ order.price }} {{ erc20Token.symbol }}
+                    </div>
                     <!-- <div
                       class="font-heading-large font-semibold ps-b-20"
                       v-if="erc20Token"
@@ -70,16 +88,24 @@
                     <div
                       class="error-text font-caption ps-y-16"
                       v-if="dirty && !validation['balance']"
-                    >{{errorMessage}}</div>
+                    >
+                      {{ errorMessage }}
+                    </div>
                     <div class="d-flex justify-content-between">
-                      <div class="font-body-small text-gray-300 ps-y-4">Listed for</div>
-                      <div class="font-body-small text-gray-300 ml-auto ps-y-4">Last offer</div>
+                      <div class="font-body-small text-gray-300 ps-y-4">
+                        Listed for
+                      </div>
+                      <div class="font-body-small text-gray-300 ml-auto ps-y-4">
+                        Last offer
+                      </div>
                     </div>
                     <div class="d-flex justify-content-between">
                       <div
                         class="font-heading-large font-semibold ps-b-20"
                         v-if="erc20Token"
-                      >{{order.price}} {{erc20Token.symbol}}</div>
+                      >
+                        {{ order.price }} {{ erc20Token.symbol }}
+                      </div>
                       <!-- <div
                         class="font-heading-large font-semibold ps-b-20"
                         v-if="erc20Token"
@@ -87,7 +113,9 @@
                       <div
                         class="font-heading-large font-semibold ps-b-20 ml-auto"
                         v-if="erc20Token"
-                      >{{order.min_price}} {{erc20Token.symbol}}</div>
+                      >
+                        {{ order.min_price }} {{ erc20Token.symbol }}
+                      </div>
                       <!-- <div
                         class="font-heading-large font-semibold ps-b-20 ml-auto"
                         v-if="erc20Token"
@@ -112,7 +140,9 @@
                         <button
                           class="btn btn-primary btn-block btn-lg"
                           @click="makeOffer()"
-                        >Make an offer</button>
+                        >
+                          Make an offer
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -124,44 +154,74 @@
                   <div
                     class="error-text font-caption ps-y-16"
                     v-if="dirty && !validation['balance']"
-                  >{{errorMessage}}</div>
+                  >
+                    {{ errorMessage }}
+                  </div>
                   <div class="d-flex justify-content-between">
-                    <div class="font-body-small text-gray-300 ps-y-4">Minimum bid</div>
-                    <div class="font-body-small text-gray-300 ml-auto ps-y-4">Highest bid</div>
+                    <div class="font-body-small text-gray-300 ps-y-4">
+                      Minimum bid
+                    </div>
+                    <div class="font-body-small text-gray-300 ml-auto ps-y-4">
+                      Highest bid
+                    </div>
                   </div>
                   <div class="d-flex justify-content-between">
                     <div
                       class="font-heading-large font-semibold ps-b-20"
                       v-if="erc20Token && order.lowest_bid"
-                    >{{order.lowest_bid}} {{erc20Token.symbol}}</div>
+                    >
+                      {{ order.lowest_bid }} {{ erc20Token.symbol }}
+                    </div>
                     <div
                       class="font-heading-large font-semibold ps-b-20"
                       v-if="erc20Token && !order.lowest_bid"
-                    >{{order.price}} {{erc20Token.symbol}}</div>
+                    >
+                      {{ order.price }} {{ erc20Token.symbol }}
+                    </div>
                     <div
                       class="font-heading-large font-semibold ps-b-20 ml-auto"
                       v-if="erc20Token && order.highest_bid"
-                    >{{order.highest_bid}} {{erc20Token.symbol}}</div>
+                    >
+                      {{ order.highest_bid }} {{ erc20Token.symbol }}
+                    </div>
                     <div
                       class="font-heading-large font-semibold ps-b-20 ml-auto"
                       v-if="erc20Token && !order.highest_bid"
-                    >{{order.price}} {{erc20Token.symbol}}</div>
+                    >
+                      {{ order.price }} {{ erc20Token.symbol }}
+                    </div>
                   </div>
                   <div class="d-flex time-wrapper ps-8 justify-content-between">
-                    <div class="d-flex flex-column text-center align-self-center ps-x-8">
-                      <div class="font-heading-small font-semibold">{{timeRemaining.days}}</div>
+                    <div
+                      class="d-flex flex-column text-center align-self-center ps-x-8"
+                    >
+                      <div class="font-heading-small font-semibold">
+                        {{ timeRemaining.days }}
+                      </div>
                       <div class="font-caption">Days</div>
                     </div>
-                    <div class="d-flex flex-column text-center align-self-center ps-x-8">
-                      <div class="font-heading-small font-semibold">{{timeRemaining.hours}}</div>
+                    <div
+                      class="d-flex flex-column text-center align-self-center ps-x-8"
+                    >
+                      <div class="font-heading-small font-semibold">
+                        {{ timeRemaining.hours }}
+                      </div>
                       <div class="font-caption">Hrs</div>
                     </div>
-                    <div class="d-flex flex-column text-center align-self-center ps-x-8">
-                      <div class="font-heading-small font-semibold">{{timeRemaining.mins}}</div>
+                    <div
+                      class="d-flex flex-column text-center align-self-center ps-x-8"
+                    >
+                      <div class="font-heading-small font-semibold">
+                        {{ timeRemaining.mins }}
+                      </div>
                       <div class="font-caption">Mins</div>
                     </div>
-                    <div class="d-flex flex-column text-center align-self-center ps-x-8">
-                      <div class="font-heading-small font-semibold">{{timeRemaining.secs}}</div>
+                    <div
+                      class="d-flex flex-column text-center align-self-center ps-x-8"
+                    >
+                      <div class="font-heading-small font-semibold">
+                        {{ timeRemaining.secs }}
+                      </div>
                       <div class="font-caption">Secs</div>
                     </div>
 
@@ -169,12 +229,17 @@
                       <button
                         class="btn btn-light btn-block ps-x-24 ps-x-sm-40"
                         @click="makeOffer()"
-                      >Bid Now</button>
+                      >
+                        Bid Now
+                      </button>
                     </div>
                   </div>
                   <div
                     class="font-body-small text-gray-500 ps-t-20 text-center"
-                  >The highest bidder will automatically win in {{remainingTimeinWords}}.</div>
+                  >
+                    The highest bidder will automatically win in
+                    {{ remainingTimeinWords }}.
+                  </div>
                 </div>
               </div>
             </div>
@@ -209,7 +274,7 @@ import getAxios from "~/plugins/axios";
 import { parseBalance } from "~/plugins/helpers/token-utils";
 import PlaceBid from "~/components/lego/modals/place-bid";
 
-const { getTypedData } = require("~/plugins/meta-tx")
+const { getTypedData } = require("~/plugins/meta-tx");
 
 // 0X
 let {
@@ -543,8 +608,9 @@ export default class BuyToken extends Vue {
           remainingFillableAmount.isGreaterThan(0) &&
           isValidSignature
         ) {
-
-          let dataVal = await getAxios().get(`orders/exchangedata/encoded?orderId=${this.order.id}&functionName=fillOrder`)
+          let dataVal = await getAxios().get(
+            `orders/exchangedata/encoded?orderId=${this.order.id}&functionName=fillOrder`
+          );
 
           let zrx = {
             salt: generatePseudoRandomSalt(),
@@ -566,7 +632,7 @@ export default class BuyToken extends Vue {
             takerAddress
           );
 
-          if(takerSign) {
+          if (takerSign) {
             await this.handleBuyToken(takerSign);
           }
         } else {
@@ -591,36 +657,41 @@ export default class BuyToken extends Vue {
       .callAsync();
 
     if (!allowance.gt(ZERO)) {
-      let data = await matic.eth.abi.encodeFunctionCall({
-        name: 'approve', 
-        type: 'function', 
-        inputs: [
-          {
-            "name": "spender",
-            "type": "address"
-          },
-          {
-            "name": "amount",
-            "type": "uint256"
-          }
+      let data = await matic.eth.abi.encodeFunctionCall(
+        {
+          name: "approve",
+          type: "function",
+          inputs: [
+            {
+              name: "spender",
+              type: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+        },
+        [
+          contractWrappers.contractAddresses.erc20Proxy,
+          "115792089237316195423570985008687907853269984665640564039457584007913129639935",
         ]
-      }, [contractWrappers.contractAddresses.erc20Proxy, "115792089237316195423570985008687907853269984665640564039457584007913129639935"])
+      );
 
-      let { sig } = await this.executeMetaTx (data)
+      let { sig } = await this.executeMetaTx(data);
 
       let tx = {
-        intent: sig, 
-        fnSig: data, 
-        from: this.account.address, 
-        contractAddress: matic.utils.toChecksumAddress(this.order.erc20tokens.erc20tokensaddresses[0].address)
-      }
+        intent: sig,
+        fnSig: data,
+        from: this.account.address,
+        contractAddress: matic.utils.toChecksumAddress(
+          this.order.erc20tokens.erc20tokensaddresses[0].address
+        ),
+      };
 
       if (tx) {
         try {
-          let response = await getAxios().post(
-            `orders/executeMetaTx`,
-            tx
-          );
+          let response = await getAxios().post(`orders/executeMetaTx`, tx);
           if (response.status === 200) {
             console.log("Approved");
             app.addToast("Approved", "You successfully approved", {
@@ -646,33 +717,43 @@ export default class BuyToken extends Vue {
 
   async executeMetaTx(functionSig) {
     let matic = new Web3(this.networks.matic.rpc);
-    let address = matic.utils.toChecksumAddress(this.account.address)
-    let data = await matic.eth.abi.encodeFunctionCall({
-      name: 'getNonce',
-      type: 'function',
-      inputs: [{
-          "name": "user",
-          "type": "address"
-        }]
-    }, [address])
-    let _nonce = await matic.eth.call ({
-      to: matic.utils.toChecksumAddress(this.order.erc20tokens.erc20tokensaddresses[0].address),
-      data
+    let address = matic.utils.toChecksumAddress(this.account.address);
+    let data = await matic.eth.abi.encodeFunctionCall(
+      {
+        name: "getNonce",
+        type: "function",
+        inputs: [
+          {
+            name: "user",
+            type: "address",
+          },
+        ],
+      },
+      [address]
+    );
+    let _nonce = await matic.eth.call({
+      to: matic.utils.toChecksumAddress(
+        this.order.erc20tokens.erc20tokensaddresses[0].address
+      ),
+      data,
     });
     const dataToSign = getTypedData({
       name: this.order.erc20tokens.name,
-      version: '1',
-      salt: '0x0000000000000000000000000000000000000000000000000000000000013881',
-      verifyingContract: matic.utils.toChecksumAddress(this.order.erc20tokens.erc20tokensaddresses[0].address),
+      version: "1",
+      salt:
+        "0x0000000000000000000000000000000000000000000000000000000000013881",
+      verifyingContract: matic.utils.toChecksumAddress(
+        this.order.erc20tokens.erc20tokensaddresses[0].address
+      ),
       nonce: parseInt(_nonce),
       from: address,
-      functionSignature: functionSig
-    })
-    const msgParams = [address, JSON.stringify(dataToSign)]
-    let sign = await window.ethereum.request ({
-      method: 'eth_signTypedData_v3', 
-      params: msgParams
-    })
+      functionSignature: functionSig,
+    });
+    const msgParams = [address, JSON.stringify(dataToSign)];
+    let sign = await window.ethereum.request({
+      method: "eth_signTypedData_v3",
+      params: msgParams,
+    });
     return {
       sig: sign,
     };
@@ -687,6 +768,7 @@ export default class BuyToken extends Vue {
         `orders/${this.order.id}/buy`,
         data
       );
+      this.$store.dispatch("category/fetchCategories");
       if (response.status === 200) {
         app.addToast(
           "Order bought successfully",
