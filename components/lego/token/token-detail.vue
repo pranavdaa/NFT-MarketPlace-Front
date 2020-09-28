@@ -1,247 +1,264 @@
 <template>
-  <div class="container-fluid ps-y-16" v-if="order.id">
-    <div class="row ps-y-16 ps-x-md-16">
-      <div class="col-md-7 d-flex">
-        <token-short-info
-          class="align-self-center"
-          :order="order"
-          :category="category"
-          v-if="category"
-        />
-      </div>
-      <!-- Remove if-condition when implementing -->
-      <div v-if="false"
-        class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end"
-      >
-        <wishlist-button :wishlisted="isFavorite" :onClick="addToWishlist" />
-        <a class="btn btn-light align-self-center action ms-l-16">
-          <img
-            src="~/static/icons/active/share.svg"
-            alt="favorited"
-            class="icon option-icon active"
-          />
-          <span>Share</span>
-        </a>
-      </div>
-    </div>
-    <div class="row ps-y-16 ps-x-md-16 justify-content-center">
-      <div class="col-md-8">
-        <div
-          class="feature-image d-flex d-lg-flex justify-content-center"
-          v-bind:style="{ background: bg }"
-        >
-          <img
-            class="asset-img align-self-center"
-            :src="order.token.img_url"
-            alt="Kitty"
-            @load="onImageLoad"
+  <div>
+    <div class="container-fluid ps-y-16" v-if="order.id && !isLoadingDetails">
+      <div class="row ps-y-16 ps-x-md-16">
+        <div class="col-md-7 d-flex">
+          <token-short-info
+            class="align-self-center"
+            :order="order"
+            :category="category"
+            v-if="category"
           />
         </div>
-        <div
-          class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
+        <!-- Remove if-condition when implementing -->
+        <div v-if="false"
+          class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end"
         >
-          <h3 class="font-heading-medium font-semibold">
-            About {{ order.token.name }}
-          </h3>
-          <p
-            class="font-body-medium"
-            :class="{ 'show-less': showMore, 'show-more': !showMore }"
-            v-if="order.token.description"
-          >
-            {{ order.token.description }}
-            <span class="dots">...</span>
-            <span class="more">{{ order.token.description }}</span>
-            <a
-              class="font-body-small d-flex ps-t-8 font-medium"
-              href="#more-info"
-              v-if="!showMore"
-              @click.prevent="showMore = true"
-              >More info</a
-            >
-            <a
-              class="font-body-small d-flex ps-t-8 font-medium"
-              href="#more-info"
-              v-if="showMore"
-              @click.prevent="showMore = false"
-              >Show less</a
-            >
-          </p>
-
-          <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">
-            Listed for
-          </div>
-          <div
-            class="font-heading-large font-semibold ps-b-16"
-            v-if="erc20Token"
-          >
-            {{ order.price }} {{ erc20Token.symbol }}
-          </div>
-          <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
-            Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
-          </div>
-          <!-- <div
-            class="font-heading-large font-semibold ps-b-20"
-            v-if="erc20Token"
-          >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
-          <button
-            class="btn btn-primary"
-            v-if="!isOwnersToken && order.status === 0"
-            @click="buyOrder()"
-          >
-            Buy Now
-          </button>
-          <button
-            class="btn btn-light"
-            v-if="isOwnersToken && order.status === 0"
-            @click="onCancelOrder()"
-          >
-            Cancel
-          </button>
-        </div>
-        <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
-          <h3 class="font-heading-medium font-semibold category">
-            About {{ category.name }}
-            <a
-              class="ps-l-12"
-              :href="category.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Visit Website</a
-            >
-
-            <span
-              class="float-right cursor-pointer right-arrow"
-              :class="{ 'down-icon': showCategoryInfo }"
-              @click="showCategoryInfo = !showCategoryInfo"
-              v-if="category.description"
-            >
-              <svg-sprite-icon name="right-arrow" />
-            </span>
-          </h3>
-          <p
-            class="font-body-medium ps-t-20"
-            v-if="showCategoryInfo && category.description"
-          >
-            {{ category.description }}
-          </p>
-        </div>
-        <div
-          class="d-flex flex-column ps-y-16 ps-y-md-32"
-          v-if="order.token.properties"
-        >
-          <h3 class="font-heading-medium font-semibold category">
-            Properties
-            <span
-              class="float-right cursor-pointer right-arrow"
-              :class="{ 'down-icon': showProperties }"
-              @click="showProperties = !showProperties"
-            >
-              <svg-sprite-icon name="right-arrow" />
-            </span>
-          </h3>
-          <p class="font-body-medium ps-t-20" v-if="showProperties">
-            {{ order.token.properties }}
-          </p>
-        </div>
-        <div
-          class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
-          v-if="
-            order.type !== app.orderTypes.FIXED &&
-            bidsFullList &&
-            bidsFullList.length
-          "
-        >
-          <h3 class="font-heading-medium font-semibold category">
-            Bidding history
-          </h3>
-          <p class="font-body-medium ps-t-20">
-            <bidder-row
-              v-for="bid in bidsFullList"
-              :key="bid.id"
-              :bid="bid"
-              :refreshBids="refreshBids"
-              :isOwnersToken="isOwnersToken"
+          <wishlist-button :wishlisted="isFavorite" :onClick="addToWishlist" />
+          <a class="btn btn-light align-self-center action ms-l-16">
+            <img
+              src="~/static/icons/active/share.svg"
+              alt="favorited"
+              class="icon option-icon active"
             />
-          </p>
+            <span>Share</span>
+          </a>
         </div>
       </div>
-      <div class="col-md-4 d-none d-lg-flex">
-        <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
-          <h3 class="font-heading-medium font-semibold">
-            About {{ order.token.name }}
-          </h3>
-          <p
-            class="font-body-medium"
-            :class="{ 'show-less': showMore, 'show-more': !showMore }"
-            v-if="order.token.description"
+      <div class="row ps-y-16 ps-x-md-16 justify-content-center">
+        <div class="col-md-8">
+          <div
+            class="feature-image d-flex d-lg-flex justify-content-center"
+            v-bind:style="{ background: bg }"
           >
-            {{ order.token.description }}
-            <span class="dots">...</span>
-            <span class="more">{{ order.token.description }}</span>
-            <a
-              class="font-body-small d-flex ps-t-8 font-medium"
-              href="#more-info"
-              v-if="!showMore"
-              @click.prevent="showMore = true"
-              >More info</a
-            >
-            <a
-              class="font-body-small d-flex ps-t-8 font-medium"
-              href="#more-info"
-              v-if="showMore"
-              @click.prevent="showMore = false"
-              >Show less</a
-            >
-          </p>
-
-          <div class="font-body-small text-gray-300 mt-auto ps-y-4">
-            Listed for
+            <img
+              class="asset-img align-self-center"
+              :src="order.token.img_url"
+              alt="Kitty"
+              @load="onImageLoad"
+            />
           </div>
           <div
-            class="font-heading-large font-semibold ps-b-20"
-            v-if="erc20Token"
+            class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
           >
-            {{ order.price }} {{ erc20Token.symbol }}
+            <h3 class="font-heading-medium font-semibold">
+              About {{ order.token.name }}
+            </h3>
+            <p
+              class="font-body-medium"
+              :class="{ 'show-less': showMore, 'show-more': !showMore }"
+              v-if="order.token.description"
+            >
+              {{ order.token.description }}
+              <span class="dots">...</span>
+              <span class="more">{{ order.token.description }}</span>
+              <a
+                class="font-body-small d-flex ps-t-8 font-medium"
+                href="#more-info"
+                v-if="!showMore"
+                @click.prevent="showMore = true"
+                >More info</a
+              >
+              <a
+                class="font-body-small d-flex ps-t-8 font-medium"
+                href="#more-info"
+                v-if="showMore"
+                @click.prevent="showMore = false"
+                >Show less</a
+              >
+            </p>
+
+            <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">
+              Listed for
+            </div>
+            <div
+              class="font-heading-large font-semibold ps-b-16"
+              v-if="erc20Token"
+            >
+              {{ order.price }} {{ erc20Token.symbol }}
+            </div>
+            <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
+              Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+            </div>
+            <!-- <div
+              class="font-heading-large font-semibold ps-b-20"
+              v-if="erc20Token"
+            >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
+            <button
+              class="btn btn-primary"
+              v-if="!isOwnersToken && order.status === 0"
+              @click="buyOrder()"
+            >
+              Buy Now
+            </button>
+            <button
+              class="btn btn-light"
+              v-if="isOwnersToken && order.status === 0"
+              @click="onCancelOrder()"
+            >
+              Cancel
+            </button>
           </div>
-          <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
-            Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+          <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
+            <h3 class="font-heading-medium font-semibold category">
+              About {{ category.name }}
+              <a
+                class="ps-l-12"
+                :href="category.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Visit Website</a
+              >
+
+              <span
+                class="float-right cursor-pointer right-arrow"
+                :class="{ 'down-icon': showCategoryInfo }"
+                @click="showCategoryInfo = !showCategoryInfo"
+                v-if="category.description"
+              >
+                <svg-sprite-icon name="right-arrow" />
+              </span>
+            </h3>
+            <p
+              class="font-body-medium ps-t-20"
+              v-if="showCategoryInfo && category.description"
+            >
+              {{ category.description }}
+            </p>
           </div>
-          <!-- <div
-            class="font-heading-large font-semibold ps-b-20"
-            v-if="erc20Token"
-          >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
-          <button
-            class="btn btn-primary"
-            v-if="!isOwnersToken && order.status === 0"
-            @click="buyOrder()"
+          <div
+            class="d-flex flex-column ps-y-16 ps-y-md-32"
+            v-if="order.token.properties"
           >
-            Buy Now
-          </button>
-          <button
-            class="btn btn-light"
-            v-if="isOwnersToken && order.status === 0"
-            @click="onCancelOrder()"
+            <h3 class="font-heading-medium font-semibold category">
+              Properties
+              <span
+                class="float-right cursor-pointer right-arrow"
+                :class="{ 'down-icon': showProperties }"
+                @click="showProperties = !showProperties"
+              >
+                <svg-sprite-icon name="right-arrow" />
+              </span>
+            </h3>
+            <p class="font-body-medium ps-t-20" v-if="showProperties">
+              {{ order.token.properties }}
+            </p>
+          </div>
+          <div
+            class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
+            v-if="
+              order.type !== app.orderTypes.FIXED &&
+              bidsFullList &&
+              bidsFullList.length
+            "
           >
-            Cancel
-          </button>
+            <h3 class="font-heading-medium font-semibold category">
+              Bidding history
+            </h3>
+            <p class="font-body-medium ps-t-20">
+              <bidder-row
+                v-for="bid in bidsFullList"
+                :key="bid.id"
+                :bid="bid"
+                :refreshBids="refreshBids"
+                :isOwnersToken="isOwnersToken"
+              />
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 d-none d-lg-flex">
+          <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
+            <h3 class="font-heading-medium font-semibold">
+              About {{ order.token.name }}
+            </h3>
+            <p
+              class="font-body-medium"
+              :class="{ 'show-less': showMore, 'show-more': !showMore }"
+              v-if="order.token.description"
+            >
+              {{ order.token.description }}
+              <span class="dots">...</span>
+              <span class="more">{{ order.token.description }}</span>
+              <a
+                class="font-body-small d-flex ps-t-8 font-medium"
+                href="#more-info"
+                v-if="!showMore"
+                @click.prevent="showMore = true"
+                >More info</a
+              >
+              <a
+                class="font-body-small d-flex ps-t-8 font-medium"
+                href="#more-info"
+                v-if="showMore"
+                @click.prevent="showMore = false"
+                >Show less</a
+              >
+            </p>
+
+            <div class="font-body-small text-gray-300 mt-auto ps-y-4">
+              Listed for
+            </div>
+            <div
+              class="font-heading-large font-semibold ps-b-20"
+              v-if="erc20Token"
+            >
+              {{ order.price }} {{ erc20Token.symbol }}
+            </div>
+            <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
+              Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+            </div>
+            <!-- <div
+              class="font-heading-large font-semibold ps-b-20"
+              v-if="erc20Token"
+            >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
+            <button
+              class="btn btn-primary"
+              v-if="!isOwnersToken && order.status === 0"
+              @click="buyOrder()"
+            >
+              Buy Now
+            </button>
+            <button
+              class="btn btn-light"
+              v-if="isOwnersToken && order.status === 0"
+              @click="onCancelOrder()"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
+      <buy-token
+        :show="showBuyToken"
+        :order="order"
+        :refreshBids="refreshBids"
+        :close="onBuyTokenClose"
+        v-if="showBuyToken && order"
+      />
+      <cancel-confirm
+        :show="showCancelConfirm"
+        :order="order"
+        :isLoading="isLoading"
+        :accept="cancelOrder"
+        :close="onCancelOrderClose"
+        v-if="showCancelConfirm"
+      />
     </div>
-    <buy-token
-      :show="showBuyToken"
-      :order="order"
-      :refreshBids="refreshBids"
-      :close="onBuyTokenClose"
-      v-if="showBuyToken && order"
-    />
-    <cancel-confirm
-      :show="showCancelConfirm"
-      :order="order"
-      :isLoading="isLoading"
-      :accept="cancelOrder"
-      :close="onCancelOrderClose"
-      v-if="showCancelConfirm"
-    />
+
+    <div
+      class="row ps-x-16 ps-y-120 d-flex justify-content-center text-center"
+    >
+      <button-loader
+        class="mx-auto"
+        :loading="isLoadingDetails"
+        :loadingText="$t('loading')"
+        :text="$t('loadMore')"
+        block
+        lg
+        color="light"
+        v-if="isLoadingDetails"
+      ></button-loader>
+    </div>
   </div>
 </template>
 

@@ -26,7 +26,7 @@
       <span class="checkmark align-self-center"></span>
     </div>
     <NuxtLink
-      :to="{name: 'tokens-tokenId', params: { tokenId: token.token_id } }"
+      :to="{name: 'token-tokenId', params: { tokenId: token.token_id } }"
     >
       <div class="img-wrapper d-flex ps-t-12 justify-content-center">
         <img
