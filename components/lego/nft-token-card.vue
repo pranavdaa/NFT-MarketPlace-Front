@@ -26,7 +26,7 @@
       <span class="checkmark align-self-center"></span>
     </div>
     <NuxtLink
-      :to="{name: 'tokens-tokenId', params: { tokenId: token.token_id } }"
+      :to="{ name: 'tokens-tokenId', params: { tokenId: token.token_id } }"
     >
       <div class="img-wrapper d-flex ps-t-12 justify-content-center">
         <img
@@ -303,7 +303,7 @@ a {
 
 .nft-card {
   width: 240px;
-  min-height: 352px;
+  min-height: 378px;
   margin: 0.625rem;
   position: relative;
 

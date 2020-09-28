@@ -60,8 +60,11 @@
       </div>
     </div>
     <withdraw-confirmation-modal
+      v-if="showWithdrawConfirmation && withdrawTransaction"
       :show="showWithdrawConfirmation"
+      :transaction="withdrawTransaction"
       :isBurning="isLoading"
+      :burnHash="burnTransactionHash"
       :selectedTokens="selectedTokens"
       :category="category || lastCategory"
       :cancel="onCloseConfirmWithdraw"
@@ -132,6 +135,8 @@ export default class Withdraw extends Vue {
   selectingTokens = false;
   selectedTokens = [];
   showWithdrawConfirmation = false;
+  burnTransactionHash = null;
+  withdrawTransaction = null;
   lastCategory = {};
 
   async mounted() {
@@ -172,7 +177,7 @@ export default class Withdraw extends Vue {
   getMaticPOS() {
     const maticProvider = getWalletProvider({
       networks: this.networks,
-      primaryProvider: "child",
+      primaryProvider: "matic",
     });
     const parentProvider = getWalletProvider({
       networks: this.networks,
@@ -206,32 +211,49 @@ export default class Withdraw extends Vue {
 
     try {
       this.isLoading = true;
+      this.error = null;
       this.onShowWithdrawConfirmation();
 
       const maticPoS = this.getMaticPOS();
       const ERC721 = this.selectedTokens[0].contract;
       const token_ids = this.selectedTokenIds;
 
+      this.withdrawTransaction = {};
+      this.withdrawTransaction["token_array"] = token_ids;
+      this.withdrawTransaction["type"] = "WITHDRAW";
+      this.withdrawTransaction["category_id"] = this.category.id;
+
       let txHash = await maticPoS.burnBatchERC721(ERC721, token_ids, {
         from: this.account.address,
         onTransactionHash: (txHash) => {
           this.burnTransactionHash = txHash;
+          this.withdrawTransaction["txhash"] = txHash;
         },
       });
       if (txHash) {
-        console.log("Burn txhash", txHash);
         await this.handleBurnTransaction(txHash);
         this.isLoading = false;
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       this.error = error.message;
       this.isLoading = false;
-      this.showDepositConfirmation = false;
+      this.showWithdrawConfirmation = false;
       this.hidden = false;
     }
   }
-  handleBurnTransaction(txHash) {}
+  async handleBurnTransaction(txHash) {
+    console.log("Burn txhash", txHash);
+    this.withdrawTransaction["block_number"] = txHash.blockNumber.toString();
+    let response = await getAxios().post(
+      "assetmigrate",
+      this.withdrawTransaction
+    );
+    this.refreshBalance();
+    if (response.status === 200) {
+      this.withdrawTransaction = response.data.data;
+    }
+  }
 
   onCloseConfirmWithdraw() {
     this.showWithdrawConfirmation = false;
@@ -239,6 +261,7 @@ export default class Withdraw extends Vue {
   }
   onShowWithdrawConfirmation() {
     this.showWithdrawConfirmation = true;
+    this.hidden = true;
   }
 }
 </script>
