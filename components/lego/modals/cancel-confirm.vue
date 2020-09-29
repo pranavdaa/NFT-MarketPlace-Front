@@ -108,7 +108,7 @@ const colorThief = new ColorThief();
   components: {},
 })
 export default class CancelConfirm extends Vue {
-  bg = "#000000";
+  bg = "#f3f4f7";
 
   mounted() {
     console.log("mounted");
@@ -127,7 +127,7 @@ export default class CancelConfirm extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#ffffff";
+      } else this.bg = "#f3f4f7";
     } catch (error) {}
   }
 }
