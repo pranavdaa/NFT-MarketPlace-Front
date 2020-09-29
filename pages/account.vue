@@ -73,25 +73,29 @@ export default class Index extends Vue {
       let mainNftResponse = await getAxios().get(
         `tokens/balance?userId=${this.user.id}&chainId=${this.mainChainId}`
       );
-
-      let maticNftResponse = await getAxios().get(
-        `tokens/balance?userId=${this.user.id}&chainId=${this.maticChainId}`
-      );
-
-      let activityResponse = await getAxios().get(
-        `users/notification/${this.user.id}`
-      );
-
       if (mainNftResponse.status === 200 && mainNftResponse.data.data) {
         this.$store.commit("account/totalMainNft", mainNftResponse.data.count);
       }
-
+    } catch (error) {
+      // console.log(error);
+    }
+    try {
+      let maticNftResponse = await getAxios().get(
+        `tokens/balance?userId=${this.user.id}&chainId=${this.maticChainId}`
+      );
       if (maticNftResponse.status === 200 && maticNftResponse.data.data) {
         this.$store.commit(
           "account/totalMaticNft",
           maticNftResponse.data.count
         );
       }
+    } catch (error) {
+      // console.log(error);
+    }
+    try {
+      let activityResponse = await getAxios().get(
+        `users/notification/${this.user.id}`
+      );
 
       if (activityResponse.status === 200 && activityResponse.data.data) {
         this.$store.commit(
@@ -100,7 +104,7 @@ export default class Index extends Vue {
         );
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 
