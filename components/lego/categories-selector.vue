@@ -127,14 +127,22 @@ export default class CategoriesSidebar extends Vue {
 
   get allCount() {
     if (this.SHOW_COUNT.MATIC == this.countFor) {
-      return this.categories.reduce(
-        (total, category) => total + parseInt(category.maticCount),
-        0
+      return (
+        this.categories.reduce((total, category) => {
+          if (category.maticCount) {
+            total = total + parseInt(category.maticCount);
+          }
+          return total;
+        }, 0) || 0
       );
     } else if (this.SHOW_COUNT.MAIN == this.countFor) {
-      return this.categories.reduce(
-        (total, category) => total + parseInt(category.mainCount),
-        0
+      return (
+        this.categories.reduce((total, category) => {
+          if (category.mainCount) {
+            total = total + parseInt(category.mainCount);
+          }
+          return total;
+        }, 0) || 0
       );
     } else {
       return this.totalOrderCount;

@@ -19,7 +19,9 @@
             <span v-if="!isLoading || allCategory.count || !isTab">{{
               allCount
             }}</span>
-            <span v-if="isLoading && !allCategory.count && isTab">0</span>
+            <span v-if="isLoading && !allCategory.count && isTab">{{
+              allCount
+            }}</span>
           </div>
         </div>
         <div
@@ -121,10 +123,12 @@ export default class CategoriesSelector extends Vue {
       this.isTab
     ) {
       return (
-        this.categories.reduce(
-          (total, category) => total + parseInt(category.maticCount),
-          0
-        ) || 0
+        this.categories.reduce((total, category) => {
+          if (category.maticCount) {
+            total = total + parseInt(category.maticCount);
+          }
+          return total;
+        }, 0) || 0
       );
     } else if (
       this.SHOW_COUNT.MAIN == this.countFor &&
@@ -132,12 +136,15 @@ export default class CategoriesSelector extends Vue {
       this.isTab
     ) {
       return (
-        this.categories.reduce(
-          (total, category) => total + parseInt(category.mainCount),
-          0
-        ) || 0
+        this.categories.reduce((total, category) => {
+          if (category.mainCount) {
+            total = total + parseInt(category.mainCount);
+          }
+          return total;
+        }, 0) || 0
       );
     } else if (!this.isTab) {
+      console.log("all");
       return this.allCategory.count || 0;
     }
     return 0;
