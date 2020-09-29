@@ -94,6 +94,7 @@
     }
   },
   "viewOnEtherscan": "View on etherscan",
+  "viewOnMaticscan": "View on Matic Explorer",
   "nftSelected": "Collectibles selected",
   "max": "Max",
   "deposit": {

@@ -476,7 +476,9 @@ export default class TokenDetail extends Vue {
           chainId: chainId,
         });
 
-        let dataVal = await getAxios().get(`orders/exchangedata/encoded?orderId=${this.order.id}&functionName=cancelOrder`)
+        let dataVal = await getAxios().get(
+          `orders/exchangedata/encoded?orderId=${this.order.id}&functionName=cancelOrder`
+        );
 
         let zrx = {
           salt: generatePseudoRandomSalt(),
@@ -498,7 +500,7 @@ export default class TokenDetail extends Vue {
           signedOrder.makerAddress
         );
 
-        if(takerSign) {
+        if (takerSign) {
           await this.handleCancelOrder(takerSign);
         }
       } else {
@@ -514,7 +516,7 @@ export default class TokenDetail extends Vue {
     let data = {};
     if (takerSign) {
       data = {
-        taker_signature: JSON.stringify(takerSign)
+        taker_signature: JSON.stringify(takerSign),
       };
     }
     try {

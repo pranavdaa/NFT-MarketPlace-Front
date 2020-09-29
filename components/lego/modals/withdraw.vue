@@ -60,8 +60,11 @@
       </div>
     </div>
     <withdraw-confirmation-modal
+      v-if="showWithdrawConfirmation && withdrawTransaction"
       :show="showWithdrawConfirmation"
+      :transaction="withdrawTransaction"
       :isBurning="isLoading"
+      :burnHash="burnTransactionHash"
       :selectedTokens="selectedTokens"
       :category="category || lastCategory"
       :cancel="onCloseConfirmWithdraw"
@@ -77,10 +80,12 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import app from "~/plugins/app";
+import Web3 from "web3";
 
 import getAxios from "~/plugins/axios";
 import { getWalletProvider } from "~/plugins/helpers/providers";
 const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
+const { getTypedData } = require("~/plugins/meta-tx");
 
 import WithdrawConfirmationModal from "~/components/lego/modals/withdraw-confirmation-modal";
 import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
@@ -132,6 +137,8 @@ export default class Withdraw extends Vue {
   selectingTokens = false;
   selectedTokens = [];
   showWithdrawConfirmation = false;
+  burnTransactionHash = null;
+  withdrawTransaction = null;
   lastCategory = {};
 
   async mounted() {
@@ -172,7 +179,7 @@ export default class Withdraw extends Vue {
   getMaticPOS() {
     const maticProvider = getWalletProvider({
       networks: this.networks,
-      primaryProvider: "child",
+      primaryProvider: "matic",
     });
     const parentProvider = getWalletProvider({
       networks: this.networks,
@@ -199,6 +206,119 @@ export default class Withdraw extends Vue {
   onSelectionChange(tokens) {
     this.selectedTokens = tokens;
   }
+
+  async prepareMetaTx(network, ERC721Address, name, tokenIds, address) {
+    let web3 = new Web3(network.rpc);
+    let encodedFunction = await web3.eth.abi.encodeFunctionCall(
+      {
+        name: "withdrawBatch",
+        type: "function",
+        inputs: [
+          {
+            name: "tokenIds",
+            type: "uint256[]",
+          },
+        ],
+      },
+      [tokenIds]
+    );
+
+    let { sig } = await this.requestSignature(
+      network,
+      ERC721Address,
+      name,
+      address,
+      encodedFunction
+    );
+
+    if (!sig) return false;
+
+    return {
+      intent: sig,
+      fnSig: encodedFunction,
+      from: address,
+      contractAddress: ERC721Address,
+    };
+  }
+
+  async requestSignature(network, ERC721Address, name, address, functionSig) {
+    try {
+      const child_provider = new Web3.providers.HttpProvider(network.rpc);
+      const mumbai = new Web3(child_provider);
+
+      let data = await mumbai.eth.abi.encodeFunctionCall(
+        {
+          name: "getNonce",
+          type: "function",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+            },
+          ],
+        },
+        [address]
+      );
+      let _nonce = await mumbai.eth.call({
+        to: ERC721Address,
+        data,
+      });
+      const dataToSign = getTypedData({
+        name: name,
+        version: "1",
+        salt:
+          "0x0000000000000000000000000000000000000000000000000000000000013881",
+        verifyingContract: ERC721Address,
+        nonce: parseInt(_nonce),
+        from: address,
+        functionSignature: functionSig,
+      });
+      const msgParams = [address, JSON.stringify(dataToSign)];
+      let sign = await window.ethereum.request({
+        method: "eth_signTypedData_v3",
+        params: msgParams,
+      });
+      return {
+        sig: sign,
+      };
+    } catch (error) {
+      console.log(error);
+    }
+    return { sig: null };
+  }
+
+  async executeMetaTx(network, ERC721Address, name, tokenIds, address) {
+    let tx = await this.prepareMetaTx(
+      network,
+      ERC721Address,
+      name,
+      tokenIds,
+      address
+    );
+    console.log({ tx });
+    if (tx) {
+      try {
+        let response = await getAxios().post(`orders/executeMetaTx`, tx);
+        console.log({ response });
+        if (response.status === 200) {
+          console.log(response);
+          // To send transction receipt
+          return response.data.data;
+        }
+      } catch (error) {
+        console.log(error);
+        app.addToast(
+          "Failed to init withdraw",
+          "You need to sign the transaction to start withdraw",
+          {
+            type: "failure",
+          }
+        );
+        throw error;
+      }
+    }
+  }
+
   async initWithdraw() {
     if (this.isLoading || this.selectedTokens.length <= 0) {
       return;
@@ -206,32 +326,61 @@ export default class Withdraw extends Vue {
 
     try {
       this.isLoading = true;
+      this.error = null;
       this.onShowWithdrawConfirmation();
 
-      const maticPoS = this.getMaticPOS();
-      const ERC721 = this.selectedTokens[0].contract;
+      const network = this.networks.matic;
+      const ERC721 = Web3.utils.toChecksumAddress(
+        this.selectedTokens[0].contract
+      );
+      const name = this.category.name;
+      const address = Web3.utils.toChecksumAddress(this.account.address);
       const token_ids = this.selectedTokenIds;
 
-      let txHash = await maticPoS.burnBatchERC721(ERC721, token_ids, {
-        from: this.account.address,
-        onTransactionHash: (txHash) => {
-          this.burnTransactionHash = txHash;
-        },
-      });
+      this.withdrawTransaction = {};
+      this.withdrawTransaction["token_array"] = token_ids;
+      this.withdrawTransaction["type"] = "WITHDRAW";
+      this.withdrawTransaction["category_id"] = this.category.id;
+
+      // Network agnostic calls
+      let txHash = await this.executeMetaTx(
+        network,
+        ERC721,
+        name,
+        token_ids,
+        address
+      );
+
+      // TODO make sure this txHash is the transaction receipt if not then
+      // fetch from the Web3 call need blockNumber and txHash
+
       if (txHash) {
-        console.log("Burn txhash", txHash);
+        this.burnTransactionHash = txHash.transactionHash;
+        this.withdrawTransaction["txhash"] = txHash.transactionHash;
+
         await this.handleBurnTransaction(txHash);
         this.isLoading = false;
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       this.error = error.message;
       this.isLoading = false;
-      this.showDepositConfirmation = false;
+      this.showWithdrawConfirmation = false;
       this.hidden = false;
     }
   }
-  handleBurnTransaction(txHash) {}
+  async handleBurnTransaction(txHash) {
+    console.log("Burn txhash", txHash);
+    this.withdrawTransaction["block_number"] = txHash.blockNumber.toString();
+    let response = await getAxios().post(
+      "assetmigrate",
+      this.withdrawTransaction
+    );
+    this.refreshBalance();
+    if (response.status === 200) {
+      this.withdrawTransaction = response.data.data;
+    }
+  }
 
   onCloseConfirmWithdraw() {
     this.showWithdrawConfirmation = false;
@@ -239,6 +388,7 @@ export default class Withdraw extends Vue {
   }
   onShowWithdrawConfirmation() {
     this.showWithdrawConfirmation = true;
+    this.hidden = true;
   }
 }
 </script>

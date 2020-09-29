@@ -1,12 +1,17 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
-    <div class="modal add-token-modal-wrapper" v-bind:class="{ 'show': show }">
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box accept-box">
           <div
             class="box-body"
-            v-bind:style="{background: 'linear-gradient( 180deg,'+bg+' 0%, rgba(236, 235, 223, 0) 80%)'}"
+            v-bind:style="{
+              background:
+                'linear-gradient( 180deg,' +
+                bg +
+                ' 0%, rgba(236, 235, 223, 0) 80%)',
+            }"
           >
             <div class="close-wrapper" @click="close()">
               <svg-sprite-icon name="close-modal" class="close" />
@@ -14,24 +19,28 @@
             <div class="container-fluid text-center">
               <div class="row">
                 <div class="col-md-12 ps-y-32">
-                  <img
+                  <!-- Need an nft image -->
+                  <!-- <img
                     class="asset-img mx-auto"
                     src="~/static/img/dummy-kitty.png"
                     alt="kitty"
                     @load="onImageLoad"
-                  />
+                  /> -->
                 </div>
                 <div class="col-md-12">
-                  <div class="font-heading-large title font-semibold">{{bid.order.token.name}}</div>
-                  <div
-                    class="font-body-medium last-offer ps-t-4"
-                  >Highest offer is {{bid.order.highest_bid}} {{bid.erc20Token.symbol}}</div>
+                  <div class="font-heading-large title font-semibold">
+                    {{ bid.order.token.name }}
+                  </div>
+                  <div class="font-body-medium last-offer ps-t-4">
+                    Highest offer is {{ bid.order.highest_bid }}
+                    {{ bid.erc20Token.symbol }}
+                  </div>
                 </div>
                 <div class="col-md-12 ps-y-32">
                   <div class="font-body-small short-descr">Offer received</div>
-                  <div
-                    class="amount font-heading-large font-semibold ps-t-4"
-                  >{{bid.price}} {{bid.erc20Token.symbol}}</div>
+                  <div class="amount font-heading-large font-semibold ps-t-4">
+                    {{ bid.price }} {{ bid.erc20Token.symbol }}
+                  </div>
                 </div>
 
                 <div class="col-md-12 ps-t-8 ps-b-40 ps-x-40">
@@ -97,7 +106,7 @@ const colorThief = new ColorThief();
   components: {},
 })
 export default class BidConfirmationModal extends Vue {
-  bg = "#000000";
+  bg = "#f3f4f7";
 
   mounted() {}
 
@@ -112,7 +121,7 @@ export default class BidConfirmationModal extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#ffffff";
+      } else this.bg = "#f3f4f7";
     } catch (error) {}
   }
 }

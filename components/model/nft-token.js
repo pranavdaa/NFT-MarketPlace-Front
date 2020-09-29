@@ -12,7 +12,7 @@ export default class NFTToken extends Model {
     if (this.image) {
       return this.image
     }
-    return "/_nuxt/static/img/dummy-kitty.png";
+    return "";
   }
 
   get category() {

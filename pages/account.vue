@@ -1,7 +1,12 @@
 <template>
   <div class="container-fluid">
     <account-banner />
-    <tab-switcher class="sticky-top" :tabs="tabs" :activeTab="activeTab" :onChangeTab="changeTab" />
+    <tab-switcher
+      class="sticky-top"
+      :tabs="tabs"
+      :activeTab="activeTab"
+      :onChangeTab="changeTab"
+    />
     <div class="row">
       <matic-new-tab v-if="activeTab === 0" />
       <ethereum-new-tab v-if="activeTab === 1" />
@@ -46,6 +51,7 @@ import ActivityTab from "~/components/lego/account/activity-tab";
       "favouriteOrders",
       "totalMaticNft",
       "totalMainNft",
+      "totalUnreadActivity",
     ]),
     ...mapGetters("network", ["networks"]),
     ...mapGetters("auth", ["user"]),
@@ -72,6 +78,10 @@ export default class Index extends Vue {
         `tokens/balance?userId=${this.user.id}&chainId=${this.maticChainId}`
       );
 
+      let activityResponse = await getAxios().get(
+        `users/notification/${this.user.id}`
+      );
+
       if (mainNftResponse.status === 200 && mainNftResponse.data.data) {
         this.$store.commit("account/totalMainNft", mainNftResponse.data.count);
       }
@@ -80,6 +90,13 @@ export default class Index extends Vue {
         this.$store.commit(
           "account/totalMaticNft",
           maticNftResponse.data.count
+        );
+      }
+
+      if (activityResponse.status === 200 && activityResponse.data.data) {
+        this.$store.commit(
+          "account/totalUnreadActivity",
+          activityResponse.data.data.unread_count
         );
       }
     } catch (error) {
@@ -97,13 +114,14 @@ export default class Index extends Vue {
 
   changeTab(num) {
     this.activeTab = num;
+    this.fetchTotalTokens();
   }
   // Get
   get tabs() {
     return [
       { id: 0, title: "Items on Matic", count: this.totalMaticNft },
       { id: 1, title: "Items on Ethereum", count: this.totalMainNft },
-      { id: 2, title: "Activities" },
+      { id: 2, title: "Activities", count: this.totalUnreadActivity },
     ];
   }
   get favCount() {

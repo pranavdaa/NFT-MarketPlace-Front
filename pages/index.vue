@@ -156,26 +156,21 @@ export default class Index extends Vue {
   sortItems = [
     {
       id: 0,
-      name: "Popular",
-      filter: "-views",
-    },
-    {
-      id: 1,
       name: "Newest",
       filter: "-created",
     },
     {
-      id: 2,
+      id: 1,
       name: "Oldest",
       filter: "+created",
     },
     {
-      id: 3,
+      id: 2,
       name: "Price low to high",
       filter: "+price",
     },
     {
-      id: 4,
+      id: 3,
       name: "Price high to low",
       filter: "-price",
     },
@@ -189,6 +184,7 @@ export default class Index extends Vue {
   showModal = false;
 
   mounted() {
+    this.updateCategories();
     this.fetchOrders();
   }
 
@@ -224,7 +220,7 @@ export default class Index extends Vue {
   get ifSort() {
     return this.selectedFilters.selectedSort
       ? `&sort=${this.selectedFilters.selectedSort}`
-      : "";
+      : `&sort=${this.sortItems[0].filter}`;
   }
 
   // async
@@ -272,6 +268,10 @@ export default class Index extends Vue {
       console.log(error);
     }
     this.isLoadingTokens = false;
+  }
+
+  updateCategories() {
+    this.$store.dispatch("category/fetchCategories");
   }
 
   async loadMore() {

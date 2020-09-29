@@ -16,7 +16,7 @@ export default class Order extends Model {
   }
 
   get token() {
-    let img = "/_nuxt/static/img/dummy-kitty.png"
+    let img = ""
     let name = `Token ${this.tokens_id}`
     let description = ''
     if (this.image) {

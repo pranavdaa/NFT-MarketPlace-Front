@@ -12,6 +12,7 @@ export default {
       favouriteOrders: null,
       totalMaticNft: 0,
       totalMainNft: 0,
+      totalUnreadActivity: 0,
     }
   },
 
@@ -30,6 +31,9 @@ export default {
     },
     totalMainNft(state) {
       return state.totalMainNft
+    },
+    totalUnreadActivity(state) {
+      return state.totalUnreadActivity
     }
   },
 
@@ -48,6 +52,9 @@ export default {
     },
     totalMainNft(state, num) {
       state.totalMainNft = num
+    },
+    totalUnreadActivity(state, num) {
+      state.totalUnreadActivity = num
     }
   },
 

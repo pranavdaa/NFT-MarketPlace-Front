@@ -155,6 +155,10 @@
             color="light"
           ></button-loader>
         </div>
+        <pending-withdrawals
+          :tokens="displayedTokens"
+          :refreshBalance="refreshBalance"
+        />
       </div>
     </div>
   </div>
@@ -176,7 +180,7 @@ import SlideSwitch from "~/components/lego/slide-switch";
 import NoItem from "~/components/lego/no-item";
 import CategorySidebar from "~/components/lego/account/category-sidebar";
 import NFTTokenCard from "~/components/lego/nft-token-card";
-
+import PendingWithdrawals from "~/components/lego/account/pending-withdrawals";
 import SellToken from "~/components/lego/modals/sell-token";
 import Withdraw from "~/components/lego/modals/withdraw";
 
@@ -193,6 +197,7 @@ import Withdraw from "~/components/lego/modals/withdraw";
     SellToken,
     CategorySidebar,
     Withdraw,
+    PendingWithdrawals,
   },
   computed: {
     ...mapGetters("page", ["selectedFilters", "selectedCategory"]),
