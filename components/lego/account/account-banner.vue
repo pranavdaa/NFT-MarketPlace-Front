@@ -7,28 +7,48 @@
       <div
         class="d-flex flex-column align-self-center ps-l-md-16 text-center text-md-left ps-t-16 ps-t-md-0"
       >
-        <div class="name ps-b-4 font-heading-small font-semibold">{{account.name}}</div>
-        <div class="address font-body-medium">{{account.address.toUpperCase()}}</div>
-        <div class="address-short font-body-medium">{{account.shortChecksumAddress}}</div>
+        <div class="name ps-b-4 font-heading-small font-semibold">
+          {{ account.name }}
+        </div>
+        <div class="address font-body-medium">
+          {{ account.address.toUpperCase() }}
+        </div>
+        <div class="address-short font-body-medium">
+          {{ account.shortChecksumAddress }}
+        </div>
       </div>
     </div>
     <div
       class="col-12 col-lg d-flex left-content text-center text-sm-left justify-content-center ps-t-16 ps-t-md-32 ps-t-lg-0 justify-content-lg-end"
     >
-      <div class="d-flex flex-column align-self-center ms-r-32 justify-content-start">
-        <div class="name ps-b-4 font-heading-small font-semibold">Total NFT</div>
-        <div class="amount font-body-medium">{{totalMaticNft+totalMainNft}}</div>
+      <div
+        class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
+      >
+        <div class="name ps-b-4 font-heading-small font-semibold">
+          Total NFT
+        </div>
+        <div class="amount font-body-medium">
+          {{ totalMaticNft + totalMainNft }}
+        </div>
       </div>
-      <div class="d-flex flex-column align-self-center ms-r-32 justify-content-start">
-        <div class="name ps-b-4 font-heading-small font-semibold">Wallet Balance</div>
-        <div class="amount font-body-medium">${{formattedFullUSDBalance}}</div>
+      <div
+        class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
+      >
+        <div class="name ps-b-4 font-heading-small font-semibold">
+          Balance on Matic
+        </div>
+        <div class="amount font-body-medium">
+          ${{ formattedFullUSDBalance }}
+        </div>
       </div>
       <div class="align-self-center" v-if="widgetKey">
         <button
           class="btn btn-light ml-auto matic-widget-button matic-widget-button"
           data-default-page="home"
           :data-wapp-id="widgetKey"
-        >Matic Widget</button>
+        >
+          Matic Widget
+        </button>
         <script
           src="https://wallet.matic.today/embeds/widget-button.min.js"
           data-script-name="matic-embeds"

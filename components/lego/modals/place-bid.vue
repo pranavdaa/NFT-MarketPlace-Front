@@ -1,12 +1,17 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
-    <div class="modal add-token-modal-wrapper" v-bind:class="{ 'show': show }">
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box accept-box">
           <div
             class="box-body"
-            v-bind:style="{background: 'linear-gradient( 180deg,'+bg+' 0%, rgba(236, 235, 223, 0) 45%)'}"
+            v-bind:style="{
+              background:
+                'linear-gradient( 180deg,' +
+                bg +
+                ' 0%, rgba(236, 235, 223, 0) 45%)',
+            }"
           >
             <div class="close-wrapper" @click="close()">
               <svg-sprite-icon name="close-modal" class="close" />
@@ -16,17 +21,22 @@
                 <div class="col-md-12 ps-y-32">
                   <img
                     class="asset-img mx-auto"
-                    src="~/static/img/dummy-kitty.png"
-                    alt="kitty"
+                    :src="order.token.img_url"
+                    alt="order.token.name"
                     @load="onImageLoad"
                   />
                 </div>
                 <div class="col-md-12 ps-x-40">
-                  <div class="font-heading-large title font-semibold">{{pruchaseType.title}}</div>
+                  <div class="font-heading-large title font-semibold">
+                    {{ pruchaseType.title }}
+                  </div>
                   <div
                     class="font-body-medium text-gray-500 ps-t-4"
                     v-if="order"
-                  >{{pruchaseType.subtitle}} {{order.price}} {{defaultSelectedToken.symbol}}</div>
+                  >
+                    {{ pruchaseType.subtitle }} {{ order.price }}
+                    {{ defaultSelectedToken.symbol }}
+                  </div>
                   <!-- <div
                     class="font-body-medium text-gray-500 ps-t-4"
                     v-if="order"
@@ -43,22 +53,35 @@
                 <div
                   class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
                   v-if="dirty && !validation['inputAmount']"
-                >Enter a valid amount</div>
+                >
+                  Enter a valid amount
+                </div>
                 <div
                   class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
                   v-if="dirty && !validation['minAmount']"
                 >
                   Minimum
-                  <i>{{this.order.min_price}} {{defaultSelectedToken.symbol}}</i>
+                  <i
+                    >{{ this.order.min_price }}
+                    {{ defaultSelectedToken.symbol }}</i
+                  >
                   required
                 </div>
                 <div
                   class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
                   v-if="dirty && !validation['hasBalance']"
-                >You don't have sufficient balance</div>
+                >
+                  You don't have sufficient balance
+                </div>
                 <div
                   class="col-md-12 ps-x-40 ps-y-8 ps-b-20 font-caption text-gray-300"
-                >Account balance: ${{defaultSelectedToken.formattedFullUSDBalance}} = {{defaultSelectedToken.formattedBalance}} {{defaultSelectedToken.symbol}}</div>
+                >
+                  Account balance: ${{
+                    defaultSelectedxToken.formattedFullUSDBalance
+                  }}
+                  = {{ defaultSelectedToken.formattedBalance }}
+                  {{ defaultSelectedToken.symbol }}
+                </div>
 
                 <div class="col-md-12 ps-t-8 ps-x-40">
                   <button-loader
@@ -76,7 +99,9 @@
 
                 <div
                   class="col-md-12 ps-x-40 ps-t-12 ps-b-40 font-body-small text-gray-500"
-                >{{pruchaseType.note}}</div>
+                >
+                  {{ pruchaseType.note }}
+                </div>
               </div>
             </div>
           </div>
@@ -141,7 +166,7 @@ const TEN = new BigNumber(10);
   mixins: [FormValidator],
 })
 export default class PlaceBid extends Vue {
-  bg = "#000000";
+  bg = "#f3f4f7";
   inputAmount = "";
   dirty = false;
   isLoading = false;
@@ -159,7 +184,7 @@ export default class PlaceBid extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#ffffff";
+      } else this.bg = "#f3f4f7";
     } catch (error) {}
   }
 

@@ -1,27 +1,21 @@
 <template>
   <div class="col-md-12 d-flex ps-l-16 ms-y-8">
-    <!-- <svg
+    <svg
       class="unread-mark align-self-center"
       width="5"
       height="5"
       viewBox="0 0 5 5"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      v-if="!activity.read"
     >
       <rect width="5" height="5" rx="2.5" fill="#003CB2" />
-    </svg>-->
-    <div class="d-flex align-self-center activity-wrapper">
+    </svg>
+    <div class="d-flex align-self-center activity-wrapper ps-y-16">
       <div
-        class="img-wrapper justify-content-center"
+        class="img-wrapper justify-content-center d-none"
         v-bind:style="{ background: bg }"
-      >
-        <img
-          class="asset-img align-self-center"
-          src="~/static/img/dummy-kitty.png"
-          alt="kitty"
-          @load="onImageLoad"
-        />
-      </div>
+      ></div>
       <svg-sprite-icon
         name="profile"
         class="profile-logo d-none d-md-block align-self-center"

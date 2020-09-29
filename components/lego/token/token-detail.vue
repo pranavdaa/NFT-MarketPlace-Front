@@ -10,7 +10,8 @@
         />
       </div>
       <!-- Remove if-condition when implementing -->
-      <div v-if="false"
+      <div
+        v-if="false"
         class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end"
       >
         <wishlist-button :wishlisted="isFavorite" :onClick="addToWishlist" />
@@ -76,8 +77,14 @@
           >
             {{ order.price }} {{ erc20Token.symbol }}
           </div>
-          <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
-            Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+          <div
+            class="font-body-medium ps-b-20"
+            v-if="order.type === app.orderTypes.NEGOTIATION"
+          >
+            Minimum Price:
+            <span class="font-semibold">
+              {{ order.min_price }} {{ erc20Token.symbol }}
+            </span>
           </div>
           <!-- <div
             class="font-heading-large font-semibold ps-b-20"
@@ -203,8 +210,14 @@
           >
             {{ order.price }} {{ erc20Token.symbol }}
           </div>
-          <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
-            Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+          <div
+            class="font-body-medium ps-b-20"
+            v-if="order.type === app.orderTypes.NEGOTIATION"
+          >
+            Minimum Price:
+            <span class="font-semibold">
+              {{ order.min_price }} {{ erc20Token.symbol }}
+            </span>
           </div>
           <!-- <div
             class="font-heading-large font-semibold ps-b-20"
@@ -459,7 +472,9 @@ export default class TokenDetail extends Vue {
           chainId: chainId,
         });
 
-        let dataVal = await getAxios().get(`orders/exchangedata/encoded?orderId=${this.order.id}&functionName=cancelOrder`)
+        let dataVal = await getAxios().get(
+          `orders/exchangedata/encoded?orderId=${this.order.id}&functionName=cancelOrder`
+        );
 
         let zrx = {
           salt: generatePseudoRandomSalt(),
@@ -481,7 +496,7 @@ export default class TokenDetail extends Vue {
           signedOrder.makerAddress
         );
 
-        if(takerSign) {
+        if (takerSign) {
           await this.handleCancelOrder(takerSign);
         }
       } else {
@@ -497,7 +512,7 @@ export default class TokenDetail extends Vue {
     let data = {};
     if (takerSign) {
       data = {
-        taker_signature: JSON.stringify(takerSign)
+        taker_signature: JSON.stringify(takerSign),
       };
     }
     try {

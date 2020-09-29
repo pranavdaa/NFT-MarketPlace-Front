@@ -82,6 +82,8 @@ export default class ActivityTab extends Vue {
             ...response.data.data.notifications,
           ];
         }
+        // read the notification
+        this.markAsRead();
         this.isLoading = false;
       } else {
         this.isLoading = false;
@@ -92,6 +94,13 @@ export default class ActivityTab extends Vue {
       this.isLoading = false;
       this.hasNextPage = false;
     }
+  }
+
+  async markAsRead() {
+    try {
+      // Api call to mark all activity as read
+      await getAxios().put(`users/notification/mark-read${this.user.id}`);
+    } catch (error) {}
   }
 }
 </script>
