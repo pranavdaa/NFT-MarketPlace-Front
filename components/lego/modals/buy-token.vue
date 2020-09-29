@@ -768,7 +768,6 @@ export default class BuyToken extends Vue {
         `orders/${this.order.id}/buy`,
         data
       );
-      this.$store.dispatch("category/fetchCategories");
       if (response.status === 200) {
         app.addToast(
           "Order bought successfully",
@@ -790,6 +789,7 @@ export default class BuyToken extends Vue {
         }
       );
     }
+    this.$store.dispatch("category/fetchCategories");
   }
 }
 </script>

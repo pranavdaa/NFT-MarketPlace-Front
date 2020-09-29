@@ -1,27 +1,36 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
-    <div class="modal transaction-prog-modal" v-bind:class="{ 'show': show }">
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div class="modal transaction-prog-modal" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
           <div class="box-body">
             <div class="container-fluid">
-              <nav class="row tabs nav bottom-border no-border-radius d-flex col-md-12 px-0 mx-0">
+              <nav
+                class="row tabs nav bottom-border no-border-radius d-flex col-md-12 px-0 mx-0"
+              >
                 <a
                   class="nav-item col ps-y-24 px-0 text-center nav-link font-body-medium"
-                  :class="{'active font-medium': activeTab === tab.id}"
+                  :class="{ 'active font-medium': activeTab === tab.id }"
                   v-for="tab in tabs"
                   :key="tab.id"
                   @click.prevent="changeTab(tab.id)"
-                >{{tab.title}}</a>
+                  >{{ tab.title }}</a
+                >
               </nav>
-              <div class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border">
+              <div
+                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border"
+              >
                 <div
                   class="col-md-12 px-0 font-heading-small font-semibold ps-b-8"
-                >{{tabs[activeTab].subtitle}}</div>
+                >
+                  {{ tabs[activeTab].subtitle }}
+                </div>
                 <div
                   class="col-md-12 px-0 ps-b-16 font-body-small text-gray-500"
-                >{{tabs[activeTab].description}}</div>
+                >
+                  {{ tabs[activeTab].description }}
+                </div>
 
                 <div class="col-md-12 p-0">
                   <input-token
@@ -34,11 +43,15 @@
                   <div
                     class="w-100 font-caption error-text ps-t-4"
                     v-if="dirty && !validation['price']"
-                  >Valid amount required</div>
+                  >
+                    Valid amount required
+                  </div>
                 </div>
                 <div
                   class="col-md-12 font-body-small ps-t-12 text-gray-300 ps-x-0"
-                >0% commission of Matic Marketplace, you’ll get 0.00 Matic</div>
+                >
+                  0% commission of Matic Marketplace, you’ll get 0.00 Matic
+                </div>
               </div>
 
               <div
@@ -46,8 +59,15 @@
                 v-if="activeTab === 0"
               >
                 <div class="d-flex align-self-center">
-                  <div class="align-self-center font-heading-small font-semibold">Allow Negotiation?</div>
-                  <svg-sprite-icon name="questionmark-black" class="icon ms-l-4" />
+                  <div
+                    class="align-self-center font-heading-small font-semibold"
+                  >
+                    Allow Negotiation?
+                  </div>
+                  <svg-sprite-icon
+                    name="questionmark-black"
+                    class="icon ms-l-4"
+                  />
                 </div>
                 <div class="d-flex ml-auto align-self-center">
                   <label class="switch align-self-center">
@@ -57,7 +77,9 @@
                 </div>
                 <transition name="fade">
                   <div class="col-md-12 p-0" v-if="negotiation">
-                    <div class="w-100 font-body-small ps-y-12 text-gray-500">Set minimum price</div>
+                    <div class="w-100 font-body-small ps-y-12 text-gray-500">
+                      Set minimum price
+                    </div>
                     <div class="w-100 p-0">
                       <input-token
                         :placeholder="'0.00'"
@@ -70,7 +92,9 @@
                     <div
                       class="w-100 font-caption error-text ps-t-4"
                       v-if="dirty && !validation['minPrice']"
-                    >Valid amount it required for minimum price</div>
+                    >
+                      Valid amount it required for minimum price
+                    </div>
                   </div>
                 </transition>
               </div>
@@ -81,25 +105,33 @@
                 <div class="d-flex align-self-center">
                   <div
                     class="align-self-center font-heading-small font-semibold"
-                  >Set Expiration Date</div>
-                  <svg-sprite-icon name="questionmark-black" class="icon ms-l-4" />
+                  >
+                    Set Expiration Date
+                  </div>
+                  <svg-sprite-icon
+                    name="questionmark-black"
+                    class="icon ms-l-4"
+                  />
                 </div>
                 <div class="d-flex ml-auto align-self-center">
                   <span
                     class="time-pill font-body-small"
-                    :class="{'active': duration === EXPIRY_DURATION.ONE_WEEK}"
+                    :class="{ active: duration === EXPIRY_DURATION.ONE_WEEK }"
                     @click="changeDuration(EXPIRY_DURATION.ONE_WEEK)"
-                  >1 week</span>
+                    >1 week</span
+                  >
                   <span
                     class="time-pill font-body-small"
-                    :class="{'active': duration === EXPIRY_DURATION.ONE_MONTH}"
+                    :class="{ active: duration === EXPIRY_DURATION.ONE_MONTH }"
                     @click="changeDuration(EXPIRY_DURATION.ONE_MONTH)"
-                  >1 month</span>
+                    >1 month</span
+                  >
                   <span
                     class="time-pill font-body-small"
-                    :class="{'active': duration === EXPIRY_DURATION.CUSTOM}"
+                    :class="{ active: duration === EXPIRY_DURATION.CUSTOM }"
                     @click="changeDuration(EXPIRY_DURATION.CUSTOM)"
-                  >Custom</span>
+                    >Custom</span
+                  >
                 </div>
                 <div class="col-md-12 ps-x-0 ps-t-24">
                   <input
@@ -119,7 +151,10 @@
                   />
                 </div>
               </div>
-              <div class="row ps-x-16 ps-x-md-32 ps-x-lg-40 d-flex error" v-if="dirty && false"></div>
+              <div
+                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 d-flex error"
+                v-if="dirty && false"
+              ></div>
               <div class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 d-flex">
                 <button-loader
                   :text="$t('cancel')"
@@ -163,7 +198,7 @@ import { FormValidator } from "~/components/mixin";
 import InputToken from "~/components/lego/input-token";
 import { parseBalance } from "~/plugins/helpers/token-utils";
 
-const { getTypedData } = require("~/plugins/meta-tx")
+const { getTypedData } = require("~/plugins/meta-tx");
 
 // 0X
 let {
@@ -213,7 +248,7 @@ const TEN = BigNumber(10);
     ...mapGetters("account", ["account"]),
     ...mapGetters("auth", ["user"]),
     ...mapGetters("network", ["networks"]),
-    ...mapGetters("category", ["categories"])
+    ...mapGetters("category", ["categories"]),
   },
   methods: {},
   mixins: [FormValidator],
@@ -291,7 +326,10 @@ export default class SellToken extends Vue {
   }
 
   get category() {
-    return this.categories.find((category) => category.address.toLowerCase() === this.nftToken.contract.toLowerCase());
+    return this.categories.find(
+      (category) =>
+        category.address.toLowerCase() === this.nftToken.contract.toLowerCase()
+    );
   }
 
   // action
@@ -310,7 +348,9 @@ export default class SellToken extends Vue {
         ? this.expiry_date_time.format("x")
         : 0;
       const orderType = this.orderType;
-      const nftContract = this.nftToken.category.getAddress(this.networks.matic.chainId);
+      const nftContract = this.nftToken.category.getAddress(
+        this.networks.matic.chainId
+      );
       // const nftTokenId = this.nftToken.token_id;
       const erc20Address = this.selectedERC20Token.address;
       const makerAddress = this.account.address;
@@ -329,9 +369,9 @@ export default class SellToken extends Vue {
         providerEngine()
       );
 
-      console.log(nftContract)
-      console.log(providerEngine())
-      console.log(erc721TokenCont)
+      console.log(nftContract);
+      console.log(providerEngine());
+      console.log(erc721TokenCont);
 
       // Owner of current token
       const owner = await erc721TokenCont
@@ -426,36 +466,40 @@ export default class SellToken extends Vue {
       )
       .callAsync();
     if (!isApprovedForAll) {
-      let data = await matic.eth.abi.encodeFunctionCall({
-        name: 'setApprovalForAll', 
-        type: 'function', 
-        inputs: [
-          {
-            "name": "operator",
-            "type": "address"
-          },
-          {
-            "name": "approved",
-            "type": "bool"
-          }
-        ]
-      }, [contractWrappers.contractAddresses.erc721Proxy, true])
+      let data = await matic.eth.abi.encodeFunctionCall(
+        {
+          name: "setApprovalForAll",
+          type: "function",
+          inputs: [
+            {
+              name: "operator",
+              type: "address",
+            },
+            {
+              name: "approved",
+              type: "bool",
+            },
+          ],
+        },
+        [contractWrappers.contractAddresses.erc721Proxy, true]
+      );
 
-      let { sig } = await this.executeMetaTx (data)
+      let { sig } = await this.executeMetaTx(data);
 
       let tx = {
-        intent: sig, 
-        fnSig: data, 
-        from: this.account.address, 
-        contractAddress: matic.utils.toChecksumAddress(this.category.categoriesaddresses.find((category) => category.chain_id == this.networks.matic.chainId).address)
-      }
+        intent: sig,
+        fnSig: data,
+        from: this.account.address,
+        contractAddress: matic.utils.toChecksumAddress(
+          this.category.categoriesaddresses.find(
+            (category) => category.chain_id == this.networks.matic.chainId
+          ).address
+        ),
+      };
 
       if (tx) {
         try {
-          let response = await getAxios().post(
-            `orders/executeMetaTx`,
-            tx
-          );
+          let response = await getAxios().post(`orders/executeMetaTx`, tx);
           if (response.status === 200) {
             console.log("Approved");
             app.addToast("Approved", "You successfully approved", {
@@ -481,33 +525,47 @@ export default class SellToken extends Vue {
 
   async executeMetaTx(functionSig) {
     let matic = new Web3(this.networks.matic.rpc);
-    let address = matic.utils.toChecksumAddress(this.account.address)
-    let data = await matic.eth.abi.encodeFunctionCall({
-      name: 'getNonce', 
-      type: 'function', 
-      inputs: [{
-          "name": "user",
-          "type": "address"
-        }]
-    }, [address])
-    let _nonce = await matic.eth.call ({
-      to: matic.utils.toChecksumAddress(this.category.categoriesaddresses.find((category) => category.chain_id == this.networks.matic.chainId).address),
-      data
+    let address = matic.utils.toChecksumAddress(this.account.address);
+    let data = await matic.eth.abi.encodeFunctionCall(
+      {
+        name: "getNonce",
+        type: "function",
+        inputs: [
+          {
+            name: "user",
+            type: "address",
+          },
+        ],
+      },
+      [address]
+    );
+    let _nonce = await matic.eth.call({
+      to: matic.utils.toChecksumAddress(
+        this.category.categoriesaddresses.find(
+          (category) => category.chain_id == this.networks.matic.chainId
+        ).address
+      ),
+      data,
     });
     const dataToSign = getTypedData({
       name: this.category.name,
-      version: '1',
-      salt: '0x0000000000000000000000000000000000000000000000000000000000013881',
-      verifyingContract: matic.utils.toChecksumAddress(this.category.categoriesaddresses.find((category) => category.chain_id == this.networks.matic.chainId).address),
+      version: "1",
+      salt:
+        "0x0000000000000000000000000000000000000000000000000000000000013881",
+      verifyingContract: matic.utils.toChecksumAddress(
+        this.category.categoriesaddresses.find(
+          (category) => category.chain_id == this.networks.matic.chainId
+        ).address
+      ),
       nonce: parseInt(_nonce),
       from: address,
-      functionSignature: functionSig
-    })
-    const msgParams = [address, JSON.stringify(dataToSign)]
-    let sign = await window.ethereum.request ({
-      method: 'eth_signTypedData_v3', 
-      params: msgParams
-    })
+      functionSignature: functionSig,
+    });
+    const msgParams = [address, JSON.stringify(dataToSign)];
+    let sign = await window.ethereum.request({
+      method: "eth_signTypedData_v3",
+      params: msgParams,
+    });
     return {
       sig: sign,
     };
@@ -579,6 +637,7 @@ export default class SellToken extends Vue {
         }
       );
     }
+    this.$store.dispatch("category/fetchCategories");
   }
 
   // Get

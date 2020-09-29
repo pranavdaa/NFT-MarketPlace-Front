@@ -371,7 +371,6 @@ export default class BidderRow extends Vue {
           data
         );
         if (response.status === 200) {
-          this.$store.dispatch("category/fetchCategories");
           app.addToast(
             "Accepted successfully",
             "You accepted the bid for your order",
@@ -382,6 +381,7 @@ export default class BidderRow extends Vue {
           this.$router.push({ name: "account" });
         }
       } catch (error) {}
+      this.$store.dispatch("category/fetchCategories");
     }
   }
 
@@ -548,6 +548,7 @@ export default class BidderRow extends Vue {
         });
       }
     }
+    this.$store.dispatch("category/fetchCategories");
   }
 }
 </script>
