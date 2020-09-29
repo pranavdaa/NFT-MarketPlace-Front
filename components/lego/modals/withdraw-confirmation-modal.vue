@@ -518,15 +518,10 @@ export default class WithdrawConfirmationModal extends Vue {
         `assetmigrate/${this.transaction.id}`,
         data
       );
-      console.log(response);
-
       if (response.status === 200) {
         this.isCheckpointed = true;
       }
-    } catch (error) {
-      console.log(error);
-      this.isCheckpointed = true;
-    }
+    } catch (error) {}
   }
 
   async handleExit(txHash, token_ids, category_id) {
@@ -540,11 +535,11 @@ export default class WithdrawConfirmationModal extends Vue {
         `assetmigrate/${this.transaction.id}`,
         data
       );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-    this.refreshBalance();
+      if (response.status === 200) {
+        this.isExited = true;
+        this.refreshBalance();
+      }
+    } catch (error) {}
   }
 
   onCancel() {
