@@ -243,8 +243,10 @@ export default class Withdraw extends Vue {
 
   async requestSignature(network, ERC721Address, name, address, functionSig) {
     try {
-      let web3 = new Web3(network.rpc);
-      let encodedFunction = await web3.eth.abi.encodeFunctionCall(
+      const child_provider = new Web3.providers.HttpProvider(network.rpc);
+      const mumbai = new Web3(child_provider);
+
+      let data = await mumbai.eth.abi.encodeFunctionCall(
         {
           name: "getNonce",
           type: "function",
@@ -257,19 +259,10 @@ export default class Withdraw extends Vue {
         },
         [address]
       );
-      console.log({
-        web3,
-        rpc: network.rpc,
-        address,
-        ERC721Address,
-        encodedFunction,
+      let _nonce = await mumbai.eth.call({
+        to: ERC721Address,
+        data,
       });
-      let _nonce = await web3.eth.getTransactionCount(address);
-      // let _nonce = await web3.eth.call({
-      //   to: ERC721Address,
-      //   encodedFunction,
-      // });
-      console.log(_nonce);
       const dataToSign = getTypedData({
         name: name,
         version: "1",
@@ -302,6 +295,7 @@ export default class Withdraw extends Vue {
       tokenIds,
       address
     );
+    console.log({ tx });
     if (tx) {
       try {
         let response = await getAxios().post(`orders/executeMetaTx`, tx);
