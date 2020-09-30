@@ -13,6 +13,7 @@ export default {
       totalMaticNft: 0,
       totalMainNft: 0,
       totalUnreadActivity: 0,
+      pendingWithdrawals: [],
     }
   },
 
@@ -34,6 +35,9 @@ export default {
     },
     totalUnreadActivity(state) {
       return state.totalUnreadActivity
+    },
+    pendingWithdrawals(state) {
+      return state.pendingWithdrawals
     }
   },
 
@@ -55,6 +59,9 @@ export default {
     },
     totalUnreadActivity(state, num) {
       state.totalUnreadActivity = num
+    },
+    pendingWithdrawals(state, transactions) {
+      state.pendingWithdrawals = transactions
     }
   },
 
@@ -70,9 +77,7 @@ export default {
           )
           commit('userOrders', orders)
         }
-      } catch (error) {
-        // console.log(error)
-      }
+      } catch (error) { }
     },
     async fetchFavoritesOrders({ commit }) {
       try {
@@ -89,9 +94,18 @@ export default {
           })
           commit('favouriteOrders', orders)
         }
-      } catch (error) {
-        // console.log(error)
-      }
+      } catch (error) { }
+    },
+    async fetchPendingWithdrawals({ commit }) {
+      try {
+        const user = app.vuexStore.getters['auth/user']
+        let response = await getAxios().get(
+          `assetmigrate/?user_id=${user.id}&type=WITHDRAW&status=[0,1]`
+        );
+        if (response.status === 200 && response.data.data) {
+          commit('pendingWithdrawals', response.data.data.assetMigrations)
+        }
+      } catch (error) { }
     }
   }
 }
