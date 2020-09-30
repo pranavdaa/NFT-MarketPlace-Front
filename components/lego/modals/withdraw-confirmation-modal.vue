@@ -265,6 +265,7 @@ import Dagger from "@maticnetwork/dagger";
 import Decoder from "eth-decoder";
 import Web3 from "web3";
 import BigNumber from "~/plugins/bignumber";
+import { VueWatch } from "~/components/decorator";
 
 import { getWalletProvider } from "~/plugins/helpers/providers";
 const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
@@ -338,6 +339,13 @@ export default class WithdrawConfirmationModal extends Vue {
 
   async mounted() {
     await this.initCheckpointCheck();
+  }
+
+  @VueWatch("isBurning", { immediate: true, deep: true })
+  async onBurnChange(val) {
+    if (!this.isBurning) {
+      await this.initCheckpointCheck();
+    }
   }
 
   async initCheckpointCheck() {
@@ -472,7 +480,6 @@ export default class WithdrawConfirmationModal extends Vue {
       this.error = null;
       const maticPoS = this.getMaticPOS();
       const burnHash = this.transaction.txhash;
-      console.log(burnHash);
 
       let txHash = await maticPoS.exitBatchERC721(burnHash, {
         from: this.account.address,
@@ -486,7 +493,6 @@ export default class WithdrawConfirmationModal extends Vue {
         this.isDeposited = true;
       }
     } catch (error) {
-      console.log(error);
       this.isLoading = false;
       this.error = error.message;
     }
@@ -524,7 +530,7 @@ export default class WithdrawConfirmationModal extends Vue {
     } catch (error) {}
   }
 
-  async handleExit(txHash, token_ids, category_id) {
+  async handleExit(txHash) {
     console.log("Withdraw exit", txHash);
     try {
       let data = {

@@ -282,7 +282,7 @@ export default class Withdraw extends Vue {
         sig: sign,
       };
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
     return { sig: null };
   }
@@ -295,18 +295,14 @@ export default class Withdraw extends Vue {
       tokenIds,
       address
     );
-    console.log({ tx });
     if (tx) {
       try {
         let response = await getAxios().post(`orders/executeMetaTx`, tx);
-        console.log({ response });
         if (response.status === 200) {
-          console.log(response);
           // To send transction receipt
           return response.data.data;
         }
       } catch (error) {
-        console.log(error);
         app.addToast(
           "Failed to init withdraw",
           "You need to sign the transaction to start withdraw",

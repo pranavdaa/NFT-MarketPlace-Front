@@ -68,7 +68,7 @@
       :selectedTokens="selectedTokens"
       :category="category"
       :cancel="onCloseConfirmWithdraw"
-      :refreshBalance="refreshBalance"
+      :refreshBalance="refreshTransactionAndBalance"
     />
   </div>
 </template>
@@ -90,7 +90,7 @@ import WithdrawConfirmationModal from "~/components/lego/modals/withdraw-confirm
     refreshBalance: { type: Function, required: true },
   },
   computed: {
-    ...mapGetters("account", ["account"]),
+    ...mapGetters("account", ["account", "pendingWithdrawals"]),
     ...mapGetters("auth", ["userId"]),
     ...mapGetters("category", ["categories"]),
   },
@@ -99,12 +99,11 @@ import WithdrawConfirmationModal from "~/components/lego/modals/withdraw-confirm
   mixins: ["auth"],
 })
 export default class PendingWithdrawalsList extends Vue {
-  transactions = [];
   selectedTransaction = null;
   showWithdrawConfirmation = null;
 
   async mounted() {
-    await this.initTransactions();
+    this.$store.dispatch("account/fetchPendingWithdrawals");
   }
 
   selectTransaction(transaction) {
@@ -118,17 +117,16 @@ export default class PendingWithdrawalsList extends Vue {
     this.showWithdrawConfirmation = false;
   }
 
-  async initTransactions() {
-    try {
-      let response = await getAxios().get(
-        `assetmigrate/?user_id=${this.userId}&type=WITHDRAW&status=[0,1]`
-      );
-      if (response.status === 200 && response.data.data) {
-        this.transactions = response.data.data.assetMigrations;
-      }
-    } catch (error) {
-      console.log(error);
+  refreshTransactionAndBalance() {
+    this.refreshBalance();
+    this.$store.dispatch("account/fetchPendingWithdrawals");
+  }
+
+  get transactions() {
+    if (this.pendingWithdrawals && this.pendingWithdrawals.length > 0) {
+      return this.pendingWithdrawals;
     }
+    return [];
   }
 
   get category() {
