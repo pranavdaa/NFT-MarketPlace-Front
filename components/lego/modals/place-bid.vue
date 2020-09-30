@@ -77,7 +77,7 @@
                   class="col-md-12 ps-x-40 ps-y-8 ps-b-20 font-caption text-gray-300"
                 >
                   Account balance: ${{
-                    defaultSelectedxToken.formattedFullUSDBalance
+                    defaultSelectedToken.formattedFullUSDBalance
                   }}
                   = {{ defaultSelectedToken.formattedBalance }}
                   {{ defaultSelectedToken.symbol }}
