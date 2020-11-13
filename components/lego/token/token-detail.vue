@@ -11,7 +11,8 @@
           />
         </div>
         <!-- Remove if-condition when implementing -->
-        <div v-if="false"
+        <div
+          v-if="false"
           class="col-md d-flex justify-content-start ps-t-16 ps-t-md-0 justify-content-md-end"
         >
           <wishlist-button :wishlisted="isFavorite" :onClick="addToWishlist" />
@@ -77,8 +78,14 @@
             >
               {{ order.price }} {{ erc20Token.symbol }}
             </div>
-            <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
-              Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+            <div
+              class="font-body-medium ps-b-20"
+              v-if="order.type === app.orderTypes.NEGOTIATION"
+            >
+              Minimum Price:
+              <span class="font-semibold">
+                {{ order.min_price }} {{ erc20Token.symbol }}
+              </span>
             </div>
             <!-- <div
               class="font-heading-large font-semibold ps-b-20"
@@ -126,6 +133,25 @@
               {{ category.description }}
             </p>
           </div>
+
+          <div class="properties">
+            <h3
+              class="d-flex flex-row font-heading-medium font-semibold category"
+            >
+              Properties
+            </h3>
+            <div class="d-flex flex-row flex-wrap">
+              <div
+                class="col-md-3 p-4 my-4 mr-4 properties-pill text-center"
+                v-bind:key="attribute.trait_type"
+                v-for="attribute in order.token.attributes_metadata"
+              >
+                <p class="m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
+                <h4 class="m-0 pt-1 text-truncate">{{ attribute.value }}</h4>
+              </div>
+            </div>
+          </div>
+
           <div
             class="d-flex flex-column ps-y-16 ps-y-md-32"
             v-if="order.token.properties"
@@ -204,8 +230,14 @@
             >
               {{ order.price }} {{ erc20Token.symbol }}
             </div>
-            <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
-              Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+            <div
+              class="font-body-medium ps-b-20"
+              v-if="order.type === app.orderTypes.NEGOTIATION"
+            >
+              Minimum Price:
+              <span class="font-semibold">
+                {{ order.min_price }} {{ erc20Token.symbol }}
+              </span>
             </div>
             <!-- <div
               class="font-heading-large font-semibold ps-b-20"
@@ -245,9 +277,7 @@
       />
     </div>
 
-    <div
-      class="row ps-x-16 ps-y-120 d-flex justify-content-center text-center"
-    >
+    <div class="row ps-x-16 ps-y-120 d-flex justify-content-center text-center">
       <button-loader
         class="mx-auto"
         :loading="isLoadingDetails"
@@ -656,6 +686,14 @@ export default class TokenDetail extends Vue {
 
 .text-gray-300 {
   color: dark-color("300");
+}
+
+.properties {
+  .properties-pill {
+    background-color: #EAF0FD;
+    border: 1px solid #558AF2;
+    border-radius: 8px;
+  }
 }
 
 @media (max-width: 768px) {
