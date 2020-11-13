@@ -85,6 +85,25 @@
               {{ category.description }}
             </p>
           </div>
+
+          <div class="properties">
+            <h3
+              class="d-flex flex-row font-heading-medium font-semibold category"
+            >
+              Properties
+            </h3>
+            <div class="d-flex flex-row flex-wrap">
+              <div
+                class="col-md-3 p-4 my-4 mr-4 properties-pill text-center"
+                v-bind:key="attribute.trait_type"
+                v-for="attribute in token.token.attributes_metadata"
+              >
+                <p class="m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
+                <h4 class="m-0 pt-1 text-truncate">{{ attribute.value }}</h4>
+              </div>
+            </div>
+          </div>
+
           <div
             class="d-flex flex-column ps-y-16 ps-y-md-32"
             v-if="token.properties"
@@ -252,7 +271,6 @@ export default class NftDetail extends Vue {
       );
 
       if (response.status === 200 && response.data.data) {
-
         // should use a endpoint that returns detail for just one token
         let currentToken = response.data.data.filter((token) => {
           return token.token_id == this.tokenId;
@@ -328,6 +346,14 @@ export default class NftDetail extends Vue {
   }
   .more {
     display: inline;
+  }
+}
+
+.properties {
+  .properties-pill {
+    background-color: #EAF0FD;
+    border: 1px solid #558AF2;
+    border-radius: 8px;
   }
 }
 
