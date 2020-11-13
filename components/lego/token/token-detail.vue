@@ -143,7 +143,7 @@
             <div class="d-flex flex-row flex-wrap">
               <div
                 class="col-md-3 p-4 my-4 mr-4 properties-pill text-center"
-                v-bind:key="attribute.trait_type"
+                v-bind:key="`${attribute.trait_type}-${attribute.value}`"
                 v-for="attribute in order.token.attributes_metadata"
               >
                 <p class="m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
