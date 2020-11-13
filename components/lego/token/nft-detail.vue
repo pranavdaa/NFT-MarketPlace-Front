@@ -250,17 +250,19 @@ export default class NftDetail extends Vue {
       let response = await getAxios().get(
         `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}`
       );
+
       if (response.status === 200 && response.data.data) {
-        let allTokens = [];
-        response.data.data.forEach((token) => {
-          allTokens.push(new NFTTokenModel(token));
+
+        // should use a endpoint that returns detail for just one token
+        let currentToken = response.data.data.filter((token) => {
+          return token.token_id == this.tokenId;
         });
 
-        allTokens.forEach((token) => {
-          if (token.token_id == this.tokenId) {
-            this.token = token;
-          }
-        });
+        if (currentToken.length > 0) currentToken = currentToken[0];
+        else return;
+
+        let data = new NFTTokenModel(currentToken);
+        this.token = data;
       }
     } catch (error) {
       console.log(error);
