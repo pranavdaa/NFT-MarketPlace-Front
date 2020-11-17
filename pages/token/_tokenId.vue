@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid p-0">
-    <nft-detail v-if="tokenId" :tokenId="tokenId" />
+    <nft-detail v-if="tokenId" :tokenId="tokenId" :chainId="chainId" />
   </div>
 </template>
 
@@ -23,6 +23,7 @@ export default class Token extends Vue {
 
   mounted() {
     this.tokenId = this.$route.params.tokenId;
+    this.chainId = this.$route.params.chainId;
   }
 }
 </script>
