@@ -93,7 +93,7 @@
                       class="w-100 font-caption error-text ps-t-4"
                       v-if="dirty && !validation['minPrice']"
                     >
-                      Valid amount it required for minimum price
+                      Valid amount is required for minimum price
                     </div>
                   </div>
                 </transition>

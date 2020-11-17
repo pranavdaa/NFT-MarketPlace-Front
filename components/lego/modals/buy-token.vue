@@ -6,6 +6,7 @@
     ></div>
     <div
       class="modal transaction-prog-modal"
+      v-bsl="show"
       v-bind:class="{ show: show && displayed }"
     >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
@@ -14,7 +15,7 @@
             <div class="close-wrapper" @click="close()">
               <svg-sprite-icon name="close-modal" class="close" />
             </div>
-            <div class="container-fluid">
+            <div class="container-fluid ps-t-20">
               <div class="row ps-y-32">
                 <div
                   class="w-100 d-flex flex-column ps-x-16 ps-x-sm-32 ps-x-lg-40"
@@ -50,7 +51,7 @@
                     v-if="order.type === orderTypes.FIXED"
                   >
                     <div
-                      class="error-text font-caption ps-y-16"
+                      class="error-text font-caption text-center ps-y-16"
                       v-if="dirty && !validation['balance']"
                     >
                       {{ errorMessage }}
