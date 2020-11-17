@@ -131,7 +131,12 @@ const app = {
 
       registerAccountChange(async (selectedAddress) => {
         const user = store.getters["auth/user"]
-        if (!selectedAddress || !selectedAddress[0] || !user || !user.address || user.address.toLowerCase() !== selectedAddress[0].toLowerCase()) {
+
+        if (!user || !user.address) {
+          await store.dispatch("auth/logout");
+        }
+
+        else if (!selectedAddress || !selectedAddress[0] || user.address.toLowerCase() !== selectedAddress[0].toLowerCase()) {
           await store.dispatch("auth/logout")
           window.location.replace("/login")
         }
