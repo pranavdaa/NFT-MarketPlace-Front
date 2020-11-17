@@ -37,6 +37,20 @@
                     {{ pruchaseType.subtitle }} {{ order.price }}
                     {{ defaultSelectedToken.symbol }}
                   </div>
+                  <div
+                    class="font-body-medium text-gray-500 ps-t-4"
+                    v-if="order && order.highest_bid"
+                  >
+                    {{ pruchaseType.lastOffer }} {{ order.highest_bid }}
+                    {{ defaultSelectedToken.symbol }}
+                  </div>
+                  <div
+                    class="font-body-medium text-gray-500 ps-t-4"
+                    v-else-if="order"
+                  >
+                    {{ pruchaseType.minPrice }} {{ order.min_price }}
+                    {{ defaultSelectedToken.symbol }}
+                  </div>
                   <!-- <div
                     class="font-body-medium text-gray-500 ps-t-4"
                     v-if="order"
@@ -232,6 +246,8 @@ export default class PlaceBid extends Vue {
     return {
       title: "Make an offer",
       subtitle: "Listed for",
+      lastOffer: "Last Offer",
+      minPrice: "Min Price",
       note:
         "By offering, you will automatically pay for this item if the owner accepts your offer, unless you cancel it.",
       btn: "Submit offer",

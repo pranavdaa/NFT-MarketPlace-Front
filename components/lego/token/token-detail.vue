@@ -78,7 +78,10 @@
               {{ order.price }} {{ erc20Token.symbol }}
             </div>
             <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
-              Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+              Minimum Price: <span class="font-semibold"> {{ order.min_price }} {{ erc20Token.symbol }} </span>
+            </div>
+            <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION && order.highest_bid">
+              Last Offer: <span class="font-semibold"> {{ order.highest_bid }} {{ erc20Token.symbol }} </span>
             </div>
             <!-- <div
               class="font-heading-large font-semibold ps-b-20"
@@ -205,7 +208,10 @@
               {{ order.price }} {{ erc20Token.symbol }}
             </div>
             <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION">
-              Minimum Price: <span class="font-semibold"> {{ order.min_price}} {{ erc20Token.symbol }} </span>
+              Minimum Price: <span class="font-semibold"> {{ order.min_price }} {{ erc20Token.symbol }} </span>
+            </div>
+            <div class="font-body-medium ps-b-20" v-if="order.type === app.orderTypes.NEGOTIATION && order.highest_bid">
+              Last Offer: <span class="font-semibold"> {{ order.highest_bid }} {{ erc20Token.symbol }} </span>
             </div>
             <!-- <div
               class="font-heading-large font-semibold ps-b-20"

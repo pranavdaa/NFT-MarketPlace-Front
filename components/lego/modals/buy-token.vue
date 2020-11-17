@@ -95,8 +95,11 @@
                       <div class="font-body-small text-gray-300 ps-y-4">
                         Listed for
                       </div>
-                      <div class="font-body-small text-gray-300 ml-auto ps-y-4">
+                      <div class="font-body-small text-gray-300 ml-auto ps-y-4" v-if="order.highest_bid">
                         Last offer
+                      </div>
+                      <div class="font-body-small text-gray-300 ml-auto ps-y-4" v-else>
+                        Min Price
                       </div>
                     </div>
                     <div class="d-flex justify-content-between">
@@ -112,7 +115,13 @@
                       >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
                       <div
                         class="font-heading-large font-semibold ps-b-20 ml-auto"
-                        v-if="erc20Token"
+                        v-if="erc20Token && order.highest_bid"
+                      >
+                        {{ order.highest_bid }} {{ erc20Token.symbol }}
+                      </div>
+                      <div
+                        class="font-heading-large font-semibold ps-b-20 ml-auto"
+                        v-else-if="erc20Token"
                       >
                         {{ order.min_price }} {{ erc20Token.symbol }}
                       </div>
@@ -542,6 +551,7 @@ export default class BuyToken extends Vue {
   closeMakeOffer() {
     this.showMakeOffer = false;
     this.displayed = true;
+    this.close();
   }
 
   async buyFixedOrder() {
