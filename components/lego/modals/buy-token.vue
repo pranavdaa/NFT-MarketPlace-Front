@@ -447,7 +447,7 @@ export default class BuyToken extends Vue {
 
       const makerAddress = this.account.address;
       // const takerAddress = this.account.address;
-      const makerAssetAmount = maker_amount;
+      const makerAssetAmount = maker_amount.toString(10);
       const takerAssetAmount = new BigNumber(1);
       const decimalnftTokenId = this.order.tokens_id;
       const contractWrappers = new ContractWrappers(providerEngine(), {

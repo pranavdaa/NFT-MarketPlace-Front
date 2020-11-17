@@ -6,7 +6,7 @@ const TEN = new BigNumber(10)
 // parse balance of token returns BN
 export function parseBalance(balance, decimals) {
   const bnDecimals = new BigNumber(decimals)
-  return balance.dividedBy(TEN.pow(bnDecimals))
+  return new BigNumber(balance).dividedBy(TEN.pow(bnDecimals))
 }
 
 // Converts String, Int and Float to BigNumber Token amount

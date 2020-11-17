@@ -355,7 +355,7 @@ export default class SellToken extends Vue {
       const erc20Address = this.selectedERC20Token.address;
       const makerAddress = this.account.address;
       const makerAssetAmount = new BigNumber(1);
-      const takerAssetAmount = this.price;
+      const takerAssetAmount = this.price.toString(10);
       const chainId = this.networks.matic.chainId;
       const minPrice = this.minPrice;
       const decimalnftTokenId = this.nftToken.token_id;
