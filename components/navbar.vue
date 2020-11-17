@@ -54,6 +54,16 @@
             </div>
           </ul>
         </div>
+        <div>
+          <ul class="navbar-nav main-nav">
+            <a href="https://t.me/maticwalletweb"
+              target="_blank"
+              class="nav-link d-flex"
+            >
+              <span class="align-self-center">Support</span>
+            </a>
+          </ul>
+        </div>
         <div class="profile-navbar d-flex ml-auto ps-l-16">
           <div class="d-flex align-self-center" v-if="user && false">
             <nuxt-link
@@ -730,8 +740,6 @@ export default class Navbar extends Vue {
 }
 
 @media (max-width: 992px) {
-  .logo-container {
-  }
   .navbar {
     .navbar-collapse {
       display: none !important;

@@ -41,18 +41,17 @@
           ${{ formattedFullUSDBalance }}
         </div>
       </div>
-      <div class="align-self-center" v-if="widgetKey">
-        <button
-          class="btn btn-light ml-auto matic-widget-button matic-widget-button"
-          data-default-page="home"
-          :data-wapp-id="widgetKey"
+      <div class="align-self-center">
+        <a
+          href="https://transak.com/"
+          target="_blank"
         >
-          Matic Widget
-        </button>
-        <script
-          src="https://wallet.matic.today/embeds/widget-button.min.js"
-          data-script-name="matic-embeds"
-        ></script>
+          <button
+            class="btn btn-light ml-auto"
+          >
+            Buy from Transak
+          </button>
+        </a>
       </div>
     </div>
   </div>
