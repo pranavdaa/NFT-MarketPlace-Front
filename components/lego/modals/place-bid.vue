@@ -72,6 +72,17 @@
                 </div>
                 <div
                   class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
+                  v-if="dirty && !validation['maxAmount']"
+                >
+                  Maximum
+                  <i
+                    >{{ this.order.price }}
+                    {{ defaultSelectedToken.symbol }}</i
+                  >
+                  allowed
+                </div>
+                <div
+                  class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
                   v-if="dirty && !validation['minAmount']"
                 >
                   Minimum
@@ -223,6 +234,8 @@ export default class PlaceBid extends Vue {
   // get
   get validation() {
     return {
+      maxAmount:
+        this.inputAmount && this.inputAmount.lte(this.order.getPriceInBN()),
       minAmount:
         this.inputAmount && this.inputAmount.gte(this.order.getMinPriceInBN()),
       inputAmount: !!this.inputAmount && this.inputAmount.gt(ZERO),
