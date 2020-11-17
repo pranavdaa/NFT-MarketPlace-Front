@@ -15,6 +15,77 @@ export default class Order extends Model {
     return this.erc20tokens.id
   }
 
+  // adding temporarily for development without api
+  // remove this getter once API is ready
+  get attributes() {
+    return [
+      {
+        "trait_type": "title",
+        "value": "Origin",
+        "display_type": null,
+        "max_value": null,
+        "trait_count": 3802,
+        "order": null
+      },
+      {
+        "trait_type": "skill",
+        "value": 31,
+        "display_type": null,
+        "max_value": null,
+        "trait_count": 38646,
+        "order": null
+      },
+      {
+        "trait_type": "parts",
+        "value": "raven",
+        "display_type": null,
+        "max_value": null,
+        "trait_count": 7245,
+        "order": null
+      },
+      {
+        "trait_type": "speed",
+        "value": 46,
+        "display_type": null,
+        "max_value": null,
+        "trait_count": 3404,
+        "order": null
+      },
+      {
+        "trait_type": "morale",
+        "value": 54,
+        "display_type": null,
+        "max_value": null,
+        "trait_count": 1700,
+        "order": null
+      },
+      {
+        "trait_type": "hp",
+        "value": 33,
+        "display_type": null,
+        "max_value": null,
+        "trait_count": 1269,
+        "order": null
+      },
+      {
+        "trait_type": "parts",
+        "value": "doubletalk",
+        "display_type": null,
+        "max_value": null,
+        "trait_count": 3429,
+        "order": null
+      },
+      {
+        "trait_type": "parts",
+        "value": "lagging",
+        "display_type": null,
+        "max_value": null,
+        "trait_count": 3356,
+        "order": null
+      },
+    ]
+  }
+
   get token() {
     let img = ""
     let name = `Token ${this.tokens_id}`
@@ -38,7 +109,8 @@ export default class Order extends Model {
       name: name,
       img_url: img,
       owner: owner,
-      description: description
+      description: description,
+      attributes_metadata: this.attributes,
     }
   }
 
