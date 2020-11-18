@@ -2,6 +2,7 @@
   <div class="section position-absolute">
     <div
       class="modal receive-modal-wrapper"
+      v-bsl="show"
       v-bind:class="{ show: show && !hidden }"
     >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
@@ -206,6 +207,11 @@ export default class Withdraw extends Vue {
   onSelectionChange(tokens) {
     this.selectedTokens = tokens;
   }
+  onSignatureDenied() {
+    this.showWithdrawConfirmation = false;
+    this.isLoading = false;
+    this.hidden = false;
+  }
 
   async prepareMetaTx(network, ERC721Address, name, tokenIds, address) {
     let web3 = new Web3(network.rpc);
@@ -284,6 +290,8 @@ export default class Withdraw extends Vue {
     } catch (error) {
       // console.log(error);
     }
+
+    this.onSignatureDenied()
     return { sig: null };
   }
 

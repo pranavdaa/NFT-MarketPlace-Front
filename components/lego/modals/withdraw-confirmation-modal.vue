@@ -1,6 +1,10 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal receive-modal-wrapper" v-bind:class="{ show: show }">
+    <div
+      class="modal receive-modal-wrapper"
+      v-bsl="show"
+      v-bind:class="{ show: show }"
+    >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box deposit-box">
           <div class="box-header justify-content-center">
