@@ -186,6 +186,7 @@ export default class Index extends Vue {
   mounted() {
     this.updateCategories();
     this.fetchOrders();
+    this.$store.dispatch("token/reloadBalances");
   }
 
   // Wathers
