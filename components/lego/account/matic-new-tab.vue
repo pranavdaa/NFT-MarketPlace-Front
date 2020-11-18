@@ -263,6 +263,7 @@ export default class MaticNewTab extends Vue {
   }
   refreshBalance() {
     this.fetchNFTTokens({ filtering: true });
+    this.$store.dispatch("account/fetchPendingWithdrawals");
   }
   onSelectToken(token) {
     let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
