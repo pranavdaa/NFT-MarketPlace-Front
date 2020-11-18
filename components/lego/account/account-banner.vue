@@ -37,8 +37,8 @@
         <div class="name ps-b-4 font-heading-small font-semibold">
           Balance on Matic
         </div>
-        <div class="amount font-body-medium">
-          ${{ formattedFullUSDBalance }}
+        <div v-if="erc20Tokens[0]" class="amount font-body-medium">
+          {{ formattedFullUSDBalance }} {{erc20Tokens[0].symbol}}
         </div>
       </div>
       <div class="align-self-center">
@@ -67,7 +67,7 @@ import app from "~/plugins/app";
   props: {},
   computed: {
     ...mapGetters("account", ["account", "totalMaticNft", "totalMainNft"]),
-    ...mapGetters("token", ["totalCurrencyBalance"]),
+    ...mapGetters("token", ["totalCurrencyBalance","erc20Tokens"]),
     ...mapGetters("network", ["networkMeta"]),
   },
 })

@@ -151,7 +151,7 @@
             </h3>
             <div class="d-flex flex-wrap">
               <div
-                class="col-md-3 col-lg-3 p-4 my-4 mr-md-4 mr-3 properties-pill text-center"
+                class="col-md-3 col-lg-3 p-4 my-2 mr-md-4 mr-3 properties-pill text-center"
                 v-bind:key="`${attribute.trait_type}-${attribute.value}`"
                 v-for="attribute in order.token.attributes_metadata"
               >

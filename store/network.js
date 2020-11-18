@@ -52,6 +52,14 @@ export default {
       )
     },
 
+    childChainNetwork(state) {
+      return state.networks[
+        state.selectedNetworkKey ||
+        configStore.get("selectedNetworkKey") ||
+        "matic"
+      ]
+    },
+
     networks(state) {
       return state.networks
     },

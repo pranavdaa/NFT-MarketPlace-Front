@@ -36,11 +36,11 @@ export default {
       return state.selectedERC20Token
     },
     totalCurrencyBalance(state, getters, rootState, rootGetters) {
-      const network = rootGetters['network/selectedNetwork']
+      const network = rootGetters['network/childChainNetwork']
       const tokens = state.erc20Tokens
       if (tokens.length > 0) {
         return tokens.reduce((a, t) => {
-          const v = t.getBalance(network.chainId).times(new BigNumber(t.usd || '0.00'))
+          const v = t.getBalance(network.chainId)
           return a.plus(v)
         }, ZERO)
       }
