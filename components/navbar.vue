@@ -104,7 +104,7 @@
               <span
                 class="font-caption text-gray font-capitalize network-method"
                 v-if="selectedNetwork"
-              >{{ selectedNetwork.name || selectedNetwork.key }}</span>
+              >{{ rootChainNetwork.name || rootChainNetwork.key }}</span>
             </div>
             <span class="down-icon align-self-center d-none d-md-flex justify-content-center">
               <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
@@ -197,7 +197,7 @@
               <div class="font-body-small font-medium">{{formattedUserAddress}}</div>
               <div
                 class="font-caption ml-auto text-gray"
-              >{{ selectedNetwork.name || selectedNetwork.key}}</div>
+              >{{ rootChainNetwork.name || rootChainNetwork.key}}</div>
             </div>
             <div
               class="d-flex justify-content-center ps-t-12"
@@ -320,7 +320,7 @@ import * as animationData from "~/static/lottie-animations/green-check.json";
   computed: {
     ...mapGetters("auth", ["user"]),
     ...mapGetters("account", ["account"]),
-    ...mapGetters("network", ["selectedNetwork"]),
+    ...mapGetters("network", ["selectedNetwork","rootChainNetwork"]),
   },
   methods: {}
 })

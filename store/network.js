@@ -40,7 +40,7 @@ export default {
       return state.networks[
         state.selectedNetworkKey ||
         configStore.get("selectedNetworkKey") ||
-        "main"
+        "matic"
       ]
     },
 
@@ -48,15 +48,15 @@ export default {
       return (
         state.selectedNetworkKey ||
         configStore.get("selectedNetworkKey") ||
-        "main"
+        "matic"
       )
     },
 
-    childChainNetwork(state) {
+    rootChainNetwork(state) {
       return state.networks[
         state.selectedNetworkKey ||
         configStore.get("selectedNetworkKey") ||
-        "matic"
+        "main"
       ]
     },
 
