@@ -45,14 +45,14 @@
     "depositBtn": "Deposit {count} NFTs to Matic",
     "empty": {
       "title": "Oops! No item found on Ethereum chain.",
-      "description": "We didn’t found any item on Ethereum chain."
+      "description": "We didn’t find any collectibles on Ethereum chain."
     }
   },
   "maticTab": {
     "withdrawBtn": "Withdraw {count} NFTs to Ethereum",
     "empty": {
       "title": "Oops! No item found on Matic chain.",
-      "description": "We didn’t found any item on Matic chain."
+      "description": "We didn’t find any collectibles on Matic chain."
     }
   },
   "collectibles": "Collectibles",
@@ -86,9 +86,9 @@
       "finished": "Withdraw completed"
     },
     "process": {
-      "checkpointWait": "Waiting for checkpoint ...",
-      "checkpointed": "Checkpoint received. Please confirm Withdraw now.",
-      "posCheckpointed": "Checkpoint received. Please finish the withdraw process now.",
+      "checkpointWait": "Waiting for checkpoint ... Will take ~34 minutes",
+      "checkpointed": "Checkpoint completed. Please complete the Withdraw now.",
+      "posCheckpointed": "Checkpoint completed. Please finish the withdraw process now.",
       "challengeWait": "Waiting for challenge period to end. Please check back after {challengePeriod}",
       "challengeEnd": "Challenge period ended. Please finish the withdraw process."
     }
@@ -107,8 +107,8 @@
     },
     "process": {
       "preDeposit": "Please confirm the transaction to complete the deposit.",
-      "depositing": "Waiting for 12 block confirmation. It may take upto 5 min.",
-      "deposited": "It will take ~2 minute to reflact in your account."
+      "depositing": "Transactions on Ethereum sometimes take longer based on network congestion. Please wait or increase the gas price",
+      "deposited": "It will take ~7-8 minutes for the funds to get deposited to your account."
     }
   }
 }
