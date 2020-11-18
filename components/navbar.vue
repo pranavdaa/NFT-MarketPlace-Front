@@ -319,7 +319,8 @@ import * as animationData from "~/static/lottie-animations/green-check.json";
   components: { Lottie, ReceiveQrCode, LogoutConfirm },
   computed: {
     ...mapGetters("auth", ["user"]),
-    ...mapGetters("account", ["account"])
+    ...mapGetters("account", ["account"]),
+    ...mapGetters("network", ["selectedNetwork"]),
   },
   methods: {}
 })
@@ -337,10 +338,6 @@ export default class Navbar extends Vue {
   openLogout = false;
 
   currentNetwork = {
-    key: "matic",
-    name: "Matic"
-  };
-  selectedNetwork = {
     key: "matic",
     name: "Matic"
   };

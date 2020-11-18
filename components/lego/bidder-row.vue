@@ -203,7 +203,7 @@ export default class BidderRow extends Vue {
         wordings = `${this.timeRemaining.secs} seconds`;
       }
     }
-    return wordings;
+    return wordings || "1 second";
   }
 
   // Actions

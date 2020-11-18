@@ -48,7 +48,7 @@
                     color="primary"
                     :loadingText="'Initializing deposit'"
                     :loading="isLoading"
-                    :text="'Deposit to Ethereum Network'"
+                    :text="'Deposit to Matic Network'"
                     :click="approveForDeposit"
                     :disabled="selectedTokens.length <= 0"
                   ></button-loader>

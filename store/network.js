@@ -40,7 +40,7 @@ export default {
       return state.networks[
         state.selectedNetworkKey ||
         configStore.get("selectedNetworkKey") ||
-        "matic"
+        "main"
       ]
     },
 
@@ -48,7 +48,7 @@ export default {
       return (
         state.selectedNetworkKey ||
         configStore.get("selectedNetworkKey") ||
-        "matic"
+        "main"
       )
     },
 
