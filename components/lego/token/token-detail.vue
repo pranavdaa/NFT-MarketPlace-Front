@@ -143,19 +143,19 @@
             </p>
           </div>
 
-          <div class="properties">
+          <div class="properties col-md-10 ps-0">
             <h3
-              class="d-flex flex-row font-heading-medium font-semibold category"
+              class="d-flex font-heading-medium font-semibold category"
             >
               Properties
             </h3>
-            <div class="d-flex flex-row flex-wrap">
+            <div class="d-flex flex-wrap">
               <div
-                class="col-md-3 p-4 my-4 mr-4 properties-pill text-center"
+                class="col-md-3 col-lg-3 p-4 my-4 mr-md-4 mr-3 properties-pill text-center"
                 v-bind:key="`${attribute.trait_type}-${attribute.value}`"
                 v-for="attribute in order.token.attributes_metadata"
               >
-                <p class="m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
+                <p class="m-0 p-0 text-truncate trait-type">{{ attribute.trait_type }}</p>
                 <h4 class="m-0 pt-1 text-truncate">{{ attribute.value }}</h4>
               </div>
             </div>
@@ -708,9 +708,16 @@ export default class TokenDetail extends Vue {
 
 .properties {
   .properties-pill {
-    background-color: #EAF0FD;
-    border: 1px solid #558AF2;
+    background-color: #edfbff;
+    border: 1px solid #2d9cdb;
     border-radius: 8px;
+    color: dark-color("600");
+    text-transform: capitalize;
+
+    .trait-type {
+      color: #2d9cdb;
+      text-transform: uppercase;
+    }
   }
 }
 
