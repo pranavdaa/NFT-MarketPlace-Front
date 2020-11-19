@@ -89,7 +89,7 @@
                     <div class="ps-b-16">
                       <span v-if="transactionStatus === STATUS.BURNING">
                         {{
-                          "Waiting for transaction to complete. It may take few sec."
+                          "Waiting for transaction to complete. It may take few seconds"
                         }}
                       </span>
                       <a
@@ -179,7 +179,7 @@
                         }}
                       </span>
                       <span v-if="transactionStatus === STATUS.EXITING">{{
-                        "Waiting for 12 block confirmation. It may take upto 5 min. "
+                        "Transactions on Ethereum sometimes take longer based on network congestion. Please wait or increase the gas price "
                       }}</span>
                       <a
                         v-if="
@@ -485,6 +485,16 @@ export default class WithdrawConfirmationModal extends Vue {
       const maticPoS = this.getMaticPOS();
       const burnHash = this.transaction.txhash;
 
+      let exited = await maticPoS.isBatchERC721ExitProcessed(burnHash)
+      console.log("#######",exited)
+      if(exited){
+        await this.handleExit(txHash);
+        this.isLoading = false;
+        this.isDeposited = true;
+        this.cancel();
+        return 
+      }
+
       let txHash = await maticPoS.exitBatchERC721(burnHash, {
         from: this.account.address,
         onTransactionHash: (txHash) => {
@@ -552,10 +562,30 @@ export default class WithdrawConfirmationModal extends Vue {
     } catch (error) {}
   }
 
+  async handleExitedTokens(txHash) {
+    console.log("Withdraw exit", txHash);
+    try {
+      let data = {
+        exit_txhash: "TX EXITED EXTERNALLY",
+        status: 2,
+      };
+      let response = await getAxios().put(
+        `assetmigrate/${this.transaction.id}`,
+        data
+      );
+      if (response.status === 200) {
+        this.isExited = true;
+        this.refreshBalance();
+      }
+    } catch (error) {}
+  }
+
   onCancel() {
     this.cancel();
   }
 }
+
+
 </script>
 
 <style lang="scss" scoped>

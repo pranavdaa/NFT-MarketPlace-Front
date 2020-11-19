@@ -1298,9 +1298,9 @@
     ethereumjs-util "^6.2.0"
     mqtt-regex "^1.0.5"
 
-"@maticnetwork/maticjs@https://github.com/maticnetwork/matic.js.git#0980462121d6971675cc544e46744ea3fad114b4":
-  version "2.0.7"
-  resolved "https://github.com/maticnetwork/matic.js.git#0980462121d6971675cc544e46744ea3fad114b4"
+"@maticnetwork/maticjs@https://github.com/maticnetwork/matic.js.git#3ff67e1c69a97fa967e9871068b3d89697c5b2c8":
+  version "2.0.16"
+  resolved "https://github.com/maticnetwork/matic.js.git#3ff67e1c69a97fa967e9871068b3d89697c5b2c8"
   dependencies:
     "@maticnetwork/meta" "^2.4.3"
     "@truffle/hdwallet-provider" "^1.0.35"
