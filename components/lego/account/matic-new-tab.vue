@@ -337,9 +337,27 @@ export default class MaticNewTab extends Vue {
     this.isLoadingTokens = false;
   }
 
+  async fetchNotifications() {
+    try {
+      let activityResponse = await getAxios().get(
+        `users/notification/${this.user.id}`
+      );
+
+      if (activityResponse.status === 200 && activityResponse.data.data) {
+        this.$store.commit(
+          "account/totalUnreadActivity",
+          activityResponse.data.data.unread_count
+        );
+      }
+    } catch (error) {
+      console.log("Naresh: ", error);
+    }
+  }
+
   async refreshNFTTokens() {
     this.hasNextPage = true;
     await this.fetchNFTTokens({ filtering: true });
+    await this.fetchNotifications();
   }
 
   // Getters
