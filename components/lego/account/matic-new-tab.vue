@@ -263,6 +263,7 @@ export default class MaticNewTab extends Vue {
   }
   refreshBalance() {
     this.fetchNFTTokens({ filtering: true });
+    this.fetchEthereumCount();
     this.$store.dispatch("account/fetchPendingWithdrawals");
   }
   onSelectToken(token) {
@@ -282,6 +283,22 @@ export default class MaticNewTab extends Vue {
   }
 
   // Async
+  async fetchEthereumCount() {
+    try {
+      let response;
+
+      response = await getAxios().get(
+        `tokens/balance?userId=${this.user.id}&chainId=${this.mainChainId}`
+      );
+
+      if (response.status === 200 && response.data.count) {
+        this.$store.commit("account/totalMainNft", response.data.count);
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  }
+
   async fetchNFTTokens(options = {}) {
     if (this.isLoadingTokens || (!this.hasNextPage && !options.filtering)) {
       // ignore if already fetching
@@ -350,7 +367,7 @@ export default class MaticNewTab extends Vue {
         );
       }
     } catch (error) {
-      console.log("Naresh: ", error);
+      // console.log(error);
     }
   }
 
@@ -437,6 +454,9 @@ export default class MaticNewTab extends Vue {
   }
   get chainId() {
     return this.networks.matic.chainId;
+  }
+  get mainChainId() {
+    return this.networks.main.chainId; 
   }
   get exmptyMsg() {
     return {
