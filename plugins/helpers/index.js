@@ -1,7 +1,7 @@
 import eutils from 'ethjs-util'
 import BigNumber from '~/plugins/bignumber'
 
-const DEFAULT_DEBOUNCE_DURATION = 500
+const DEFAULT_DEBOUNCE_DURATION = 2000
 export function debounce(method, duration = DEFAULT_DEBOUNCE_DURATION) {
   let timeoutId
   function debounceWrapper(...args) {
