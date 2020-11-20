@@ -70,9 +70,23 @@
                 >
                   Enter a valid amount
                 </div>
+                <div class="col-md-12 ps-t-4 ps-x-40" v-else-if="dirty && !validation['hasBalance']">
+                  <div
+                    class="error font-caption text-left"
+                  >
+                    You don't have sufficient balance
+                  </div>
+                  <div class="ps-t-16">
+                    <NuxtLink
+                      class="text-center font-semibold text-primary-600"
+                      :to="{ name: 'account' }"
+                      >Add funds to your account here</NuxtLink
+                    >
+                  </div>
+                </div>
                 <div
                   class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
-                  v-if="dirty && !validation['maxAmount']"
+                  v-else-if="dirty && !validation['maxAmount']"
                 >
                   Maximum
                   <i
@@ -83,7 +97,7 @@
                 </div>
                 <div
                   class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
-                  v-if="dirty && !validation['minAmount']"
+                  v-else-if="dirty && !validation['minAmount']"
                 >
                   Minimum
                   <i
@@ -91,12 +105,6 @@
                     {{ defaultSelectedToken.symbol }}</i
                   >
                   required
-                </div>
-                <div
-                  class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
-                  v-if="dirty && !validation['hasBalance']"
-                >
-                  You don't have sufficient balance
                 </div>
                 <div
                   class="col-md-12 ps-x-40 ps-y-8 ps-b-20 font-caption text-gray-300"
@@ -289,6 +297,9 @@ export default class PlaceBid extends Vue {
 }
 .text-gray-300 {
   color: dark-color("300");
+}
+.text-primary-600 {
+  color: primary-color("600");
 }
 .error {
   color: red-color("400");
