@@ -55,6 +55,12 @@
       "description": "We didn’t find any collectibles on Matic chain."
     }
   },
+  "activityTab": {
+    "empty": {
+      "title": "Oops! No activities found.",
+      "description": "We didn’t find any activities record."
+    }
+  },
   "collectibles": "Collectibles",
   "logout": {
     "title": "Logout",

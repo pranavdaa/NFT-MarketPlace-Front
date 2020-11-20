@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-md-12 text-md-left text-center ps-y-32">
+      <div class="col-md-12 text-md-left text-center ps-y-32" v-if="notifications > 0">
         Here's a list of your requested transactions. Remember, once
         transactions make it onto the blockchain, the app takes a couple minutes
         to receive the updates, so keep checking!
@@ -14,6 +14,15 @@
         :activity="activity"
       />
     </div>
+
+    <no-item
+      class="ps-b-120"
+      :message="exmptyMsg"
+      v-if="
+        notifications.length <= 0 && !isLoading
+      "
+    />
+    
     <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
       <!-- matic loader here -->
       <button-loader
@@ -39,11 +48,13 @@ import { mapGetters } from "vuex";
 import getAxios from "~/plugins/axios";
 
 import ActivityRow from "~/components/lego/account/activity-row";
+import NoItem from "~/components/lego/no-item";
 
 @Component({
   props: {},
   components: {
     ActivityRow,
+    NoItem,
   },
   computed: {
     ...mapGetters("auth", ["user"]),
@@ -100,6 +111,15 @@ export default class ActivityTab extends Vue {
     try {
       await getAxios().put(`users/notification/mark-read/${this.user.id}`);
     } catch (error) {}
+  }
+
+  // Getters
+  get exmptyMsg() {
+    return {
+      title: this.$t("activityTab.empty.title"),
+      description: this.$t("activityTab.empty.description"),
+      img: true,
+    };
   }
 }
 </script>
