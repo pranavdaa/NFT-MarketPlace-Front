@@ -143,7 +143,7 @@ export function registerAccountChange(fn) {
 // register network change
 export function registerNetworkChange(fn) {
   if (window.ethereum.on) {
-    window.ethereum.on("networkChanged", fn)
+    window.ethereum.on("chainChanged", chainId => fn(chainId))
   }
 }
 

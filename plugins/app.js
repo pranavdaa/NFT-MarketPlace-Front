@@ -115,7 +115,19 @@ const app = {
 
     // set network depending upon the login strategy
     if (this.isMetaMaskConnected()) {
-      const metamaskNetworkChangeHandler = async () => {
+      const metamaskNetworkChangeHandler = async (chainId) => {
+        const network = new MetaNetwork(
+          this.uiconfig.matic.deployment.network,
+          this.uiconfig.matic.deployment.version
+        )
+
+        const main = network.Main
+
+        if (chainId && chainId !== "0x" + main.ChainId.toString(16)) {
+          await store.dispatch("auth/logout")
+          window.location.replace("/login")
+        }
+
         await store.dispatch("network/setProviders", {
           main: getWalletProvider({
             networks: this.ethereumNetworks, primaryProvider: 'main'
