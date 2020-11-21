@@ -26,7 +26,7 @@
       <span class="checkmark align-self-center"></span>
     </div>
     <NuxtLink
-      :to="{ name: 'token-tokenId', params: { tokenId: token.token_id }, query: { chainId: token.chainId } }"
+      :to="(!isMainToken && !order) ? { name: 'token-tokenId', params: { tokenId: token.token_id }, query: { chainId: token.chainId } } : { name: 'tokens-id', params: { id: order.id } }"
     >
       <div class="img-wrapper d-flex ps-t-12 justify-content-center">
         <img

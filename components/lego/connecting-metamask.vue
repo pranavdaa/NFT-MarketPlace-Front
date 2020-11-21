@@ -23,14 +23,14 @@
                 >Waiting for confirmation from Metamask</div>
               </div>
 
-              <div class="row justify-content-center wallet-download-info">
+              <!-- <div class="row justify-content-center wallet-download-info">
                 Don't have wallet?
                 <a
                   href="https://matic.network/wallet"
                   class="link-color ps-l-2"
                   target="_blank"
                 >Download here</a>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -64,10 +64,10 @@ export default class ConnectingMetamask extends Vue {
   max-width: 446px;
 }
 
-.wallet-download-info {
-  border-top: 1px solid light-color("400");
-  padding: 32px 10px;
-  color: dark-color("100");
-  @include font-setting("body-medium", "medium");
-}
+// .wallet-download-info {
+//   border-top: 1px solid light-color("400");
+//   padding: 32px 10px;
+//   color: dark-color("100");
+//   @include font-setting("body-medium", "medium");
+// }
 </style>
