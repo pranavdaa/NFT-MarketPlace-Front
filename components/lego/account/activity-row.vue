@@ -16,10 +16,11 @@
         class="img-wrapper justify-content-center d-none"
         v-bind:style="{ background: bg }"
       ></div>
-      <svg-sprite-icon
-        name="profile"
-        class="profile-logo d-none d-md-block align-self-center"
-      ></svg-sprite-icon>
+      <img
+        :src="imgUrl"
+        class="asset-img align-self-center profile-logo"
+        :alt="activity.orders.categories.img_url"
+      />
       <div
         class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16"
       >
@@ -30,7 +31,7 @@
           {{ remainingTimeinWords }} ago
         </div>
       </div>
-      <div class="d-flex ml-auto ms-r-16" v-if="true">
+      <div class="d-flex ml-auto ms-r-16" v-if="true && activity.type === 'ORDER'">
         <nuxt-link
           :to="{ name: 'tokens-id', params: { id: activity.order_id } }"
           class="btn btn-light align-self-center"
@@ -63,6 +64,8 @@ import AcceptBid from "~/components/lego/modals/bid-confirmation";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
+import app from "~/plugins/app";
+
 const colorThief = new ColorThief();
 
 @Component({
@@ -97,6 +100,10 @@ export default class ActivityRow extends Vue {
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
       } else this.bg = "#ffffff";
     } catch (error) {}
+  }
+
+  get imgUrl() {
+    return `${app.uiconfig.apis.FILE_HOST}${this.activity.orders.categories.img_url}`
   }
 
   get timeRemaining() {
