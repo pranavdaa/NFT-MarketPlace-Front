@@ -49,6 +49,23 @@ export function fuzzysearch(rawNeedle, rawHaystack) {
   return true
 }
 
+export function fuzzySearchResult(inputVal, tokensList) {
+  let searchedTokensList = [];
+
+  tokensList.forEach((token) => {
+    if (
+      fuzzysearch(inputVal, token.name) ||
+      fuzzysearch(inputVal, token.description) ||
+      fuzzysearch(inputVal, token.token_id) ||
+      fuzzysearch(inputVal, token.category.name)
+    ) {
+      searchedTokensList.push(token);
+    }
+  })
+
+  return searchedTokensList;
+}
+
 export function getNextRoute(route) {
   const meta = route.meta
   const query = route.query

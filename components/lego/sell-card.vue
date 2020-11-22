@@ -3,13 +3,6 @@
     :to="{ name: 'tokens-id', params: { id: order.id } }"
     class="sell-card text-center cursor-pointer"
     v-bind:style="{ background: bg }"
-    v-if="
-      !searchInput ||
-      fuzzysearch(searchInput, order.name) ||
-      fuzzysearch(searchInput, order.tokens_id) ||
-      fuzzysearch(searchInput, category.name) ||
-      fuzzysearch(searchInput, erc20Token.name)
-    "
   >
     <on-sale-tag v-if="order.onSale && !onlyToken" :time="order.timeleft" />
     <owned-tag v-if="isOwnersToken" />
@@ -101,7 +94,6 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import app from "~/plugins/app";
 import { mapGetters } from "vuex";
-import { fuzzysearch } from "~/plugins/helpers";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -126,11 +118,6 @@ import OwnedTag from "~/components/lego/token/owned-tag";
       required: false,
       default: () => {},
     },
-    searchInput: {
-      type: String,
-      required: false,
-      default: null,
-    },
     moveToMatic: {
       type: Function,
       required: false,
@@ -149,7 +136,6 @@ import OwnedTag from "~/components/lego/token/owned-tag";
 })
 export default class SellCard extends Vue {
   bg = "#f3f4f7";
-  fuzzysearch = fuzzysearch;
 
   // Initial
   mounted() {}

@@ -55,6 +55,11 @@
       "description": "We didn’t find any collectibles on Matic chain."
     }
   },
+  "searchNotFound": {
+    "title": "No search results found",
+    "description": "We can't seem to find any tokens that matches your search",
+    "img": true
+  },
   "activityTab": {
     "empty": {
       "title": "Oops! No activities found.",
@@ -101,6 +106,7 @@
   },
   "viewOnEtherscan": "View on etherscan",
   "viewOnMaticscan": "View on Matic Explorer",
+  "preventUserDepositModalClose": "Please stay on this page until the deposit transaction is confirmed on Ethereum",
   "nftSelected": "Collectibles selected",
   "max": "Max",
   "deposit": {

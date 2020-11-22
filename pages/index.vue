@@ -78,8 +78,14 @@
             :message="exmptyMsg"
             v-if="orderFullList.length <= 0 && !isLoadingTokens"
           />
+          <no-item
+            class="ps-b-120"
+            :message="this.$t('searchNotFound')"
+            v-else-if="searchedTokens.length === 0"
+          />
+
           <sell-card
-            v-for="order in orderFullList"
+            v-for="order in searchedTokens"
             :key="order.id"
             :order="order"
             :searchInput="searchInput"
@@ -114,6 +120,8 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import app from "~/plugins/app";
+import { fuzzysearch } from "~/plugins/helpers/index";
+import { fuzzySearchResult } from "~/plugins/helpers/index";
 import getAxios from "~/plugins/axios";
 import { VueWatch } from "~/components/decorator";
 
@@ -147,6 +155,7 @@ import CategorySidebar from "~/components/lego/account/category-sidebar";
 export default class Index extends Vue {
   limit = app.uiconfig.defaultPageSize;
   searchInput = null;
+  fuzzysearch = fuzzysearch;
   exmptyMsg = {
     title: "Oops! No item found.",
     description: "We didn’t found any item that is on sale.",
@@ -212,7 +221,25 @@ export default class Index extends Vue {
   get displayedTokens() {
     return this.orderFullList || [];
   }
+  get searchedTokens() {
+    let searchedTokensList = [];
 
+    if (this.searchInput !== null && this.orderFullList.length > 0) {
+      this.orderFullList.forEach((order) => {
+        debugger
+        if (
+          fuzzysearch(this.searchInput, order.name) ||
+          fuzzysearch(this.searchInput, order.tokens_id)
+        ) {
+          searchedTokensList.push(order);
+        }
+      })
+    } else {
+      return this.orderFullList;
+    }
+
+    return searchedTokensList;
+  }
   get ifCategory() {
     return this.selectedFilters.selectedCategory
       ? `&categoryArray=[${this.selectedFilters.selectedCategory.id}]`

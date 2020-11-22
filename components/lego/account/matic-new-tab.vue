@@ -101,8 +101,14 @@
           class="row ps-x-16 d-flex justify-content-center text-center ps-b-60"
           v-if="displayedTokens && displayedTokens.length > 0"
         >
+          <no-item
+            class="ps-b-120"
+            :message="this.$t('searchNotFound')"
+            v-if="searchedTokens.length === 0"
+          />
+
           <NFTTokenCard
-            v-for="token in displayedTokens"
+            v-for="token in searchedTokens"
             :key="token.id"
             :token="token"
             :isSelected="token.isSelected"
@@ -170,6 +176,9 @@ import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import getAxios from "~/plugins/axios";
 import app from "~/plugins/app";
+import { fuzzysearch } from "~/plugins/helpers/index";
+import { fuzzySearchResult } from "~/plugins/helpers/index";
+
 import NFTTokenModel from "~/components/model/nft-token";
 
 import SellCard from "~/components/lego/sell-card";
@@ -232,6 +241,7 @@ export default class MaticNewTab extends Vue {
   displayTokens = 0;
   isLoadingTokens = false;
   limit = 20;
+  fuzzysearch = fuzzysearch;
 
   mounted() {
     this.fetchNFTTokens();
@@ -405,6 +415,13 @@ export default class MaticNewTab extends Vue {
       );
     }
     return tokens || [];
+  }
+  get searchedTokens() {
+    if (this.searchInput !== null && this.displayedTokens.length > 0) {
+      return fuzzySearchResult(this.searchInput, this.displayedTokens)
+    } else {
+      return this.displayedTokens;
+    }
   }
   get selectedTokenIds() {
     let token_ids = [];

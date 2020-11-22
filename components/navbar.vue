@@ -772,8 +772,8 @@ export default class Navbar extends Vue {
         }
 
         .extra-links {
-          display: block;
-          border-top: 1px solid light-color("500");
+          display: none;
+          // border-top: 1px solid light-color("500");
         }
       }
     }

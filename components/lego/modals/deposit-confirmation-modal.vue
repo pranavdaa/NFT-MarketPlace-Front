@@ -1,5 +1,6 @@
 <template>
   <div class="section position-absolute">
+    <PreventUnload :when="(transactionStatus === STATUS.DEPOSITING) && !!(this.transactionHash)" message="Please stay on this page until the deposit transaction is confirmed on Ethereum!" />
     <div
       class="modal receive-modal-wrapper"
       v-bsl="show"
@@ -16,10 +17,11 @@
             <span
               @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
+              :class="{'disabled-cursor': transactionStatus === STATUS.DEPOSITING && transactionHash }"
             >
               <svg-sprite-icon
                 name="close"
-                class="close align-self-center float-left cursor-pointer"
+                class="close align-self-center float-left"
               ></svg-sprite-icon>
             </span>
           </div>
@@ -115,7 +117,7 @@
                   <div
                     class="float-left process-msg font-caption text-gray ms-l-12 ms-b-2 ps-l-24"
                   >
-                    <div class="ps-b-16">
+                    <div class="ps-b-8">
                       <span v-if="transactionStatus === STATUS.INITIATED">
                         {{ this.$t("deposit.process.preDeposit") }}
                       </span>
@@ -133,6 +135,12 @@
                         >{{ this.$t("viewOnEtherscan") }}</a
                       >
                     </div>
+                    <div class="ps-b-16 text-red font-semibold"
+                      v-if="
+                        transactionStatus === STATUS.DEPOSITING &&
+                        transactionHash
+                      "
+                    >{{ this.$t("preventUserDepositModalClose") }}</div>
                   </div>
                 </div>
                 <div class="col-12 p-0">
@@ -205,6 +213,8 @@ import getAxios from "~/plugins/axios";
 import { getWalletProvider } from "~/plugins/helpers/providers";
 const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
 
+import PreventUnload from 'vue-prevent-unload';
+
 const STATUS = {
   INITIATING: 0,
   INITIATED: 1,
@@ -241,7 +251,9 @@ const STATUS = {
       required: true,
     },
   },
-  components: {},
+  components: {
+    PreventUnload,
+  },
   methods: {},
   computed: {
     ...mapGetters("account", ["account"]),
@@ -374,6 +386,7 @@ export default class DepositConfirmationModal extends Vue {
   }
 
   onCancel() {
+    if (this.transactionStatus === STATUS.DEPOSITING && this.transactionHash) return;
     this.cancel();
   }
 }
@@ -428,6 +441,9 @@ export default class DepositConfirmationModal extends Vue {
 }
 .text-red {
   color: red-color("600");
+}
+.disabled-cursor {
+  cursor: default !important;
 }
 
 .btn-pay {
