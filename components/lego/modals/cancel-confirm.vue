@@ -39,7 +39,7 @@
                   </div>
                 </div>
                 <div class="col-md-12 ps-y-32">
-                  <div class="font-body-small short-descr">Selling for</div>
+                  <div class="font-body-small short-descr">Listed for</div>
                   <div class="amount font-heading-large font-semibold ps-t-4">
                     {{ order.price }} {{ order.erc20tokens.symbol }}
                   </div>

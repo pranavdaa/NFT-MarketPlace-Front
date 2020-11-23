@@ -272,7 +272,7 @@ export default class PlaceBid extends Vue {
       note:
         "By offering, you will automatically pay for this item if the owner accepts your offer, unless you cancel it.",
       btn: "Submit offer",
-      loadingText: "Submintting offer",
+      loadingText: "Submitting offer",
     };
   }
 

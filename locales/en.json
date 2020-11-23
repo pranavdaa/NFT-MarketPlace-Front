@@ -120,7 +120,7 @@
     "process": {
       "preDeposit": "Please confirm the transaction to complete the deposit.",
       "depositing": "Transactions on Ethereum sometimes take longer based on network congestion. Please wait or increase the gas price",
-      "deposited": "It will take ~7-8 minutes for the funds to get deposited to your account."
+      "deposited": "It will take ~7-8 minutes for the NFT's to get deposited to your account."
     }
   }
 }

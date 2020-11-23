@@ -89,7 +89,7 @@
                     <div class="ps-b-16">
                       <span v-if="transactionStatus === STATUS.BURNING">
                         {{
-                          "Waiting for transaction to complete. It may take few seconds"
+                          "It will take a few seconds for the transaction to complete"
                         }}
                       </span>
                       <a
@@ -124,7 +124,7 @@
                     />
                   </div>
                   <div class="float-left body-medium ps-2 ps-t-0 ms-l-12">
-                    {{ "Checkpoint to Ethereum" }}
+                    {{ "Checkpoint on Ethereum" }}
                   </div>
                 </div>
                 <div class="col-12 p-0">
@@ -134,7 +134,7 @@
                     <div class="ps-b-16">
                       <span v-if="transactionStatus === STATUS.CHECKPOINTING">
                         {{
-                          "Waiting for Matic to submit Checkpoint to Ethereum"
+                          "Waiting for Checkpoint to be reached on Ethereum. Approx time taken will be ~34 minutes"
                         }}
                       </span>
                     </div>

@@ -37,7 +37,7 @@
                   </div>
                 </div>
                 <div class="col-md-12 ps-y-32">
-                  <div class="font-body-small short-descr">Offer received</div>
+                  <div class="font-body-small short-descr">Offered for</div>
                   <div class="amount font-heading-large font-semibold ps-t-4">
                     {{ bid.price }} {{ bid.erc20Token.symbol }}
                   </div>
