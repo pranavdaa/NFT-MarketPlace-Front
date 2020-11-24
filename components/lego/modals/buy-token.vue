@@ -55,8 +55,15 @@
                       v-if="dirty && !validation['balance']"
                     >
                       {{ errorMessage }}
+                      <div class="ps-t-16">
+                    <NuxtLink
+                      class="text-center font-semibold text-primary-600"
+                      :to="{ name: 'account' }"
+                      >Add funds to your account here</NuxtLink
+                    >
+                  </div>
                     </div>
-
+                    
                     <div class="font-body-small text-gray-300 mt-auto ps-y-4">
                       Listed for
                     </div>

@@ -216,7 +216,7 @@
                       class="ps-l-2"
                       v-if="transactionStatus >= STATUS.EXITED"
                     >
-                      {{ "It will take ~2 minute to reflate in your account." }}
+                      {{ "It will take ~2 minutes for the NFT to appear in your Ethereum account." }}
                     </span>
                   </div>
                 </div>
@@ -486,9 +486,9 @@ export default class WithdrawConfirmationModal extends Vue {
       const burnHash = this.transaction.txhash;
 
       let exited = await maticPoS.isBatchERC721ExitProcessed(burnHash)
-      console.log("#######",exited)
       if(exited){
-        await this.handleExit(txHash);
+        console.log("exited before")
+        await this.handleExitedTokens();
         this.isLoading = false;
         this.isDeposited = true;
         this.cancel();
@@ -497,15 +497,14 @@ export default class WithdrawConfirmationModal extends Vue {
 
       let txHash = await maticPoS.exitBatchERC721(burnHash, {
         from: this.account.address,
-        onTransactionHash: (txHash) => {
-          this.transactionHash = txHash;
+        onReceipt: async (txHash) => {
+          console.log("exited now")
+          await this.handleExit(txHash);
+          this.isLoading = false;
+          this.isDeposited = true;
         },
       });
-      if (txHash) {
-        await this.handleExit(txHash);
-        this.isLoading = false;
-        this.isDeposited = true;
-      }
+  
     } catch (error) {
       this.isLoading = false;
       this.error = error.message;
@@ -562,8 +561,7 @@ export default class WithdrawConfirmationModal extends Vue {
     } catch (error) {}
   }
 
-  async handleExitedTokens(txHash) {
-    console.log("Withdraw exit", txHash);
+  async handleExitedTokens() {
     try {
       let data = {
         exit_txhash: "TX EXITED EXTERNALLY",

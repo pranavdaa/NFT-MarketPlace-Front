@@ -3,7 +3,8 @@ import { toChecksumAddress } from "ethereumjs-util"
 import BigNumber from "~/plugins/bignumber"
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
-import getBaseAxios from "~/plugins/axios"
+import MetaNetwork from "@maticnetwork/meta/network"
+const uiconfig = JSON.parse(process.env.uiconfig)
 
 import { parseBalance, parseUSDBalance } from "~/plugins/helpers/token-utils"
 
@@ -21,11 +22,17 @@ export default class Token extends Model {
   }
 
   get addresses() {
+
+    const network = new MetaNetwork(
+      uiconfig.matic.deployment.network,
+      uiconfig.matic.deployment.version
+    )
+
     let addresses = {}
     if (this.erc20tokensaddresses) {
       this.erc20tokensaddresses.forEach(address => {
-        if (address.chain_id == "8001") {
-          addresses["80001"] = address.address
+        if (address.chain_id == network.Matic.ChainId) {
+          addresses[network.Matic.ChainId] = address.address
         } else {
           addresses[address.chain_id] = address.address
         }

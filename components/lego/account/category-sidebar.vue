@@ -144,7 +144,6 @@ export default class CategoriesSelector extends Vue {
         }, 0) || 0
       );
     } else if (!this.isTab) {
-      console.log("all");
       return this.allCategory.count || 0;
     }
     return 0;
