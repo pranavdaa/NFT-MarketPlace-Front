@@ -50,7 +50,7 @@
                 <div
                   class="col-md-12 font-body-small ps-t-12 text-gray-300 ps-x-0"
                 >
-                  0% commission of Matic Marketplace, you’ll get 0.00 Matic
+                  
                 </div>
               </div>
 
@@ -275,7 +275,7 @@ export default class SellToken extends Vue {
       subtitle: "Set price",
       description:
         "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
-      commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
+      commission: "",
       btnTitle: "Submit to Marketplace",
     },
   ];

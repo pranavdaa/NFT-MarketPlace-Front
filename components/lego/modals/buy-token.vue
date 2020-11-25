@@ -365,7 +365,7 @@ export default class BuyToken extends Vue {
       subtitle: "Set price",
       description:
         "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
-      commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
+      commission: "",
       btnTitle: "Submit to Marketplace",
     },
     {
@@ -374,7 +374,7 @@ export default class BuyToken extends Vue {
       subtitle: "Set minimum bid",
       description:
         "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
-      commission: "0% commission of Matic Marketplace, you’ll get 0.00 Matic",
+      commission: "",
       btnTitle: "Submit to Marketplace",
     },
   ];
