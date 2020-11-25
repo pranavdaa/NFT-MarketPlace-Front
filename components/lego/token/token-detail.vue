@@ -367,8 +367,8 @@ const TEN = BigNumber(10);
 export default class TokenDetail extends Vue {
   bg = "#ffffff";
   showMore = false;
-  showCategoryInfo = true;
-  showProperties = true;
+  showCategoryInfo = false;
+  showProperties = false;
   showBuyToken = false;
   showCancelConfirm = false;
 

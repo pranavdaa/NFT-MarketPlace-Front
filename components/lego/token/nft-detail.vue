@@ -210,8 +210,8 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
 export default class NftDetail extends Vue {
   bg = "#ffffff";
   showMore = false;
-  showCategoryInfo = true;
-  showProperties = true;
+  showCategoryInfo = false;
+  showProperties = false;
 
   isLoadingDetails = false;
   isLoading = false;
