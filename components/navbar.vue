@@ -13,8 +13,15 @@
             <svg-sprite-icon name="grabber" class="icon navbar-toggler-icon"></svg-sprite-icon>
             <svg-sprite-icon name="close" class="icon close-icon"></svg-sprite-icon>
           </button>
-          <img src="~assets/img/navbar-logo.svg" alt="Matic Logo" class="logo align-self-center" />
-          <div class="product-text align-self-center ps-l-12">{{$t("marketplace")}}</div>
+          <div class="d-flex">
+            <div class="d-flex">
+            <img src="~assets/img/open-sea-logo.svg" alt="Open Sea Logo" class="logo align-self-center" />
+            </div>
+            <div class="d-flex flex-column justify-content-center logo-desc-container">
+              <div><span class="logo-title">OpenSea</span> <span class="logo-product-name">L2</span> <span class="tag">BETA</span></div>
+              <div class="logo-description">Powered by Matic Network</div>
+            </div>
+          </div>
         </nuxt-link>
         <div
           class="navbar-collapse collapse d-flex col p-0 justify-content-center"
@@ -427,16 +434,34 @@ export default class Navbar extends Vue {
   flex-basis: 0 !important;
   flex-grow: 1 !important;
 }
+
+.tag {
+  background: primary-color("200");
+  border-radius: 3px;
+  color: primary-color("600");
+  font-size: font-size("body-small");
+  font-weight: 500;
+  padding: 4px 5px;
+}
+
 .logo-container {
   .logo {
-    height: 26px;
+    height: 40px;
   }
 
-  .product-text {
-    font-size: 20px;
-    line-height: 28px;
-    text-transform: capitalize;
-    color: light-color("100");
+  .logo-desc-container {
+    margin-left: 12px;
+
+    .logo-title {
+      color: #3291E9;
+    }
+    .logo-product-name {
+      color: dark-color("300");
+    }
+    .logo-description {
+      font-size: font-size("body-small");
+      color: dark-color("500");
+    }
   }
 }
 
