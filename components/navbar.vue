@@ -88,31 +88,11 @@
             @click.prevent.stop="handleOpenProfile(!openProfile)"
             v-if="user"
           >
-            <span class="profile-icon profile-with-status align-self-center">
-              <svg-sprite-icon name="profile" class="profile-logo"></svg-sprite-icon>
-              <!-- <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon> -->
-              <!-- <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" /> -->
-              <div class="profile-status ms-l-24 ms-t-8">
-                <svg
-                  class="status-icon"
-                  v-bind:class="{'main': currentNetwork.key === 'main', 'matic': currentNetwork.key === 'matic','other': currentNetwork.key != 'main' && currentNetwork.key != 'matic',}"
-                  width="10"
-                  height="10"
-                  viewBox="0 0 10 10"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="5" cy="5" r="4" fill="#25CD79" stroke="white" stroke-width="2" />
-                </svg>
-              </div>
+            <img src="~assets/svg/metamask.svg" />
+            <span class="navbar-user-address">
+            {{ formattedUserAddress }}
             </span>
-            <div class="profile d-none d-md-flex flex-column align-self-center ms-l-12">
-              <span class="font-body-small font-medium user-name">{{ formattedUserAddress }}</span>
-              <span
-                class="font-caption text-gray font-capitalize network-method"
-                v-if="selectedNetwork"
-              >{{ rootChainNetwork.name || rootChainNetwork.key }}</span>
-            </div>
+            
             <span class="down-icon align-self-center d-none d-md-flex justify-content-center">
               <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
             </span>
@@ -574,14 +554,13 @@ export default class Navbar extends Vue {
 
   .nav-profile-container {
     cursor: pointer;
-    .profile {
-      width: 124px;
-    }
-    .profile-icon {
-      .svg-sprite-icon {
-        height: 34px;
-        width: 34px;
-      }
+    background: light-color("500");
+    padding: 10px 18px 10px 14px;
+    border-radius: 24px;
+
+    .navbar-user-address {
+      @include font-setting("body-medium", "400");
+      margin: 0 13px 0 10px;
     }
 
     .down-icon {
