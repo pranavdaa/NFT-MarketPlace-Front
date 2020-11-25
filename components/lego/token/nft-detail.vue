@@ -88,27 +88,8 @@
 
           <div class="properties">
             <h3
-              class="d-flex flex-row font-heading-medium font-semibold category"
+              class="font-heading-medium font-semibold mb-4"
             >
-              Properties
-            </h3>
-            <div class="d-flex flex-row flex-wrap">
-              <div
-                class="col-md-3 p-4 my-4 mr-4 properties-pill text-center"
-                v-bind:key="`${attribute.trait_type}-${attribute.value}`"
-                v-for="attribute in token.token.attributes_metadata"
-              >
-                <p class="m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
-                <h4 class="m-0 pt-1 text-truncate">{{ attribute.value }}</h4>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="d-flex flex-column ps-y-16 ps-y-md-32"
-            v-if="token.properties"
-          >
-            <h3 class="font-heading-medium font-semibold category">
               Properties
               <span
                 class="float-right cursor-pointer right-arrow"
@@ -118,9 +99,18 @@
                 <svg-sprite-icon name="right-arrow" />
               </span>
             </h3>
-            <p class="font-body-medium ps-t-20" v-if="showProperties">
-              {{ token.properties }}
-            </p>
+            <div class="d-flex flex-row flex-wrap" v-if="showProperties">
+              <div
+                class="col-md-4 p-0 pr-4 justify-content-between"
+                v-bind:key="`${attribute.trait_type}-${attribute.value}`"
+                v-for="attribute in token.token.attributes_metadata"
+              >
+              <div class="d-flex flex-column properties-pill p-3 mb-4">
+                <p class="property-title m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
+                <p class="property-detail m-0 pt-1 text-truncate">{{ attribute.value }}</p>
+              </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-md-4 d-none d-lg-flex">
@@ -353,9 +343,16 @@ export default class NftDetail extends Vue {
 
 .properties {
   .properties-pill {
-    background-color: #EAF0FD;
-    border: 1px solid #558AF2;
+    background:  primary-color("100");
+    border: 1px solid primary-color("300");
     border-radius: 8px;
+  }
+  .property-title {
+    @include font-setting("body-medium", "700");
+  }
+  .property-detail {
+    @include font-setting("body-large", "500");
+    color: dark-color("500");
   }
 }
 
