@@ -143,29 +143,10 @@
             </p>
           </div>
 
-          <div class="properties col-md-10 ps-0">
+          <div class="properties">
             <h3
-              class="d-flex font-heading-medium font-semibold category"
+              class="font-heading-medium font-semibold mb-4"
             >
-              Properties
-            </h3>
-            <div class="d-flex flex-wrap">
-              <div
-                class="col-md-3 col-lg-3 p-4 my-2 mr-md-4 mr-3 properties-pill text-center"
-                v-bind:key="`${attribute.trait_type}-${attribute.value}`"
-                v-for="attribute in order.token.attributes_metadata"
-              >
-                <p class="m-0 p-0 text-truncate trait-type">{{ attribute.trait_type }}</p>
-                <h4 class="m-0 pt-1 text-truncate">{{ attribute.value }}</h4>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="d-flex flex-column ps-y-16 ps-y-md-32"
-            v-if="order.token.properties"
-          >
-            <h3 class="font-heading-medium font-semibold category">
               Properties
               <span
                 class="float-right cursor-pointer right-arrow"
@@ -175,10 +156,20 @@
                 <svg-sprite-icon name="right-arrow" />
               </span>
             </h3>
-            <p class="font-body-medium ps-t-20" v-if="showProperties">
-              {{ order.token.properties }}
-            </p>
+            <div class="d-flex flex-row flex-wrap" v-if="showProperties">
+              <div
+                class="col-md-4 p-0 pr-4 justify-content-between"
+                v-bind:key="`${attribute.trait_type}-${attribute.value}`"
+                v-for="attribute in order.token.attributes_metadata"
+              >
+              <div class="d-flex flex-column properties-pill p-3 mb-4">
+                <p class="property-title m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
+                <p class="property-detail m-0 pt-1 text-truncate">{{ attribute.value }}</p>
+              </div>
+              </div>
+            </div>
           </div>
+
           <div
             class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
             v-if="
@@ -376,8 +367,8 @@ const TEN = BigNumber(10);
 export default class TokenDetail extends Vue {
   bg = "#ffffff";
   showMore = false;
-  showCategoryInfo = true;
-  showProperties = true;
+  showCategoryInfo = false;
+  showProperties = false;
   showBuyToken = false;
   showCancelConfirm = false;
 
@@ -652,6 +643,7 @@ export default class TokenDetail extends Vue {
   padding-bottom: 3.75rem;
   min-height: 500px;
   border-radius: $default-card-box-border-radius;
+  background: light-color("600") !important;
   .asset-img {
     max-width: 90%;
     max-height: 380px;
@@ -709,16 +701,16 @@ export default class TokenDetail extends Vue {
 
 .properties {
   .properties-pill {
-    background-color: #edfbff;
-    border: 1px solid #2d9cdb;
+    background:  primary-color("100");
+    border: 1px solid primary-color("300");
     border-radius: 8px;
-    color: dark-color("600");
-    text-transform: capitalize;
-
-    .trait-type {
-      color: #2d9cdb;
-      text-transform: uppercase;
-    }
+  }
+  .property-title {
+    @include font-setting("body-medium", "700");
+  }
+  .property-detail {
+    @include font-setting("body-large", "500");
+    color: dark-color("500");
   }
 }
 
