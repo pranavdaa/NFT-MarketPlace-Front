@@ -25,7 +25,7 @@
         class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
       >
         <div class="name ps-b-4 font-heading-small font-semibold">
-          Total NFT
+          {{ $t("account.banner.totalNft") }}
         </div>
         <div class="amount font-body-medium">
           {{ totalMaticNft + totalMainNft }}
@@ -35,25 +35,23 @@
         class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
       >
         <div class="name ps-b-4 font-heading-small font-semibold">
-          Balance on Matic
+          {{ $t("account.banner.balance") }}
         </div>
         <div v-if="erc20Tokens[0]" class="amount font-body-medium">
-          {{ formattedFullUSDBalance }} {{erc20Tokens[0].symbol}}
+          {{ formattedFullUSDBalance }} {{ erc20Tokens[0].symbol }}
         </div>
       </div>
+
       <div class="align-self-center">
-        <a
-          href="https://transak.com/"
-          target="_blank"
-        >
-          <button
-            class="btn btn-light ml-auto"
-          >
-            Buy from Transak
-          </button>
-        </a>
+        <button class="btn btn-light ml-auto" @click="depositModal = true">
+          {{ $t("account.banner.depositWeth") }}
+        </button>
       </div>
     </div>
+    <deposit-weth
+      :show="depositModal"
+      :close="closeDepositModal"
+    ></deposit-weth>
   </div>
 </template>
 
@@ -62,13 +60,25 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import app from "~/plugins/app";
+import DepositWeth from "~/components/lego/modals/deposit-weth";
 
 @Component({
   props: {},
+  components: { DepositWeth },
   computed: {
     ...mapGetters("account", ["account", "totalMaticNft", "totalMainNft"]),
-    ...mapGetters("token", ["totalCurrencyBalance","erc20Tokens"]),
+    ...mapGetters("token", ["totalCurrencyBalance", "erc20Tokens"]),
     ...mapGetters("network", ["networkMeta"]),
+  },
+  data() {
+    return {
+      depositModal: false,
+    };
+  },
+  methods: {
+    closeDepositModal() {
+      this.depositModal = false;
+    },
   },
 })
 export default class AccountBanner extends Vue {
