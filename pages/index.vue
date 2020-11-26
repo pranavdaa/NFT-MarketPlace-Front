@@ -81,7 +81,7 @@
           <no-item
             class="ps-b-120"
             :message="this.$t('searchNotFound')"
-            v-else-if="searchedTokens.length === 0"
+            v-else-if="searchedTokens.length === 0 && !isLoadingTokens"
           />
 
           <sell-card

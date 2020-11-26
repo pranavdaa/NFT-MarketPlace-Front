@@ -107,6 +107,7 @@
   "viewOnEtherscan": "View on etherscan",
   "viewOnMaticscan": "View on Matic Explorer",
   "preventUserDepositModalClose": "Please stay on this page until the deposit transaction is confirmed on Ethereum",
+  "preventUserWithdrawModalClose": "Please stay on this page until the withdraw transaction is confirmed on Ethereum",
   "nftSelected": "Collectibles selected",
   "max": "Max",
   "deposit": {
