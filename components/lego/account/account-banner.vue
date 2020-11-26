@@ -10,11 +10,27 @@
         <div class="white-color name ps-b-4 font-heading-small font-semibold">
           {{ account.name }}
         </div>
-        <div class="white-color address font-body-medium">
-          {{ account.address.toUpperCase() }}
-        </div>
-        <div class="white-color address-short font-body-medium">
-          {{ account.shortChecksumAddress }}
+        <div class="d-flex flex-row">
+          <div class="white-color address font-body-medium">
+            {{ account.address.toUpperCase() }}
+          </div>
+          <div class="white-color address-short font-body-medium">
+            {{ account.shortChecksumAddress }}
+          </div>
+          &nbsp; &nbsp;
+          <div class="copy-wrapper" @click.stop.prevent="copyAddress">
+            <img
+              name="copy-white"
+              src="~/assets/svg/copy-white.svg"
+              v-if="copyAnim === false"
+            />
+            <lottie
+              :options="defaultOptions"
+              :width="24"
+              :height="24"
+              v-if="copyAnim === true"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -58,13 +74,17 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
+import copy from "copy-to-clipboard";
+import Lottie from "vue-lottie";
 import { mapGetters } from "vuex";
+
 import app from "~/plugins/app";
 import DepositWeth from "~/components/lego/modals/deposit-weth";
+import * as animationData from "~/static/lottie-animations/green-check.json";
 
 @Component({
   props: {},
-  components: { DepositWeth },
+  components: { DepositWeth, Lottie },
   computed: {
     ...mapGetters("account", ["account", "totalMaticNft", "totalMainNft"]),
     ...mapGetters("token", ["totalCurrencyBalance", "erc20Tokens"]),
@@ -79,9 +99,25 @@ import DepositWeth from "~/components/lego/modals/deposit-weth";
     closeDepositModal() {
       this.depositModal = false;
     },
+
+    copyAnimation(show) {
+      this.copyAnim = show;
+    },
+
+    copyAddress() {
+      this.copyAnimation(true);
+      copy(this.account.checksumAddress || this.account.address);
+      setTimeout(() => {
+        this.copyAnimation(false);
+      }, 3000);
+    },
   },
 })
 export default class AccountBanner extends Vue {
+  defaultOptions = { animationData: animationData.default, loop: false };
+  animationSpeed = 2;
+  copyAnim = false;
+
   // Widget event listener
   maticWidgetEventsListener = (event) => {
     let targetedEvents = [
@@ -131,6 +167,14 @@ export default class AccountBanner extends Vue {
     min-height: 64px !important;
   }
 }
+
+.copy-wrapper {
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
+  z-index: 99;
+}
+
 .address-short {
   display: none;
 }
