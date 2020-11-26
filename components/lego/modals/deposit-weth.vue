@@ -1,6 +1,10 @@
 <template>
   <section>
-    <div class="deposit-weth modal fade show" v-if="show">
+    <div
+      class="deposit-weth modal fade show"
+      v-if="show"
+      :class="{ 'hide-modal': showReceiveModal }"
+    >
       <div class="modal-dialog">
         <div class="box">
           <div class="box-body">
@@ -21,7 +25,12 @@
               <div
                 class="row ps-x-md-32 ps-y-md-32 ps-y-32 ps-x-16 d-flex justify-content-center"
               >
-                <div class="option-box d-flex flex-row my-2">
+                <a
+                  class="option-box d-flex flex-row my-2"
+                  href="https://transak.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <div><img src="~assets/svg/buy-from-transak.svg" /></div>
                   <div class="option-right d-flex flex-column">
                     <div class="title">
@@ -31,8 +40,13 @@
                       {{ $t("account.deposit.options.buy.description") }}
                     </div>
                   </div>
-                </div>
-                <div class="option-box d-flex flex-row my-2">
+                </a>
+                <a
+                  class="option-box d-flex flex-row my-2"
+                  href="http://wallet.matic.network/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <div><img src="~assets/svg/deposit-from-mainnet.svg" /></div>
                   <div class="option-right d-flex flex-column">
                     <div class="title">
@@ -42,8 +56,11 @@
                       {{ $t("account.deposit.options.deposit.description") }}
                     </div>
                   </div>
-                </div>
-                <div class="option-box d-flex flex-row my-2">
+                </a>
+                <div
+                  class="option-box d-flex flex-row my-2"
+                  @click="showReceiveModal = true"
+                >
                   <div><img src="~assets/svg/transfer-from-wallet.svg" /></div>
                   <div class="option-right d-flex flex-column">
                     <div class="title">
@@ -61,13 +78,21 @@
       </div>
     </div>
     <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+
+    <receive-qr-code
+      :show="showReceiveModal"
+      :close="closeReceiveModal"
+      :uri="account.address"
+    ></receive-qr-code>
   </section>
 </template>
 
 <script>
 import Vue from "vue";
+import { mapGetters } from "vuex";
 
 import Component from "nuxt-class-component";
+import ReceiveQrCode from "~/components/lego/receive-qr-code";
 
 @Component({
   props: {
@@ -83,11 +108,18 @@ import Component from "nuxt-class-component";
   },
   data() {
     return {
+      showReceiveModal: false,
     };
   },
-  components: {},
-  computed: {},
-  methods: {},
+  components: { ReceiveQrCode },
+  computed: {
+    ...mapGetters("account", ["account"]),
+  },
+  methods: {
+    closeReceiveModal() {
+      this.showReceiveModal = false;
+    },
+  },
 })
 export default class DepositWeth extends Vue {
   mounted() {}
@@ -96,8 +128,9 @@ export default class DepositWeth extends Vue {
 
 <style lang="scss" scoped="true">
 @import "~assets/css/theme/_theme";
-.deposit-weth {
-  color: black;
+
+.hide-modal {
+  opacity: 0;
 }
 
 .box {
@@ -112,12 +145,14 @@ export default class DepositWeth extends Vue {
 .option-box {
   border: 1px solid light-color("400");
   border-radius: 8px;
+  cursor: pointer;
   padding: 32px;
 
   .option-right {
     margin-left: 32px;
     .title {
       @include font-setting("heading-medium", "semibold");
+      color: dark-color("700");
     }
     .description {
       @include font-setting("body-small", "regular");
