@@ -33,6 +33,28 @@
       "ethereum": "Items on Ethereum",
       "activity": "Activities",
       "favorites": "Favorites"
+    },
+    "banner": {
+      "totalNft": "Total NFT",
+      "balance": "WETH Balance",
+      "depositWeth": "Deposit WETH"
+    },
+    "deposit": {
+      "title": "Deposit Options",
+      "options": {
+        "buy": {
+          "title": "Buy from Transak",
+          "description": "You can buy WETH from transak to directly your Matic wallet."
+        },
+        "deposit": {
+          "title": "Deposit from Mainnet",
+          "description": "Deposit WETH from your ethereum wallet to Matic wallet"
+        },
+        "transfer": {
+          "title": "Transfer from another wallet",
+          "description": "You can transfer WETH to your wallet if you’ve WETH in another Matic wallet."
+        }
+      }
     }
   },
   "moreOptions": {

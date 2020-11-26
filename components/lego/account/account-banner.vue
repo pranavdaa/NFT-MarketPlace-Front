@@ -7,13 +7,13 @@
       <div
         class="d-flex flex-column align-self-center ps-l-md-16 text-center text-md-left ps-t-16 ps-t-md-0"
       >
-        <div class="name ps-b-4 font-heading-small font-semibold">
+        <div class="white-color name ps-b-4 font-heading-small font-semibold">
           {{ account.name }}
         </div>
-        <div class="address font-body-medium">
+        <div class="white-color address font-body-medium">
           {{ account.address.toUpperCase() }}
         </div>
-        <div class="address-short font-body-medium">
+        <div class="white-color address-short font-body-medium">
           {{ account.shortChecksumAddress }}
         </div>
       </div>
@@ -24,36 +24,34 @@
       <div
         class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
       >
-        <div class="name ps-b-4 font-heading-small font-semibold">
-          Total NFT
+        <div class="white-color name ps-b-4 font-heading-small font-semibold">
+          {{ $t("account.banner.totalNft") }}
         </div>
-        <div class="amount font-body-medium">
+        <div class="white-color amount font-body-medium">
           {{ totalMaticNft + totalMainNft }}
         </div>
       </div>
       <div
         class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
       >
-        <div class="name ps-b-4 font-heading-small font-semibold">
-          Balance on Matic
+        <div class="white-color name ps-b-4 font-heading-small font-semibold">
+          {{ $t("account.banner.balance") }}
         </div>
-        <div v-if="erc20Tokens[0]" class="amount font-body-medium">
-          {{ formattedFullUSDBalance }} {{erc20Tokens[0].symbol}}
+        <div v-if="erc20Tokens[0]" class="white-color amount font-body-medium">
+          {{ formattedFullUSDBalance }} {{ erc20Tokens[0].symbol }}
         </div>
       </div>
+
       <div class="align-self-center">
-        <a
-          href="https://transak.com/"
-          target="_blank"
-        >
-          <button
-            class="btn btn-light ml-auto"
-          >
-            Buy from Transak
-          </button>
-        </a>
+        <button class="btn btn-light ml-auto" @click="depositModal = true">
+          {{ $t("account.banner.depositWeth") }}
+        </button>
       </div>
     </div>
+    <deposit-weth
+      :show="depositModal"
+      :close="closeDepositModal"
+    ></deposit-weth>
   </div>
 </template>
 
@@ -62,13 +60,25 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import app from "~/plugins/app";
+import DepositWeth from "~/components/lego/modals/deposit-weth";
 
 @Component({
   props: {},
+  components: { DepositWeth },
   computed: {
     ...mapGetters("account", ["account", "totalMaticNft", "totalMainNft"]),
-    ...mapGetters("token", ["totalCurrencyBalance","erc20Tokens"]),
+    ...mapGetters("token", ["totalCurrencyBalance", "erc20Tokens"]),
     ...mapGetters("network", ["networkMeta"]),
+  },
+  data() {
+    return {
+      depositModal: false,
+    };
+  },
+  methods: {
+    closeDepositModal() {
+      this.depositModal = false;
+    },
   },
 })
 export default class AccountBanner extends Vue {
@@ -109,9 +119,12 @@ export default class AccountBanner extends Vue {
 
 <style lang="scss" scoped="true">
 @import "~assets/css/theme/_theme";
+
+.white-color {
+  color: light-color("700");
+}
 .account-banner {
   background-color: primary-color("600");
-  color: light-color("700");
 
   .profile-pic {
     min-width: 64px !important;
