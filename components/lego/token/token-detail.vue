@@ -389,6 +389,8 @@ export default class TokenDetail extends Vue {
   onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
+      img.crossOrigin = "Anonymous";
+
       let rgbColor = colorThief.getColor(img);
       if (rgbColor) {
         let hsl = rgbToHsl({
@@ -643,7 +645,7 @@ export default class TokenDetail extends Vue {
   padding-bottom: 3.75rem;
   min-height: 500px;
   border-radius: $default-card-box-border-radius;
-  background: light-color("600") !important;
+
   .asset-img {
     max-width: 90%;
     max-height: 380px;
