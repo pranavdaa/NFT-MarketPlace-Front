@@ -175,6 +175,8 @@ export default class NFTTokenCard extends Vue {
   async onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
+      img.crossOrigin = "Anonymous";
+
       let rgbColor = colorThief.getColor(img);
       if (rgbColor) {
         let hsl = rgbToHsl({
