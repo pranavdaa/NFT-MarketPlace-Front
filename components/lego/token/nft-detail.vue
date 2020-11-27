@@ -28,91 +28,93 @@
             />
           </div>
           <div class="details-section">
-          <div
-            class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
-          >
-            <h2>{{ token.description }}</h2>
-            <h3 class="font-heading-medium font-semibold">
-              About {{ token.name }}
-            </h3>
-            <p
-              class="font-body-medium"
-              :class="{ 'show-less': showMore, 'show-more': !showMore }"
-              v-if="token.description"
+            <div
+              class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
             >
-              {{ token.description }}
-              <span class="dots">...</span>
-              <span class="more">{{ token.description }}</span>
-              <a
-                class="font-body-small d-flex ps-t-8 font-medium"
-                href="#more-info"
-                v-if="!showMore"
-                @click.prevent="showMore = true"
-                >More info</a
+              <h2>{{ token.description }}</h2>
+              <h3 class="font-heading-medium font-semibold">
+                About {{ token.name }}
+              </h3>
+              <p
+                class="font-body-medium"
+                :class="{ 'show-less': showMore, 'show-more': !showMore }"
+                v-if="token.description"
               >
-              <a
-                class="font-body-small d-flex ps-t-8 font-medium"
-                href="#more-info"
-                v-if="showMore"
-                @click.prevent="showMore = false"
-                >Show less</a
-              >
-            </p>
-          </div>
-          <div class="d-flex flex-column py-4" v-if="category">
-            <h3 class="font-heading-medium font-semibold category">
-              About {{ category.name }}
-              <a
-                class="ps-l-12"
-                :href="category.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Visit Website</a
-              >
+                {{ token.description }}
+                <span class="dots">...</span>
+                <span class="more">{{ token.description }}</span>
+                <a
+                  class="font-body-small d-flex ps-t-8 font-medium"
+                  href="#more-info"
+                  v-if="!showMore"
+                  @click.prevent="showMore = true"
+                  >More info</a
+                >
+                <a
+                  class="font-body-small d-flex ps-t-8 font-medium"
+                  href="#more-info"
+                  v-if="showMore"
+                  @click.prevent="showMore = false"
+                  >Show less</a
+                >
+              </p>
+            </div>
+            <div class="d-flex flex-column py-4" v-if="category">
+              <h3 class="font-heading-medium font-semibold category">
+                About {{ category.name }}
+                <a
+                  class="ps-l-12"
+                  :href="category.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Visit Website</a
+                >
 
-              <span
-                class="float-right cursor-pointer right-arrow"
-                :class="{ 'down-icon': showCategoryInfo }"
-                @click="showCategoryInfo = !showCategoryInfo"
-                v-if="category.description"
+                <span
+                  class="float-right cursor-pointer right-arrow"
+                  :class="{ 'down-icon': showCategoryInfo }"
+                  @click="showCategoryInfo = !showCategoryInfo"
+                  v-if="category.description"
+                >
+                  <svg-sprite-icon name="right-arrow" />
+                </span>
+              </h3>
+              <p
+                class="font-body-medium ps-t-20"
+                v-if="showCategoryInfo && category.description"
               >
-                <svg-sprite-icon name="right-arrow" />
-              </span>
-            </h3>
-            <p
-              class="font-body-medium ps-t-20"
-              v-if="showCategoryInfo && category.description"
-            >
-              {{ category.description }}
-            </p>
-          </div>
+                {{ category.description }}
+              </p>
+            </div>
 
-          <div class="properties py-4">
-            <h3
-              class="font-heading-medium font-semibold mb-4"
-            >
-              Properties
-              <span
-                class="float-right cursor-pointer right-arrow"
-                :class="{ 'down-icon': showProperties }"
-                @click="showProperties = !showProperties"
-              >
-                <svg-sprite-icon name="right-arrow" />
-              </span>
-            </h3>
-            <div class="d-flex flex-row flex-wrap" v-if="showProperties">
-              <div
-                class="col-md-4 p-0 pr-4 justify-content-between"
-                v-bind:key="`${attribute.trait_type}-${attribute.value}`"
-                v-for="attribute in token.token.attributes_metadata"
-              >
-              <div class="d-flex flex-column properties-pill p-3 mb-4">
-                <p class="property-title m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
-                <p class="property-detail m-0 pt-1 text-truncate">{{ attribute.value }}</p>
-              </div>
+            <div class="properties py-4">
+              <h3 class="font-heading-medium font-semibold mb-4">
+                Properties
+                <span
+                  class="float-right cursor-pointer right-arrow"
+                  :class="{ 'down-icon': showProperties }"
+                  @click="showProperties = !showProperties"
+                >
+                  <svg-sprite-icon name="right-arrow" />
+                </span>
+              </h3>
+              <div class="d-flex flex-row flex-wrap" v-if="showProperties">
+                <div
+                  class="col-md-4 p-0 pr-4 justify-content-between"
+                  v-bind:key="`${attribute.trait_type}-${attribute.value}`"
+                  v-for="attribute in token.token.attributes_metadata"
+                >
+                  <div class="d-flex flex-column properties-pill p-3 mb-4">
+                    <p class="property-title m-0 p-0 text-truncate">
+                      {{ attribute.trait_type }}
+                    </p>
+                    <p class="property-detail m-0 pt-1 text-truncate">
+                      {{ attribute.value }}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
         <div class="col-md-4 d-none d-lg-flex">
@@ -191,8 +193,8 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
     },
     chainId: {
       type: [Number, String],
-      required: false, 
-    }
+      required: false,
+    },
   },
   components: {
     TokenShortInfo,
@@ -265,7 +267,6 @@ export default class NftDetail extends Vue {
       );
 
       if (response.status === 200 && response.data.data) {
-
         // should use a endpoint that returns detail for just one token
         let currentToken = response.data.data.filter((token) => {
           return token.token_id == this.tokenId;
@@ -294,7 +295,7 @@ export default class NftDetail extends Vue {
   padding-bottom: 3.75rem;
   min-height: 500px;
   border-radius: $default-card-box-border-radius;
-  
+
   .asset-img {
     max-width: 90%;
     max-height: 380px;
@@ -316,7 +317,7 @@ export default class NftDetail extends Vue {
   }
 }
 .details-section {
-  >:not(:last-child)  {
+  > :not(:last-child) {
     border-bottom: 1px solid light-color("400");
   }
 }
@@ -353,7 +354,7 @@ export default class NftDetail extends Vue {
 
 .properties {
   .properties-pill {
-    background:  primary-color("100");
+    background: primary-color("100");
     border: 1px solid primary-color("300");
     border-radius: 8px;
   }

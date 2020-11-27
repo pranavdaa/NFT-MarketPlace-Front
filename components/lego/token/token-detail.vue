@@ -89,7 +89,9 @@
             </div>
             <div
               class="font-body-medium ps-b-20"
-              v-if="order.type === app.orderTypes.NEGOTIATION && order.highest_bid"
+              v-if="
+                order.type === app.orderTypes.NEGOTIATION && order.highest_bid
+              "
             >
               Last Offer:
               <span class="font-semibold">
@@ -145,9 +147,7 @@
             </div>
 
             <div class="properties py-4">
-              <h3
-                class="font-heading-medium font-semibold mb-4"
-              >
+              <h3 class="font-heading-medium font-semibold mb-4">
                 Properties
                 <span
                   class="float-right cursor-pointer right-arrow"
@@ -163,10 +163,14 @@
                   v-bind:key="`${attribute.trait_type}-${attribute.value}`"
                   v-for="attribute in order.token.attributes_metadata"
                 >
-                <div class="d-flex flex-column properties-pill p-3 mb-4">
-                  <p class="property-title m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
-                  <p class="property-detail m-0 pt-1 text-truncate">{{ attribute.value }}</p>
-                </div>
+                  <div class="d-flex flex-column properties-pill p-3 mb-4">
+                    <p class="property-title m-0 p-0 text-truncate">
+                      {{ attribute.trait_type }}
+                    </p>
+                    <p class="property-detail m-0 pt-1 text-truncate">
+                      {{ attribute.value }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -244,7 +248,9 @@
             </div>
             <div
               class="font-body-medium ps-b-20"
-              v-if="order.type === app.orderTypes.NEGOTIATION && order.highest_bid"
+              v-if="
+                order.type === app.orderTypes.NEGOTIATION && order.highest_bid
+              "
             >
               Last Offer:
               <span class="font-semibold">
@@ -670,7 +676,7 @@ export default class TokenDetail extends Vue {
   }
 }
 .details-section {
-  >:not(:last-child)  {
+  > :not(:last-child) {
     border-bottom: 1px solid light-color("400");
   }
 }
@@ -711,7 +717,7 @@ export default class TokenDetail extends Vue {
 
 .properties {
   .properties-pill {
-    background:  primary-color("100");
+    background: primary-color("100");
     border: 1px solid primary-color("300");
     border-radius: 8px;
   }
