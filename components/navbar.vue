@@ -92,7 +92,7 @@
             <span class="navbar-user-address">
             {{ formattedUserAddress }}
             </span>
-            
+
             <span class="down-icon align-self-center d-none d-md-flex justify-content-center">
               <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
             </span>

@@ -50,7 +50,7 @@
                 <div
                   class="col-md-12 font-body-small ps-t-12 text-gray-300 ps-x-0"
                 >
-                  
+
                 </div>
               </div>
 
