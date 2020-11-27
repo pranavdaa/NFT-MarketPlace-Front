@@ -57,6 +57,9 @@
       }
     }
   },
+  "support": {
+    "title": "Support"
+  },
   "moreOptions": {
     "deposit": "Deposit to Matic",
     "withdraw": "Withdraw to Ethereum",
