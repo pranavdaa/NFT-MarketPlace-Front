@@ -26,7 +26,7 @@
         <div
           class="navbar-collapse collapse d-flex col p-0 justify-content-center"
           :class="{'show': openMenu}"
-          @click.prevent.stop="handleOpenMenu(!openMenu)"
+          @click="handleOpenMenu(!openMenu)"
         >
           <ul class="navbar-nav main-nav mx-md-auto">
             <li class="nav-item">
@@ -47,6 +47,14 @@
                 <span class="align-self-center">{{ $t('account.title') }}</span>
               </nuxt-link>
             </li>
+            <li class="nav-item">
+              <a href="https://t.me/maticwalletweb"
+                target="_blank"
+                class="nav-link d-flex justify-content-lg-center"
+              >
+                <span class="align-self-center">{{$t('support.title')}}</span>
+              </a>
+            </li>
             <div class="extra-links">
               <li class="nav-item">
                 <a class="nav-link d-flex justify-content-lg-center" href="#" target="_blank">
@@ -59,16 +67,6 @@
                 </a>
               </li>
             </div>
-          </ul>
-        </div>
-        <div>
-          <ul class="navbar-nav main-nav">
-            <a href="https://t.me/maticwalletweb"
-              target="_blank"
-              class="nav-link d-flex"
-            >
-              <span class="align-self-center">Support</span>
-            </a>
           </ul>
         </div>
         <div class="profile-navbar d-flex ml-auto ps-l-16">
