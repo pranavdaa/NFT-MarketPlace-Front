@@ -43,7 +43,7 @@
         <div class="white-color name ps-b-4 font-heading-small font-semibold">
           {{ $t("account.banner.totalNft") }}
         </div>
-        <div class="white-color amount font-body-medium">
+        <div class="white-color amount font-body-medium text-right">
           {{ totalMaticNft + totalMainNft }}
         </div>
       </div>
@@ -53,7 +53,7 @@
         <div class="white-color name ps-b-4 font-heading-small font-semibold">
           {{ $t("account.banner.balance") }}
         </div>
-        <div v-if="erc20Tokens[0]" class="white-color amount font-body-medium">
+        <div v-if="erc20Tokens[0]" class="white-color amount font-body-medium text-right">
           {{ formattedFullUSDBalance }} {{ erc20Tokens[0].symbol }}
         </div>
       </div>
