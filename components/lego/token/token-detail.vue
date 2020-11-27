@@ -29,7 +29,7 @@
       <div class="row ps-y-16 ps-x-md-16 justify-content-center">
         <div class="col-md-8">
           <div
-            class="feature-image d-flex d-lg-flex justify-content-center"
+            class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             v-bind:style="{ background: bg }"
           >
             <img
