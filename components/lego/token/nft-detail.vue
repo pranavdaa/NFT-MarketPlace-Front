@@ -27,6 +27,7 @@
               @load="onImageLoad"
             />
           </div>
+          <div class="details-section">
           <div
             class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
           >
@@ -58,7 +59,7 @@
               >
             </p>
           </div>
-          <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
+          <div class="d-flex flex-column py-4" v-if="category">
             <h3 class="font-heading-medium font-semibold category">
               About {{ category.name }}
               <a
@@ -86,7 +87,7 @@
             </p>
           </div>
 
-          <div class="properties">
+          <div class="properties py-4">
             <h3
               class="font-heading-medium font-semibold mb-4"
             >
@@ -111,6 +112,7 @@
               </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
         <div class="col-md-4 d-none d-lg-flex">
@@ -311,6 +313,11 @@ export default class NftDetail extends Vue {
   .option-icon {
     margin-top: -3px;
     margin-right: 4px;
+  }
+}
+.details-section {
+  >:not(:last-child)  {
+    border-bottom: 1px solid light-color("400");
   }
 }
 .right-arrow {

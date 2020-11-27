@@ -115,83 +115,86 @@
               Cancel
             </button>
           </div>
-          <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
-            <h3 class="font-heading-medium font-semibold category">
-              About {{ category.name }}
-              <a
-                class="ps-l-12"
-                :href="category.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Visit Website</a
-              >
+          <div class="details-section">
+            <div class="d-flex flex-column py-4" v-if="category">
+              <h3 class="font-heading-medium font-semibold category">
+                About {{ category.name }}
+                <a
+                  class="ps-l-12"
+                  :href="category.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Visit Website</a
+                >
 
-              <span
-                class="float-right cursor-pointer right-arrow"
-                :class="{ 'down-icon': showCategoryInfo }"
-                @click="showCategoryInfo = !showCategoryInfo"
-                v-if="category.description"
+                <span
+                  class="float-right cursor-pointer right-arrow"
+                  :class="{ 'down-icon': showCategoryInfo }"
+                  @click="showCategoryInfo = !showCategoryInfo"
+                  v-if="category.description"
+                >
+                  <svg-sprite-icon name="right-arrow" />
+                </span>
+              </h3>
+              <p
+                class="font-body-medium ps-t-20"
+                v-if="showCategoryInfo && category.description"
               >
-                <svg-sprite-icon name="right-arrow" />
-              </span>
-            </h3>
-            <p
-              class="font-body-medium ps-t-20"
-              v-if="showCategoryInfo && category.description"
-            >
-              {{ category.description }}
-            </p>
-          </div>
+                {{ category.description }}
+              </p>
+            </div>
 
-          <div class="properties">
-            <h3
-              class="font-heading-medium font-semibold mb-4"
-            >
-              Properties
-              <span
-                class="float-right cursor-pointer right-arrow"
-                :class="{ 'down-icon': showProperties }"
-                @click="showProperties = !showProperties"
+            <div class="properties py-4">
+              <h3
+                class="font-heading-medium font-semibold mb-4"
               >
-                <svg-sprite-icon name="right-arrow" />
-              </span>
-            </h3>
-            <div class="d-flex flex-row flex-wrap" v-if="showProperties">
-              <div
-                class="col-md-4 p-0 pr-4 justify-content-between"
-                v-bind:key="`${attribute.trait_type}-${attribute.value}`"
-                v-for="attribute in order.token.attributes_metadata"
-              >
-              <div class="d-flex flex-column properties-pill p-3 mb-4">
-                <p class="property-title m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
-                <p class="property-detail m-0 pt-1 text-truncate">{{ attribute.value }}</p>
-              </div>
+                Properties
+                <span
+                  class="float-right cursor-pointer right-arrow"
+                  :class="{ 'down-icon': showProperties }"
+                  @click="showProperties = !showProperties"
+                >
+                  <svg-sprite-icon name="right-arrow" />
+                </span>
+              </h3>
+              <div class="d-flex flex-row flex-wrap" v-if="showProperties">
+                <div
+                  class="col-md-4 p-0 pr-4 justify-content-between"
+                  v-bind:key="`${attribute.trait_type}-${attribute.value}`"
+                  v-for="attribute in order.token.attributes_metadata"
+                >
+                <div class="d-flex flex-column properties-pill p-3 mb-4">
+                  <p class="property-title m-0 p-0 text-truncate">{{ attribute.trait_type }}</p>
+                  <p class="property-detail m-0 pt-1 text-truncate">{{ attribute.value }}</p>
+                </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div
-            class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
-            v-if="
-              order.type !== app.orderTypes.FIXED &&
-              bidsFullList &&
-              bidsFullList.length
-            "
-          >
-            <h3 class="font-heading-medium font-semibold category">
-              Bidding history
-            </h3>
-            <p class="font-body-medium ps-t-20">
-              <bidder-row
-                v-for="bid in bidsFullList"
-                :key="bid.id"
-                :bid="bid"
-                :refreshBids="refreshBids"
-                :isOwnersToken="isOwnersToken"
-              />
-            </p>
+            <div
+              class="d-flex flex-column ps-y-16 ps-y-md-32 bids"
+              v-if="
+                order.type !== app.orderTypes.FIXED &&
+                bidsFullList &&
+                bidsFullList.length
+              "
+            >
+              <h3 class="font-heading-medium font-semibold category">
+                Bidding history
+              </h3>
+              <p class="font-body-medium ps-t-20">
+                <bidder-row
+                  v-for="bid in bidsFullList"
+                  :key="bid.id"
+                  :bid="bid"
+                  :refreshBids="refreshBids"
+                  :isOwnersToken="isOwnersToken"
+                />
+              </p>
+            </div>
           </div>
         </div>
+
         <div class="col-md-4 d-none d-lg-flex">
           <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
             <h3 class="font-heading-medium font-semibold">
@@ -664,6 +667,11 @@ export default class TokenDetail extends Vue {
   .option-icon {
     margin-top: -3px;
     margin-right: 4px;
+  }
+}
+.details-section {
+  >:not(:last-child)  {
+    border-bottom: 1px solid light-color("400");
   }
 }
 .right-arrow {
