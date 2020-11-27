@@ -5,7 +5,8 @@
     v-bind:style="{ background: bg }"
   >
     <on-sale-tag v-if="order.onSale && !onlyToken" :time="order.timeleft" />
-    <owned-tag v-if="isOwnersToken" />
+    <!-- <owned-tag v-if="sellOrderType" /> -->
+    <order-type-tag :type="sellOrderType" v-if="sellOrderType" />
 
     <div class="img-wrapper d-flex ps-t-12 justify-content-center">
       <img
@@ -101,6 +102,7 @@ const colorThief = new ColorThief();
 
 import OnSaleTag from "~/components/lego/token/on-sale-tag";
 import OwnedTag from "~/components/lego/token/owned-tag";
+import OrderTypeTag from "~/components/lego/token/order-type-tag";
 
 @Component({
   props: {
@@ -124,7 +126,7 @@ import OwnedTag from "~/components/lego/token/owned-tag";
       default: () => {},
     },
   },
-  components: { OnSaleTag, OwnedTag },
+  components: { OnSaleTag, OwnedTag, OrderTypeTag },
   computed: {
     ...mapGetters("category", ["categories"]),
     ...mapGetters("token", ["erc20Tokens"]),
@@ -198,6 +200,10 @@ export default class SellCard extends Vue {
       return this.user.id === this.order.maker_address;
     }
     return false;
+  }
+
+  get sellOrderType() {
+    return this.order.type
   }
 
   // Actions

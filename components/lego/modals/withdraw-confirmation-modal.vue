@@ -10,7 +10,7 @@
       v-bind:class="{ show: show }"
     >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
-        <div class="box deposit-box">
+        <div class="box withdraw-box">
           <div class="box-header justify-content-center">
             <div
               class="font-heading-medium font-semibold align-self-center w-100 text-center"
@@ -240,7 +240,7 @@
                   ></div>
                 </div>
               </div>
-              <div class="row p-0">
+              <div class="row p-0" v-if="transactionStatus !== STATUS.EXITED">
                 <div class="col-12 p-0 d-flex justify-content-space-between">
                   <button-loader
                     class="w-100"
@@ -505,7 +505,6 @@ export default class WithdrawConfirmationModal extends Vue {
         console.log("exited before")
         await this.handleExitedTokens();
         this.isLoading = false;
-        this.isDeposited = true;
         this.cancel();
         return
       }
@@ -519,7 +518,6 @@ export default class WithdrawConfirmationModal extends Vue {
           console.log("exited now")
           await this.handleExit(txHash);
           this.isLoading = false;
-          this.isDeposited = true;
         },
       });
 
@@ -608,12 +606,12 @@ export default class WithdrawConfirmationModal extends Vue {
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
 
-.deposit-box {
+.withdraw-box {
   width: 446px;
 }
 
 @media (max-width: 446px) {
-  .deposit-box {
+  .withdraw-box {
     width: 100%;
   }
 }
