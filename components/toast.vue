@@ -38,7 +38,7 @@
         </div>
       </div>
       <!-- <div class="tt-body" v-if="item.details">
-        <a target="_blank" v-if="item.link" :href="item.link">{{ item.details }}</a>
+        <a target="_blank" v-if="item.link" :href="item.link" rel="noopener noreferrer">{{ item.details }}</a>
         <span v-if="!item.link">{{ item.details }}</span>
       </div>-->
     </div>

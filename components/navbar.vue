@@ -65,9 +65,10 @@
             </li>
             <li class="nav-item">
               <a
-                href="https://t.me/maticwalletweb"
-                target="_blank"
                 class="nav-link d-flex justify-content-lg-center"
+                href="https://t.me/maticwalletweb"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 <span class="align-self-center">{{ $t("support.title") }}</span>
               </a>
@@ -77,6 +78,7 @@
                 <a
                   class="nav-link d-flex justify-content-lg-center"
                   href="#"
+                  rel="noopener noreferrer"
                   target="_blank"
                 >
                   <span class="align-self-center">{{ $t("whatsNew") }}</span>
@@ -86,6 +88,7 @@
                 <a
                   class="nav-link d-flex justify-content-lg-center"
                   href="#"
+                  rel="noopener noreferrer"
                   target="_blank"
                 >
                   <span class="align-self-center">{{ $t("helpCenter") }}</span>

@@ -29,6 +29,7 @@
                   href="https://matic.network/wallet"
                   class="link-color ps-l-2"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >Download here</a>
               </div> -->
             </div>
