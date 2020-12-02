@@ -145,7 +145,7 @@ export default class SellCard extends Vue {
   onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
-      img.crossOrigin = "Anonymous";
+      // img.crossOrigin = "Anonymous";
 
       let rgbColor = colorThief.getColor(img);
       if (rgbColor) {

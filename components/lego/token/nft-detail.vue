@@ -87,7 +87,7 @@
               </p>
             </div>
 
-            <div class="properties py-4">
+            <div class="properties py-4" v-if="order.token.attributes_metadata">
               <h3 class="font-heading-medium font-semibold mb-4">
                 Properties
                 <span
@@ -230,7 +230,7 @@ export default class NftDetail extends Vue {
   onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
-      img.crossOrigin = "Anonymous";
+      // img.crossOrigin = "Anonymous";
 
       let rgbColor = colorThief.getColor(img);
       if (rgbColor) {
