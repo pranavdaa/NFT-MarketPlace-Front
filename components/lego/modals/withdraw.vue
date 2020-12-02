@@ -272,8 +272,7 @@ export default class Withdraw extends Vue {
       const dataToSign = getTypedData({
         name: name,
         version: "1",
-        salt:
-          "0x0000000000000000000000000000000000000000000000000000000000013881",
+        salt: app.uiconfig.SALT,
         verifyingContract: ERC721Address,
         nonce: parseInt(_nonce),
         from: address,

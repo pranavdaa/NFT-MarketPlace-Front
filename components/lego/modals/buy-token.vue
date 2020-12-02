@@ -761,8 +761,7 @@ export default class BuyToken extends Vue {
     const dataToSign = getTypedData({
       name: this.order.erc20tokens.name,
       version: "1",
-      salt:
-        "0x0000000000000000000000000000000000000000000000000000000000013881",
+      salt: app.uiconfig.SALT,
       verifyingContract: matic.utils.toChecksumAddress(
         this.order.erc20tokens.erc20tokensaddresses[0].address
       ),

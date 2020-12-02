@@ -550,8 +550,7 @@ export default class SellToken extends Vue {
     const dataToSign = getTypedData({
       name: this.category.name,
       version: "1",
-      salt:
-        "0x0000000000000000000000000000000000000000000000000000000000013881",
+      salt: app.uiconfig.SALT,
       verifyingContract: matic.utils.toChecksumAddress(
         this.category.categoriesaddresses.find(
           (category) => category.chain_id == this.networks.matic.chainId
