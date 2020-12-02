@@ -64,19 +64,12 @@
                     :disableToken="true"
                   />
                 </div>
-                <div
-                  class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
-                  v-if="dirty && !validation['inputAmount']"
-                >
-                  Enter a valid amount
-                </div>
-                <div class="col-md-12 ps-t-4 ps-x-40" v-else-if="dirty && !validation['hasBalance']">
-                  <div
-                    class="error font-caption text-left"
-                  >
-                    You don't have sufficient balance
+
+                <div class="col-md-12 ps-t-4 ps-x-40">
+                  <div class="error font-caption text-left">
+                    {{ validationMessage }}
                   </div>
-                  <div class="ps-t-16">
+                  <div class="ps-t-16" v-if="noEnoughBalance">
                     <NuxtLink
                       class="text-center font-semibold text-primary-600"
                       :to="{ name: 'account' }"
@@ -84,28 +77,7 @@
                     >
                   </div>
                 </div>
-                <div
-                  class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
-                  v-else-if="dirty && !validation['maxAmount']"
-                >
-                  Maximum
-                  <i
-                    >{{ this.order.price }}
-                    {{ defaultSelectedToken.symbol }}</i
-                  >
-                  allowed
-                </div>
-                <div
-                  class="col-md-12 error font-caption text-left ps-t-4 ps-x-40"
-                  v-else-if="dirty && !validation['minAmount']"
-                >
-                  Minimum
-                  <i
-                    >{{ this.order.min_price }}
-                    {{ defaultSelectedToken.symbol }}</i
-                  >
-                  required
-                </div>
+
                 <div
                   class="col-md-12 ps-x-40 ps-y-8 ps-b-20 font-caption text-gray-300"
                 >
@@ -201,8 +173,9 @@ const TEN = new BigNumber(10);
 export default class PlaceBid extends Vue {
   bg = "#f3f4f7";
   inputAmount = "";
-  dirty = false;
   isLoading = false;
+  validationMessage = '';
+  noEnoughBalance = false;
 
   mounted() {}
 
@@ -227,32 +200,39 @@ export default class PlaceBid extends Vue {
 
   async makeOfferOrBid() {
     this.isLoading = true;
-    if (!this.isValid) {
-      this.dirty = true;
+
+    if (this.validatePrice()) {
       this.isLoading = false;
       return;
     }
-    this.dirty = false;
 
     await this.executeBidOrOffer(this.inputAmount);
 
     this.isLoading = false;
   }
 
-  // get
-  get validation() {
-    return {
-      maxAmount:
-        this.inputAmount && this.inputAmount.lte(this.order.getPriceInBN()),
-      minAmount:
-        this.inputAmount && this.inputAmount.gte(this.order.getMinPriceInBN()),
-      inputAmount: !!this.inputAmount && this.inputAmount.gt(ZERO),
-      hasBalance: this.defaultSelectedToken.fullBalance.gte(
-        this.inputAmount || ZERO
-      ),
-    };
+  validatePrice() {
+    this.noEnoughBalance = false;
+
+    if (!this.inputAmount || !this.inputAmount.gt(ZERO)){
+      return this.validationMessage = "Enter a valid amount";
+    }
+    else if (!this.defaultSelectedToken.fullBalance.gte(this.inputAmount || ZERO)) {
+      this.noEnoughBalance = true;
+      return this.validationMessage = "You don't have sufficient balance";
+    }
+    else if (!this.inputAmount.gte(this.order.getMinPriceInBN())) {
+      return this.validationMessage = `Minimum ${this.order.min_price} ${this.defaultSelectedToken.symbol} required`;
+    }
+    else if (!this.inputAmount.lte(this.order.getPriceInBN())) {
+      return this.validationMessage = `Maximum ${this.order.price} ${this.defaultSelectedToken.symbol} allowed`;
+    }
+    else {
+      return this.validationMessage = '';
+    }
   }
 
+  // getters
   get pruchaseType() {
     if (this.bid) {
       return {
