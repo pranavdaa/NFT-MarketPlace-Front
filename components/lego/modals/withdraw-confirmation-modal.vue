@@ -103,6 +103,7 @@
                           transaction.txhash
                         "
                         :href="maticExplorerURL"
+                        rel="noopener noreferrer"
                         target="_blank"
                         :title="transaction.txhash"
                         >{{ this.$t("viewOnMaticscan") }}</a
@@ -191,6 +192,7 @@
                           transactionStatus >= STATUS.EXITING && transactionHash
                         "
                         :href="mainExplorerURL"
+                        rel="noopener noreferrer"
                         target="_blank"
                         :title="transactionHash"
                         >{{ this.$t("viewOnEtherscan") }}</a

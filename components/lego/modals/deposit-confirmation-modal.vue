@@ -131,6 +131,7 @@
                         "
                         :href="explorerURL"
                         target="_blank"
+                        rel="noopener noreferrer"
                         :title="transactionHash"
                         >{{ this.$t("viewOnEtherscan") }}</a
                       >
