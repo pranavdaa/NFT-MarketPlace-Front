@@ -123,6 +123,7 @@ export default class InputToken extends Vue {
       this.inputAmount !== null &&
       this.inputAmount.toString().trim() !== ""
     ) {
+      BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
       this.inputAmount = new BigNumber(parseFloat(this.inputAmount));
       const decimals = new BigNumber(this.defaultSelectedToken.decimal);
       result = this.inputAmount.times(TEN.pow(decimals));
