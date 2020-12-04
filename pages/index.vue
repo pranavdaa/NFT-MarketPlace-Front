@@ -226,7 +226,6 @@ export default class Index extends Vue {
 
     if (this.searchInput !== null && this.orderFullList.length > 0) {
       this.orderFullList.forEach((order) => {
-        debugger
         if (
           fuzzysearch(this.searchInput, order.name) ||
           fuzzysearch(this.searchInput, order.tokens_id)
