@@ -1,7 +1,7 @@
 <template>
   <div class="section position-absolute">
     <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
-    <div class="modal transaction-prog-modal" v-bind:class="{ show: show }">
+    <div class="modal transaction-prog-modal" v-bind:class="{ show: show, 'hide-modal': showApproveModal }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
           <div class="box-body">
@@ -180,6 +180,17 @@
         </div>
       </div>
     </div>
+
+    <approve-process
+      :show="showApproveModal"
+      :close="closeApproveModal"
+      :approveClicked="approveClickedFunc"
+      :signClicked="signClickedFunc"
+      :isApprovedStatus="isApprovedStatus"
+      :approveLoading="approveLoading"
+      :isSignedStatus="isSignedStatus"
+      :signLoading="signLoading"
+    ></approve-process>
   </div>
 </template>
 
@@ -197,6 +208,7 @@ import BigNumber from "~/plugins/bignumber";
 import { FormValidator } from "~/components/mixin";
 import InputToken from "~/components/lego/input-token";
 import { parseBalance } from "~/plugins/helpers/token-utils";
+import ApproveProcess from "~/components/lego/modals/approve-process";
 
 const { getTypedData } = require("~/plugins/meta-tx");
 
@@ -242,7 +254,7 @@ const TEN = BigNumber(10);
       default: () => {},
     },
   },
-  components: { InputToken },
+  components: { InputToken, ApproveProcess },
   computed: {
     ...mapGetters("token", ["selectedERC20Token"]),
     ...mapGetters("account", ["account"]),
@@ -264,6 +276,11 @@ export default class SellToken extends Vue {
   auction_time = moment().format("HH:mm");
   auction_date = moment().add(1, "days").format("YYYY-MM-DD");
   minimumDate = this.auction_date;
+  showApproveModal = false;
+  isApprovedStatus = false;
+  isSignedStatus = false;
+  approveLoading = false;
+  signLoading = false;
 
   price = 0;
   minPrice = 0;
@@ -325,6 +342,11 @@ export default class SellToken extends Vue {
     this.minPrice = value;
   }
 
+  closeApproveModal() {
+    this.showApproveModal = false;
+    this.close();
+  }
+
   get category() {
     return this.categories.find(
       (category) =>
@@ -333,14 +355,8 @@ export default class SellToken extends Vue {
   }
 
   // action
-  async submitToMarketplace() {
-    this.isLoading = true;
-    if (!this.isValid) {
-      this.dirty = true;
-      this.isLoading = false;
-      return;
-    }
-    this.dirty = false;
+  async approveClickedFunc() {
+    this.approveLoading = true;
 
     try {
       const yearInSec = moment().add(365, "days").format("x");
@@ -373,6 +389,124 @@ export default class SellToken extends Vue {
       console.log(providerEngine());
       console.log(erc721TokenCont);
 
+      // Check Approve 0x, Approve if not
+      const isApproved = await this.approve0x(
+        erc721TokenCont,
+        contractWrappers,
+        makerAddress
+      );
+
+      this.isApprovedStatus = isApproved;
+      this.approveLoading = false;
+    } catch (error) {
+      console.log(error);
+      this.approveLoading = false
+      app.addToast("Something went wrong", error.message.substring(0, 60), {
+        type: "failure",
+      });
+    }
+  }
+
+  async signClickedFunc() {
+    this.signLoading = true;
+
+    try {
+      const yearInSec = moment().add(365, "days").format("x");
+      const expiry_date_time = this.expiry_date_time
+        ? this.expiry_date_time.format("x")
+        : 0;
+      const orderType = this.orderType;
+      const nftContract = this.nftToken.category.getAddress(
+        this.networks.matic.chainId
+      );
+      // const nftTokenId = this.nftToken.token_id;
+      const erc20Address = this.selectedERC20Token.address;
+      const makerAddress = this.account.address;
+      const makerAssetAmount = new BigNumber(1);
+      const takerAssetAmount = this.price.toString(10);
+      const chainId = this.networks.matic.chainId;
+      const minPrice = this.minPrice;
+      const decimalnftTokenId = this.nftToken.token_id;
+      const contractWrappers = new ContractWrappers(providerEngine(), {
+        chainId: chainId,
+      });
+
+      const makerAssetData = await contractWrappers.devUtils
+        .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
+        .callAsync();
+      const takerAssetData = await contractWrappers.devUtils
+        .encodeERC20AssetData(erc20Address)
+        .callAsync();
+
+      const exchangeAddress = contractWrappers.contractAddresses.exchange;
+
+      let expirationTimeSeconds = new BigNumber(yearInSec);
+      if (orderType === app.orderTypes.AUCTION) {
+        expirationTimeSeconds = new BigNumber(expiry_date_time);
+      }
+
+      const orderTemplate = {
+        chainId: chainId,
+        exchangeAddress,
+        makerAddress: makerAddress,
+        takerAddress: app.uiconfig.NULL_ADDRESS,
+        senderAddress: app.uiconfig.NULL_ADDRESS,
+        feeRecipientAddress: app.uiconfig.NULL_ADDRESS,
+        expirationTimeSeconds: expirationTimeSeconds,
+        salt: generatePseudoRandomSalt(),
+        makerAssetAmount,
+        takerAssetAmount,
+        makerAssetData,
+        takerAssetData,
+        makerFeeAssetData: app.uiconfig.NULL_BYTES,
+        takerFeeAssetData: app.uiconfig.NULL_BYTES,
+        makerFee: ZERO,
+        takerFee: ZERO,
+      };
+
+      // Sign if FIXED order
+      let signedOrder = "";
+      if (orderType === app.orderTypes.FIXED) {
+        signedOrder = await signatureUtils.ecSignOrderAsync(
+          providerEngine(),
+          orderTemplate,
+          makerAddress
+        );
+      }
+      // add extra info
+      orderTemplate.orderType = orderType;
+      orderTemplate.expiry_date_time = expiry_date_time;
+
+      await this.handleSellSign(orderTemplate, signedOrder);
+    } catch (error) {
+      console.log(error);
+      this.signLoading = false;
+      app.addToast("Something went wrong", error.message.substring(0, 60), {
+        type: "failure",
+      });
+    }
+  }
+
+  async submitToMarketplace() {
+    this.isLoading = true;
+    if (!this.isValid) {
+      this.dirty = true;
+      this.isLoading = false;
+      return;
+    }
+    this.dirty = false;
+    try {
+      const nftContract = this.nftToken.category.getAddress(
+        this.networks.matic.chainId
+      );
+      const decimalnftTokenId = this.nftToken.token_id;
+
+      // ERC721 contract
+      const erc721TokenCont = new ERC721TokenContract(
+        nftContract,
+        providerEngine()
+      );
+
       // Owner of current token
       const owner = await erc721TokenCont
         .ownerOf(new BigNumber(decimalnftTokenId))
@@ -391,62 +525,9 @@ export default class SellToken extends Vue {
         this.close();
         return;
       }
-      // Check Approve 0x, Approve if not
-      const isApproved = await this.approve0x(
-        erc721TokenCont,
-        contractWrappers,
-        makerAddress
-      );
+      this.showApproveModal = true;
+      this.approveClickedFunc();
 
-      if (isApproved) {
-        const makerAssetData = await contractWrappers.devUtils
-          .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
-          .callAsync();
-        const takerAssetData = await contractWrappers.devUtils
-          .encodeERC20AssetData(erc20Address)
-          .callAsync();
-
-        const exchangeAddress = contractWrappers.contractAddresses.exchange;
-
-        let expirationTimeSeconds = new BigNumber(yearInSec);
-        if (orderType === app.orderTypes.AUCTION) {
-          expirationTimeSeconds = new BigNumber(expiry_date_time);
-        }
-
-        const orderTemplate = {
-          chainId: chainId,
-          exchangeAddress,
-          makerAddress: makerAddress,
-          takerAddress: app.uiconfig.NULL_ADDRESS,
-          senderAddress: app.uiconfig.NULL_ADDRESS,
-          feeRecipientAddress: app.uiconfig.NULL_ADDRESS,
-          expirationTimeSeconds: expirationTimeSeconds,
-          salt: generatePseudoRandomSalt(),
-          makerAssetAmount,
-          takerAssetAmount,
-          makerAssetData,
-          takerAssetData,
-          makerFeeAssetData: app.uiconfig.NULL_BYTES,
-          takerFeeAssetData: app.uiconfig.NULL_BYTES,
-          makerFee: ZERO,
-          takerFee: ZERO,
-        };
-
-        // Sign if FIXED order
-        let signedOrder = "";
-        if (orderType === app.orderTypes.FIXED) {
-          signedOrder = await signatureUtils.ecSignOrderAsync(
-            providerEngine(),
-            orderTemplate,
-            makerAddress
-          );
-        }
-        // add extra info
-        orderTemplate.orderType = orderType;
-        orderTemplate.expiry_date_time = expiry_date_time;
-
-        await this.handleSellSign(orderTemplate, signedOrder);
-      }
     } catch (error) {
       console.error(error);
       app.addToast("Something went wrong", error.message.substring(0, 60), {
@@ -466,49 +547,30 @@ export default class SellToken extends Vue {
       )
       .callAsync();
     if (!isApprovedForAll) {
-      let data = await matic.eth.abi.encodeFunctionCall(
-        {
-          name: "setApprovalForAll",
-          type: "function",
-          inputs: [
-            {
-              name: "operator",
-              type: "address",
-            },
-            {
-              name: "approved",
-              type: "bool",
-            },
-          ],
-        },
-        [contractWrappers.contractAddresses.erc721Proxy, true]
-      );
-
-      let { sig } = await this.executeMetaTx(data);
-
-      let tx = {
-        intent: sig,
-        fnSig: data,
-        from: this.account.address,
-        contractAddress: matic.utils.toChecksumAddress(
-          this.category.categoriesaddresses.find(
-            (category) => category.chain_id == this.networks.matic.chainId
-          ).address
-        ),
-      };
-
-      if (tx) {
-        try {
-          let response = await getAxios().post(`orders/executeMetaTx`, tx);
-          if (response.status === 200) {
-            console.log("Approved");
-            app.addToast("Approved", "You successfully approved", {
-              type: "success",
+      if (!this.category.isMetaTx) {
+        if (
+          window.ethereum.chainId ===
+          "0x" + this.networks.matic.chainId.toString(16)
+        ) {
+          const makerERC721ApprovalTxHash = await erc721TokenCont
+            .setApprovalForAll(contractWrappers.contractAddresses.erc721Proxy, true)
+            .sendTransactionAsync({
+              from: makerAddress,
+              gas: 8000000,
+              gasPrice: 1000000000,
             });
+
+          if (makerERC721ApprovalTxHash) {
+            console.log("Approve Hash", makerERC721ApprovalTxHash);
+            app.addToast(
+              "Approved successfully",
+              "You successfully approved the token to put on sale",
+              {
+                type: "success",
+              }
+            );
             return true;
           }
-        } catch (error) {
-          console.log(error);
           app.addToast(
             "Failed to approve",
             "You need to approve the transaction to sale the NFT",
@@ -516,6 +578,69 @@ export default class SellToken extends Vue {
               type: "failure",
             }
           );
+        } else {
+          app.addToast(
+            "Change network",
+            "Please change the network to Matic",
+            {
+              type: "failure",
+            }
+          );
+
+          return false;
+        }
+      } else {
+        let data = await matic.eth.abi.encodeFunctionCall(
+          {
+            name: "setApprovalForAll",
+            type: "function",
+            inputs: [
+              {
+                name: "operator",
+                type: "address",
+              },
+              {
+                name: "approved",
+                type: "bool",
+              },
+            ],
+          },
+          [contractWrappers.contractAddresses.erc721Proxy, true]
+        );
+
+        let { sig } = await this.executeMetaTx(data);
+
+        let tx = {
+          intent: sig,
+          fnSig: data,
+          from: this.account.address,
+          contractAddress: matic.utils.toChecksumAddress(
+            this.category.categoriesaddresses.find(
+              (category) => category.chain_id == this.networks.matic.chainId
+            ).address
+          ),
+        };
+
+        if (tx) {
+          try {
+            let response = await getAxios().post(`orders/executeMetaTx`, tx);
+            if (response.status === 200) {
+              console.log("Approved");
+              app.addToast("Approved", "You successfully approved", {
+                type: "success",
+              });
+              return true;
+            }
+          } catch (error) {
+            console.log(error);
+            app.addToast(
+              "Failed to approve",
+              "You need to approve the transaction to sale the NFT",
+              {
+                type: "failure",
+              }
+            );
+          }
         }
       }
       return false;
@@ -624,6 +749,8 @@ export default class SellToken extends Vue {
           }
         );
         this.$store.dispatch("account/fetchActiveOrders");
+        this.isSignedStatus = true;
+        this.signLoading = false;
         this.close();
       }
     } catch (error) {
@@ -635,6 +762,7 @@ export default class SellToken extends Vue {
           type: "failure",
         }
       );
+      this.isSignedStatus = false;
     }
     this.$store.dispatch("category/fetchCategories");
   }
@@ -671,6 +799,10 @@ export default class SellToken extends Vue {
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
+
+.hide-modal {
+  opacity: 0;
+}
 
 .text-gray-500 {
   color: dark-color("500");

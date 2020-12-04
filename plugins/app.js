@@ -122,8 +122,9 @@ const app = {
         )
 
         const main = network.Main
+        const matic = network.Matic
 
-        if (chainId && chainId !== "0x" + main.ChainId.toString(16)) {
+        if (chainId && (chainId !== "0x" + main.ChainId.toString(16) && chainId !== "0x" + matic.ChainId.toString(16))) {
           await store.dispatch("auth/logout")
           window.location.replace("/login")
         }

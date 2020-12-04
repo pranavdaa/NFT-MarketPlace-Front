@@ -7,7 +7,7 @@
     <div
       class="modal transaction-prog-modal"
       v-bsl="show"
-      v-bind:class="{ show: show && displayed }"
+      v-bind:class="{ show: show && displayed, 'hide-modal': showApproveModal }"
     >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
@@ -276,6 +276,17 @@
       :bid="isBid"
       :close="closeMakeOffer"
     />
+
+    <approve-process
+      :show="showApproveModal"
+      :close="closeApproveModal"
+      :approveClicked="approveClickedFunc"
+      :signClicked="signClickedFunc"
+      :isApprovedStatus="isApprovedStatus"
+      :approveLoading="approveLoading"
+      :isSignedStatus="isSignedStatus"
+      :signLoading="signLoading"
+    ></approve-process>
   </div>
 </template>
 
@@ -293,6 +304,7 @@ import getAxios from "~/plugins/axios";
 
 import { parseBalance } from "~/plugins/helpers/token-utils";
 import PlaceBid from "~/components/lego/modals/place-bid";
+import ApproveProcess from "~/components/lego/modals/approve-process";
 
 const { getTypedData } = require("~/plugins/meta-tx");
 
@@ -335,7 +347,7 @@ const TEN = BigNumber(10);
       default: () => {},
     },
   },
-  components: { InputToken, PlaceBid },
+  components: { InputToken, PlaceBid, ApproveProcess },
   computed: {
     ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
     ...mapGetters("network", ["networks"]),
@@ -381,11 +393,24 @@ export default class BuyToken extends Vue {
       btnTitle: "Submit to Marketplace",
     },
   ];
+
+  showApproveModal = false;
+  isApprovedStatus = false;
+  isSignedStatus = false;
+  approveLoading = false;
+  signLoading = false;
+  makerAmount = null;
+
   mounted() {}
 
   // handler
   tokenImage(token) {
     return require("~/static/tokens/" + token.toUpperCase() + ".svg");
+  }
+
+  closeApproveModal() {
+    this.showApproveModal = false;
+    this.close();
   }
 
   // get
@@ -446,39 +471,123 @@ export default class BuyToken extends Vue {
     };
   }
 
-  async executeBidOrOffer(maker_amount) {
-    this.isLoading = true;
-    try {
-      const yearInSec = moment().add(365, "days").format("x");
-      const chainId = this.networks.matic.chainId;
-      const nftContract = this.order.categories.categoriesaddresses[0].address;
-      const nftTokenId = this.order.tokens_id;
-      const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
-        .address;
+  async approveClickedFunc() {
+    this.approveLoading = true;
 
-      const makerAddress = this.account.address;
-      // const takerAddress = this.account.address;
-      const makerAssetAmount = maker_amount.toString(10);
-      const takerAssetAmount = new BigNumber(1);
-      const decimalnftTokenId = this.order.tokens_id;
-      const contractWrappers = new ContractWrappers(providerEngine(), {
-        chainId,
-      });
+    if (this.order.type === this.orderTypes.NEGOTIATION) {
+      try {
+        const yearInSec = moment().add(365, "days").format("x");
+        const chainId = this.networks.matic.chainId;
+        const nftContract = this.order.categories.categoriesaddresses[0].address;
+        const nftTokenId = this.order.tokens_id;
+        const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
+          .address;
 
-      let expirationTimeSeconds = new BigNumber(yearInSec);
-      if (this.order.expiry_date) {
-        expirationTimeSeconds = new BigNumber(
-          moment(this.order.expiry_date).format("x")
-        );
+        const makerAddress = this.account.address;
+        // const takerAddress = this.account.address;
+        const makerAssetAmount = this.makerAmount.toString(10);
+        const takerAssetAmount = new BigNumber(1);
+        const decimalnftTokenId = this.order.tokens_id;
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId,
+        });
+
+        let expirationTimeSeconds = new BigNumber(yearInSec);
+        if (this.order.expiry_date) {
+          expirationTimeSeconds = new BigNumber(
+            moment(this.order.expiry_date).format("x")
+          );
+        }
+
+        const isApproved = this.approve0x(
+          contractWrappers,
+          erc20Address,
+          makerAddress
+        ).then((result) => {
+          this.isApprovedStatus = result;
+          this.approveLoading = false;
+        }).catch(e => {
+          this.approveLoading = false;
+        });
+      } catch (error) {
+        console.error(error);
+        this.approveLoading = false;
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
       }
+    } else if (this.order.type === this.orderTypes.FIXED) {
+      try {
+        const chainId = this.networks.matic.chainId;
+        const takerAddress = this.account.address;
+        const erc20Address = this.erc20Token.address;
+        const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
+          new BigNumber(this.order.price),
+          this.erc20Token.decimal
+        );
+        let signedOrder = JSON.parse(this.order.signature);
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId: signedOrder.chainId,
+        });
 
-      const isApproved = this.approve0x(
-        contractWrappers,
-        erc20Address,
-        makerAddress
-      );
+        signedOrder["makerAssetAmount"] = BigNumber(signedOrder.makerAssetAmount);
+        signedOrder["takerAssetAmount"] = takerAssetAmount;
+        signedOrder["expirationTimeSeconds"] = BigNumber(
+          signedOrder.expirationTimeSeconds
+        );
+        signedOrder["makerFee"] = BigNumber(signedOrder.makerFee);
+        signedOrder["salt"] = BigNumber(signedOrder.salt);
+        signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
+        console.log(signedOrder);
 
-      if (isApproved) {
+        // Check Approve 0x, Approve if not
+        const isApproved = await this.approve0x(
+          contractWrappers,
+          erc20Address,
+          takerAddress
+        );
+
+        console.log("asasdasd: ", isApproved)
+        this.isApprovedStatus = isApproved;
+        this.approveLoading = false;
+      } catch (error) {
+        console.error(error);
+        this.approveLoading = false;
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
+      }
+    }
+  }
+
+  async signClickedFunc() {
+    this.signLoading = true;
+
+    if (this.order.type === this.orderTypes.NEGOTIATION) {
+      try {
+        const yearInSec = moment().add(365, "days").format("x");
+        const chainId = this.networks.matic.chainId;
+        const nftContract = this.order.categories.categoriesaddresses[0].address;
+        const nftTokenId = this.order.tokens_id;
+        const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
+          .address;
+
+        const makerAddress = this.account.address;
+        // const takerAddress = this.account.address;
+        const makerAssetAmount = this.makerAmount.toString(10);
+        const takerAssetAmount = new BigNumber(1);
+        const decimalnftTokenId = this.order.tokens_id;
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId,
+        });
+
+        let expirationTimeSeconds = new BigNumber(yearInSec);
+        if (this.order.expiry_date) {
+          expirationTimeSeconds = new BigNumber(
+            moment(this.order.expiry_date).format("x")
+          );
+        }
+
         const exchangeAddress = contractWrappers.contractAddresses.exchange;
         const erc20TokenCont = new ERC20TokenContract(
           erc20Address,
@@ -540,76 +649,34 @@ export default class BuyToken extends Vue {
                 type: "success",
               }
             );
+
+            this.isSignedStatus = true;
+            this.signLoading = false;
+            this.close();
           }
         }
+      } catch (error) {
+        console.log(error);
+        this.isSignedStatus = false;
+        this.signLoading = false;
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
       }
-    } catch (error) {
-      console.error(error);
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
-    }
-    this.isLoading = true;
-    this.closeMakeOffer();
-    this.close();
-  }
+    } else if (this.order.type === this.orderTypes.FIXED) {
+      try {
+        const chainId = this.networks.matic.chainId;
+        const takerAddress = this.account.address;
+        const erc20Address = this.erc20Token.address;
+        const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
+          new BigNumber(this.order.price),
+          this.erc20Token.decimal
+        );
+        let signedOrder = JSON.parse(this.order.signature);
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId: signedOrder.chainId,
+        });
 
-  makeOffer() {
-    this.$store.commit("token/selectedERC20Token", this.erc20Token);
-    this.showMakeOffer = true;
-    this.displayed = false;
-  }
-  closeMakeOffer() {
-    this.showMakeOffer = false;
-    this.displayed = true;
-    this.close();
-  }
-
-  async buyFixedOrder() {
-    this.isLoading = true;
-    this.dirty = false;
-    if (this.order.type !== app.orderTypes.FIXED) {
-      this.isLoading = false;
-      return;
-    }
-
-    if (!this.isValid) {
-      this.isLoading = false;
-      this.dirty = true;
-      return;
-    }
-
-    try {
-      const chainId = this.networks.matic.chainId;
-      const takerAddress = this.account.address;
-      const erc20Address = this.erc20Token.address;
-      const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
-        new BigNumber(this.order.price),
-        this.erc20Token.decimal
-      );
-      let signedOrder = JSON.parse(this.order.signature);
-      const contractWrappers = new ContractWrappers(providerEngine(), {
-        chainId: signedOrder.chainId,
-      });
-
-      signedOrder["makerAssetAmount"] = BigNumber(signedOrder.makerAssetAmount);
-      signedOrder["takerAssetAmount"] = takerAssetAmount;
-      signedOrder["expirationTimeSeconds"] = BigNumber(
-        signedOrder.expirationTimeSeconds
-      );
-      signedOrder["makerFee"] = BigNumber(signedOrder.makerFee);
-      signedOrder["salt"] = BigNumber(signedOrder.salt);
-      signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
-      console.log(signedOrder);
-
-      // Check Approve 0x, Approve if not
-      const isApproved = await this.approve0x(
-        contractWrappers,
-        erc20Address,
-        takerAddress
-      );
-
-      if (isApproved) {
         const [
           { orderStatus, orderHash },
           remainingFillableAmount,
@@ -659,11 +726,49 @@ export default class BuyToken extends Vue {
         } else {
           console.log("Order is already sold");
         }
+      } catch (error) {
+        console.log(error);
+        this.isSignedStatus = false;
+        this.signLoading = false;
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
       }
-    } catch (error) {
-      console.log(error);
     }
-    this.isLoading = false;
+  }
+
+  async executeBidOrOffer(maker_amount) {
+    this.makerAmount = maker_amount;
+    this.showApproveModal = true;
+    this.approveClickedFunc();
+    this.showMakeOffer = false;
+  }
+
+  makeOffer() {
+    this.$store.commit("token/selectedERC20Token", this.erc20Token);
+    this.showMakeOffer = true;
+    this.displayed = false;
+  }
+  closeMakeOffer() {
+    this.showMakeOffer = false;
+    this.displayed = true;
+    this.close();
+  }
+
+  async buyFixedOrder() {
+    this.showApproveModal = true;
+    this.approveClickedFunc();
+
+    if (this.order.type !== app.orderTypes.FIXED) {
+      this.isLoading = false;
+      return;
+    }
+
+    if (!this.isValid) {
+      this.isLoading = false;
+      this.dirty = true;
+      return;
+    }
   }
 
   async approve0x(contractWrappers, erc20Address, takerAddress) {
@@ -816,6 +921,10 @@ export default class BuyToken extends Vue {
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
+
+.hide-modal {
+  opacity: 0;
+}
 
 .text-gray-500 {
   color: dark-color("500");

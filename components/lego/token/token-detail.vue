@@ -107,7 +107,7 @@
               v-if="!isOwnersToken && order.status === 0"
               @click="buyOrder()"
             >
-              Buy Now
+              {{ buttonVal }}
             </button>
             <button
               class="btn btn-light"
@@ -266,7 +266,7 @@
               v-if="!isOwnersToken && order.status === 0"
               @click="buyOrder()"
             >
-              Buy Now
+              {{ buttonVal }}
             </button>
             <button
               class="btn btn-light"
@@ -456,6 +456,10 @@ export default class TokenDetail extends Vue {
       return this.user.id === this.order.maker_address;
     }
     return false;
+  }
+
+  get buttonVal() {
+    return this.order.type === app.orderTypes.FIXED ? "Buy Now" : "Place a Bid"
   }
 
   // async
