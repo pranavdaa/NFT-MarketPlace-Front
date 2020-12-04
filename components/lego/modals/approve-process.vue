@@ -35,10 +35,10 @@
                   </div>
                   <div class="col-10">
                     <div class="status-title font-heading-medium">
-                      Approve
+                      {{ modalTexts.approve.title }}
                     </div>
                     <div class="status-desc font-body-small ps-t-6">
-                      Approving the transaction
+                      {{ modalTexts.approve.subText }}
                     </div>
 
                     <button-loader
@@ -73,10 +73,10 @@
                   </div>
                   <div class="col-10">
                     <div class="status-title font-heading-medium">
-                      Sign sell order
+                      {{ modalTexts.sign.title }}
                     </div>
                     <div class="status-desc font-body-small ps-t-6">
-                      Sign sell transaction using your wallet
+                      {{ modalTexts.sign.subText }}
                     </div>
 
                     <button-loader
@@ -142,6 +142,10 @@ import Component from "nuxt-class-component";
     },
     signLoading: {
       type: Boolean,
+      required: false
+    },
+    modalTexts: {
+      type: Object,
       required: false
     }
   }

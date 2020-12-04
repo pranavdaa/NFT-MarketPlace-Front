@@ -190,6 +190,7 @@
       :approveLoading="approveLoading"
       :isSignedStatus="isSignedStatus"
       :signLoading="signLoading"
+      :modalTexts="approvalModalText"
     ></approve-process>
   </div>
 </template>
@@ -282,6 +283,17 @@ export default class SellToken extends Vue {
   approveLoading = false;
   signLoading = false;
 
+  approvalModalText = {
+    approve: {
+      title: 'Approve',
+      subText: 'Approve 0x contract to transfer your NFT'
+    },
+    sign: {
+      title: 'Sign sell order',
+      subText: 'Sign sell transaction'
+    }
+  }
+
   price = 0;
   minPrice = 0;
 
@@ -291,7 +303,7 @@ export default class SellToken extends Vue {
       title: "Fixed Price",
       subtitle: "Set price",
       description:
-        "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
+        "Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "",
       btnTitle: "Submit to Marketplace",
     },

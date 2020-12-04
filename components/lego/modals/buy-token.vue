@@ -286,6 +286,7 @@
       :approveLoading="approveLoading"
       :isSignedStatus="isSignedStatus"
       :signLoading="signLoading"
+      :modalTexts="approvalModalText"
     ></approve-process>
   </div>
 </template>
@@ -373,13 +374,24 @@ export default class BuyToken extends Vue {
   };
   errorMessage = "You don't have sufficient balance to buy this order";
 
+  approvalModalText = {
+    approve: {
+      title: 'Approve',
+      subText: 'Approve 0x contract to transfer your WETH'
+    },
+    sign: {
+      title: 'Sign buy order',
+      subText: ''
+    }
+  }
+
   tabs = [
     {
       id: 0,
       title: "Fixed Price",
       subtitle: "Set price",
       description:
-        "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
+        "Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "",
       btnTitle: "Submit to Marketplace",
     },
@@ -388,7 +400,7 @@ export default class BuyToken extends Vue {
       title: "Sell in Auction",
       subtitle: "Set minimum bid",
       description:
-        "Your asset will be sell at this price. It will be available for sale in marketplace until you cancel it.",
+        "Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "",
       btnTitle: "Submit to Marketplace",
     },
@@ -547,7 +559,6 @@ export default class BuyToken extends Vue {
           takerAddress
         );
 
-        console.log("asasdasd: ", isApproved)
         this.isApprovedStatus = isApproved;
         this.approveLoading = false;
       } catch (error) {

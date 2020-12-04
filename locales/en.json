@@ -48,7 +48,7 @@
         },
         "deposit": {
           "title": "Deposit from Mainnet",
-          "description": "Deposit ETH from your ethereum wallet to Matic wallet to get WETH on Matic"
+          "description": "Deposit ETH from your Ethereum wallet to Matic wallet to get WETH on Matic"
         },
         "transfer": {
           "title": "Transfer from another wallet",
