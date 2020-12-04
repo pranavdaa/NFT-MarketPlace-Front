@@ -87,7 +87,7 @@
               </p>
             </div>
 
-            <div class="properties py-4" v-if="order.token.attributes_metadata">
+            <div class="properties py-4" v-if="token.token.attributes_metadata">
               <h3 class="font-heading-medium font-semibold mb-4">
                 Properties
                 <span
