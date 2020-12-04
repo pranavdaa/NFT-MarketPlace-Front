@@ -173,11 +173,10 @@
                 </div>
               </div>
               <div class="row" v-if="error">
-                <div class="col-12 ps-x-32 text-center text-red">
+                <div class="col-12 ps-x-32 ps-b-12 text-center text-red">
                   <div
                     class="font-body-small text-red text-center mx-auto"
-                    v-html="error"
-                  ></div>
+                  >Please try again</div>
                 </div>
               </div>
               <div class="row p-0">
