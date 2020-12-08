@@ -56,12 +56,12 @@
                     >
                       {{ errorMessage }}
                       <div class="ps-t-16">
-                    <NuxtLink
-                      class="text-center font-semibold text-primary-600"
-                      :to="{ name: 'account' }"
-                      >Add funds to your account here</NuxtLink
-                    >
-                  </div>
+                        <NuxtLink
+                          class="text-center font-semibold text-primary-600"
+                          :to="{ name: 'account' }"
+                          >Add funds to your account here</NuxtLink
+                        >
+                      </div>
                     </div>
 
                     <div class="font-body-small text-gray-300 mt-auto ps-y-4">
@@ -767,9 +767,6 @@ export default class BuyToken extends Vue {
   }
 
   async buyFixedOrder() {
-    this.showApproveModal = true;
-    this.approveClickedFunc();
-
     if (this.order.type !== app.orderTypes.FIXED) {
       this.isLoading = false;
       return;
@@ -780,6 +777,9 @@ export default class BuyToken extends Vue {
       this.dirty = true;
       return;
     }
+
+    this.showApproveModal = true;
+    this.approveClickedFunc();
   }
 
   async approve0x(contractWrappers, erc20Address, takerAddress) {
