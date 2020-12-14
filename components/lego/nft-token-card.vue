@@ -37,18 +37,19 @@
           @load="onImageLoad"
         />
       </div>
+
+      <div
+        class="gradient"
+        v-bind:style="{
+          background:
+            'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
+        }"
+      ></div>
     </NuxtLink>
     <div class="more-actions" v-if="!isAllCategories && !order">
       <MoreOptions :options="moreOptions" />
     </div>
 
-    <div
-      class="gradient"
-      v-bind:style="{
-        background:
-          'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
-      }"
-    ></div>
     <div
       class="category-pill d-flex mx-auto ms-t-20 ms-b-16"
       v-if="token.category"
