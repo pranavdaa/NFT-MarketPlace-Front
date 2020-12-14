@@ -76,6 +76,7 @@
               v-if="selectedCategory"
               class="btn btn-primary ps-x-32 ms-l-sm-20 ms-t-16 ms-t-sm-0 text-nowrap"
               @click.prevent="onWithdraw()"
+              :disabled="!selectedCategory.isOpenseaCompatible"
             >
               {{
                 $t("maticTab.withdrawBtn", {
@@ -473,7 +474,7 @@ export default class MaticNewTab extends Vue {
     return this.networks.matic.chainId;
   }
   get mainChainId() {
-    return this.networks.main.chainId; 
+    return this.networks.main.chainId;
   }
   get exmptyMsg() {
     return {

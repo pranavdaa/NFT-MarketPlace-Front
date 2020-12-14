@@ -7,7 +7,7 @@
     <div
       class="check-container"
       :class="{ checked: isSelected }"
-      v-if="!isAllCategories && !order"
+      v-if="!isAllCategories && !order && isOpenseaCompatible"
       @click="toggleSelection()"
     >
       <input
@@ -247,6 +247,10 @@ export default class NFTTokenCard extends Vue {
     return false;
   }
 
+  get isOpenseaCompatible() {
+    return this.token.category.isOpenseaCompatible;
+  }
+
   get order() {
     if (
       !this.isMainToken &&
@@ -272,19 +276,28 @@ export default class NFTTokenCard extends Vue {
       ];
     }
 
+    if (this.isOpenseaCompatible) {
+      return [
+        {
+          title: this.$t("moreOptions.withdraw"),
+          action: this.withdraw,
+        },
+        {
+          title: this.$t("moreOptions.sell"),
+          action: this.sell,
+        },
+        // {
+        //   title: this.$t("moreOptions.send"),
+        //   action: this.transfer,
+        // },
+      ];
+    }
+
     return [
-      {
-        title: this.$t("moreOptions.withdraw"),
-        action: this.withdraw,
-      },
       {
         title: this.$t("moreOptions.sell"),
         action: this.sell,
       },
-      // {
-      //   title: this.$t("moreOptions.send"),
-      //   action: this.transfer,
-      // },
     ];
   }
 }
