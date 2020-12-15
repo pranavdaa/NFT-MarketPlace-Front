@@ -7,7 +7,7 @@
     <div
       class="check-container"
       :class="{ checked: isSelected }"
-      v-if="!isAllCategories && !order && isOpenseaCompatible"
+      v-if="showCheckbox"
       @click="toggleSelection()"
     >
       <input
@@ -249,6 +249,14 @@ export default class NFTTokenCard extends Vue {
 
   get isOpenseaCompatible() {
     return this.token.category.isOpenseaCompatible;
+  }
+
+  get showCheckbox() {
+    if (!this.isMainToken) {
+      return !this.isAllCategories && !this.order && (this.isOpenseaCompatible)
+    } else {
+      return !this.isAllCategories && !this.order
+    }
   }
 
   get order() {
