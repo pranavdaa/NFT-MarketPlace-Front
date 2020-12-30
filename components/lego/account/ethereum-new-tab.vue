@@ -50,7 +50,7 @@
               </div>
               <div class="count ps-l-12 font-body-large ml-auto">
                 {{
-                  selectedCategory.count ||
+                  selectedCategory.mainCount ||
                   (displayedTokens && displayedTokens.length) ||
                   0
                 }}

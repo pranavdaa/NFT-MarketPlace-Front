@@ -50,7 +50,7 @@
               </div>
               <div class="count ps-l-12 font-body-large ml-auto">
                 {{
-                  selectedCategory.count ||
+                  selectedCategory.maticCount ||
                   (displayedTokens && displayedTokens.length) ||
                   0
                 }}
