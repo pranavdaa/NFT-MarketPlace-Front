@@ -53,6 +53,15 @@
                       :disabled="approveLoading || isApproved === true"
                       :click="approveConfirm"
                     ></button-loader>
+                    <div 
+                      class="text-danger mx-auto text-center font-body-small"
+                      v-if="networkChangeNeeded===true"
+                    >
+                      Please select the Matic Network Network in Metamask
+                      <a href="https://docs.matic.network/docs/develop/metamask/config-matic/#matic-mainnet" target="_blank" rel="noopener noreferrer">
+                        guide
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -147,6 +156,10 @@ import Component from "nuxt-class-component";
     modalTexts: {
       type: Object,
       required: false
+    },
+    networkChangeNeeded: {
+      type: Boolean,
+      required: true
     }
   }
 })

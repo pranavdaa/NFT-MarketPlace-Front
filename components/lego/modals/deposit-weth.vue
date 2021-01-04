@@ -27,22 +27,6 @@
               >
                 <a
                   class="option-box d-flex flex-row my-2"
-                  href="https://transak.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div><img src="~assets/svg/buy-from-transak.svg" /></div>
-                  <div class="option-right d-flex flex-column">
-                    <div class="title">
-                      {{ $t("account.deposit.options.buy.title") }}
-                    </div>
-                    <div class="description pt-2">
-                      {{ $t("account.deposit.options.buy.description") }}
-                    </div>
-                  </div>
-                </a>
-                <a
-                  class="option-box d-flex flex-row my-2"
                   href="http://wallet.matic.network/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -54,6 +38,22 @@
                     </div>
                     <div class="description pt-2">
                       {{ $t("account.deposit.options.deposit.description") }}
+                    </div>
+                  </div>
+                </a>
+                <a
+                  class="option-box d-flex flex-row my-2"
+                  href="https://transak.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div><img src="~assets/svg/buy-from-transak.svg" /></div>
+                  <div class="option-right d-flex flex-column">
+                    <div class="title">
+                      {{ $t("account.deposit.options.buy.title") }}
+                    </div>
+                    <div class="description pt-2">
+                      {{ $t("account.deposit.options.buy.description") }}
                     </div>
                   </div>
                 </a>

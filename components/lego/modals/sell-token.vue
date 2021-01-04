@@ -191,6 +191,7 @@
       :isSignedStatus="isSignedStatus"
       :signLoading="signLoading"
       :modalTexts="approvalModalText"
+      :networkChangeNeeded="showNetworkChangeNeeded"
     ></approve-process>
   </div>
 </template>
@@ -282,6 +283,7 @@ export default class SellToken extends Vue {
   isSignedStatus = false;
   approveLoading = false;
   signLoading = false;
+  showNetworkChangeNeeded = false;
 
   approvalModalText = {
     approve: {
@@ -591,6 +593,7 @@ export default class SellToken extends Vue {
             }
           );
         } else {
+          this.showNetworkChangeNeeded = true;
           app.addToast(
             "Change network",
             "Please change the network to Matic",

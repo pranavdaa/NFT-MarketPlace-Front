@@ -44,7 +44,7 @@
       "options": {
         "buy": {
           "title": "Buy from Transak",
-          "description": "You can buy WETH from transak, directly to your Matic wallet."
+          "description": "You can buy WETH from Transak, directly to your Matic wallet."
         },
         "deposit": {
           "title": "Deposit from Mainnet",

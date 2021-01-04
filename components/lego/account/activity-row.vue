@@ -24,7 +24,13 @@
       <div
         class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16"
       >
-        <div class="font-body-small">
+        <div class="font-body-small" v-if="true && activity.type === 'ORDER'">
+          <nuxt-link 
+          :to="{ name: 'tokens-id', params: { id: activity.order_id } }"
+          >{{ activity.message }}</nuxt-link
+        >
+        </div>
+        <div class="font-body-small" v-if="true && activity.type !== 'ORDER'">
           {{ activity.message }}
         </div>
         <div class="font-caption text-gray-300">
@@ -32,11 +38,13 @@
         </div>
       </div>
       <div class="d-flex ml-auto ms-r-16" v-if="true && activity.type === 'ORDER'">
-        <nuxt-link
-          :to="{ name: 'tokens-id', params: { id: activity.order_id } }"
+        <a
+          :href="explorerLink"
+          target="_blank"
+          rel="noopener noreferrer"
           class="btn btn-light align-self-center"
-          >View details</nuxt-link
-        >
+          >View details
+        </a>
       </div>
       <div class="d-flex ml-auto ms-r-16" v-if="false">
         <button
@@ -59,12 +67,15 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import moment from "moment";
+import getAxios from "~/plugins/axios";
 
 import AcceptBid from "~/components/lego/modals/bid-confirmation";
+import OrderModel from "~/components/model/order";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
 import app from "~/plugins/app";
+import config from "~/config/uiconfig";
 
 const colorThief = new ColorThief();
 
@@ -84,8 +95,28 @@ export default class ActivityRow extends Vue {
   showAcceptBid = false;
   showInProcess = false;
   showTokenList = false;
+  explorerLink = "";
 
-  mounted() {}
+  async mounted() {
+    await this.fetchOrder();
+  }
+
+  async fetchOrder() {
+    try {
+      if(this.activity.type === 'ORDER'){
+        let response = await getAxios().get(`orders/${this.activity.order_id}`);
+        if (response.status === 200 && response.data.data) {
+          let data = new OrderModel(response.data.data);
+          this.order = data;
+          this.explorerLink =  config.maticExplorer + "address/" + this.order.categories.categoriesaddresses[0].address;
+        }
+      }
+      console.log(this.explorerLink);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   onImageLoad() {
     try {
