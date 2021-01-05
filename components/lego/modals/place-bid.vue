@@ -28,33 +28,33 @@
                 </div>
                 <div class="col-md-12 ps-x-40">
                   <div class="font-heading-large title font-semibold">
-                    {{ pruchaseType.title }}
+                    {{ purchaseType.title }}
                   </div>
                   <div
                     class="font-body-medium text-gray-500 ps-t-4"
                     v-if="order"
                   >
-                    {{ pruchaseType.subtitle }} {{ order.price }}
+                    {{ purchaseType.subtitle }} {{ order.price }}
                     {{ defaultSelectedToken.symbol }}
                   </div>
                   <div
                     class="font-body-medium text-gray-500 ps-t-4"
                     v-if="order && order.highest_bid"
                   >
-                    {{ pruchaseType.lastOffer }} {{ order.highest_bid }}
+                    {{ purchaseType.lastOffer }} {{ order.highest_bid }}
                     {{ defaultSelectedToken.symbol }}
                   </div>
                   <div
                     class="font-body-medium text-gray-500 ps-t-4"
                     v-else-if="order"
                   >
-                    {{ pruchaseType.minPrice }} {{ order.min_price }}
+                    {{ purchaseType.minPrice }} {{ order.min_price }}
                     {{ defaultSelectedToken.symbol }}
                   </div>
                   <!-- <div
                     class="font-body-medium text-gray-500 ps-t-4"
                     v-if="order"
-                  >{{pruchaseType.subtitle}} {{order.getPrice().toString(10)}} {{defaultSelectedToken.symbol}}</div>-->
+                  >{{purchaseType.subtitle}} {{order.getPrice().toString(10)}} {{defaultSelectedToken.symbol}}</div>-->
                 </div>
                 <div class="col-md-12 ps-t-32 ps-x-40">
                   <input-token
@@ -69,13 +69,13 @@
                   <div class="error font-caption text-left">
                     {{ validationMessage }}
                   </div>
-                  <div class="ps-t-16" v-if="noEnoughBalance">
+                  <!-- <div class="ps-t-16" v-if="noEnoughBalance">
                     <NuxtLink
                       class="text-center font-semibold text-primary-600"
                       :to="{ name: 'account' }"
                       >Add funds to your account here</NuxtLink
                     >
-                  </div>
+                  </div> -->
                 </div>
 
                 <div
@@ -92,20 +92,27 @@
                   <button-loader
                     class
                     :loading="isLoading || inProcess"
-                    :loadingText="pruchaseType.loadingText"
-                    :text="pruchaseType.btn"
+                    :loadingText="purchaseType.loadingText"
+                    :text="purchaseType.btn"
+                    :disabled="submitOfferButtonDisabled"
                     block
                     primary
                     lg
                     color="primary"
                     :click="makeOfferOrBid"
                   ></button-loader>
+                  <br>
+                  <button 
+                    class="btn col-md-12 ps-t-12 ps-b-12 ps-x-40 btn-primary" 
+                    @click="executeDeposit()">
+                    {{ $t("account.banner.depositWeth") }}
+                  </button>
                 </div>
 
                 <div
                   class="col-md-12 ps-x-40 ps-t-12 ps-b-40 font-body-small text-gray-500"
                 >
-                  {{ pruchaseType.note }}
+                  {{ purchaseType.note }}
                 </div>
               </div>
             </div>
@@ -156,6 +163,10 @@ const TEN = new BigNumber(10);
       type: Function,
       required: true,
     },
+    executeDeposit: {
+      type: Function,
+      required: true,
+    },
     close: {
       type: Function,
       required: true,
@@ -176,6 +187,7 @@ export default class PlaceBid extends Vue {
   isLoading = false;
   validationMessage = '';
   noEnoughBalance = false;
+  submitOfferButtonDisabled = true;
 
   mounted() {}
 
@@ -196,6 +208,14 @@ export default class PlaceBid extends Vue {
 
   changeAmount(value) {
     this.inputAmount = value;
+
+    if (this.validatePrice()) {
+      this.submitOfferButtonDisabled = true;
+      return;
+    }else{
+      this.submitOfferButtonDisabled = false;
+      return;
+    }
   }
 
   async makeOfferOrBid() {
@@ -214,7 +234,10 @@ export default class PlaceBid extends Vue {
   validatePrice() {
     this.noEnoughBalance = false;
 
-    if (!this.inputAmount || !this.inputAmount.gt(ZERO)){
+    if (!this.inputAmount){
+      return this.validationMessage = ' ';
+    }
+    else if (!this.inputAmount || !this.inputAmount.gt(ZERO)) {
       return this.validationMessage = "Enter a valid amount";
     }
     else if (!this.defaultSelectedToken.fullBalance.gte(this.inputAmount || ZERO)) {
@@ -233,7 +256,7 @@ export default class PlaceBid extends Vue {
   }
 
   // getters
-  get pruchaseType() {
+  get purchaseType() {
     if (this.bid) {
       return {
         title: "Enter your bid",

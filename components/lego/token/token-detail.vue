@@ -105,9 +105,18 @@
             <button
               class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0"
+              :disabled="order.type === app.orderTypes.FIXED && !validation['balance']"
               @click="buyOrder()"
             >
               {{ buttonVal }}
+            </button>
+            <br>
+            <button 
+              class="btn" 
+              style="backgroundColor:#0ea03f" 
+              v-if="!isOwnersToken && order.status === 0 && order.type === app.orderTypes.FIXED"
+              @click="depositModal = true">
+              {{ $t("account.banner.depositWeth") }}
             </button>
             <button
               class="btn btn-light"
@@ -264,9 +273,18 @@
             <button
               class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0"
+              :disabled="order.type === app.orderTypes.FIXED && !validation['balance']"
               @click="buyOrder()"
             >
               {{ buttonVal }}
+            </button>
+            <br>
+            <button 
+              class="btn" 
+              style="backgroundColor:#0ea03f" 
+              v-if="!isOwnersToken && order.status === 0 && order.type === app.orderTypes.FIXED"
+              @click="depositModal = true">
+              {{ $t("account.banner.depositWeth") }}
             </button>
             <button
               class="btn btn-light"
@@ -278,6 +296,10 @@
           </div>
         </div>
       </div>
+      <deposit-weth
+        :show="depositModal"
+        :close="closeDepositModal"
+      ></deposit-weth>
       <buy-token
         :show="showBuyToken"
         :order="order"
@@ -325,6 +347,7 @@ import WishlistButton from "~/components/lego/wishlist-button";
 import BidderRow from "~/components/lego/bidder-row";
 import BuyToken from "~/components/lego/modals/buy-token";
 import CancelConfirm from "~/components/lego/modals/cancel-confirm";
+import DepositWeth from "~/components/lego/modals/deposit-weth";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -362,6 +385,7 @@ const TEN = BigNumber(10);
     BidderRow,
     BuyToken,
     CancelConfirm,
+    DepositWeth
   },
   computed: {
     ...mapGetters("category", ["categories"]),
@@ -372,6 +396,17 @@ const TEN = BigNumber(10);
   },
   middleware: [],
   mixins: [],
+  data() {
+    return {
+      depositModal: false,
+    };
+  },
+
+  methods: {
+    closeDepositModal() {
+      this.depositModal = false;
+    }
+  }
 })
 export default class TokenDetail extends Vue {
   bg = "#ffffff";
@@ -393,6 +428,12 @@ export default class TokenDetail extends Vue {
   // initialize
   async mounted() {
     await this.fetchOrder();
+  }
+
+  get validation() {
+    return {
+      balance: this.erc20Token.balance.gte(this.order.price),
+    };
   }
 
   onImageLoad() {

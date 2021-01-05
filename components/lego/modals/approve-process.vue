@@ -57,9 +57,9 @@
                       class="text-danger mx-auto text-center font-body-small"
                       v-if="networkChangeNeeded===true"
                     >
-                      Please select the Matic Network Network in Metamask
+                      Please select Matic Mainnet in Metamask <br>
                       <a href="https://docs.matic.network/docs/develop/metamask/config-matic/#matic-mainnet" target="_blank" rel="noopener noreferrer">
-                        guide
+                        (guide)
                       </a>
                     </div>
                   </div>
@@ -159,7 +159,7 @@ import Component from "nuxt-class-component";
     },
     networkChangeNeeded: {
       type: Boolean,
-      required: true
+      required: false
     }
   }
 })

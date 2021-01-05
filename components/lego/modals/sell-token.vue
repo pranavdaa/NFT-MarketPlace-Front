@@ -369,6 +369,45 @@ export default class SellToken extends Vue {
   }
 
   // action
+  async approveStatus() {
+    this.approveLoading = true;
+    try {
+
+      const nftContract = this.nftToken.category.getAddress(
+        this.networks.matic.chainId
+      );
+      const makerAddress = this.account.address;
+      const chainId = this.networks.matic.chainId;
+      const contractWrappers = new ContractWrappers(providerEngine(), {
+        chainId: chainId,
+      });
+
+      const erc721TokenCont = new ERC721TokenContract(
+        nftContract,
+        providerEngine()
+      );
+
+      const isApprovedForAll = await erc721TokenCont
+      .isApprovedForAll(
+        makerAddress,
+        contractWrappers.contractAddresses.erc721Proxy
+      )
+      .callAsync();
+
+      this.isApprovedStatus = isApprovedForAll;
+      this.approveLoading = false;
+
+    }
+    catch (error) {
+      console.log(error);
+      this.approveLoading = false
+      app.addToast("Something went wrong", error.message.substring(0, 60), {
+        type: "failure",
+      });
+    }
+
+  }
+
   async approveClickedFunc() {
     this.approveLoading = true;
 
@@ -540,7 +579,7 @@ export default class SellToken extends Vue {
         return;
       }
       this.showApproveModal = true;
-      this.approveClickedFunc();
+      this.approveStatus();
 
     } catch (error) {
       console.error(error);
@@ -594,13 +633,13 @@ export default class SellToken extends Vue {
           );
         } else {
           this.showNetworkChangeNeeded = true;
-          app.addToast(
-            "Change network",
-            "Please change the network to Matic",
-            {
-              type: "failure",
-            }
-          );
+          // app.addToast(
+          //   "Change network",
+          //   "Please change the network to Matic",
+          //   {
+          //     type: "failure",
+          //   }
+          // );
 
           return false;
         }

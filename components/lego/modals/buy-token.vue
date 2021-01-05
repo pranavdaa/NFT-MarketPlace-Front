@@ -7,7 +7,7 @@
     <div
       class="modal transaction-prog-modal"
       v-bsl="show"
-      v-bind:class="{ show: show && displayed, 'hide-modal': showApproveModal }"
+      v-bind:class="{ show: show && displayed, 'hide-modal': showApproveModal && depositModal }"
     >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
@@ -271,6 +271,7 @@
       v-if="showMakeOffer"
       :show="showMakeOffer"
       :executeBidOrOffer="executeBidOrOffer"
+      :executeDeposit="executeDeposit"
       :order="order"
       :inProcess="isLoading"
       :bid="isBid"
@@ -288,6 +289,11 @@
       :signLoading="signLoading"
       :modalTexts="approvalModalText"
     ></approve-process>
+
+    <deposit-weth
+      :show="depositModal"
+      :close="closeDepositModal"
+    ></deposit-weth>
   </div>
 </template>
 
@@ -306,6 +312,7 @@ import getAxios from "~/plugins/axios";
 import { parseBalance } from "~/plugins/helpers/token-utils";
 import PlaceBid from "~/components/lego/modals/place-bid";
 import ApproveProcess from "~/components/lego/modals/approve-process";
+import DepositWeth from "~/components/lego/modals/deposit-weth";
 
 const { getTypedData } = require("~/plugins/meta-tx");
 
@@ -348,7 +355,7 @@ const TEN = BigNumber(10);
       default: () => {},
     },
   },
-  components: { InputToken, PlaceBid, ApproveProcess },
+  components: { InputToken, PlaceBid, ApproveProcess, DepositWeth },
   computed: {
     ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
     ...mapGetters("network", ["networks"]),
@@ -412,8 +419,14 @@ export default class BuyToken extends Vue {
   approveLoading = false;
   signLoading = false;
   makerAmount = null;
+  depositModal = false;
 
   mounted() {}
+
+  closeDepositModal() {
+    this.depositModal = false;
+    this.close();
+  }
 
   // handler
   tokenImage(token) {
@@ -752,6 +765,11 @@ export default class BuyToken extends Vue {
     this.makerAmount = maker_amount;
     this.showApproveModal = true;
     this.approveClickedFunc();
+    this.showMakeOffer = false;
+  }
+
+  async executeDeposit() {
+    this.depositModal = true;
     this.showMakeOffer = false;
   }
 
