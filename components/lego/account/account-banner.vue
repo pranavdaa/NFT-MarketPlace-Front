@@ -51,13 +51,26 @@
         class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
       >
         <div class="white-color name ps-b-4 font-heading-small font-semibold">
-          {{ $t("account.banner.balance") }}
+          {{ $t("account.banner.WETHBalance") }}
         </div>
         <div
           v-if="erc20Tokens[0]"
           class="white-color amount font-body-medium text-right"
         >
-          {{ formattedFullUSDBalance }} {{ erc20Tokens[0].symbol }}
+          {{ formattedFullUSDBalance(0) }}
+        </div>
+      </div>
+      <div
+        class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
+      >
+        <div class="white-color name ps-b-4 font-heading-small font-semibold">
+          {{ $t("account.banner.DAIBalance") }}
+        </div>
+        <div
+          v-if="erc20Tokens[1]"
+          class="white-color amount font-body-medium text-right"
+        >
+          {{ formattedFullUSDBalance(1) }}
         </div>
       </div>
 
@@ -84,6 +97,7 @@ import { mapGetters } from "vuex";
 import app from "~/plugins/app";
 import DepositWeth from "~/components/lego/modals/deposit-weth";
 import * as animationData from "~/static/lottie-animations/green-check.json";
+import { stripZeros } from "ethereumjs-util";
 
 @Component({
   props: {},
@@ -140,11 +154,19 @@ export default class AccountBanner extends Vue {
     window.maticWidgetEventsListener = this.maticWidgetEventsListener;
   }
 
-  get formattedFullUSDBalance() {
-    if (this.totalCurrencyBalance) {
-      return parseFloat(this.totalCurrencyBalance.toFixed(3));
+  formattedFullUSDBalance(index) {
+    let currencyBalance = this.totalCurrencyBalance;
+    console.log(currencyBalance)
+    for (let i = 0; i < currencyBalance.length; i++){
+      if(currencyBalance[i] && parseInt(currencyBalance[i])!==0){
+        console.log(currencyBalance[i])
+        currencyBalance[i] = parseFloat(currencyBalance[i].toFixed(3))
+      }
+      else{
+        currencyBalance[i] = "00.00"
+      }
     }
-    return "00.00";
+    return currencyBalance[index]
   }
 
   get widgetKey() {

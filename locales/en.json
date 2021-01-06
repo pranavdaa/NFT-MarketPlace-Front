@@ -36,7 +36,8 @@
     },
     "banner": {
       "totalNft": "Total NFT",
-      "balance": "WETH Balance",
+      "WETHBalance": "WETH",
+      "DAIBalance": "DAI",
       "depositWeth": "Add Funds"
     },
     "deposit": {
