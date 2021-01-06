@@ -157,7 +157,7 @@ export default class AccountBanner extends Vue {
   formattedFullUSDBalance(index) {
     let currencyBalance = this.totalCurrencyBalance;
     for (let i = 0; i < currencyBalance.length; i++){
-      if(currencyBalance[i] && parseInt(currencyBalance[i])!==0){
+      if(currencyBalance[i] && parseFloat(currencyBalance[i])>0){
         currencyBalance[i] = parseFloat(currencyBalance[i].toFixed(3))
       }
       else{
