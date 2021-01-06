@@ -433,7 +433,7 @@ export default class TokenDetail extends Vue {
 
   get validation() {
     return {
-      balanceFixed: this.erc20Token.balance.gte(this.order.min_price),
+      balance: this.erc20Token.balance.gte(this.order.min_price),
     };
   }
 
