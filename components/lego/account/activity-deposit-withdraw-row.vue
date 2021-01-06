@@ -69,7 +69,6 @@ import OrderModel from "~/components/model/order";
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
 import app from "~/plugins/app";
-import config from "~/config/uiconfig";
 
 const colorThief = new ColorThief();
 
@@ -95,14 +94,14 @@ export default class ActivityDepositWithdrawRow extends Vue {
     console.log(this.activity);
     
     if(this.activity.type==="DEPOSIT"){
-        this.explorerLink = config.mainExplorer + "tx/" + this.activity.txhash;
+        this.explorerLink = app.uiconfig.mainExplorer + "tx/" + this.activity.txhash;
     }
     else if (this.activity.type ==="WITHDRAW"){
-        if(this.activity.status === 0){
-            this.explorerLink = config.maticExplorer + "tx/" + this.activity.txhash;
+        if(this.activity.status === 0 || this.activity.status === 1){
+            this.explorerLink = app.uiconfig.maticExplorer + "tx/" + this.activity.txhash;
         }
-        else if (this.activity.status === 2){
-            this.explorerLink = config.mainExplorer + "tx/" + this.activity.exit_txhash;
+        else if (this.activity.status === 2 || this.activity.status === 3){
+            this.explorerLink = app.uiconfig.mainExplorer + "tx/" + this.activity.exit_txhash;
         }
     }
   }

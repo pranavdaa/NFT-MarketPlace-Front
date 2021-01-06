@@ -96,7 +96,7 @@ export default class ActivityOrderRow extends Vue {
   showExplorerLink = false;
 
   async mounted() {
-    this.explorerLink = config.maticExplorer + "tx/" + this.activity.orders.txhash;
+    this.explorerLink = app.uiconfig.maticExplorer + "tx/" + this.activity.orders.txhash;
     if(this.activity.type==="SWAP"){
       this.showExplorerLink = true;
     }
