@@ -105,7 +105,7 @@
             <button
               class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0"
-              :disabled="order.type === app.orderTypes.FIXED && !validation['balance']"
+              :disabled="!validation['balance']"
               @click="buyOrder()"
             >
               {{ buttonVal }}
@@ -114,7 +114,7 @@
             <button 
               class="btn" 
               style="backgroundColor:#0ea03f" 
-              v-if="!isOwnersToken && order.status === 0 && order.type === app.orderTypes.FIXED"
+              v-if="!isOwnersToken && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
               @click="depositModal = true">
               {{ $t("account.banner.depositWeth") }}
             </button>
@@ -273,7 +273,7 @@
             <button
               class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0"
-              :disabled="order.type === app.orderTypes.FIXED && !validation['balance']"
+              :disabled="!validation['balance']"
               @click="buyOrder()"
             >
               {{ buttonVal }}
@@ -282,7 +282,7 @@
             <button 
               class="btn" 
               style="backgroundColor:#0ea03f" 
-              v-if="!isOwnersToken && order.status === 0 && order.type === app.orderTypes.FIXED"
+              v-if="!isOwnersToken && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
               @click="depositModal = true">
               {{ $t("account.banner.depositWeth") }}
             </button>
@@ -428,11 +428,12 @@ export default class TokenDetail extends Vue {
   // initialize
   async mounted() {
     await this.fetchOrder();
+
   }
 
   get validation() {
     return {
-      balance: this.erc20Token.balance.gte(this.order.price),
+      balanceFixed: this.erc20Token.balance.gte(this.order.min_price),
     };
   }
 

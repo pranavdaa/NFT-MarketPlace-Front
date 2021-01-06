@@ -12,7 +12,7 @@ export default {
       favouriteOrders: null,
       totalMaticNft: 0,
       totalMainNft: 0,
-      totalUnreadActivity: 0,
+      totalUnreadOrderActivity: 0,
       pendingWithdrawals: [],
     }
   },
@@ -33,8 +33,8 @@ export default {
     totalMainNft(state) {
       return state.totalMainNft
     },
-    totalUnreadActivity(state) {
-      return state.totalUnreadActivity
+    totalUnreadOrderActivity(state) {
+      return state.totalUnreadOrderActivity
     },
     pendingWithdrawals(state) {
       return state.pendingWithdrawals
@@ -57,8 +57,8 @@ export default {
     totalMainNft(state, num) {
       state.totalMainNft = num
     },
-    totalUnreadActivity(state, num) {
-      state.totalUnreadActivity = num
+    totalUnreadOrderActivity(state, num) {
+      state.totalUnreadOrderActivity = num
     },
     pendingWithdrawals(state, transactions) {
       state.pendingWithdrawals = transactions
@@ -100,7 +100,7 @@ export default {
       try {
         const user = app.vuexStore.getters['auth/user']
         let response = await getAxios().get(
-          `assetmigrate/?user_id=${user.id}&type=WITHDRAW&status=[0,1]`
+          `assetmigrate/?user_id=${user.id}&type=["WITHDRAW"]&status=[0,1]`
         );
         if (response.status === 200 && response.data.data) {
           commit('pendingWithdrawals', response.data.data.assetMigrations)

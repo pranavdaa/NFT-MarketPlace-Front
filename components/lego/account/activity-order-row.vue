@@ -24,20 +24,17 @@
       <div
         class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16"
       >
-        <div class="font-body-small" v-if="true && activity.type === 'ORDER'">
+        <div class="font-body-small" v-if="true">
           <nuxt-link 
           :to="{ name: 'tokens-id', params: { id: activity.order_id } }"
           >{{ activity.message }}</nuxt-link
         >
         </div>
-        <div class="font-body-small" v-if="true && activity.type !== 'ORDER'">
-          {{ activity.message }}
-        </div>
         <div class="font-caption text-gray-300">
           {{ remainingTimeinWords }} ago
         </div>
       </div>
-      <div class="d-flex ml-auto ms-r-16" v-if="true && activity.type === 'ORDER'">
+      <div class="d-flex ml-auto ms-r-16" v-if="true && showExplorerLink">
         <a
           :href="explorerLink"
           target="_blank"
@@ -90,31 +87,24 @@ const colorThief = new ColorThief();
     AcceptBid,
   },
 })
-export default class ActivityRow extends Vue {
+export default class ActivityOrderRow extends Vue {
   bg = "#ffffff";
   showAcceptBid = false;
   showInProcess = false;
   showTokenList = false;
   explorerLink = "";
+  showExplorerLink = false;
 
   async mounted() {
-    await this.fetchOrder();
-  }
-
-  async fetchOrder() {
-    try {
-      if(this.activity.type === 'ORDER'){
-        let response = await getAxios().get(`orders/${this.activity.order_id}`);
-        if (response.status === 200 && response.data.data) {
-          let data = new OrderModel(response.data.data);
-          this.order = data;
-          this.explorerLink =  config.maticExplorer + "address/" + this.order.categories.categoriesaddresses[0].address;
-        }
-      }
-      console.log(this.explorerLink);
-      
-    } catch (error) {
-      console.log(error);
+    this.explorerLink = config.maticExplorer + "tx/" + this.activity.orders.txhash;
+    if(this.activity.type==="SWAP"){
+      this.showExplorerLink = true;
+    }
+    else if (this.activity.type ==="CANCELLED" && this.activity.orders.type === "FIXED"){
+      this.showExplorerLink = true;
+    }
+    else {
+      this.showExplorerLink = false;
     }
   }
 

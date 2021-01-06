@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="row" v-if="notifications">
-      <activity-row
+      <activity-deposit-withdraw-row
         v-for="activity in notifications"
         :key="activity.id"
         :activity="activity"
@@ -47,20 +47,20 @@ import { mapGetters } from "vuex";
 
 import getAxios from "~/plugins/axios";
 
-import ActivityRow from "~/components/lego/account/activity-row";
+import ActivityDepositWithdrawRow from "~/components/lego/account/activity-deposit-withdraw-row";
 import NoItem from "~/components/lego/no-item";
 
 @Component({
   props: {},
   components: {
-    ActivityRow,
+    ActivityDepositWithdrawRow,
     NoItem,
   },
   computed: {
     ...mapGetters("auth", ["user"]),
   },
 })
-export default class ActivityTab extends Vue {
+export default class ActivityDepositWithdrawTab extends Vue {
   notifications = [];
   isLoading = false;
   limit = 20;
@@ -81,20 +81,18 @@ export default class ActivityTab extends Vue {
       let offset = this.notifications.length;
 
       response = await getAxios().get(
-        `users/notification/${this.user.id}?offset=${offset}&limit=${this.limit}`
+        `assetmigrate/?user_id=${this.user.id}&type=["DEPOSIT","WITHDRAW"]&status=[0,1,2,3]`
       );
-      if (response.status === 200 && response.data.data.notifications) {
+      if (response.status === 200 && response.data.data.assetMigrations) {
         this.hasNextPage = response.data.data.has_next_page;
         if (offset == 0) {
-          this.notifications = response.data.data.notifications;
+          this.notifications = response.data.data.assetMigrations;
         } else {
           this.notifications = [
             ...this.notifications,
-            ...response.data.data.notifications,
+            ...response.data.data.assetMigrations,
           ];
         }
-        // mark read the notification
-        this.markAsRead();
         this.isLoading = false;
       } else {
         this.isLoading = false;
@@ -105,12 +103,6 @@ export default class ActivityTab extends Vue {
       this.isLoading = false;
       this.hasNextPage = false;
     }
-  }
-
-  async markAsRead() {
-    try {
-      await getAxios().put(`users/notification/mark-read/${this.user.id}`);
-    } catch (error) {}
   }
 
   // Getters
