@@ -496,6 +496,86 @@ export default class BuyToken extends Vue {
     };
   }
 
+  async checkApprovestatus() {
+    this.approveLoading = true;
+
+    if (this.order.type === this.orderTypes.NEGOTIATION) {
+      try {
+        const yearInSec = moment().add(365, "days").format("x");
+        const chainId = this.networks.matic.chainId;
+        const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
+          .address;
+
+        const makerAddress = this.account.address;
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId,
+        });
+
+        let expirationTimeSeconds = new BigNumber(yearInSec);
+        if (this.order.expiry_date) {
+          expirationTimeSeconds = new BigNumber(
+            moment(this.order.expiry_date).format("x")
+          );
+        }
+
+        let matic = new Web3(this.networks.matic.rpc);
+        const erc20TokenCont = new ERC20TokenContract(
+          erc20Address,
+          providerEngine()
+        );
+
+        let allowance = await erc20TokenCont
+          .allowance(makerAddress, contractWrappers.contractAddresses.erc20Proxy)
+          .callAsync();
+
+        this.isApprovedStatus = allowance.gt(ZERO)
+        this.approveLoading = false;
+
+      } catch (error) {
+        console.error(error);
+        this.approveLoading = false;
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
+      }
+    } else if (this.order.type === this.orderTypes.FIXED) {
+      try {
+        const takerAddress = this.account.address;
+        const erc20Address = this.erc20Token.address;
+        const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
+          new BigNumber(this.order.price),
+          this.erc20Token.decimal
+        );
+        let signedOrder = JSON.parse(this.order.signature);
+        const contractWrappers = new ContractWrappers(providerEngine(), {
+          chainId: signedOrder.chainId,
+        });
+
+        // Check Approve 0x
+        let matic = new Web3(this.networks.matic.rpc);
+        const erc20TokenCont = new ERC20TokenContract(
+          erc20Address,
+          providerEngine()
+        );
+
+        let allowance = await erc20TokenCont
+          .allowance(takerAddress, contractWrappers.contractAddresses.erc20Proxy)
+          .callAsync();
+
+
+        this.isApprovedStatus = allowance.gt(ZERO);
+        this.approveLoading = false;
+      } catch (error) {
+        console.error(error);
+        this.approveLoading = false;
+        app.addToast("Something went wrong", error.message.substring(0, 60), {
+          type: "failure",
+        });
+      }
+    }
+  }
+
+
   async approveClickedFunc() {
     this.approveLoading = true;
 
@@ -764,7 +844,7 @@ export default class BuyToken extends Vue {
   async executeBidOrOffer(maker_amount) {
     this.makerAmount = maker_amount;
     this.showApproveModal = true;
-    this.approveClickedFunc();
+    this.checkApprovestatus();
     this.showMakeOffer = false;
   }
 
@@ -797,7 +877,8 @@ export default class BuyToken extends Vue {
     }
 
     this.showApproveModal = true;
-    this.approveClickedFunc();
+    this.displayed = false;
+    this.checkApprovestatus();
   }
 
   async approve0x(contractWrappers, erc20Address, takerAddress) {
