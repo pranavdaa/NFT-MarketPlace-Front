@@ -473,7 +473,7 @@ export default class MaticNewTab extends Vue {
     return this.networks.matic.chainId;
   }
   get mainChainId() {
-    return this.networks.main.chainId; 
+    return this.networks.main.chainId;
   }
   get exmptyMsg() {
     return {
