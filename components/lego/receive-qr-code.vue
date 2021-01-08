@@ -1,34 +1,59 @@
 <template>
   <section>
     <div class="modal fade show" v-if="show">
-      <div class="modal-dialog">
+      <div class="modal-dialog align-self-center">
         <div class="box">
           <div class="box-body">
             <div class="ps-16 ps-md-32 box-header">
-              <span class="font-heading-medium font-semibold col">My QR Code</span>
+              <span class="font-heading-medium font-semibold col"
+                >My QR Code</span
+              >
               <div class="align-self-center cursor-pointer" @click="close()">
-                <svg-sprite-icon name="close" class="close align-self-center cursor-pointer" />
+                <svg-sprite-icon
+                  name="close"
+                  class="close align-self-center cursor-pointer"
+                />
               </div>
             </div>
 
             <div class="container">
-              <div class="row ps-x-md-32 ps-y-md-60 ps-y-32 ps-x-16 d-flex justify-content-center">
-                <div class="qrcode-container align-self-center mt-4" v-if="qrValue">
-                  <Qrcode :value="qrValue" :options="{ size: 200 }" />
+              <div
+                class="row ps-x-md-32 ps-y-md-60 ps-y-32 ps-x-16 d-flex justify-content-center"
+              >
+                <div
+                  class="qrcode-container align-self-center mt-4"
+                  v-if="qrValue"
+                >
+                  <Qrcode
+                    class="d-flex"
+                    :value="qrValue"
+                    :options="{ size: 200 }"
+                  />
                 </div>
-                <div class="col-12 font-body-small text-center text-muted ps-t-8">Wallet address</div>
-                <div class="col-12 font-body-small text-center font-medium ps-t-8">{{qrValue}}</div>
+                <div
+                  class="col-12 font-body-small text-center text-muted ps-t-8"
+                >
+                  Wallet address
+                </div>
+                <div
+                  class="col-12 font-body-small text-center font-medium ps-t-8"
+                >
+                  {{ qrValue }}
+                </div>
               </div>
 
               <div class="row justify-content-center wallet-download-info p-0">
-                <div
-                  class="col-12 text-gray font-caption text-center ps-b-20"
-                >Only send ethereum and your ERC20 tokens to this address. sending other token will result in permanent loss.</div>
+                <div class="col-12 text-gray font-caption text-center ps-b-20">
+                  Only send ethereum and your ERC20 tokens to this address.
+                  sending other token will result in permanent loss.
+                </div>
                 <div class="col-12 p-0" @click="copyAddress()">
                   <button
                     class="btn btn-primary ps-20 btn-block no-border no-top-border-radius"
                     v-if="copyAnim === false"
-                  >Copy Address</button>
+                  >
+                    Copy Address
+                  </button>
 
                   <button
                     class="btn btn-block no-border no-top-border-radius"
@@ -48,7 +73,7 @@
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
   </section>
 </template>
 
@@ -67,33 +92,33 @@ import Component from "nuxt-class-component";
     show: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     uri: {
       type: String,
-      required: true
+      required: true,
     },
     close: {
       type: Function,
       required: false,
-      default: function() {
+      default: function () {
         this.show = false;
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       defaultOptions: { animationData: animationData.default, loop: false },
-      animationSpeed: 2
+      animationSpeed: 2,
     };
   },
   components: {
     Qrcode: VueQrcode,
-    Lottie
+    Lottie,
   },
 
   computed: {},
-  methods: {}
+  methods: {},
 })
 export default class ReceiveQrCode extends Vue {
   copyAnim = false;
@@ -122,6 +147,11 @@ export default class ReceiveQrCode extends Vue {
 
 <style lang="scss" scoped="true">
 @import "~assets/css/theme/_theme";
+
+.box {
+  max-width: 446px;
+  width: 100%;
+}
 
 .qrcode-container {
   border-radius: 5px;

@@ -13,7 +13,7 @@ $font-weights: (
   "regular": 400,
   "medium": 500,
   "semibold": 600,
-  "bold": 700
+  "bold": 700,
 );
 
 @function font-weight($base) {
@@ -29,19 +29,19 @@ $font-sizes: (
   "body-large": 1.125rem,
   "heading-small": 1rem,
   "heading-medium": 1.125rem,
-  "heading-large": 1.5rem
+  "heading-large": 1.5rem,
 );
 
 $font-display-sizes-lg: (
   "display-medium": 48px,
   "display-large": 64px,
-  "extra-large": 96px
+  "extra-large": 96px,
 );
 
 $font-display-sizes-sm: (
   "display-medium": 24px,
   "display-large": 36px,
-  "extra-large": 48px
+  "extra-large": 48px,
 );
 
 @function font-size($base) {
@@ -64,7 +64,7 @@ $line-heights: (
   "heading-large": 2rem,
   "display-medium": 110%,
   "display-large": 110%,
-  "extra-large": 110%
+  "extra-large": 110%,
 );
 
 @function line-height($base) {
@@ -99,7 +99,7 @@ $primary-colors: (
   "400": #558af2,
   "300": #aac5f9,
   "200": #d5e2fc,
-  "100": #eaf0fd
+  "100": #eaf0fd,
 );
 
 @function primary-color($base) {
@@ -121,7 +121,7 @@ $red-colors: (
   "400": #f37056,
   "300": #f9b7aa,
   "200": #fcdbd5,
-  "100": #fdedea
+  "100": #fdedea,
 );
 
 @function red-color($base) {
@@ -147,7 +147,7 @@ $yellow-colors: (
   "400": #fae36e,
   "300": #fdf1b7,
   "200": #fef8db,
-  "100": #fefbed
+  "100": #fefbed,
 );
 
 @function yellow-color($base) {
@@ -173,7 +173,7 @@ $green-colors: (
   "400": #51d794,
   "300": #a8ebc9,
   "200": #d3f5e4,
-  "100": #e9faf2
+  "100": #e9faf2,
 );
 
 @function green-color($base) {
@@ -199,7 +199,7 @@ $light-colors: (
   "400": #e7e9ee,
   "300": #dcdfe6,
   "200": #cfd4dd,
-  "100": #b7bfcc
+  "100": #b7bfcc,
 );
 
 @function light-color($base) {
@@ -222,7 +222,7 @@ $dark-colors: (
   "400": #545f76,
   "300": #6e798f,
   "200": #8690a5,
-  "100": #9fa8ba
+  "100": #9fa8ba,
 );
 
 @function dark-color($base) {
@@ -236,7 +236,7 @@ $supportive-colors: (
   "400": #7165f3,
   "300": #b8b2f9,
   "200": #dbd9fc,
-  "100": #edecfe
+  "100": #edecfe,
 );
 
 @function supportive-color($base) {
@@ -255,7 +255,7 @@ $theme-colors: (
   "danger": red-color("600"),
   "warning": yellow-color("600"),
   "light": light-color("700"),
-  "dark": dark-color("700")
+  "dark": dark-color("700"),
 );
 
 // $theme-color-bases: (
@@ -278,7 +278,7 @@ $theme-colors: (
     "danger": red-color($weight),
     "warning": yellow-color($weight),
     "light": light-color($weight),
-    "dark": dark-color($weight)
+    "dark": dark-color($weight),
   );
 
   @return map-get($theme-color-bases, $base);
@@ -292,7 +292,7 @@ $link-color: primary-color("600");
 $caption-color: dark-color("200");
 $disable-color: dark-color("300");
 $text-muted: dark-color("500");
-$body-bg: light-color("600");
+$body-bg: light-color("700");
 $body-color: light-color("700");
 
 // Border radius
@@ -321,7 +321,7 @@ $breadcrumb-divider: none;
 $paddingSizes: 0, 1, 2, 4, 6, 8, 12, 16, 20, 24, 28, 32, 40, 60, 80, 120;
 $paddingTypes: (
   "ps": "padding",
-  "ms": "margin"
+  "ms": "margin",
 );
 
 // Media queries constraines for devices

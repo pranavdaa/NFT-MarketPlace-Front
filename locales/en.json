@@ -3,16 +3,151 @@
   "helpCenter": "Help center",
   "whatsNew": "What's new",
   "marketplace": "Marketplace",
+  "loadMore": "Load More",
+  "loading": "Loading",
+  "login": "Login",
+  "sell": "Sell",
+  "transfer": "Transfer",
+  "moveToMatic": "Move to Matic",
+  "walletConnect": "WalletConnect",
+  "walletConnectMsg": "Connect using mobile wallet",
+  "metamask": {
+    "title": "Metamask",
+    "loginWithMetamask": "Login with Metamask",
+    "lockedMessage": "Metamask is locked. Please unlock it and try again.",
+    "loginMessage": "You can login with Metamask. It will manage private keys for you. No extra password needed.",
+    "notAvailable": "Metamask is not available. You need to install <a href='https://metamask.io/' target='_blank'>Metamask browser extension</a> to use this feature.",
+    "unlockForTransaction": "Please make sure Metamask is unlocked to send transaction with account."
+  },
+  "webConnectMsg": "Connect using browser wallet",
+  "portis": "Portis",
+  "downloadHere": "Download here",
+  "downloadWallet": "Don't have wallet?",
   "home": {
-    "title": "Discover",
-    "logout": "Logout"
+    "title": "Discover"
   },
   "account": {
-    "title": "My account"
+    "title": "My account",
+    "tabs": {
+      "matic": "Items on Matic",
+      "ethereum": "Items on Ethereum",
+      "activity": "Activities",
+      "favorites": "Favorites"
+    },
+    "banner": {
+      "totalNft": "Total NFT",
+      "WETHBalance": "WETH",
+      "DAIBalance": "DAI",
+      "depositWeth": "Add Funds"
+    },
+    "deposit": {
+      "title": "Deposit Options",
+      "options": {
+        "buy": {
+          "title": "Buy from Transak",
+          "description": "You can buy WETH/DAI from Transak, directly to your Matic wallet."
+        },
+        "deposit": {
+          "title": "Deposit from Mainnet",
+          "description": "Deposit ETH/DAI from your Ethereum wallet to Matic wallet to get WETH/DAI on Matic"
+        },
+        "transfer": {
+          "title": "Transfer from another wallet",
+          "description": "You can transfer WETH/DAI to your wallet if you have WETH/DAI in another Matic wallet."
+        }
+      }
+    }
   },
+  "support": {
+    "title": "Support"
+  },
+  "moreOptions": {
+    "deposit": "Deposit to Matic",
+    "withdraw": "Withdraw to Ethereum",
+    "sell": "Sell",
+    "send": "Send to Friend"
+  },
+  "ethereumTab": {
+    "depositBtn": "Deposit {count} NFTs to Matic",
+    "empty": {
+      "title": "Oops! No item found on Ethereum chain.",
+      "description": "We didn’t find any collectibles on Ethereum chain."
+    }
+  },
+  "maticTab": {
+    "withdrawBtn": "Withdraw {count} NFTs to Ethereum",
+    "empty": {
+      "title": "Oops! No item found on Matic chain.",
+      "description": "We didn’t find any collectibles on Matic chain."
+    }
+  },
+  "searchNotFound": {
+    "title": "No search results found",
+    "description": "We can't seem to find any tokens that matches your search",
+    "img": true
+  },
+  "activityTab": {
+    "empty": {
+      "title": "Oops! No activities found.",
+      "description": "We didn’t find any activities record."
+    }
+  },
+  "collectibles": "Collectibles",
   "logout": {
     "title": "Logout",
     "logoutQuestion": "Are you sure want to logout?",
     "okay": "Yes, logout"
+  },
+  "sort": {
+    "popular": "Popular",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "priceLowtoHigh": "Price Low to High",
+    "priceHightoLow": "Price High to Low"
+  },
+  "token": {
+    "onsale": "On sale",
+    "owned": "Owned"
+  },
+  "submitToMarketplace": "Submit to Marketplace",
+  "submittingToMarketplace": "Submitting to Marketplace",
+  "withdraw": {
+    "title": "Move Collectibles to Ethereum",
+    "testChallengePeriod": "~3-4 minutes",
+    "mainChallengePeriod": "7 days",
+    "steps": {
+      "preInit": "Withdraw Initializing...",
+      "init": "Withdraw initialized",
+      "checkpoint": "Exit transaction on ethereum",
+      "challengePeriod": "Challenge period",
+      "finished": "Withdraw completed"
+    },
+    "process": {
+      "checkpointWait": "Waiting for checkpoint ... Will take ~34 minutes",
+      "checkpointed": "Checkpoint completed. Please complete the Withdraw now.",
+      "posCheckpointed": "Checkpoint completed. Please finish the withdraw process now.",
+      "challengeWait": "Waiting for challenge period to end. Please check back after {challengePeriod}",
+      "challengeEnd": "Challenge period ended. Please finish the withdraw process."
+    }
+  },
+  "viewOnEtherscan": "View on etherscan",
+  "viewOnMaticscan": "View on Matic Explorer",
+  "preventUserDepositModalClose": "Please stay on this page until the deposit transaction is confirmed on Ethereum",
+  "preventUserWithdrawModalClose": "Please stay on this page until the withdraw transaction is confirmed on Ethereum",
+  "nftSelected": "Collectibles selected",
+  "max": "Max",
+  "deposit": {
+    "title": "Move Collectibles to Matic",
+    "steps": {
+      "preInit": "Deposit Initializing...",
+      "init": "Deposit initialized",
+      "deposit": "Deposit on Ethereum Transaction",
+      "finished": "Deposit completed"
+    },
+    "process": {
+      "preDeposit": "Please confirm the transaction to complete the deposit.",
+      "depositing": "Transactions on Ethereum sometimes take longer based on network congestion. Please wait or increase the gas price",
+      "deposited": "It will take ~7-8 minutes for the NFT's to get deposited to your account."
+    }
   }
 }

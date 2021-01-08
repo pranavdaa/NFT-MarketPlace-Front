@@ -28,7 +28,7 @@
         <div class="mr-3">
           <svg-sprite-icon name="dummy" class="tt-icon align-self-center" :class="item.type"></svg-sprite-icon>
         </div>
-        <div class="tt-body-container">
+        <div class="tt-body-container w-100">
           <div class="font-semibold mb-2">{{ item.title }}</div>
           <div class="mb-4">{{ item.details }}</div>
           <div class="d-flex justify-content-end">
@@ -38,7 +38,7 @@
         </div>
       </div>
       <!-- <div class="tt-body" v-if="item.details">
-        <a target="_blank" v-if="item.link" :href="item.link">{{ item.details }}</a>
+        <a target="_blank" v-if="item.link" :href="item.link" rel="noopener noreferrer">{{ item.details }}</a>
         <span v-if="!item.link">{{ item.details }}</span>
       </div>-->
     </div>
@@ -52,7 +52,7 @@ import app from "~/plugins/app";
 
 @Component({
   props: {},
-  components: {}
+  components: {},
 })
 export default class Toast extends Vue {
   toasts = null;
@@ -75,7 +75,7 @@ export default class Toast extends Vue {
         if (!options.sticky) {
           options._tid = setTimeout(
             this.removeToast,
-            options.timeout || 15000,
+            options.timeout || 3000,
             options
           );
         }

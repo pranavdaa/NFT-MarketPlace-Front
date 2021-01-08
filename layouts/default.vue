@@ -1,44 +1,23 @@
 <template>
-  <div class="container p-0">
-    <navbar-section v-if="!query.embed" />
+  <div class="container-fluid p-0">
+    <navbar-section />
     <div class="content-container">
-      <div class="nuxt-section" :class="{'embed':!!query.embed}">
+      <div class="nuxt-section">
         <nuxt />
       </div>
     </div>
-    <!-- <footer-section /> -->
-    <!-- <toast></toast> -->
-    <!-- <wallet-connect-modal></wallet-connect-modal> -->
+    <toast></toast>
   </div>
 </template>
 
 <script>
-// import FooterSection from "~/components/footer";
 import NavbarSection from "~/components/navbar";
-// import Toast from "~/components/toast";
-// import WalletConnectModal from "~/components/lego/walletconnect-modal";
+import Toast from "~/components/toast";
 
 export default {
   components: {
-    // FooterSection,
-    NavbarSection
-    // Toast,
-    // WalletConnectModal
-  },
-  head() {
-    return {
-      bodyAttrs: {
-        class: this.$route.query.embed ? "embed" : ""
-      }
-    };
-  },
-  data() {
-    return {
-      query: {}
-    };
-  },
-  mounted() {
-    this.query = this.$route.query;
+    NavbarSection,
+    Toast
   }
 };
 </script>
@@ -62,17 +41,13 @@ export default {
 .logo-name {
   height: 24px;
 }
-
+.content-container {
+  margin-top: $navbar-local-height;
+}
 @media (max-width: 768px) {
   .logo-container {
     height: 60px;
     box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.05);
-  }
-
-  .content-container {
-    width: 100%;
-    margin-top: $navbar-local-height;
-    margin-left: 0px;
   }
 }
 </style>

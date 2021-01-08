@@ -1,20 +1,32 @@
+const uiconfig = require("./config/uiconfig")
 
 export default {
-  mode: 'universal',
+  mode: 'spa',
   /*
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'Matic - Marketplace',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
+      { hid: 'description', name: 'description', content: 'Matic - Marketplace' },
+      { name: "og:title", content: "Matic - Marketplace" },
+      { name: "og:description", content: "Matic - Marketplace" },
+      { name: "og:site_name", content: "Matic - Marketplace" },
+      { name: "apple-mobile-web-app-title", content: "Matic - Marketplace" },
+      { hid: "description", name: "description", content: "Matic - Marketplace" }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: "stylesheet", href: "/fonts/font.css" }
     ]
+  },
+  /*
+   ** Environment variables
+   */
+  env: {
+    uiconfig: JSON.stringify(uiconfig)
   },
   /*
   ** Customize the progress-bar color
@@ -43,6 +55,7 @@ export default {
   */
   plugins: [
     { src: "~/plugins/i18n", ssr: false }, // i18n initialize
+    { src: "~/plugins/v-body-scroll-lock", ssr: false }, // Vue Body Scroll Lock initialize
 
     { src: "~/plugins/auxillary", ssr: false }, // Vue auxillary :)
     { src: "~/plugins/app-init", ssr: false } // Initialize local app
