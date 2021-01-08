@@ -40,7 +40,7 @@
       {{ order.token.name }}
     </h3>
     <div class="price font-body-small ms-b-20" v-if="erc20Token && !onlyToken">
-      {{ order.price }} {{ erc20Token.symbol }} &nbsp; ({{ priceInUSD.toFixed(2) }} USD)
+      {{ order.price }} {{ erc20Token.symbol }} &nbsp; (${{ priceInUSD.toFixed(2) }})
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
