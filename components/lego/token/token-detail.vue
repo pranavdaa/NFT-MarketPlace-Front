@@ -69,39 +69,41 @@
               >
             </p>
 
-            <div class="font-body-small text-gray-300 ms-t-16 ps-y-4">
-              Listed for
+            <div class="ms-t-16" v-if="showListedDetails">
+              <div class="font-body-small text-gray-300 ps-y-4">
+                Listed for
+              </div>
+              <div
+                class="font-heading-large font-semibold ps-b-16"
+                v-if="erc20Token"
+              >
+                {{ order.price }} {{ erc20Token.symbol }}
+              </div>
+              <div
+                class="font-body-medium ps-b-20"
+                v-if="order.type === app.orderTypes.NEGOTIATION"
+              >
+                Minimum Price:
+                <span class="font-semibold">
+                  {{ order.min_price }} {{ erc20Token.symbol }}
+                </span>
+              </div>
+              <div
+                class="font-body-medium ps-b-20"
+                v-if="
+                  order.type === app.orderTypes.NEGOTIATION && order.highest_bid
+                "
+              >
+                Last Offer:
+                <span class="font-semibold">
+                  {{ order.highest_bid }} {{ erc20Token.symbol }}
+                </span>
+              </div>
+              <!-- <div
+                class="font-heading-large font-semibold ps-b-20"
+                v-if="erc20Token"
+              >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
             </div>
-            <div
-              class="font-heading-large font-semibold ps-b-16"
-              v-if="erc20Token"
-            >
-              {{ order.price }} {{ erc20Token.symbol }}
-            </div>
-            <div
-              class="font-body-medium ps-b-20"
-              v-if="order.type === app.orderTypes.NEGOTIATION"
-            >
-              Minimum Price:
-              <span class="font-semibold">
-                {{ order.min_price }} {{ erc20Token.symbol }}
-              </span>
-            </div>
-            <div
-              class="font-body-medium ps-b-20"
-              v-if="
-                order.type === app.orderTypes.NEGOTIATION && order.highest_bid
-              "
-            >
-              Last Offer:
-              <span class="font-semibold">
-                {{ order.highest_bid }} {{ erc20Token.symbol }}
-              </span>
-            </div>
-            <!-- <div
-              class="font-heading-large font-semibold ps-b-20"
-              v-if="erc20Token"
-            >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
             <button
               class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0"
@@ -111,9 +113,8 @@
               {{ buttonVal }}
             </button>
             <br>
-            <button 
-              class="btn" 
-              style="backgroundColor:#0ea03f" 
+            <button
+              class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
               @click="depositModal = true">
               {{ $t("account.banner.depositWeth") }}
@@ -237,39 +238,41 @@
               >
             </p>
 
-            <div class="font-body-small text-gray-300 mt-auto ps-y-4">
-              Listed for
+            <div class="mt-auto" v-if="showListedDetails">
+              <div class="font-body-small text-gray-300 ps-y-4">
+                Listed for
+              </div>
+              <div
+                class="font-heading-large font-semibold ps-b-20"
+                v-if="erc20Token"
+              >
+                {{ order.price }} {{ erc20Token.symbol }}
+              </div>
+              <div
+                class="font-body-medium ps-b-20"
+                v-if="order.type === app.orderTypes.NEGOTIATION"
+              >
+                Minimum Price:
+                <span class="font-semibold">
+                  {{ order.min_price }} {{ erc20Token.symbol }}
+                </span>
+              </div>
+              <div
+                class="font-body-medium ps-b-20"
+                v-if="
+                  order.type === app.orderTypes.NEGOTIATION && order.highest_bid
+                "
+              >
+                Last Offer:
+                <span class="font-semibold">
+                  {{ order.highest_bid }} {{ erc20Token.symbol }}
+                </span>
+              </div>
+              <!-- <div
+                class="font-heading-large font-semibold ps-b-20"
+                v-if="erc20Token"
+              >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
             </div>
-            <div
-              class="font-heading-large font-semibold ps-b-20"
-              v-if="erc20Token"
-            >
-              {{ order.price }} {{ erc20Token.symbol }}
-            </div>
-            <div
-              class="font-body-medium ps-b-20"
-              v-if="order.type === app.orderTypes.NEGOTIATION"
-            >
-              Minimum Price:
-              <span class="font-semibold">
-                {{ order.min_price }} {{ erc20Token.symbol }}
-              </span>
-            </div>
-            <div
-              class="font-body-medium ps-b-20"
-              v-if="
-                order.type === app.orderTypes.NEGOTIATION && order.highest_bid
-              "
-            >
-              Last Offer:
-              <span class="font-semibold">
-                {{ order.highest_bid }} {{ erc20Token.symbol }}
-              </span>
-            </div>
-            <!-- <div
-              class="font-heading-large font-semibold ps-b-20"
-              v-if="erc20Token"
-            >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
             <button
               class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0"
@@ -279,9 +282,8 @@
               {{ buttonVal }}
             </button>
             <br>
-            <button 
-              class="btn" 
-              style="backgroundColor:#0ea03f" 
+            <button
+              class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
               @click="depositModal = true">
               {{ $t("account.banner.depositWeth") }}
@@ -431,12 +433,6 @@ export default class TokenDetail extends Vue {
 
   }
 
-  get validation() {
-    return {
-      balance: this.erc20Token.balance.gte(this.order.min_price),
-    };
-  }
-
   onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
@@ -502,6 +498,16 @@ export default class TokenDetail extends Vue {
 
   get buttonVal() {
     return this.order.type === app.orderTypes.FIXED ? "Buy Now" : "Place a Bid"
+  }
+
+  get validation() {
+    return {
+      balance: this.erc20Token.balance.gte(this.order.min_price),
+    };
+  }
+
+  get showListedDetails() {
+    return !(this.order.status === 3)
   }
 
   // async
