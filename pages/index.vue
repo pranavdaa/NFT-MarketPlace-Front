@@ -176,12 +176,12 @@ export default class Index extends Vue {
     {
       id: 2,
       name: "Price low to high",
-      filter: "+price",
+      filter: "+usd_price",
     },
     {
       id: 3,
       name: "Price high to low",
-      filter: "-price",
+      filter: "-usd_price",
     },
   ];
 

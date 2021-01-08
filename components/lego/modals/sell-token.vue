@@ -41,16 +41,16 @@
                     :disabled="isLoading"
                   />
                   <div
-                    class="w-100 font-caption error-text ps-t-4"
+                    class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
+                  >
+                    ~ {{ priceInUSD.toFixed(3) }} USD
+                  </div>
+                  <div
+                    class="w-100 font-caption error-text ps-t-12"
                     v-if="dirty && !validation['price']"
                   >
                     Valid amount required
                   </div>
-                </div>
-                <div
-                  class="col-md-12 font-body-small ps-t-12 text-gray-300 ps-x-0"
-                >
-
                 </div>
               </div>
 
@@ -766,6 +766,7 @@ export default class SellToken extends Vue {
         this.price,
         this.selectedERC20Token.decimal
       ).toString(10);
+      formData.usd_price = this.priceInUSD.toString();
     } else if (formData.type === app.orderTypes.NEGOTIATION) {
       formData.taker_address = this.user.id;
       formData.taker_token = this.nftToken.categories_id;
@@ -775,6 +776,7 @@ export default class SellToken extends Vue {
         this.price,
         this.selectedERC20Token.decimal
       ).toString(10);
+      formData.usd_price = this.priceInUSD.toString();
       formData.min_price = parseBalance(
         this.minPrice,
         this.selectedERC20Token.decimal
@@ -847,6 +849,14 @@ export default class SellToken extends Vue {
     } else if (this.activeTab === 1) {
       return app.orderTypes.AUCTION;
     }
+  }
+
+  get priceInUSD() {
+    let result =
+      parseBalance(this.price, this.selectedERC20Token.decimal).toString(10) *
+      this.selectedERC20Token.usd;
+
+    return isNaN(result) ? 0 : result
   }
 }
 </script>

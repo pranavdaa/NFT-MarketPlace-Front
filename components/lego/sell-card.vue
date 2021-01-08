@@ -40,7 +40,7 @@
       {{ order.token.name }}
     </h3>
     <div class="price font-body-small ms-b-20" v-if="erc20Token && !onlyToken">
-      {{ order.price }} {{ erc20Token.symbol }}
+      {{ order.price }} {{ erc20Token.symbol }} &nbsp; ({{ priceInUSD.toFixed(2) }} USD)
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
@@ -206,6 +206,10 @@ export default class SellCard extends Vue {
 
   get sellOrderType() {
     return this.order.type
+  }
+
+  get priceInUSD() {
+    return this.order.usd_price ? parseFloat(this.order.usd_price) : 0
   }
 
   // Actions

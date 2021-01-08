@@ -12,7 +12,7 @@
         Owned by
         <a href @click.prevent>{{shortAddress}}</a> in
         <a
-          :href="category.url"
+          :href="order.external_link"
           target="_blank"
           rel="noopener noreferrer"
           >{{category.name}}

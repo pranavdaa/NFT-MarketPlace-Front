@@ -91,8 +91,6 @@ export default class ActivityDepositWithdrawRow extends Vue {
   explorerLink = "";
 
   async mounted() {
-    console.log(this.activity);
-    
     if(this.activity.type==="DEPOSIT"){
         this.explorerLink = app.uiconfig.mainExplorer + "tx/" + this.activity.txhash;
     }
