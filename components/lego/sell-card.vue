@@ -3,16 +3,10 @@
     :to="{ name: 'tokens-id', params: { id: order.id } }"
     class="sell-card text-center cursor-pointer"
     v-bind:style="{ background: bg }"
-    v-if="
-      !searchInput ||
-      fuzzysearch(searchInput, order.name) ||
-      fuzzysearch(searchInput, order.tokens_id) ||
-      fuzzysearch(searchInput, category.name) ||
-      fuzzysearch(searchInput, erc20Token.name)
-    "
   >
     <on-sale-tag v-if="order.onSale && !onlyToken" :time="order.timeleft" />
-    <owned-tag v-if="isOwnersToken" />
+    <!-- <owned-tag v-if="sellOrderType" /> -->
+    <order-type-tag :type="sellOrderType" v-if="sellOrderType" />
 
     <div class="img-wrapper d-flex ps-t-12 justify-content-center">
       <img
@@ -46,7 +40,7 @@
       {{ order.token.name }}
     </h3>
     <div class="price font-body-small ms-b-20" v-if="erc20Token && !onlyToken">
-      {{ order.price }} {{ erc20Token.symbol }}
+      {{ order.price }} {{ erc20Token.symbol }} &nbsp; ({{ priceInUSD.toFixed(2) }} USD)
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
@@ -101,7 +95,6 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import app from "~/plugins/app";
 import { mapGetters } from "vuex";
-import { fuzzysearch } from "~/plugins/helpers";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -109,6 +102,7 @@ const colorThief = new ColorThief();
 
 import OnSaleTag from "~/components/lego/token/on-sale-tag";
 import OwnedTag from "~/components/lego/token/owned-tag";
+import OrderTypeTag from "~/components/lego/token/order-type-tag";
 
 @Component({
   props: {
@@ -126,18 +120,13 @@ import OwnedTag from "~/components/lego/token/owned-tag";
       required: false,
       default: () => {},
     },
-    searchInput: {
-      type: String,
-      required: false,
-      default: null,
-    },
     moveToMatic: {
       type: Function,
       required: false,
       default: () => {},
     },
   },
-  components: { OnSaleTag, OwnedTag },
+  components: { OnSaleTag, OwnedTag, OrderTypeTag },
   computed: {
     ...mapGetters("category", ["categories"]),
     ...mapGetters("token", ["erc20Tokens"]),
@@ -149,7 +138,6 @@ import OwnedTag from "~/components/lego/token/owned-tag";
 })
 export default class SellCard extends Vue {
   bg = "#f3f4f7";
-  fuzzysearch = fuzzysearch;
 
   // Initial
   mounted() {}
@@ -157,6 +145,8 @@ export default class SellCard extends Vue {
   onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
+      // img.crossOrigin = "Anonymous";
+
       let rgbColor = colorThief.getColor(img);
       if (rgbColor) {
         let hsl = rgbToHsl({
@@ -212,6 +202,14 @@ export default class SellCard extends Vue {
       return this.user.id === this.order.maker_address;
     }
     return false;
+  }
+
+  get sellOrderType() {
+    return this.order.type
+  }
+
+  get priceInUSD() {
+    return this.order.usd_price ? parseFloat(this.order.usd_price) : 0
   }
 
   // Actions

@@ -32,7 +32,8 @@ export default class NFTToken extends Model {
       token_id: this.token_id,
       name: this.name,
       owner: this.owner,
-      img_url: this.img_url
+      img_url: this.img_url,
+      attributes_metadata: this.attributes,
     }
   }
 

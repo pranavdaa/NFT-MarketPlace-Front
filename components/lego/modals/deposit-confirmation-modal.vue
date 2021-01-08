@@ -1,6 +1,11 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal receive-modal-wrapper" v-bind:class="{ show: show }">
+    <PreventUnload :when="(transactionStatus === STATUS.DEPOSITING) && !!(this.transactionHash)" message="Please stay on this page until the deposit transaction is confirmed on Ethereum!" />
+    <div
+      class="modal receive-modal-wrapper"
+      v-bsl="show"
+      v-bind:class="{ show: show }"
+    >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box deposit-box">
           <div class="box-header justify-content-center">
@@ -12,10 +17,11 @@
             <span
               @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
+              :class="{'disabled-cursor': transactionStatus === STATUS.DEPOSITING && transactionHash }"
             >
               <svg-sprite-icon
                 name="close"
-                class="close align-self-center float-left cursor-pointer"
+                class="close align-self-center float-left"
               ></svg-sprite-icon>
             </span>
           </div>
@@ -111,7 +117,7 @@
                   <div
                     class="float-left process-msg font-caption text-gray ms-l-12 ms-b-2 ps-l-24"
                   >
-                    <div class="ps-b-16">
+                    <div class="ps-b-8">
                       <span v-if="transactionStatus === STATUS.INITIATED">
                         {{ this.$t("deposit.process.preDeposit") }}
                       </span>
@@ -125,10 +131,17 @@
                         "
                         :href="explorerURL"
                         target="_blank"
+                        rel="noopener noreferrer"
                         :title="transactionHash"
                         >{{ this.$t("viewOnEtherscan") }}</a
                       >
                     </div>
+                    <div class="ps-b-16 text-red font-semibold"
+                      v-if="
+                        transactionStatus === STATUS.DEPOSITING &&
+                        transactionHash
+                      "
+                    >{{ this.$t("preventUserDepositModalClose") }}</div>
                   </div>
                 </div>
                 <div class="col-12 p-0">
@@ -160,11 +173,10 @@
                 </div>
               </div>
               <div class="row" v-if="error">
-                <div class="col-12 ps-x-32 text-center text-red">
+                <div class="col-12 ps-x-32 ps-b-12 text-center text-red">
                   <div
                     class="font-body-small text-red text-center mx-auto"
-                    v-html="error"
-                  ></div>
+                  >Please try again</div>
                 </div>
               </div>
               <div class="row p-0">
@@ -200,6 +212,8 @@ import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
 import { getWalletProvider } from "~/plugins/helpers/providers";
 const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
+
+import PreventUnload from 'vue-prevent-unload';
 
 const STATUS = {
   INITIATING: 0,
@@ -237,7 +251,9 @@ const STATUS = {
       required: true,
     },
   },
-  components: {},
+  components: {
+    PreventUnload,
+  },
   methods: {},
   computed: {
     ...mapGetters("account", ["account"]),
@@ -370,6 +386,7 @@ export default class DepositConfirmationModal extends Vue {
   }
 
   onCancel() {
+    if (this.transactionStatus === STATUS.DEPOSITING && this.transactionHash) return;
     this.cancel();
   }
 }
@@ -424,6 +441,9 @@ export default class DepositConfirmationModal extends Vue {
 }
 .text-red {
   color: red-color("600");
+}
+.disabled-cursor {
+  cursor: default !important;
 }
 
 .btn-pay {

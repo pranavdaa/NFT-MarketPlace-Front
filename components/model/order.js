@@ -18,7 +18,8 @@ export default class Order extends Model {
   get token() {
     let img = ""
     let name = `Token ${this.tokens_id}`
-    let description = ''
+    let owner = ""
+    let description = ""
     if (this.image) {
       img = this.image
     }
@@ -28,11 +29,17 @@ export default class Order extends Model {
     if (this.description) {
       description = this.description
     }
+
+    if (this.seller_users) owner = this.seller_users.address
+    else if (this.makerAddress) owner = this.makerAddress
+    else owner = ""
+
     return {
       name: name,
       img_url: img,
-      owner: this.makerAddress || "",
-      description: description
+      owner: owner,
+      description: description,
+      attributes_metadata: this.attributes,
     }
   }
 

@@ -53,7 +53,7 @@ export default class Category extends Model {
   getAddress(networkId) {
     if (this.addresses) {
       if (networkId) {
-        return this.addresses[networkId]
+        return this.addresses[networkId] ? this.addresses[networkId] : ''
       } else {
         const selectedNetwork = app.getSelectedNetwork()
         if (selectedNetwork) {

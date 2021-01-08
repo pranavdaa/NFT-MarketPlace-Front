@@ -1,7 +1,7 @@
 import eutils from 'ethjs-util'
 import BigNumber from '~/plugins/bignumber'
 
-const DEFAULT_DEBOUNCE_DURATION = 500
+const DEFAULT_DEBOUNCE_DURATION = 1000
 export function debounce(method, duration = DEFAULT_DEBOUNCE_DURATION) {
   let timeoutId
   function debounceWrapper(...args) {
@@ -47,6 +47,23 @@ export function fuzzysearch(rawNeedle, rawHaystack) {
   }
 
   return true
+}
+
+export function fuzzySearchResult(inputVal, tokensList) {
+  let searchedTokensList = [];
+
+  tokensList.forEach((token) => {
+    if (
+      fuzzysearch(inputVal, token.name) ||
+      fuzzysearch(inputVal, token.description) ||
+      fuzzysearch(inputVal, token.token_id) ||
+      fuzzysearch(inputVal, token.category.name)
+    ) {
+      searchedTokensList.push(token);
+    }
+  })
+
+  return searchedTokensList;
 }
 
 export function getNextRoute(route) {

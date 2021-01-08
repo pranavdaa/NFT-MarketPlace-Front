@@ -1,8 +1,16 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal receive-modal-wrapper" v-bind:class="{ show: show }">
+    <PreventUnload
+      :when="(transactionStatus === STATUS.EXITING) && !!(this.transactionHash)"
+      message="Please stay on this page until the withdraw transaction is confirmed on Ethereum!"
+    />
+    <div
+      class="modal receive-modal-wrapper"
+      v-bsl="show"
+      v-bind:class="{ show: show }"
+    >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
-        <div class="box deposit-box">
+        <div class="box withdraw-box">
           <div class="box-header justify-content-center">
             <div
               class="font-heading-medium font-semibold align-self-center w-100 text-center"
@@ -12,10 +20,11 @@
             <span
               @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
+              :class="{'disabled-cursor': transactionStatus === STATUS.EXITING && transactionHash }"
             >
               <svg-sprite-icon
                 name="close"
-                class="close align-self-center float-left cursor-pointer"
+                class="close align-self-center float-left"
               ></svg-sprite-icon>
             </span>
           </div>
@@ -85,7 +94,7 @@
                     <div class="ps-b-16">
                       <span v-if="transactionStatus === STATUS.BURNING">
                         {{
-                          "Waiting for transaction to complete. It may take few sec."
+                          "It will take a few seconds for the transaction to complete"
                         }}
                       </span>
                       <a
@@ -94,6 +103,7 @@
                           transaction.txhash
                         "
                         :href="maticExplorerURL"
+                        rel="noopener noreferrer"
                         target="_blank"
                         :title="transaction.txhash"
                         >{{ this.$t("viewOnMaticscan") }}</a
@@ -120,7 +130,7 @@
                     />
                   </div>
                   <div class="float-left body-medium ps-2 ps-t-0 ms-l-12">
-                    {{ "Checkpoint to Ethereum" }}
+                    {{ "Checkpoint on Ethereum" }}
                   </div>
                 </div>
                 <div class="col-12 p-0">
@@ -130,7 +140,7 @@
                     <div class="ps-b-16">
                       <span v-if="transactionStatus === STATUS.CHECKPOINTING">
                         {{
-                          "Waiting for Matic to submit Checkpoint to Ethereum"
+                          "Waiting for Checkpoint to be reached on Ethereum. Approx time taken will be ~34 minutes"
                         }}
                       </span>
                     </div>
@@ -168,25 +178,32 @@
                   <div
                     class="float-left process-msg font-caption text-gray ms-l-12 ms-b-2 ps-l-24"
                   >
-                    <div class="ps-b-16">
+                    <div class="ps-b-8">
                       <span v-if="transactionStatus === STATUS.CHECKPOINTED">
                         {{
                           "Please confirm the transaction to complete the Withdraw."
                         }}
                       </span>
                       <span v-if="transactionStatus === STATUS.EXITING">{{
-                        "Waiting for 12 block confirmation. It may take upto 5 min. "
+                        "Transactions on Ethereum sometimes take longer based on network congestion. Please wait or increase the gas price "
                       }}</span>
                       <a
                         v-if="
                           transactionStatus >= STATUS.EXITING && transactionHash
                         "
                         :href="mainExplorerURL"
+                        rel="noopener noreferrer"
                         target="_blank"
                         :title="transactionHash"
                         >{{ this.$t("viewOnEtherscan") }}</a
                       >
                     </div>
+                    <div class="ps-b-16 text-red font-semibold"
+                      v-if="
+                        transactionStatus === STATUS.EXITING &&
+                        transactionHash
+                      "
+                    >{{ this.$t("preventUserWithdrawModalClose") }}</div>
                   </div>
                 </div>
                 <div class="col-12 p-0">
@@ -212,7 +229,7 @@
                       class="ps-l-2"
                       v-if="transactionStatus >= STATUS.EXITED"
                     >
-                      {{ "It will take ~2 minute to reflate in your account." }}
+                      {{ "It will take ~2 minutes for the NFT to appear in your Ethereum account." }}
                     </span>
                   </div>
                 </div>
@@ -225,7 +242,7 @@
                   ></div>
                 </div>
               </div>
-              <div class="row p-0">
+              <div class="row p-0" v-if="transactionStatus !== STATUS.EXITED">
                 <div class="col-12 p-0 d-flex justify-content-space-between">
                   <button-loader
                     class="w-100"
@@ -270,6 +287,8 @@ import { VueWatch } from "~/components/decorator";
 import { getWalletProvider } from "~/plugins/helpers/providers";
 const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
 
+import PreventUnload from 'vue-prevent-unload';
+
 const STATUS = {
   BURNING: 0,
   CHECKPOINTING: 1,
@@ -310,7 +329,9 @@ const STATUS = {
       required: true,
     },
   },
-  components: {},
+  components: {
+    PreventUnload
+  },
   methods: {},
   computed: {
     ...mapGetters("account", ["account"]),
@@ -481,17 +502,27 @@ export default class WithdrawConfirmationModal extends Vue {
       const maticPoS = this.getMaticPOS();
       const burnHash = this.transaction.txhash;
 
+      let exited = await maticPoS.isBatchERC721ExitProcessed(burnHash)
+      if(exited){
+        console.log("exited before")
+        await this.handleExitedTokens();
+        this.isLoading = false;
+        this.cancel();
+        return
+      }
+
       let txHash = await maticPoS.exitBatchERC721(burnHash, {
         from: this.account.address,
         onTransactionHash: (txHash) => {
           this.transactionHash = txHash;
         },
+        onReceipt: async (txHash) => {
+          console.log("exited now")
+          await this.handleExit(txHash);
+          this.isLoading = false;
+        },
       });
-      if (txHash) {
-        await this.handleExit(txHash);
-        this.isLoading = false;
-        this.isDeposited = true;
-      }
+
     } catch (error) {
       this.isLoading = false;
       this.error = error.message;
@@ -548,21 +579,41 @@ export default class WithdrawConfirmationModal extends Vue {
     } catch (error) {}
   }
 
+  async handleExitedTokens() {
+    try {
+      let data = {
+        exit_txhash: "TX EXITED EXTERNALLY",
+        status: 2,
+      };
+      let response = await getAxios().put(
+        `assetmigrate/${this.transaction.id}`,
+        data
+      );
+      if (response.status === 200) {
+        this.isExited = true;
+        this.refreshBalance();
+      }
+    } catch (error) {}
+  }
+
   onCancel() {
+    if (this.transactionStatus === STATUS.EXITING && this.transactionHash) return;
     this.cancel();
   }
 }
+
+
 </script>
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
 
-.deposit-box {
+.withdraw-box {
   width: 446px;
 }
 
 @media (max-width: 446px) {
-  .deposit-box {
+  .withdraw-box {
     width: 100%;
   }
 }
@@ -603,6 +654,9 @@ export default class WithdrawConfirmationModal extends Vue {
 }
 .text-red {
   color: red-color("600");
+}
+.disabled-cursor {
+  cursor: default !important;
 }
 
 .btn-pay {

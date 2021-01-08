@@ -9,6 +9,7 @@
       :placeholder="placeholder"
       v-model="inputAmount"
       :disabled="disabled"
+      @keypress="validateDecimals"
     />
     <div
       class="token-btn font-caps font-medium d-flex align-self-center ps-12"
@@ -91,6 +92,17 @@ const TEN = new BigNumber(10);
   computed: {
     ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
   },
+  methods: {
+    validateDecimals($event) {
+      // limiting decimal places
+      let value = $event.target.value;
+      if (value && value.toString().split(".")[1]) {
+        let decimals = $event.target.value.toString().split(".")[1].length || 0;
+        if (decimals > this.defaultSelectedToken.decimal)
+          $event.preventDefault();
+      }
+    },
+  },
 })
 export default class InputToken extends Vue {
   inputAmount = null;
@@ -123,6 +135,7 @@ export default class InputToken extends Vue {
       this.inputAmount !== null &&
       this.inputAmount.toString().trim() !== ""
     ) {
+      BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
       this.inputAmount = new BigNumber(parseFloat(this.inputAmount));
       const decimals = new BigNumber(this.defaultSelectedToken.decimal);
       result = this.inputAmount.times(TEN.pow(decimals));

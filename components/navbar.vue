@@ -7,48 +7,91 @@
             class="navbar-toggler"
             role="button"
             type="button"
-            :class="{'open': openMenu}"
+            :class="{ open: openMenu }"
             @click.prevent.stop="handleOpenMenu(!openMenu)"
           >
-            <svg-sprite-icon name="grabber" class="icon navbar-toggler-icon"></svg-sprite-icon>
-            <svg-sprite-icon name="close" class="icon close-icon"></svg-sprite-icon>
+            <svg-sprite-icon
+              name="grabber"
+              class="icon navbar-toggler-icon"
+            ></svg-sprite-icon>
+            <svg-sprite-icon
+              name="close"
+              class="icon close-icon"
+            ></svg-sprite-icon>
           </button>
-          <img src="~assets/img/navbar-logo.svg" alt="Matic Logo" class="logo align-self-center" />
-          <div class="product-text align-self-center ps-l-12">{{$t("marketplace")}}</div>
+          <div class="d-flex">
+            <div class="d-flex">
+              <img
+                src="~assets/img/open-sea-logo.svg"
+                alt="Open Sea Logo"
+                class="logo align-self-center"
+              />
+            </div>
+            <div
+              class="d-flex flex-column justify-content-center logo-desc-container"
+            >
+              <div>
+                <span class="logo-title">OpenSea</span>
+                <span class="logo-product-name">L2</span>
+                <span class="tag">BETA</span>
+              </div>
+              <div class="logo-description">Powered by Matic Network</div>
+            </div>
+          </div>
         </nuxt-link>
         <div
           class="navbar-collapse collapse d-flex col p-0 justify-content-center"
-          :class="{'show': openMenu}"
-          @click.prevent.stop="handleOpenMenu(!openMenu)"
+          :class="{ show: openMenu }"
+          @click="handleOpenMenu(!openMenu)"
         >
           <ul class="navbar-nav main-nav mx-md-auto">
             <li class="nav-item">
               <nuxt-link
                 class="nav-link d-flex justify-content-lg-center"
-                :to="{name: 'index'}"
-                :class="{ 'active': checkIfNestedRoute('index') }"
+                :to="{ name: 'index' }"
+                :class="{ active: checkIfNestedRoute('index') }"
               >
-                <span class="align-self-center">{{ $t('home.title') }}</span>
+                <span class="align-self-center">{{ $t("home.title") }}</span>
               </nuxt-link>
             </li>
             <li class="nav-item">
               <nuxt-link
                 class="nav-link d-flex justify-content-lg-center"
-                :to="{name: 'account'}"
-                :class="{ 'active': checkIfNestedRoute('account') }"
+                :to="{ name: 'account' }"
+                :class="{ active: checkIfNestedRoute('account') }"
               >
-                <span class="align-self-center">{{ $t('account.title') }}</span>
+                <span class="align-self-center">{{ $t("account.title") }}</span>
               </nuxt-link>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link d-flex justify-content-lg-center"
+                href="https://t.me/maticwalletweb"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span class="align-self-center">{{ $t("support.title") }}</span>
+              </a>
             </li>
             <div class="extra-links">
               <li class="nav-item">
-                <a class="nav-link d-flex justify-content-lg-center" href="#" target="_blank">
-                  <span class="align-self-center">{{ $t('whatsNew') }}</span>
+                <a
+                  class="nav-link d-flex justify-content-lg-center"
+                  href="#"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span class="align-self-center">{{ $t("whatsNew") }}</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link d-flex justify-content-lg-center" href="#" target="_blank">
-                  <span class="align-self-center">{{ $t('helpCenter') }}</span>
+                <a
+                  class="nav-link d-flex justify-content-lg-center"
+                  href="#"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span class="align-self-center">{{ $t("helpCenter") }}</span>
                 </a>
               </li>
             </div>
@@ -58,11 +101,14 @@
           <div class="d-flex align-self-center" v-if="user && false">
             <nuxt-link
               class="nav-link d-flex"
-              :to="{name: 'index-notification'}"
-              :class="{ 'active': checkIfNestedRoute('index-notification') }"
+              :to="{ name: 'index-notification' }"
+              :class="{ active: checkIfNestedRoute('index-notification') }"
             >
               <span class="notification-icon d-flex justify-content-center">
-                <svg-sprite-icon name="notification" class="align-self-center"></svg-sprite-icon>
+                <svg-sprite-icon
+                  name="notification"
+                  class="align-self-center"
+                ></svg-sprite-icon>
               </span>
             </nuxt-link>
           </div>
@@ -71,33 +117,18 @@
             @click.prevent.stop="handleOpenProfile(!openProfile)"
             v-if="user"
           >
-            <span class="profile-icon profile-with-status align-self-center">
-              <svg-sprite-icon name="profile" class="profile-logo"></svg-sprite-icon>
-              <!-- <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon> -->
-              <!-- <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" /> -->
-              <div class="profile-status ms-l-24 ms-t-8">
-                <svg
-                  class="status-icon"
-                  v-bind:class="{'main': currentNetwork.key === 'main', 'matic': currentNetwork.key === 'matic','other': currentNetwork.key != 'main' && currentNetwork.key != 'matic',}"
-                  width="10"
-                  height="10"
-                  viewBox="0 0 10 10"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="5" cy="5" r="4" fill="#25CD79" stroke="white" stroke-width="2" />
-                </svg>
-              </div>
+            <img src="~assets/svg/metamask.svg" />
+            <span class="navbar-user-address">
+              {{ formattedUserAddress }}
             </span>
-            <div class="profile d-none d-md-flex flex-column align-self-center ms-l-12">
-              <span class="font-body-small font-medium user-name">{{ formattedUserAddress }}</span>
-              <span
-                class="font-caption text-gray font-capitalize network-method"
-                v-if="selectedNetwork"
-              >{{ selectedNetwork.name || selectedNetwork.key }}</span>
-            </div>
-            <span class="down-icon align-self-center d-none d-md-flex justify-content-center">
-              <svg-sprite-icon class="align-self-center" name="right-arrow"></svg-sprite-icon>
+
+            <span
+              class="down-icon align-self-center d-none d-md-flex justify-content-center"
+            >
+              <svg-sprite-icon
+                class="align-self-center"
+                name="right-arrow"
+              ></svg-sprite-icon>
             </span>
           </div>
 
@@ -106,12 +137,15 @@
               <nuxt-link
                 class="align-self-center btn btn-primary login-button d-flex"
                 role="button"
-                :to="{name: 'login'}"
+                :to="{ name: 'login' }"
               >
                 <span class="d-flex with-icon">
-                  <svg-sprite-icon name="login" class="align-self-center"></svg-sprite-icon>
+                  <svg-sprite-icon
+                    name="login"
+                    class="align-self-center"
+                  ></svg-sprite-icon>
                 </span>
-                <span>{{ $t('login') }}</span>
+                <span>{{ $t("login") }}</span>
               </nuxt-link>
             </li>
           </ul>
@@ -122,12 +156,15 @@
     <div
       class="profile-dropdown-menu no-top-border-radius dropdown-menu dropdown-menu-right show"
       v-if="openProfile"
-      v-click-outside="() => openProfile = false"
+      v-click-outside="() => (openProfile = false)"
     >
       <div class="profile-container">
         <div class="d-flex ps-16 ps-md-32">
           <span class="profile-icon profile-with-status align-self-center">
-            <svg-sprite-icon name="profile" class="profile-logo"></svg-sprite-icon>
+            <svg-sprite-icon
+              name="profile"
+              class="profile-logo"
+            ></svg-sprite-icon>
             <!-- <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon> -->
             <!-- <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" /> -->
             <div class="profile-status d-none">
@@ -170,7 +207,11 @@
                       type="matrix"
                       values="0 0 0 0 0.0235294 0 0 0 0 0.0627451 0 0 0 0 0.141176 0 0 0 0.12 0"
                     />
-                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+                    <feBlend
+                      mode="normal"
+                      in2="BackgroundImageFix"
+                      result="effect1_dropShadow"
+                    />
                     <feBlend
                       mode="normal"
                       in="SourceGraphic"
@@ -184,10 +225,12 @@
           </span>
           <div class="ps-l-20 profile-details w-100">
             <div class="d-flex w-100">
-              <div class="font-body-small font-medium">{{formattedUserAddress}}</div>
-              <div
-                class="font-caption ml-auto text-gray"
-              >{{ selectedNetwork.name || selectedNetwork.key}}</div>
+              <div class="font-body-small font-medium">
+                {{ formattedUserAddress }}
+              </div>
+              <div class="font-caption ml-auto text-gray">
+                {{ rootChainNetwork.name || rootChainNetwork.key }}
+              </div>
             </div>
             <div
               class="d-flex justify-content-center ps-t-12"
@@ -197,10 +240,14 @@
               <div class="profile-address d-flex w-100">
                 <div
                   class="col p-0 d-none d-md-block address mr-auto align-self-center"
-                >{{ account.address }}</div>
+                >
+                  {{ account.address }}
+                </div>
                 <div
                   class="col p-0 d-block d-md-none address mr-auto align-self-center"
-                >{{ this.account.shortChecksumAddress }}</div>
+                >
+                  {{ this.account.shortChecksumAddress }}
+                </div>
                 <div class="copy-wrapper justify-content-center">
                   <svg-sprite-icon
                     class="copy-icon align-self-center"
@@ -226,15 +273,25 @@
             <li class="option-item" @click="openQrCode = !openQrCode">
               <div class="d-flex">
                 <div class="align-self-center">
-                  <img src="~/static/icons/qr-code.svg" alt="qr-code" class="option-icon inactive" />
+                  <img
+                    src="~/static/icons/qr-code.svg"
+                    alt="qr-code"
+                    class="option-icon inactive"
+                  />
                   <img
                     src="~/static/icons/active/qr-code.svg"
                     alt="qr-code"
                     class="option-icon active"
                   />
                 </div>
-                <div class="option-text font-body-medium align-self-center ps-x-16">Show QR Code</div>
-                <div class="align-elf-center d-flex justify-content-center ml-auto">
+                <div
+                  class="option-text font-body-medium align-self-center ps-x-16"
+                >
+                  Show QR Code
+                </div>
+                <div
+                  class="align-elf-center d-flex justify-content-center ml-auto"
+                >
                   <svg
                     class="align-self-center right-arrow"
                     width="24"
@@ -255,15 +312,25 @@
             <li class="option-item" @click="openLogout = true">
               <div class="d-flex">
                 <div class="align-self-center">
-                  <img src="~/static/icons/logout.svg" alt="qr-code" class="option-icon inactive" />
+                  <img
+                    src="~/static/icons/logout.svg"
+                    alt="qr-code"
+                    class="option-icon inactive"
+                  />
                   <img
                     src="~/static/icons/active/logout.svg"
                     alt="qr-code"
                     class="option-icon active"
                   />
                 </div>
-                <div class="option-text font-body-medium align-self-center ps-x-16">Logout</div>
-                <div class="align-elf-center d-flex justify-content-center ml-auto">
+                <div
+                  class="option-text font-body-medium align-self-center ps-x-16"
+                >
+                  Logout
+                </div>
+                <div
+                  class="align-elf-center d-flex justify-content-center ml-auto"
+                >
                   <svg
                     class="align-self-center right-arrow"
                     width="24"
@@ -285,7 +352,12 @@
       </div>
     </div>
     <!-- ./ Profile Dropdown -->
-    <receive-qr-code :show="openQrCode" :uri="account.address" :close="qrClose" v-if="user" />
+    <receive-qr-code
+      :show="openQrCode"
+      :uri="account.address"
+      :close="qrClose"
+      v-if="user"
+    />
     <logout-confirm :show="openLogout" :logout="logout" :close="logoutClose" />
   </nav>
 </template>
@@ -309,9 +381,10 @@ import * as animationData from "~/static/lottie-animations/green-check.json";
   components: { Lottie, ReceiveQrCode, LogoutConfirm },
   computed: {
     ...mapGetters("auth", ["user"]),
-    ...mapGetters("account", ["account"])
+    ...mapGetters("account", ["account"]),
+    ...mapGetters("network", ["selectedNetwork", "rootChainNetwork"]),
   },
-  methods: {}
+  methods: {},
 })
 export default class Navbar extends Vue {
   defaultOptions = { animationData: animationData.default, loop: false };
@@ -328,11 +401,7 @@ export default class Navbar extends Vue {
 
   currentNetwork = {
     key: "matic",
-    name: "Matic"
-  };
-  selectedNetwork = {
-    key: "matic",
-    name: "Matic"
+    name: "Matic",
   };
 
   checkIfNestedRoute(...names) {
@@ -420,16 +489,34 @@ export default class Navbar extends Vue {
   flex-basis: 0 !important;
   flex-grow: 1 !important;
 }
+
+.tag {
+  background: primary-color("200");
+  border-radius: 3px;
+  color: primary-color("600");
+  font-size: font-size("body-small");
+  font-weight: 500;
+  padding: 4px 5px;
+}
+
 .logo-container {
   .logo {
-    height: 26px;
+    height: 40px;
   }
 
-  .product-text {
-    font-size: 20px;
-    line-height: 28px;
-    text-transform: capitalize;
-    color: light-color("100");
+  .logo-desc-container {
+    margin-left: 12px;
+
+    .logo-title {
+      color: #3291e9;
+    }
+    .logo-product-name {
+      color: dark-color("300");
+    }
+    .logo-description {
+      font-size: font-size("body-small");
+      color: dark-color("500");
+    }
   }
 }
 
@@ -542,14 +629,13 @@ export default class Navbar extends Vue {
 
   .nav-profile-container {
     cursor: pointer;
-    .profile {
-      width: 124px;
-    }
-    .profile-icon {
-      .svg-sprite-icon {
-        height: 34px;
-        width: 34px;
-      }
+    background: light-color("500");
+    padding: 10px 18px 10px 14px;
+    border-radius: 24px;
+
+    .navbar-user-address {
+      @include font-setting("body-medium", "400");
+      margin: 0 13px 0 10px;
     }
 
     .down-icon {
@@ -730,8 +816,6 @@ export default class Navbar extends Vue {
 }
 
 @media (max-width: 992px) {
-  .logo-container {
-  }
   .navbar {
     .navbar-collapse {
       display: none !important;
@@ -767,8 +851,8 @@ export default class Navbar extends Vue {
         }
 
         .extra-links {
-          display: block;
-          border-top: 1px solid light-color("500");
+          display: none;
+          // border-top: 1px solid light-color("500");
         }
       }
     }

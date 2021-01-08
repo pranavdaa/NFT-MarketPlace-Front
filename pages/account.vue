@@ -10,7 +10,8 @@
     <div class="row">
       <matic-new-tab v-if="activeTab === 0" />
       <ethereum-new-tab v-if="activeTab === 1" />
-      <activity-tab v-if="activeTab === 2" />
+      <activity-order-tab v-if="activeTab === 2" />
+      <activity-deposit-withdraw-tab v-if="activeTab === 3" />
     </div>
   </div>
 </template>
@@ -29,7 +30,8 @@ import AccountBanner from "~/components/lego/account/account-banner";
 import TabSwitcher from "~/components/lego/tab-switcher";
 import MaticNewTab from "~/components/lego/account/matic-new-tab";
 import EthereumNewTab from "~/components/lego/account/ethereum-new-tab";
-import ActivityTab from "~/components/lego/account/activity-tab";
+import ActivityOrderTab from "~/components/lego/account/activity-order-tab";
+import ActivityDepositWithdrawTab from "~/components/lego/account/activity-deposit-withdraw-tab";
 
 @Component({
   props: {},
@@ -42,7 +44,8 @@ import ActivityTab from "~/components/lego/account/activity-tab";
     TabSwitcher,
     MaticNewTab,
     EthereumNewTab,
-    ActivityTab,
+    ActivityOrderTab,
+    ActivityDepositWithdrawTab
   },
   middleware: ["auth"],
   mixins: [],
@@ -51,7 +54,7 @@ import ActivityTab from "~/components/lego/account/activity-tab";
       "favouriteOrders",
       "totalMaticNft",
       "totalMainNft",
-      "totalUnreadActivity",
+      "totalUnreadOrderActivity",
     ]),
     ...mapGetters("network", ["networks"]),
     ...mapGetters("auth", ["user"]),
@@ -99,7 +102,7 @@ export default class Index extends Vue {
 
       if (activityResponse.status === 200 && activityResponse.data.data) {
         this.$store.commit(
-          "account/totalUnreadActivity",
+          "account/totalUnreadOrderActivity",
           activityResponse.data.data.unread_count
         );
       }
@@ -125,7 +128,8 @@ export default class Index extends Vue {
     return [
       { id: 0, title: "Items on Matic", count: this.totalMaticNft },
       { id: 1, title: "Items on Ethereum", count: this.totalMainNft },
-      { id: 2, title: "Activities", count: this.totalUnreadActivity },
+      { id: 2, title: "Orders", count: this.totalUnreadOrderActivity },
+      { id: 3, title: "Deposits & Withdraws" },
     ];
   }
   get favCount() {

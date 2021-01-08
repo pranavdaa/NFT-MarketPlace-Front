@@ -11,7 +11,12 @@
       <div class="font-body-small owner-info">
         Owned by
         <a href @click.prevent>{{shortAddress}}</a> in
-        <a href @click.prevent>{{category.name}}</a>
+        <a
+          :href="order.external_link"
+          target="_blank"
+          rel="noopener noreferrer"
+          >{{category.name}}
+        </a>
       </div>
     </div>
   </div>

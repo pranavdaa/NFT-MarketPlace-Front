@@ -16,12 +16,18 @@
             {{ allCategory.name }}
           </div>
           <div class="count ps-l-12 font-body-medium ml-auto align-self-center">
-            <span v-if="!isLoading || allCategory.count || !isTab">{{
-              allCount
-            }}</span>
-            <span v-if="isLoading && !allCategory.count && isTab">{{
-              allCount
-            }}</span>
+            <span v-if="!isLoading || allCategory.count || !isTab">
+              <span v-if="isLoading && !!allCategory.count && isTab">
+                <div class="wave">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </div>
+              </span>
+              <span v-else>
+                 {{ allCount }}
+              </span>
+            </span>
           </div>
         </div>
         <div
@@ -45,21 +51,27 @@
             class="count ps-l-12 font-body-medium ml-auto align-self-center"
             v-if="!isLoading || category.count || !isTab"
           >
-            <span v-if="SHOW_COUNT.ORDER == countFor">
-              {{ category.count || 0 }}
-            </span>
-            <span v-if="SHOW_COUNT.MAIN == countFor">
-              {{ category.mainCount || 0 }}
-            </span>
-            <span v-if="SHOW_COUNT.MATIC == countFor">
-              {{ category.maticCount || 0 }}
-            </span>
-          </div>
-          <div
-            class="count ps-l-12 font-body-medium ml-auto align-self-center"
-            v-if="isLoading && !allCategory.count && isTab"
-          >
-            0
+            <div
+              class="count ps-l-12 font-body-medium ml-auto align-self-center"
+              v-if="isLoading && !!allCategory.count && isTab"
+            >
+              <div class="wave">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+            <div v-else>
+              <span v-if="SHOW_COUNT.ORDER == countFor">
+                {{ category.count || 0 }}
+              </span>
+              <span v-if="SHOW_COUNT.MAIN == countFor">
+                {{ category.mainCount || 0 }}
+              </span>
+              <span v-if="SHOW_COUNT.MATIC == countFor">
+                {{ category.maticCount || 0 }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -144,7 +156,6 @@ export default class CategoriesSelector extends Vue {
         }, 0) || 0
       );
     } else if (!this.isTab) {
-      console.log("all");
       return this.allCategory.count || 0;
     }
     return 0;
@@ -195,6 +206,37 @@ export default class CategoriesSelector extends Vue {
       }
     }
   }
+}
+
+.wave {
+  position:relative;
+
+	.dot {
+		display:inline-block;
+		width:4px;
+		height:4px;
+		border-radius:50%;
+		background:dark-color("300");
+		animation: wave 1.3s linear infinite;
+
+		&:nth-child(2) {
+			animation-delay: -1.1s;
+		}
+
+		&:nth-child(3) {
+			animation-delay: -0.9s;
+		}
+	}
+}
+
+@keyframes wave {
+	0%, 60%, 100% {
+		transform: initial;
+	}
+
+	30% {
+		transform: translateY(-7px);
+	}
 }
 
 @media (max-width: 768px) {

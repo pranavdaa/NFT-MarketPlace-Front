@@ -38,14 +38,15 @@ export default {
     totalCurrencyBalance(state, getters, rootState, rootGetters) {
       const network = rootGetters['network/selectedNetwork']
       const tokens = state.erc20Tokens
-      if (tokens.length > 0) {
-        return tokens.reduce((a, t) => {
-          const v = t.getBalance(network.chainId).times(new BigNumber(t.usd || '0.00'))
-          return a.plus(v)
-        }, ZERO)
-      }
+      let tokensBalance = []
+      tokens.reduce((a, t) => {
+        const v = t.getBalance(network.chainId)
+        tokensBalance.push(v);
+        return a.plus(v)
 
-      return ZERO
+      }, ZERO)
+      return tokensBalance
+      
     },
   },
 

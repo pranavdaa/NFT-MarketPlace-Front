@@ -109,7 +109,7 @@
                 >
                   {{ $t("downloadWallet") }}
                   <a
-                    href="https://matic.network/wallet"
+                    href="https://metamask.io/download.html"
                     target="_blank"
                     class="link-color ps-l-4"
                     >{{ $t("downloadHere") }}</a

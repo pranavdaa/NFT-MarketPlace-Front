@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="modal fade show" v-if="show">
-      <div class="modal-dialog">
+      <div class="modal-dialog align-self-center">
         <div class="box">
           <div class="box-body">
             <div class="ps-16 ps-md-32 box-header">

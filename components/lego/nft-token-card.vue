@@ -3,18 +3,11 @@
     :to="{ name: 'account' }"
     class="nft-card text-center cursor-pointer"
     v-bind:style="{ background: bg }"
-    v-if="
-      !searchInput ||
-      fuzzysearch(searchInput, token.name) ||
-      fuzzysearch(searchInput, token.description) ||
-      fuzzysearch(searchInput, token.token_id) ||
-      fuzzysearch(searchInput, category.name)
-    "
   >
     <div
       class="check-container"
       :class="{ checked: isSelected }"
-      v-if="!isAllCategories && !order"
+      v-if="showCheckbox"
       @click="toggleSelection()"
     >
       <input
@@ -26,7 +19,15 @@
       <span class="checkmark align-self-center"></span>
     </div>
     <NuxtLink
-      :to="{ name: 'token-tokenId', params: { tokenId: token.token_id } }"
+      :to="
+        !order
+          ? {
+              name: 'token-tokenId',
+              params: { tokenId: token.token_id },
+              query: { chainId: token.chainId },
+            }
+          : { name: 'tokens-id', params: { id: order.id } }
+      "
     >
       <div class="img-wrapper d-flex ps-t-12 justify-content-center">
         <img
@@ -36,18 +37,19 @@
           @load="onImageLoad"
         />
       </div>
+
+      <div
+        class="gradient"
+        v-bind:style="{
+          background:
+            'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
+        }"
+      ></div>
     </NuxtLink>
     <div class="more-actions" v-if="!isAllCategories && !order">
       <MoreOptions :options="moreOptions" />
     </div>
 
-    <div
-      class="gradient"
-      v-bind:style="{
-        background:
-          'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
-      }"
-    ></div>
     <div
       class="category-pill d-flex mx-auto ms-t-20 ms-b-16"
       v-if="token.category"
@@ -108,7 +110,6 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import app from "~/plugins/app";
 import { mapGetters } from "vuex";
-import { fuzzysearch } from "~/plugins/helpers/index";
 import { toDataURL } from "~/plugins/helpers/";
 
 import MoreOptions from "~/components/lego/more-options";
@@ -127,11 +128,6 @@ const colorThief = new ColorThief();
       type: Boolean,
       required: false,
       default: false,
-    },
-    searchInput: {
-      type: String,
-      required: false,
-      default: null,
     },
     onSelectToken: {
       type: Function,
@@ -180,7 +176,6 @@ const colorThief = new ColorThief();
 })
 export default class NFTTokenCard extends Vue {
   bg = "#f3f4f7";
-  fuzzysearch = fuzzysearch;
   maxTokenSelection = app.uiconfig.maxBulkDeposit;
 
   // Initial
@@ -189,6 +184,8 @@ export default class NFTTokenCard extends Vue {
   async onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
+      // img.crossOrigin = "Anonymous";
+
       let rgbColor = colorThief.getColor(img);
       if (rgbColor) {
         let hsl = rgbToHsl({
@@ -250,6 +247,18 @@ export default class NFTTokenCard extends Vue {
     return false;
   }
 
+  get isOpenseaCompatible() {
+    return this.token.category.isOpenseaCompatible;
+  }
+
+  get showCheckbox() {
+    if (!this.isMainToken) {
+      return !this.isAllCategories && !this.order && (this.isOpenseaCompatible)
+    } else {
+      return !this.isAllCategories && !this.order
+    }
+  }
+
   get order() {
     if (
       !this.isMainToken &&
@@ -275,19 +284,28 @@ export default class NFTTokenCard extends Vue {
       ];
     }
 
+    if (this.isOpenseaCompatible) {
+      return [
+        {
+          title: this.$t("moreOptions.withdraw"),
+          action: this.withdraw,
+        },
+        {
+          title: this.$t("moreOptions.sell"),
+          action: this.sell,
+        },
+        // {
+        //   title: this.$t("moreOptions.send"),
+        //   action: this.transfer,
+        // },
+      ];
+    }
+
     return [
-      {
-        title: this.$t("moreOptions.withdraw"),
-        action: this.withdraw,
-      },
       {
         title: this.$t("moreOptions.sell"),
         action: this.sell,
       },
-      // {
-      //   title: this.$t("moreOptions.send"),
-      //   action: this.transfer,
-      // },
     ];
   }
 }

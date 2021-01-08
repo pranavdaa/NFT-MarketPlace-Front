@@ -52,6 +52,14 @@ export default {
       )
     },
 
+    rootChainNetwork(state) {
+      return state.networks[
+        state.selectedNetworkKey ||
+        configStore.get("selectedNetworkKey") ||
+        "main"
+      ]
+    },
+
     networks(state) {
       return state.networks
     },

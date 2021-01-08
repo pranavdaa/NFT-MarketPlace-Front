@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="container-fluid ps-y-16" v-if="token.token_id && !isLoadingDetails">
+    <div
+      class="container-fluid ps-y-16"
+      v-if="token.token_id && !isLoadingDetails"
+    >
       <div class="row ps-y-16 ps-x-md-16">
         <div class="col-md-7 d-flex">
           <token-short-info
@@ -14,8 +17,8 @@
       <div class="row ps-y-16 ps-x-md-16 justify-content-center">
         <div class="col-md-8">
           <div
-            class="feature-image d-flex d-lg-flex justify-content-center"
-            v-bind:style="{background: bg}"
+            class="feature-image d-flex d-lg-flex justify-content-center mb-4"
+            v-bind:style="{ background: bg }"
           >
             <img
               class="asset-img align-self-center"
@@ -24,101 +27,130 @@
               @load="onImageLoad"
             />
           </div>
-          <div class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16">
-            <h2>{{token.description}}</h2>
-            <h3 class="font-heading-medium font-semibold">About {{token.name}}</h3>
-            <p
-              class="font-body-medium"
-              :class="{'show-less': showMore, 'show-more': !showMore}"
-              v-if="token.description"
+          <div class="details-section">
+            <div
+              class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
             >
-              {{token.description}}
-              <span class="dots">...</span>
-              <span class="more">{{token.description}}</span>
-              <a
-                class="font-body-small d-flex ps-t-8 font-medium"
-                href="#more-info"
-                v-if="!showMore"
-                @click.prevent="showMore = true"
-              >More info</a>
-              <a
-                class="font-body-small d-flex ps-t-8 font-medium"
-                href="#more-info"
-                v-if="showMore"
-                @click.prevent="showMore = false"
-              >Show less</a>
-            </p>
-          </div>
-          <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="category">
-            <h3 class="font-heading-medium font-semibold category">
-              About {{category.name}}
-              <a
-                class="ps-l-12"
-                :href="category.url"
-                target="_blank"
-                rel="noopener noreferrer"
-              >Visit Website</a>
+              <h2>{{ token.description }}</h2>
+              <h3 class="font-heading-medium font-semibold">
+                About {{ token.name }}
+              </h3>
+              <p
+                class="font-body-medium"
+                :class="{ 'show-less': showMore, 'show-more': !showMore }"
+                v-if="token.description"
+              >
+                {{ token.description }}
+                <span class="dots">...</span>
+                <span class="more">{{ token.description }}</span>
+                <a
+                  class="font-body-small d-flex ps-t-8 font-medium"
+                  href="#more-info"
+                  v-if="!showMore"
+                  @click.prevent="showMore = true"
+                  >More info</a
+                >
+                <a
+                  class="font-body-small d-flex ps-t-8 font-medium"
+                  href="#more-info"
+                  v-if="showMore"
+                  @click.prevent="showMore = false"
+                  >Show less</a
+                >
+              </p>
+            </div>
+            <div class="d-flex flex-column py-4" v-if="category">
+              <h3 class="font-heading-medium font-semibold category">
+                About {{ category.name }}
+                <a
+                  class="ps-l-12"
+                  :href="category.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Visit Website</a
+                >
 
-              <span
-                class="float-right cursor-pointer right-arrow"
-                :class="{'down-icon':showCategoryInfo}"
-                @click="showCategoryInfo = !showCategoryInfo"
-                v-if="category.description"
+                <span
+                  class="float-right cursor-pointer right-arrow"
+                  :class="{ 'down-icon': showCategoryInfo }"
+                  @click="showCategoryInfo = !showCategoryInfo"
+                  v-if="category.description"
+                >
+                  <svg-sprite-icon name="right-arrow" />
+                </span>
+              </h3>
+              <p
+                class="font-body-medium ps-t-20"
+                v-if="showCategoryInfo && category.description"
               >
-                <svg-sprite-icon name="right-arrow" />
-              </span>
-            </h3>
-            <p
-              class="font-body-medium ps-t-20"
-              v-if="showCategoryInfo && category.description"
-            >{{category.description}}</p>
-          </div>
-          <div class="d-flex flex-column ps-y-16 ps-y-md-32" v-if="token.properties">
-            <h3 class="font-heading-medium font-semibold category">
-              Properties
-              <span
-                class="float-right cursor-pointer right-arrow"
-                :class="{'down-icon':showProperties}"
-                @click="showProperties = !showProperties"
-              >
-                <svg-sprite-icon name="right-arrow" />
-              </span>
-            </h3>
-            <p class="font-body-medium ps-t-20" v-if="showProperties">{{token.properties}}</p>
+                {{ category.description }}
+              </p>
+            </div>
+
+            <div class="properties py-4" v-if="token.token.attributes_metadata">
+              <h3 class="font-heading-medium font-semibold mb-4">
+                Properties
+                <span
+                  class="float-right cursor-pointer right-arrow"
+                  :class="{ 'down-icon': showProperties }"
+                  @click="showProperties = !showProperties"
+                >
+                  <svg-sprite-icon name="right-arrow" />
+                </span>
+              </h3>
+              <div class="d-flex flex-row flex-wrap" v-if="showProperties">
+                <div
+                  class="col-md-4 p-0 pr-4 justify-content-between"
+                  v-bind:key="`${attribute.trait_type}-${attribute.value}`"
+                  v-for="attribute in token.token.attributes_metadata"
+                >
+                  <div class="d-flex flex-column properties-pill p-3 mb-4">
+                    <p class="property-title m-0 p-0 text-truncate">
+                      {{ attribute.trait_type }}
+                    </p>
+                    <p class="property-detail m-0 pt-1 text-truncate">
+                      {{ attribute.value }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-md-4 d-none d-lg-flex">
           <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
-            <h3 class="font-heading-medium font-semibold">About {{token.name}}</h3>
+            <h3 class="font-heading-medium font-semibold">
+              About {{ token.name }}
+            </h3>
             <p
               class="font-body-medium"
-              :class="{'show-less': showMore, 'show-more': !showMore}"
+              :class="{ 'show-less': showMore, 'show-more': !showMore }"
               v-if="token.description"
             >
-              {{token.description}}
+              {{ token.description }}
               <span class="dots">...</span>
-              <span class="more">{{token.description}}</span>
+              <span class="more">{{ token.description }}</span>
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
                 v-if="!showMore"
                 @click.prevent="showMore = true"
-              >More info</a>
+                >More info</a
+              >
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
                 v-if="showMore"
                 @click.prevent="showMore = false"
-              >Show less</a>
+                >Show less</a
+              >
             </p>
           </div>
         </div>
       </div>
     </div>
 
-    <div
-      class="row ps-x-16 ps-y-120 d-flex justify-content-center text-center"
-    >
+    <div class="row ps-x-16 ps-y-120 d-flex justify-content-center text-center">
       <button-loader
         class="mx-auto"
         :loading="isLoadingDetails"
@@ -159,6 +191,10 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
       type: [Number, String],
       required: false,
     },
+    chainId: {
+      type: [Number, String],
+      required: false,
+    },
   },
   components: {
     TokenShortInfo,
@@ -178,8 +214,8 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
 export default class NftDetail extends Vue {
   bg = "#ffffff";
   showMore = false;
-  showCategoryInfo = true;
-  showProperties = true;
+  showCategoryInfo = false;
+  showProperties = false;
 
   isLoadingDetails = false;
   isLoading = false;
@@ -194,6 +230,8 @@ export default class NftDetail extends Vue {
   onImageLoad() {
     try {
       const img = this.$el.querySelector(".asset-img");
+      // img.crossOrigin = "Anonymous";
+
       let rgbColor = colorThief.getColor(img);
       if (rgbColor) {
         let hsl = rgbToHsl({
@@ -217,10 +255,6 @@ export default class NftDetail extends Vue {
     return app;
   }
 
-  get chainId() {
-    return this.networks.matic.chainId;
-  }
-
   // async
   async fetchNFTTokens() {
     if (!this.tokenId || this.isLoadingDetails) {
@@ -229,19 +263,21 @@ export default class NftDetail extends Vue {
     this.isLoadingDetails = true;
     try {
       let response = await getAxios().get(
-          `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}`
+        `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}`
       );
+
       if (response.status === 200 && response.data.data) {
-        let allTokens = [];
-        response.data.data.forEach((token) => {
-          allTokens.push(new NFTTokenModel(token));
+        // should use a endpoint that returns detail for just one token
+        let currentToken = response.data.data.filter((token) => {
+          return token.token_id == this.tokenId;
         });
 
-        allTokens.forEach((token) => {
-          if (token.token_id == this.tokenId) {
-            this.token = token;
-          }
-        })
+        if (currentToken.length > 0) currentToken = currentToken[0];
+        else return;
+
+        currentToken.chainId = this.chainId;
+        let data = new NFTTokenModel(currentToken);
+        this.token = data;
       }
     } catch (error) {
       console.log(error);
@@ -259,6 +295,7 @@ export default class NftDetail extends Vue {
   padding-bottom: 3.75rem;
   min-height: 500px;
   border-radius: $default-card-box-border-radius;
+
   .asset-img {
     max-width: 90%;
     max-height: 380px;
@@ -277,6 +314,11 @@ export default class NftDetail extends Vue {
   .option-icon {
     margin-top: -3px;
     margin-right: 4px;
+  }
+}
+.details-section {
+  > :not(:last-child) {
+    border-bottom: 1px solid light-color("400");
   }
 }
 .right-arrow {
@@ -307,6 +349,21 @@ export default class NftDetail extends Vue {
   }
   .more {
     display: inline;
+  }
+}
+
+.properties {
+  .properties-pill {
+    background: primary-color("100");
+    border: 1px solid primary-color("300");
+    border-radius: 8px;
+  }
+  .property-title {
+    @include font-setting("body-medium", "700");
+  }
+  .property-detail {
+    @include font-setting("body-large", "500");
+    color: dark-color("500");
   }
 }
 

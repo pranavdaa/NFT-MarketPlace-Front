@@ -1,6 +1,6 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div class="modal-backdrop" v-bsl="show" v-bind:class="{ show: show }"></div>
     <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box accept-box">
@@ -37,7 +37,7 @@
                   </div>
                 </div>
                 <div class="col-md-12 ps-y-32">
-                  <div class="font-body-small short-descr">Offer received</div>
+                  <div class="font-body-small short-descr">Offered for</div>
                   <div class="amount font-heading-large font-semibold ps-t-4">
                     {{ bid.price }} {{ bid.erc20Token.symbol }}
                   </div>

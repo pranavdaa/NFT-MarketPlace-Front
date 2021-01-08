@@ -115,7 +115,20 @@ const app = {
 
     // set network depending upon the login strategy
     if (this.isMetaMaskConnected()) {
-      const metamaskNetworkChangeHandler = async () => {
+      const metamaskNetworkChangeHandler = async (chainId) => {
+        const network = new MetaNetwork(
+          this.uiconfig.matic.deployment.network,
+          this.uiconfig.matic.deployment.version
+        )
+
+        const main = network.Main
+        const matic = network.Matic
+
+        if (chainId && (chainId !== "0x" + main.ChainId.toString(16) && chainId !== "0x" + matic.ChainId.toString(16))) {
+          await store.dispatch("auth/logout")
+          window.location.replace("/login")
+        }
+
         await store.dispatch("network/setProviders", {
           main: getWalletProvider({
             networks: this.ethereumNetworks, primaryProvider: 'main'
@@ -131,7 +144,12 @@ const app = {
 
       registerAccountChange(async (selectedAddress) => {
         const user = store.getters["auth/user"]
-        if (!selectedAddress || !selectedAddress[0] || !user || !user.address || user.address.toLowerCase() !== selectedAddress[0].toLowerCase()) {
+
+        if (!user || !user.address) {
+          await store.dispatch("auth/logout");
+        }
+
+        else if (!selectedAddress || !selectedAddress[0] || user.address.toLowerCase() !== selectedAddress[0].toLowerCase()) {
           await store.dispatch("auth/logout")
           window.location.replace("/login")
         }

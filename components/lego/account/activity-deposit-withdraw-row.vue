@@ -1,6 +1,6 @@
 <template>
   <div class="col-md-12 d-flex ps-l-16 ms-y-8">
-    <svg
+    <!-- <svg
       class="unread-mark align-self-center"
       width="5"
       height="5"
@@ -10,20 +10,21 @@
       v-if="!activity.read"
     >
       <rect width="5" height="5" rx="2.5" fill="#003CB2" />
-    </svg>
+    </svg> -->
     <div class="d-flex align-self-center activity-wrapper ps-y-16">
       <div
         class="img-wrapper justify-content-center d-none"
         v-bind:style="{ background: bg }"
       ></div>
-      <svg-sprite-icon
-        name="profile"
-        class="profile-logo d-none d-md-block align-self-center"
-      ></svg-sprite-icon>
+      <img
+        :src="imgUrl"
+        class="asset-img align-self-center profile-logo"
+        :alt="activity.categories.img_url"
+      />
       <div
         class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16"
       >
-        <div class="font-body-small">
+        <div class="font-body-small" v-if="true">
           {{ activity.message }}
         </div>
         <div class="font-caption text-gray-300">
@@ -31,11 +32,13 @@
         </div>
       </div>
       <div class="d-flex ml-auto ms-r-16" v-if="true">
-        <nuxt-link
-          :to="{ name: 'tokens-id', params: { id: activity.order_id } }"
+        <a
+          :href="explorerLink"
+          target="_blank"
+          rel="noopener noreferrer"
           class="btn btn-light align-self-center"
-          >View details</nuxt-link
-        >
+          >View details
+        </a>
       </div>
       <div class="d-flex ml-auto ms-r-16" v-if="false">
         <button
@@ -58,11 +61,15 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import moment from "moment";
+import getAxios from "~/plugins/axios";
 
 import AcceptBid from "~/components/lego/modals/bid-confirmation";
+import OrderModel from "~/components/model/order";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
+import app from "~/plugins/app";
+
 const colorThief = new ColorThief();
 
 @Component({
@@ -76,13 +83,26 @@ const colorThief = new ColorThief();
     AcceptBid,
   },
 })
-export default class ActivityRow extends Vue {
+export default class ActivityDepositWithdrawRow extends Vue {
   bg = "#ffffff";
   showAcceptBid = false;
   showInProcess = false;
   showTokenList = false;
+  explorerLink = "";
 
-  mounted() {}
+  async mounted() {
+    if(this.activity.type==="DEPOSIT"){
+        this.explorerLink = app.uiconfig.mainExplorer + "tx/" + this.activity.txhash;
+    }
+    else if (this.activity.type ==="WITHDRAW"){
+        if(this.activity.status === 0 || this.activity.status === 1){
+            this.explorerLink = app.uiconfig.maticExplorer + "tx/" + this.activity.txhash;
+        }
+        else if (this.activity.status === 2 || this.activity.status === 3){
+            this.explorerLink = app.uiconfig.mainExplorer + "tx/" + this.activity.exit_txhash;
+        }
+    }
+  }
 
   onImageLoad() {
     try {
@@ -97,6 +117,10 @@ export default class ActivityRow extends Vue {
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
       } else this.bg = "#ffffff";
     } catch (error) {}
+  }
+
+  get imgUrl() {
+    return `${app.uiconfig.apis.FILE_HOST}${this.activity.categories.img_url}`
   }
 
   get timeRemaining() {

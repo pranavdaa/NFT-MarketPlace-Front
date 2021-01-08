@@ -203,7 +203,7 @@ export default class BidderRow extends Vue {
         wordings = `${this.timeRemaining.secs} seconds`;
       }
     }
-    return wordings;
+    return wordings || "1 second";
   }
 
   // Actions
@@ -349,7 +349,7 @@ export default class BidderRow extends Vue {
           }
         }
       } catch (error) {
-        throw error;
+        // throw error;
         console.error(error);
         app.addToast("Something went wrong", error.message.substring(0, 60), {
           type: "failure",
