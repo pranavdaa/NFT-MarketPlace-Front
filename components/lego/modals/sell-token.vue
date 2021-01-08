@@ -43,7 +43,7 @@
                   <div
                     class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
                   >
-                    ~ {{ priceInUSD.toFixed(3) }} USD
+                    ~ ${{ priceInUSD.toFixed(3) }}
                   </div>
                   <div
                     class="w-100 font-caption error-text ps-t-12"
@@ -88,6 +88,11 @@
                         :disableToken="true"
                         :disabled="isLoading"
                       />
+                      <div
+                        class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
+                      >
+                        ~ ${{ minPriceInUSD.toFixed(3) }}
+                      </div>
                     </div>
                     <div
                       class="w-100 font-caption error-text ps-t-4"
@@ -361,11 +366,12 @@ export default class SellToken extends Vue {
     this.close();
   }
 
-  get category() {
-    return this.categories.find(
-      (category) =>
-        category.address.toLowerCase() === this.nftToken.contract.toLowerCase()
-    );
+  convertPriceToUSD(amount) {
+    let result =
+      parseBalance(amount, this.selectedERC20Token.decimal).toString(10) *
+      this.selectedERC20Token.usd;
+
+    return result
   }
 
   // action
@@ -851,12 +857,21 @@ export default class SellToken extends Vue {
     }
   }
 
-  get priceInUSD() {
-    let result =
-      parseBalance(this.price, this.selectedERC20Token.decimal).toString(10) *
-      this.selectedERC20Token.usd;
+  get category() {
+    return this.categories.find(
+      (category) =>
+        category.address.toLowerCase() === this.nftToken.contract.toLowerCase()
+    );
+  }
 
-    return isNaN(result) ? 0 : result
+  get priceInUSD() {
+    let equivalentUSD = this.convertPriceToUSD(this.price)
+    return isNaN(equivalentUSD) ? 0 : equivalentUSD
+  }
+
+  get minPriceInUSD() {
+    let equivalentUSD = this.convertPriceToUSD(this.minPrice)
+    return isNaN(equivalentUSD) ? 0 : equivalentUSD
   }
 }
 </script>
