@@ -7,7 +7,7 @@
     <div
       class="check-container"
       :class="{ checked: isSelected }"
-      v-if="!isAllCategories && !order"
+      v-if="showCheckbox"
       @click="toggleSelection()"
     >
       <input
@@ -37,18 +37,19 @@
           @load="onImageLoad"
         />
       </div>
+
+      <div
+        class="gradient"
+        v-bind:style="{
+          background:
+            'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
+        }"
+      ></div>
     </NuxtLink>
     <div class="more-actions" v-if="!isAllCategories && !order">
       <MoreOptions :options="moreOptions" />
     </div>
 
-    <div
-      class="gradient"
-      v-bind:style="{
-        background:
-          'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
-      }"
-    ></div>
     <div
       class="category-pill d-flex mx-auto ms-t-20 ms-b-16"
       v-if="token.category"
@@ -246,6 +247,18 @@ export default class NFTTokenCard extends Vue {
     return false;
   }
 
+  get isOpenseaCompatible() {
+    return this.token.category.isOpenseaCompatible;
+  }
+
+  get showCheckbox() {
+    if (!this.isMainToken) {
+      return !this.isAllCategories && !this.order && (this.isOpenseaCompatible)
+    } else {
+      return !this.isAllCategories && !this.order
+    }
+  }
+
   get order() {
     if (
       !this.isMainToken &&
@@ -271,19 +284,28 @@ export default class NFTTokenCard extends Vue {
       ];
     }
 
+    if (this.isOpenseaCompatible) {
+      return [
+        {
+          title: this.$t("moreOptions.withdraw"),
+          action: this.withdraw,
+        },
+        {
+          title: this.$t("moreOptions.sell"),
+          action: this.sell,
+        },
+        // {
+        //   title: this.$t("moreOptions.send"),
+        //   action: this.transfer,
+        // },
+      ];
+    }
+
     return [
-      {
-        title: this.$t("moreOptions.withdraw"),
-        action: this.withdraw,
-      },
       {
         title: this.$t("moreOptions.sell"),
         action: this.sell,
       },
-      // {
-      //   title: this.$t("moreOptions.send"),
-      //   action: this.transfer,
-      // },
     ];
   }
 }

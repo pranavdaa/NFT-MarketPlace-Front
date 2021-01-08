@@ -73,6 +73,7 @@ export default class MoreOptions extends Vue {
   }
 }
 .more-action-menu {
+  min-width: 10rem;
   position: absolute;
   top: 40px;
   right: 0;
