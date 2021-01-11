@@ -59,7 +59,7 @@
                         >
                           <div class="text-right d-flex flex-column">
                             <span class="font-body-medium font-medium"
-                              >${{ token.formattedFullUSDBalance }}</span
+                              >{{ token.formattedFullUSDBalance }}</span
                             >
                             <span class="text-gray font-body-medium mt-1"
                               >{{ token.formattedBalance }}
