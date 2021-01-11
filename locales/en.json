@@ -61,6 +61,9 @@
   "support": {
     "title": "Support"
   },
+  "faq": {
+    "title": "FAQ"
+  },
   "moreOptions": {
     "deposit": "Deposit to Matic",
     "withdraw": "Withdraw to Ethereum",
