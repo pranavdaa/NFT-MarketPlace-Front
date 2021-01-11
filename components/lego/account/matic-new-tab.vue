@@ -99,7 +99,7 @@
         />
 
         <div
-          class="row ps-x-16 d-flex justify-content-center text-center ps-b-60"
+          class="row ps-x-16 d-flex justify-content-center justify-content-lg-start text-center ps-b-60"
           v-if="displayedTokens && displayedTokens.length > 0"
         >
           <no-item
