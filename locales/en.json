@@ -61,6 +61,9 @@
   "support": {
     "title": "Support"
   },
+  "faq": {
+    "title": "FAQ"
+  },
   "moreOptions": {
     "deposit": "Deposit to Matic",
     "withdraw": "Withdraw to Ethereum",
@@ -109,7 +112,7 @@
     "onsale": "On sale",
     "owned": "Owned"
   },
-  "submitToMarketplace": "Submit to Marketplace",
+  "submitToMarketplace": "List for Sale",
   "submittingToMarketplace": "Submitting to Marketplace",
   "withdraw": {
     "title": "Move Collectibles to Ethereum",

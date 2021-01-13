@@ -43,7 +43,7 @@
                   <div
                     class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
                   >
-                    ~ ${{ priceInUSD.toFixed(3) }}
+                    ~ {{ priceInUSDFormatted }}
                   </div>
                   <div
                     class="w-100 font-caption error-text ps-t-12"
@@ -91,7 +91,7 @@
                       <div
                         class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
                       >
-                        ~ ${{ minPriceInUSD.toFixed(3) }}
+                        ~ {{ minPriceInUSDFormatted }}
                       </div>
                     </div>
                     <div
@@ -205,6 +205,7 @@
 import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
+import { formatUSDValue } from "~/plugins/helpers/index";
 import Web3 from "web3";
 import moment from "moment";
 
@@ -312,7 +313,7 @@ export default class SellToken extends Vue {
       description:
         "Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "",
-      btnTitle: "Submit to Marketplace",
+      btnTitle: "List for Sale",
     },
   ];
 
@@ -869,9 +870,14 @@ export default class SellToken extends Vue {
     return isNaN(equivalentUSD) ? 0 : equivalentUSD
   }
 
-  get minPriceInUSD() {
+  get priceInUSDFormatted() {
+    let equivalentUSD = this.convertPriceToUSD(this.price)
+    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
+  }
+
+  get minPriceInUSDFormatted() {
     let equivalentUSD = this.convertPriceToUSD(this.minPrice)
-    return isNaN(equivalentUSD) ? 0 : equivalentUSD
+    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
   }
 }
 </script>

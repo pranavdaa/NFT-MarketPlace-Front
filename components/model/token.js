@@ -4,6 +4,7 @@ import BigNumber from "~/plugins/bignumber"
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
 import MetaNetwork from "@maticnetwork/meta/network"
+import { formatUSDValue } from "~/plugins/helpers/index"
 const uiconfig = JSON.parse(process.env.uiconfig)
 
 import { parseBalance, parseUSDBalance } from "~/plugins/helpers/token-utils"
@@ -97,7 +98,7 @@ export default class Token extends Model {
 
   get formattedFullUSDBalance() {
     if (this.usd) {
-      return parseUSDBalance(this.balance, this.usd).toFixed(2)
+      return formatUSDValue(parseUSDBalance(this.balance, this.usd).toFixed(2))
     }
     return ZERO
   }

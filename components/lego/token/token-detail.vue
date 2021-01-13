@@ -112,13 +112,19 @@
             >
               {{ buttonVal }}
             </button>
-            <br>
-            <button
-              class="btn btn-primary"
+            <div
+              class="font-body-small text-danger text-center ps-t-12"
+              v-if="!validation['balance']"
+            >
+              You have insufficient balance in your account
+            </div>
+            <div
+              class="font-body-large font-semibold text-primary text-center cursor-pointer ps-t-16"
               v-if="!isOwnersToken && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
-              @click="depositModal = true">
-              {{ $t("account.banner.depositWeth") }}
-            </button>
+              @click="depositModal = true"
+            >
+              Add Funds
+            </div>
             <button
               class="btn btn-light"
               v-if="isOwnersToken && order.status === 0"
@@ -281,13 +287,19 @@
             >
               {{ buttonVal }}
             </button>
-            <br>
-            <button
-              class="btn btn-primary"
+            <div
+              class="font-body-small text-danger text-center ps-t-12"
+              v-if="!validation['balance']"
+            >
+              You have insufficient balance in your account
+            </div>
+            <div
+              class="font-body-large font-semibold text-primary text-center cursor-pointer ps-t-16"
               v-if="!isOwnersToken && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
-              @click="depositModal = true">
-              {{ $t("account.banner.depositWeth") }}
-            </button>
+              @click="depositModal = true"
+            >
+              Add Funds
+            </div>
             <button
               class="btn btn-light"
               v-if="isOwnersToken && order.status === 0"

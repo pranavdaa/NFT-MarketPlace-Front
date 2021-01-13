@@ -81,7 +81,7 @@
                 <div
                   class="col-md-12 ps-x-40 ps-y-8 ps-b-20 font-caption text-gray-300"
                 >
-                  Account balance: ${{
+                  Account balance: {{
                     defaultSelectedToken.formattedFullUSDBalance
                   }}
                   = {{ defaultSelectedToken.formattedBalance }}
@@ -101,12 +101,12 @@
                     color="primary"
                     :click="makeOfferOrBid"
                   ></button-loader>
-                  <br>
-                  <button 
-                    class="btn col-md-12 ps-t-12 ps-b-12 ps-x-40 btn-primary" 
-                    @click="executeDeposit()">
-                    {{ $t("account.banner.depositWeth") }}
-                  </button>
+                  <div
+                    class="font-body-large font-semibold text-primary text-center cursor-pointer ps-t-12"
+                    @click="executeDeposit()"
+                  >
+                    Add Funds
+                  </div>
                 </div>
 
                 <div

@@ -40,7 +40,7 @@
       {{ order.token.name }}
     </h3>
     <div class="price font-body-small ms-b-20" v-if="erc20Token && !onlyToken">
-      {{ order.price }} {{ erc20Token.symbol }} &nbsp; (${{ priceInUSD.toFixed(2) }})
+      {{ order.price }} {{ erc20Token.symbol }} &nbsp; ({{ priceInUSD }})
     </div>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
@@ -97,6 +97,7 @@ import app from "~/plugins/app";
 import { mapGetters } from "vuex";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
+import { formatUSDValue } from "~/plugins/helpers/index";
 import ColorThief from "color-thief";
 const colorThief = new ColorThief();
 
@@ -209,7 +210,7 @@ export default class SellCard extends Vue {
   }
 
   get priceInUSD() {
-    return this.order.usd_price ? parseFloat(this.order.usd_price) : 0
+    return this.order.usd_price ? formatUSDValue(parseFloat(this.order.usd_price)) : '$0'
   }
 
   // Actions

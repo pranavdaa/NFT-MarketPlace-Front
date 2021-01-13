@@ -64,6 +64,15 @@
               </nuxt-link>
             </li>
             <li class="nav-item">
+              <nuxt-link
+                class="nav-link d-flex justify-content-lg-center"
+                :to="{ name: 'faq' }"
+                :class="{ active: checkIfNestedRoute('faq') }"
+              >
+                <span class="align-self-center">{{ $t("faq.title") }}</span>
+              </nuxt-link>
+            </li>
+            <li class="nav-item">
               <a
                 class="nav-link d-flex justify-content-lg-center"
                 href="https://t.me/maticwalletweb"

@@ -21,31 +21,20 @@
                   class="w-100 d-flex flex-column ps-x-16 ps-x-sm-32 ps-x-lg-40"
                 >
                   <h3 class="font-heading-medium font-semibold">
-                    About {{ order.token.name }}
+                    <a
+                      :href="order.external_link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-gray-900"
+                      >{{ order.token.name }}
+                    </a>
                   </h3>
-                  <p
-                    class="font-body-medium"
-                    :class="{ 'show-less': showMore, 'show-more': !showMore }"
-                    v-if="order.token.description"
-                  >
-                    {{ order.token.description }}
-                    <span class="dots">...</span>
-                    <span class="more">{{ order.token.description }}</span>
-                    <a
-                      class="font-body-small d-inline-flex ps-t-8 font-medium"
-                      href="#more-info"
-                      v-if="!showMore"
-                      @click.prevent="showMore = true"
-                      >More info</a
-                    >
-                    <a
-                      class="font-body-small d-inline-flex ps-t-8 font-medium"
-                      href="#more-info"
-                      v-if="showMore"
-                      @click.prevent="showMore = false"
-                      >Show less</a
-                    >
-                  </p>
+                  <img
+                    class="asset-img mx-auto ps-b-20"
+                    :src="order.token.img_url"
+                    alt="order.token.name"
+                    @load="onImageLoad"
+                  />
                   <div
                     class="mt-auto w-100 d-flex flex-column fixed-price"
                     v-if="order.type === orderTypes.FIXED"
@@ -68,10 +57,16 @@
                       Listed for
                     </div>
                     <div
-                      class="font-heading-large font-semibold ps-b-20"
+                      class="font-heading-large font-semibold"
                       v-if="erc20Token"
                     >
                       {{ order.price }} {{ erc20Token.symbol }}
+                    </div>
+                    <div
+                      class="font-heading-medium font-semibold ps-b-20 text-gray-300"
+                      v-if="erc20Token"
+                    >
+                      {{ priceInUSD }}
                     </div>
                     <!-- <div
                       class="font-heading-large font-semibold ps-b-20"
@@ -99,39 +94,63 @@
                     >
                       {{ errorMessage }}
                     </div>
+
+
                     <div class="d-flex justify-content-between">
-                      <div class="font-body-small text-gray-300 ps-y-4">
-                        Listed for
+                      <div>
+                        <div class="font-body-small text-gray-300 ps-y-4">
+                          Listed for
+                        </div>
+                        <div
+                          class="font-heading-large font-semibold"
+                          v-if="erc20Token"
+                        >
+                          {{ order.price }} {{ erc20Token.symbol }}
+                        </div>
+                        <div
+                          class="font-heading-medium font-semibold ps-b-20 text-gray-300"
+                          v-if="erc20Token"
+                        >
+                          {{ priceInUSD }}
+                        </div>
                       </div>
-                      <div
-                        class="font-heading-medium font-semibold ps-b-20"
-                        v-if="erc20Token"
-                      >
-                        {{ order.price }} {{ erc20Token.symbol }}
+
+
+                      <div class="text-right" v-if="order.highest_bid">
+                        <div class="font-body-small text-gray-300 ps-y-4">
+                          Last offer
+                        </div>
+                        <div
+                          class="font-heading-large font-semibold"
+                        >
+                          {{ order.highest_bid }} {{ erc20Token.symbol }}
+                        </div>
+                        <div
+                          class="font-heading-medium font-semibold ps-b-20 text-gray-300"
+                          v-if="erc20Token"
+                        >
+                          {{ lastPriceInUSD }}
+                        </div>
+                      </div>
+
+                      <div class="text-right" v-else>
+                        <div class="font-body-small text-gray-300 ps-y-4">
+                          Min Price
+                        </div>
+                        <div
+                          class="font-heading-large font-semibold"
+                        >
+                          {{ order.min_price }} {{ erc20Token.symbol }}
+                        </div>
+                        <div
+                          class="font-heading-medium font-semibold ps-b-20 text-gray-300"
+                          v-if="erc20Token"
+                        >
+                          {{ minPriceInUSD }}
+                        </div>
                       </div>
                     </div>
 
-                    <div class="d-flex justify-content-between" v-if="order.highest_bid">
-                      <div class="font-body-small text-gray-300 ps-y-4">
-                        Last offer
-                      </div>
-                      <div
-                        class="font-heading-medium font-semibold ps-b-20"
-                      >
-                        {{ order.highest_bid }} {{ erc20Token.symbol }}
-                      </div>
-                    </div>
-
-                    <div class="d-flex justify-content-between" v-else>
-                      <div class="font-body-small text-gray-300 ps-y-4">
-                        Min Price
-                      </div>
-                      <div
-                        class="font-heading-medium font-semibold ps-b-20"
-                      >
-                        {{ order.min_price }} {{ erc20Token.symbol }}
-                      </div>
-                    </div>
                       <!-- <div
                         class="font-heading-large font-semibold ps-b-20"
                         v-if="erc20Token"
@@ -310,6 +329,7 @@ import InputToken from "~/components/lego/input-token";
 import getAxios from "~/plugins/axios";
 
 import { parseBalance } from "~/plugins/helpers/token-utils";
+import { formatUSDValue } from "~/plugins/helpers/index";
 import PlaceBid from "~/components/lego/modals/place-bid";
 import ApproveProcess from "~/components/lego/modals/approve-process";
 import DepositWeth from "~/components/lego/modals/deposit-weth";
@@ -381,17 +401,6 @@ export default class BuyToken extends Vue {
   };
   errorMessage = "You don't have sufficient balance to buy this order";
 
-  approvalModalText = {
-    approve: {
-      title: 'Approve',
-      subText: 'Approve 0x contract to transfer your WETH'
-    },
-    sign: {
-      title: 'Sign buy order',
-      subText: ''
-    }
-  }
-
   tabs = [
     {
       id: 0,
@@ -423,6 +432,26 @@ export default class BuyToken extends Vue {
 
   mounted() {}
 
+  onImageLoad() {
+    try {
+      const img = this.$el.querySelector(".asset-img");
+      let rgbColor = colorThief.getColor(img);
+      if (rgbColor) {
+        let hsl = rgbToHsl({
+          r: rgbColor[0],
+          g: rgbColor[1],
+          b: rgbColor[2],
+        });
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+      } else this.bg = "#f3f4f7";
+    } catch (error) {}
+  }
+
+  convertPriceToUSD(amount) {
+    let result = amount * this.selectedERC20Token.usd;
+    return result
+  }
+
   closeDepositModal() {
     this.depositModal = false;
     this.close();
@@ -445,8 +474,33 @@ export default class BuyToken extends Vue {
     )[0];
   }
 
+  get approvalModalText() {
+    return {
+      approve: {
+        title: 'Approve',
+        subText: `Approve 0x contract to transfer your ${this.erc20Token.symbol}`
+      },
+      sign: {
+        title: 'Sign buy order',
+        subText: ''
+      }
+    }
+  }
+
   get orderTypes() {
     return app.orderTypes;
+  }
+
+  get priceInUSD() {
+    return this.order.usd_price ? formatUSDValue(parseFloat(this.order.usd_price)) : '$0'
+  }
+  get minPriceInUSD() {
+    let equivalentUSD = this.convertPriceToUSD(this.order.min_price)
+    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
+  }
+  get lastPriceInUSD() {
+    let equivalentUSD = this.convertPriceToUSD(this.order.highest_bid)
+    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
   }
 
   get isBid() {
@@ -1032,10 +1086,18 @@ export default class BuyToken extends Vue {
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
 
+.asset-img {
+  max-width: 300px;
+  max-height: 300px;
+}
+
 .hide-modal {
   opacity: 0;
 }
 
+.text-gray-900 {
+  color: dark-color("900");
+}
 .text-gray-500 {
   color: dark-color("500");
 }
