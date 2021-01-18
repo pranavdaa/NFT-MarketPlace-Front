@@ -114,7 +114,7 @@
             </button>
             <div
               class="font-body-small text-danger text-center ps-t-12"
-              v-if="!validation['balance']"
+              v-if="!isOwnersToken && !validation['balance']"
             >
               You have insufficient balance in your account
             </div>
@@ -289,7 +289,7 @@
             </button>
             <div
               class="font-body-small text-danger text-center ps-t-12"
-              v-if="!validation['balance']"
+              v-if="!isOwnersToken && !validation['balance']"
             >
               You have insufficient balance in your account
             </div>
