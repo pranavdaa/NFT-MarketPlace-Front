@@ -103,7 +103,7 @@
                   ></button-loader>
                   <div
                     class="font-body-large font-semibold text-primary text-center cursor-pointer ps-t-12"
-                    @click="executeDeposit()"
+                    @click="executeDeposit"
                   >
                     Add Funds
                   </div>

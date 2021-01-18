@@ -396,9 +396,6 @@ export default class BuyToken extends Vue {
   showMakeOffer = false;
 
   dirty = false;
-  errorMessages = {
-    noBalance: "You don't have sufficient balance to buy this order",
-  };
   errorMessage = "You don't have sufficient balance to buy this order";
 
   tabs = [
@@ -448,7 +445,9 @@ export default class BuyToken extends Vue {
   }
 
   convertPriceToUSD(amount) {
-    let result = amount * this.selectedERC20Token.usd;
+    let amountVal = new BigNumber(parseFloat(amount))
+    let usdVal = new BigNumber(this.selectedERC20Token.usd)
+    let result = amountVal.times(usdVal)
     return result
   }
 

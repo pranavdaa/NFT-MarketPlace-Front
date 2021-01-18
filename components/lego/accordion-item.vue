@@ -27,38 +27,44 @@
 </template>
 
 <script>
-export default {
-  props: {},
-  inject: ["Accordion"],
-  data() {
-    return {
-      index: null
-    };
-  },
-  computed: {
-    visible() {
-      return this.index == this.Accordion.active;
+import Vue from "vue";
+import Component from "nuxt-class-component";
+
+@Component({
+  props: {
+    accordionItem: {
+      type: Object,
+      required: false
     }
-  },
-  methods: {
-    open() {
-      if (this.visible) {
-        this.Accordion.active = null;
-      } else {
-        this.Accordion.active = this.index;
-      }
-    },
-    start(el) {
-      el.style.height = el.scrollHeight + "px";
-    },
-    end(el) {
-      el.style.height = "";
-    }
-  },
-  created() {
-    this.index = this.Accordion.count++;
   }
-};
+})
+export default class AccordionItem extends Vue {
+  index = null;
+
+  created() {
+    this.index = this.accordionItem.count++;
+  }
+
+  open() {
+    if (this.visible) {
+      this.accordionItem.active = null;
+    } else {
+      this.accordionItem.active = this.index;
+    }
+  }
+
+  start(el) {
+    el.style.height = el.scrollHeight + "px";
+  }
+
+  end(el) {
+    el.style.height = "unset";
+  }
+
+  get visible() {
+    return this.index == this.accordionItem.active;
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -94,8 +100,8 @@ export default {
 }
 
 .spin:hover {
-    transform:rotate(45deg);
-    -ms-transform:rotate(45deg);
-    -webkit-transform:rotate(45deg);
+  transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
 }
 </style>
