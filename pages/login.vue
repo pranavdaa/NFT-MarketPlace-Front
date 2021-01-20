@@ -196,7 +196,7 @@ export default class Login extends Vue {
         Test: [{ name: "owner", type: "string" }],
       },
       domain: {
-        name: "Ether Mail",
+        name: "Opensea on Matic",
         host: '',
         version: "1",
         verifyingContract: "0x0",
