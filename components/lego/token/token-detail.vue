@@ -119,7 +119,7 @@
               You have insufficient balance in your account
             </div>
             <div
-              class="font-body-large font-semibold text-primary text-center cursor-pointer ps-t-16"
+              class="font-body-medium font-semibold text-primary text-center cursor-pointer ps-t-16"
               v-if="isInsufficientBalance && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
               @click="depositModal = true"
             >
@@ -294,7 +294,7 @@
               You have insufficient balance in your account
             </div>
             <div
-              class="font-body-large font-semibold text-primary text-center cursor-pointer ps-t-16"
+              class="font-body-medium font-semibold text-primary text-center cursor-pointer ps-t-16"
               v-if="isInsufficientBalance && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
               @click="depositModal = true"
             >
@@ -735,8 +735,11 @@ export default class TokenDetail extends Vue {
 .feature-info {
   &.mobile {
     min-height: auto;
+    position: relative;
   }
-  width: 100%;
+  position: fixed;
+  // width: 100%;
+  margin-right: 1rem;
   max-height: 500px;
   border: 1px solid #f3f4f7;
   border-radius: $default-card-box-border-radius;
