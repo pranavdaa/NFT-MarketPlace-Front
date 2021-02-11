@@ -117,6 +117,7 @@
             :onSelectToken="onSelectToken"
             :onWithdraw="onWithdraw"
             :onSell="onSellToken"
+            :onSend="onSendToken"
             :searchInput="searchInput"
             :totalSelected="selectedTokens.length"
           />
@@ -128,6 +129,15 @@
           :close="onCloseSellModal"
           :nftToken="selectedToken"
           v-if="showSellModal"
+          :refreshNFTTokens="refreshNFTTokens"
+        />
+
+        <send-token
+          class="text-left"
+          :show="showSendModal"
+          :close="onCloseSendModal"
+          :nftToken="selectedToken"
+          v-if="showSendModal"
           :refreshNFTTokens="refreshNFTTokens"
         />
 
@@ -192,6 +202,7 @@ import CategorySidebar from "~/components/lego/account/category-sidebar";
 import NFTTokenCard from "~/components/lego/nft-token-card";
 import PendingWithdrawals from "~/components/lego/account/pending-withdrawals";
 import SellToken from "~/components/lego/modals/sell-token";
+import SendToken from "~/components/lego/modals/send-token";
 import Withdraw from "~/components/lego/modals/withdraw";
 
 @Component({
@@ -205,6 +216,7 @@ import Withdraw from "~/components/lego/modals/withdraw";
     NoItem,
     NFTTokenCard,
     SellToken,
+    SendToken,
     CategorySidebar,
     Withdraw,
     PendingWithdrawals,
@@ -231,6 +243,7 @@ import Withdraw from "~/components/lego/modals/withdraw";
 export default class MaticNewTab extends Vue {
   // Modals
   showSellModal = false;
+  showSendModal = false;
   showWithdrawModal = false;
   selectedToken = null;
   selectedTokens = [];
@@ -258,6 +271,13 @@ export default class MaticNewTab extends Vue {
   }
   onCloseSellModal() {
     this.showSellModal = false;
+  }
+  onSendToken(token) {
+    this.selectedToken = token;
+    this.showSendModal = true;
+  }
+  onCloseSendModal() {
+    this.showSendModal = false;
   }
   onWithdraw(token = null) {
     if (token) {
