@@ -34,6 +34,7 @@
                             placeholder="Enter receiver address"
                             hint-text="Enter only matic network address"
                             :value="toAddress"
+                            :disabled="isLoading"
                             @input="handleAddressInput"
                         />
                         <div
@@ -95,12 +96,12 @@ import Web3 from "web3";
 
 import app from "~/plugins/app";
 import BigNumber from "~/plugins/bignumber";
+import getAxios from "~/plugins/axios";
 
 import { FormValidator } from "~/components/mixin";
 
 const { getTypedData } = require("~/plugins/meta-tx");
 
-// 0X
 let {
   ERC721TokenContract,
 } = require("@0x/contract-wrappers");
@@ -110,8 +111,6 @@ import {
 import { isValidAddress } from 'ethereumjs-util'
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
-
-const ZERO = BigNumber(0);
 
 @Component({
   props: {
@@ -149,7 +148,7 @@ export default class SendToken extends Vue {
     dirty = false;
     error = "";
     toAddress = null;
-
+    
     mounted() {}
 
     handleAddressInput(input) {
@@ -161,11 +160,9 @@ export default class SendToken extends Vue {
         const web3obj = new Web3(window.ethereum)
         const chainId = await web3obj.eth.getChainId()
         if (chainId !== this.networks.matic.chainId) {
-            this.metamaskValidation = false
             this.error = 'selectMatic'
             return false
         }
-        this.metamaskValidation = true
         return true
     }
 
@@ -182,11 +179,6 @@ export default class SendToken extends Vue {
             this.error = this.$t('invalid.owner')
             this.isLoading = false
             return false
-        }
-
-        if (!(await this.metamaskValidation())) {
-            this.isLoading = false
-            return
         }
 
         this.dirty = false;
@@ -222,7 +214,6 @@ export default class SendToken extends Vue {
                 this.close();
                 return;
             }
-            console.log(erc721TokenCont)
 
             if(this.category.isMetaTx){
 
@@ -263,38 +254,48 @@ export default class SendToken extends Vue {
                 };
 
                 if (tx) {
-                    console.log("Transfer Hash", tx);
-                    app.addToast(
-                    "Transferred successfully",
-                    "You successfully transferred the token to "+ this.toAddress,
-                    {
-                        type: "success",
+                    try {
+                        let response = await getAxios().post(`orders/executeMetaTx`, tx);
+                        this.refreshNFTTokens();
+                        if (response.status === 200) {
+                        //console.log("Transfer receipt: " + response);
+                        app.addToast("Transferred", "You successfully transferred the token", {
+                            type: "success",
+                        });
+                        this.close()
+                        return true;
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        app.addToast(
+                        "Failed to Transfer",
+                        "Failed to transfer asset",
+                        {
+                            type: "failure",
+                        }
+                        );
                     }
-                    );
-                    this.close()
-                    return true;
                 }
-                app.addToast(
-                    "Failed to transfer",
-                    "Failed to transfer token",
-                    {
-                        type: "failure",
-                    }
-                );
 
             } else {
+
+                if (!(await this.metamaskValidation())) {
+                    this.isLoading = false
+                    return
+                }
                 const erc721TransferTxHash = await erc721TokenCont
-                .safeTransferFrom(this.account.address, this.toAddress, decimalnftTokenId)
+                .safeTransferFrom1(this.account.address, this.toAddress, new BigNumber(decimalnftTokenId))
                 .sendTransactionAsync({
                     from: this.account.address,
                     gas: 8000000,
                     gasPrice: 1000000000,
                 });
                 if (erc721TransferTxHash) {
-                    console.log("Transfer Hash", erc721TransferTxHash);
+                    //console.log("Transfer Hash", erc721TransferTxHash);
+                    this.refreshNFTTokens();
                     app.addToast(
                     "Transferred successfully",
-                    "You successfully transferred the token to "+ this.toAddress,
+                    "You successfully transferred the token",
                     {
                         type: "success",
                     }
