@@ -19,8 +19,39 @@
                 >
               </nav>
               <div
-                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border"
+                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border flex"
               >
+                <div v-if="nftToken.type==='ERC1155'"
+                  class="d-flex align-self-center ps-b-8">
+                  <div
+                    class="align-self-center font-heading-small font-semibold"
+                  >
+                    Enter Quantity to sale
+                  </div>
+                </div>
+                <div v-if="nftToken.type==='ERC1155'"
+                  class="d-flex ml-auto align-self-center ps-b-8">
+                  <div class="font-body-small text-gray-500 ms-l-4">
+                    Available : {{nftToken.amount}}
+                  </div>
+                </div>
+                <div class="col-md-12 p-0" v-if="nftToken.type==='ERC1155'">
+                  <Textfield
+                    v-if="nftToken.type==='ERC1155'"
+                    type="text"
+                    placeholder="0"
+                    :value="erc1155Amount"
+                    :disabled="isLoading"
+                    @input="handleERC1155Amount"
+                    :showMax="true"
+                  /><br>
+                </div>
+                <div
+                  class="w-100 font-caption error-text"
+                  v-if="nftToken.type==='ERC1155' && dirty && validation['minPrice'] && validation['minPricePerUnit']"
+                >
+                  Valid quantity is required
+                </div>
                 <div
                   class="col-md-12 px-0 font-heading-small font-semibold ps-b-8"
                 >
@@ -49,39 +80,26 @@
                     :disableToken="isLoading"
                     :disabled="isLoading"
                   />
-                  <div
-                    v-if="nftToken.type==='ERC721'"
-                    class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
-                  >
-                    ~ {{ priceInUSDFormatted }}
+                </div>
+        
+                <div class="d-flex align-self-center">
+                  <div class="align-self-center font-body-small font-semibold ps-t-12">
+                    Total Price
                   </div>
-                  <div
-                    v-else
-                    class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
-                  >
-                    ~ {{ pricePerUnitInUSDFormatted }}
+                </div>
+                <div class="d-flex ml-auto align-self-center">
+                  <div class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12">
+                    {{ priceInUSDFormatted }}
                   </div>
+                </div>
+      
+                <div class="col-md-12 p-0">
                   <div
                     class="w-100 font-caption error-text ps-t-12"
                     v-if="dirty && !validation['price'] && !validation['pricePerUnit']"
                   >
                     Valid amount required
                   </div>
-                  <div
-                    class="w-100 font-caption error-text ps-t-4"
-                    v-if="dirty && validation['minPrice'] && validation['minPricePerUnit']"
-                  >
-                    Valid quantity is required
-                  </div>
-                  <br>
-                  <Textfield
-                    v-if="nftToken.type==='ERC1155'"
-                    type="text"
-                    placeholder="Enter Quantity"
-                    :value="erc1155Amount"
-                    :disabled="isLoading"
-                    @input="handleERC1155Amount"
-                  /><br>
                 </div>
               </div>
 
@@ -132,19 +150,10 @@
                         :disableToken="true"
                         :disabled="isLoading"
                       />
-                      <div
-                        v-if="nftToken.type==='ERC721'"
-                        class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
-                      >
-                        ~ {{ minPriceInUSDFormatted }}
-                      </div>
-                      <div
-                        v-else
-                        class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
-                      >
-                        ~ {{ minPricePerUnitInUSDFormatted }}
-                      </div>
                     </div>
+                    <div class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12">
+                      ~ {{ minPriceInUSDFormatted }}
+                    </div>        
                     <div
                       class="w-100 font-caption error-text ps-t-4"
                       v-if="dirty && !validation['minPrice'] && !validation['minPricePerUnit']"
@@ -1129,22 +1138,26 @@ export default class SellToken extends Vue {
   }
 
   get priceInUSDFormatted() {
-    let equivalentUSD = this.convertPriceToUSD(this.price)
+    let equivalentUSD = null;
+    if(this.nftToken.type === 'ERC1155'){
+      let pricePerUnit = new BigNumber(this.pricePerUnit)
+      let amount = new BigNumber(this.erc1155Amount)
+      equivalentUSD = this.convertPriceToUSD((pricePerUnit.times(amount)).toString(10))
+    } else {
+      equivalentUSD = this.convertPriceToUSD(this.price)
+    }
     return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
   }
 
   get minPriceInUSDFormatted() {
-    let equivalentUSD = this.convertPriceToUSD(this.minPrice)
-    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
-  }
-
-  get pricePerUnitInUSDFormatted() {
-    let equivalentUSD = this.convertPriceToUSD(this.pricePerUnit)
-    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
-  }
-
-  get minPricePerUnitInUSDFormatted() {
-    let equivalentUSD = this.convertPriceToUSD(this.minPricePerUnit)
+    let equivalentUSD = null;
+    if(this.nftToken.type === 'ERC1155'){
+      let minPricePerUnit = new BigNumber(this.minPricePerUnit)
+      let amount = new BigNumber(this.erc1155Amount)
+      equivalentUSD = this.convertPriceToUSD((minPricePerUnit.times(amount)).toString(10))
+    } else {
+      equivalentUSD = this.convertPriceToUSD(this.minPrice)
+    }
     return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
   }
 }
