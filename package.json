@@ -19,6 +19,7 @@
     "@0x/web3-wrapper": "^7.0.7",
     "@maticnetwork/dagger": "^0.2.0",
     "@maticnetwork/eth-dagger": "^0.0.3",
+    "@maticnetwork/matic-design-system": "^0.2.22",
     "@maticnetwork/maticjs": "https://github.com/maticnetwork/matic.js.git#3ff67e1c69a97fa967e9871068b3d89697c5b2c8",
     "@maticnetwork/meta": "^2.4.0",
     "@maticnetwork/metamask-provider": "^0.0.1",
