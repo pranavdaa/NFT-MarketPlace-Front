@@ -451,10 +451,11 @@ export default class SellToken extends Vue {
   }
 
   convertPriceToUSD(amount) {
-    let result =
-      parseBalance(amount, this.selectedERC20Token.decimal).toString(10) *
+    let result = null;
+    if(this.selectedERC20Token){
+      result = parseBalance(amount, this.selectedERC20Token.decimal).toString(10) *
       this.selectedERC20Token.usd;
-
+    }
     return result
   }
 
