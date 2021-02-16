@@ -37,7 +37,7 @@
       :class="{ 'ms-b-16': onlyToken }"
       :title="order.token.name"
     >
-      {{ order.token.name }}
+      {{ order.token.name }} {{ order.token_type==='ERC1155' ? '( ' + order.quantity + ' )': ''}}
     </h3>
     <div class="price font-body-small ms-b-20" v-if="erc20Token && !onlyToken">
       {{ order.price }} {{ erc20Token.symbol }} &nbsp; ({{ priceInUSD }})

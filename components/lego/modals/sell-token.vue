@@ -19,8 +19,40 @@
                 >
               </nav>
               <div
-                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border"
+                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border flex"
               >
+                <div v-if="nftToken.type==='ERC1155'"
+                  class="d-flex align-self-center ps-b-8">
+                  <div
+                    class="align-self-center font-heading-small font-semibold"
+                  >
+                    Enter Quantity to sale
+                  </div>
+                </div>
+                <div v-if="nftToken.type==='ERC1155'"
+                  class="d-flex ml-auto align-self-center ps-b-8">
+                  <div class="font-body-small text-gray-500 ms-l-4">
+                    Available : {{nftToken.amount}}
+                  </div>
+                </div>
+                <div class="col-md-12 p-0" v-if="nftToken.type==='ERC1155'">
+                  <Textfield
+                    v-if="nftToken.type==='ERC1155'"
+                    type="text"
+                    placeholder="0"
+                    :value="erc1155Amount"
+                    :disabled="isLoading"
+                    @input="handleERC1155Amount"
+                    :showMax="true"
+                  />
+                  <div
+                    class="w-100 font-caption error-text ps-t-12"
+                    v-if="nftToken.type==='ERC1155' && dirty && validation['minPrice'] && validation['minPricePerUnit']"
+                  >
+                    Valid quantity is required
+                  </div><br>
+                </div>
+                
                 <div
                   class="col-md-12 px-0 font-heading-small font-semibold ps-b-8"
                 >
@@ -34,20 +66,38 @@
 
                 <div class="col-md-12 p-0">
                   <input-token
+                    v-if="nftToken.type==='ERC721'"
                     :placeholder="'0.00'"
                     :integer="true"
                     :change="changePrice"
                     :disableToken="isLoading"
                     :disabled="isLoading"
                   />
-                  <div
-                    class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
-                  >
-                    ~ {{ priceInUSDFormatted }}
+                  <input-token
+                    v-if="nftToken.type==='ERC1155'"
+                    :placeholder="'0.00'"
+                    :integer="true"
+                    :change="changePricePerUnit"
+                    :disableToken="isLoading"
+                    :disabled="isLoading"
+                  />
+                </div>
+        
+                <div class="d-flex align-self-center">
+                  <div class="align-self-center font-body-small font-semibold ps-t-12">
+                    Total Price
                   </div>
+                </div>
+                <div class="d-flex ml-auto align-self-center">
+                  <div class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12">
+                    {{ priceInUSDFormatted }}
+                  </div>
+                </div>
+      
+                <div class="col-md-12 p-0">
                   <div
                     class="w-100 font-caption error-text ps-t-12"
-                    v-if="dirty && !validation['price']"
+                    v-if="dirty && !validation['price'] && !validation['pricePerUnit']"
                   >
                     Valid amount required
                   </div>
@@ -77,26 +127,37 @@
                 </div>
                 <transition name="fade">
                   <div class="col-md-12 p-0" v-if="negotiation">
-                    <div class="w-100 font-body-small ps-y-12 text-gray-500">
+                    <div v-if="nftToken.type==='ERC721'"
+                      class="w-100 font-body-small ps-y-12 text-gray-500">
                       Set minimum price
+                    </div>
+                    <div v-else class="w-100 font-body-small ps-y-12 text-gray-500">
+                      Set minimum price per unit
                     </div>
                     <div class="w-100 p-0">
                       <input-token
+                        v-if="nftToken.type==='ERC721'"
                         :placeholder="'0.00'"
                         :integer="true"
                         :change="changeMinPrice"
                         :disableToken="true"
                         :disabled="isLoading"
                       />
-                      <div
-                        class="col-md-12 font-body-small ps-t-12 ps-x-8 text-gray-300 ps-x-0"
-                      >
-                        ~ {{ minPriceInUSDFormatted }}
-                      </div>
+                      <input-token
+                        v-if="nftToken.type==='ERC1155'"
+                        :placeholder="'0.00'"
+                        :integer="true"
+                        :change="changeMinPricePerUnit"
+                        :disableToken="true"
+                        :disabled="isLoading"
+                      />
                     </div>
+                    <div class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12">
+                      ~ {{ minPriceInUSDFormatted }}
+                    </div>        
                     <div
                       class="w-100 font-caption error-text ps-t-4"
-                      v-if="dirty && !validation['minPrice']"
+                      v-if="dirty && !validation['minPrice'] && !validation['minPricePerUnit']"
                     >
                       Valid amount is required for minimum price
                     </div>
@@ -230,6 +291,9 @@ let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
 // let { BigNumber } = require("@0x/utils");
 let { Web3Wrapper } = require("@0x/web3-wrapper");
 import { getRandomFutureDateInSeconds } from "~/plugins/helpers/0x-utils";
+import {
+  Textfield,
+} from '@maticnetwork/matic-design-system'
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
 
@@ -262,12 +326,12 @@ const TEN = BigNumber(10);
       default: () => {},
     },
   },
-  components: { InputToken, ApproveProcess },
+  components: { InputToken, ApproveProcess, Textfield },
   computed: {
     ...mapGetters("token", ["selectedERC20Token"]),
     ...mapGetters("account", ["account"]),
     ...mapGetters("auth", ["user"]),
-    ...mapGetters("network", ["networks"]),
+    ...mapGetters("network", ["networks", "networkMeta"]),
     ...mapGetters("category", ["categories"]),
   },
   methods: {},
@@ -304,13 +368,17 @@ export default class SellToken extends Vue {
 
   price = 0;
   minPrice = 0;
+  pricePerUnit = 0;
+  minPricePerUnit = 0;
+  erc1155Amount = null;
 
   tabs = [
     {
       id: 0,
       title: "Fixed Price",
-      subtitle: "Set price",
-      description:
+      subtitle: this.nftToken.type==="ERC1155"? "Set price per Unit" : "Set price",
+      description: this.nftToken.type==="ERC1155"?
+        "Your asset will be sold at this price for 1 unit. It will be available for sale in marketplace until you cancel it." :
         "Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "",
       btnTitle: "List for Sale",
@@ -325,6 +393,11 @@ export default class SellToken extends Vue {
   // Handlers
   changeTab(num) {
     this.activeTab = num;
+  }
+
+  handleERC1155Amount(input) {
+      this.dirty = false
+      this.erc1155Amount = input
   }
 
   toCustom() {
@@ -357,9 +430,20 @@ export default class SellToken extends Vue {
     this.dirty = false;
     this.price = value;
   }
+
+  changePricePerUnit(value) {
+    this.dirty = false;
+    this.pricePerUnit = value;
+  }
+
   changeMinPrice(value) {
     this.dirty = false;
     this.minPrice = value;
+  }
+
+  changeMinPricePerUnit(value) {
+    this.dirty = false;
+    this.minPricePerUnit = value;
   }
 
   closeApproveModal() {
@@ -389,17 +473,35 @@ export default class SellToken extends Vue {
         chainId: chainId,
       });
 
-      const erc721TokenCont = new ERC721TokenContract(
-        nftContract,
-        providerEngine()
-      );
+      let isApprovedForAll;
 
-      const isApprovedForAll = await erc721TokenCont
-      .isApprovedForAll(
-        makerAddress,
-        contractWrappers.contractAddresses.erc721Proxy
-      )
-      .callAsync();
+      if(this.nftToken.type === 'ERC1155'){
+
+        let matic = new Web3(this.networks.matic.rpc);
+        const erc1155TokenCont = new matic.eth.Contract(
+          this.networkMeta.abi('ChildERC1155', 'pos'),
+          nftContract
+        );
+
+        isApprovedForAll = await erc1155TokenCont.methods
+        .isApprovedForAll(
+          makerAddress,
+          contractWrappers.contractAddresses.erc1155Proxy
+        )
+        .call();
+      } else {
+        const erc721TokenCont = new ERC721TokenContract(
+          nftContract,
+          providerEngine()
+        );
+
+        isApprovedForAll = await erc721TokenCont
+        .isApprovedForAll(
+          makerAddress,
+          contractWrappers.contractAddresses.erc721Proxy
+        )
+        .callAsync();
+      }
 
       this.isApprovedStatus = isApprovedForAll;
       this.approveLoading = false;
@@ -430,31 +532,54 @@ export default class SellToken extends Vue {
       // const nftTokenId = this.nftToken.token_id;
       const erc20Address = this.selectedERC20Token.address;
       const makerAddress = this.account.address;
-      const makerAssetAmount = new BigNumber(1);
-      const takerAssetAmount = this.price.toString(10);
       const chainId = this.networks.matic.chainId;
-      const minPrice = this.minPrice;
-      const decimalnftTokenId = this.nftToken.token_id;
       const contractWrappers = new ContractWrappers(providerEngine(), {
         chainId: chainId,
       });
+      const decimalnftTokenId = this.nftToken.token_id;
+      let makerAssetAmount = new BigNumber(1);
+      let takerAssetAmount = null;
+      let takerAssetAmountPerUnit = null;
+      let minPrice= null;
+      let minPricePerUnit= null;
+      let erc721TokenCont = null
+      let erc1155TokenCont = null
+      let isApproved = false;
 
-      // ERC721 contract
-      const erc721TokenCont = new ERC721TokenContract(
-        nftContract,
-        providerEngine()
-      );
+      if(this.nftToken.type==='ERC721'){
+        takerAssetAmount = this.price.toString(10);
+        minPrice = this.minPrice;
 
-      console.log(nftContract);
-      console.log(providerEngine());
-      console.log(erc721TokenCont);
+        erc721TokenCont = new ERC721TokenContract(
+          nftContract,
+          providerEngine()
+        );
+        console.log(erc721TokenCont);
+        isApproved = await this.approve0x(
+          erc721TokenCont,
+          contractWrappers,
+          makerAddress
+        );
 
-      // Check Approve 0x, Approve if not
-      const isApproved = await this.approve0x(
-        erc721TokenCont,
-        contractWrappers,
-        makerAddress
-      );
+      } else {
+        takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit);
+        takerAssetAmount = (makerAssetAmount.times(takerAssetAmountPerUnit)).toString(10)
+        minPricePerUnit = this.minPricePerUnit;
+        minPrice = makerAssetAmount.times(new BigNumber(minPricePerUnit)).toString(10)
+
+        let matic = new Web3(this.networks.matic.rpc);
+        const erc1155TokenCont = new matic.eth.Contract(
+          this.networkMeta.abi('ChildERC1155', 'pos'),
+          nftContract
+        );
+        console.log(erc1155TokenCont);
+        isApproved = await this.approve0x(
+          erc1155TokenCont,
+          contractWrappers,
+          makerAddress
+        );
+
+      }
 
       this.isApprovedStatus = isApproved;
       this.approveLoading = false;
@@ -482,21 +607,49 @@ export default class SellToken extends Vue {
       // const nftTokenId = this.nftToken.token_id;
       const erc20Address = this.selectedERC20Token.address;
       const makerAddress = this.account.address;
-      const makerAssetAmount = new BigNumber(1);
-      const takerAssetAmount = this.price.toString(10);
       const chainId = this.networks.matic.chainId;
-      const minPrice = this.minPrice;
       const decimalnftTokenId = this.nftToken.token_id;
       const contractWrappers = new ContractWrappers(providerEngine(), {
         chainId: chainId,
       });
 
-      const makerAssetData = await contractWrappers.devUtils
-        .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
-        .callAsync();
+      let makerAssetAmount = new BigNumber(1);
+      let takerAssetAmount = null;
+      let takerAssetAmountPerUnit = null;
+      let minPrice= null;
+      let minPricePerUnit= null;
+      let erc721TokenCont = null
+      let erc1155TokenCont = null
+      let isApproved = false;
+      let makerAssetData = null;
       const takerAssetData = await contractWrappers.devUtils
         .encodeERC20AssetData(erc20Address)
         .callAsync();
+
+      if(this.nftToken.type === "ERC1155") {
+        takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit);
+        takerAssetAmount = (makerAssetAmount.times(takerAssetAmountPerUnit)).toString(10)
+        minPricePerUnit = this.minPricePerUnit;
+        minPrice = makerAssetAmount.times(new BigNumber(minPricePerUnit)).toString(10)
+
+        makerAssetData = await contractWrappers.devUtils
+        .encodeERC1155AssetData(
+          nftContract, 
+          [new BigNumber(decimalnftTokenId)],
+          [new BigNumber(this.erc1155Amount)],
+          "0x"
+          )
+        .callAsync();
+        
+      } else {
+        takerAssetAmount = this.price.toString(10);
+        minPrice = this.minPrice;
+
+        makerAssetData = await contractWrappers.devUtils
+        .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
+        .callAsync();
+        
+      }
 
       const exchangeAddress = contractWrappers.contractAddresses.exchange;
 
@@ -554,36 +707,44 @@ export default class SellToken extends Vue {
       this.isLoading = false;
       return;
     }
+    if(this.nftToken.type==="ERC1155" && new BigNumber(this.erc1155Amount).gt(new BigNumber(this.nftToken.amount))){
+      this.dirty = true;
+      this.isLoading = false;
+      return;
+    }
+
     this.dirty = false;
     try {
-      const nftContract = this.nftToken.category.getAddress(
-        this.networks.matic.chainId
-      );
-      const decimalnftTokenId = this.nftToken.token_id;
-
-      // ERC721 contract
-      const erc721TokenCont = new ERC721TokenContract(
-        nftContract,
-        providerEngine()
-      );
-
-      // Owner of current token
-      const owner = await erc721TokenCont
-        .ownerOf(new BigNumber(decimalnftTokenId))
-        .callAsync();
-      const isOwnerOfToken =
-        owner.toLowerCase() === this.account.address.toLowerCase();
-      if (!isOwnerOfToken) {
-        app.addToast(
-          "You are no owner of this token",
-          "You are no longer owner of this token, refresh to update the data",
-          {
-            type: "failure",
-          }
+      if(this.nftToken.type === "ERC721") {
+        const nftContract = this.nftToken.category.getAddress(
+          this.networks.matic.chainId
         );
-        this.isLoading = false;
-        this.close();
-        return;
+        const decimalnftTokenId = this.nftToken.token_id;
+
+        // ERC721 contract
+        const erc721TokenCont = new ERC721TokenContract(
+          nftContract,
+          providerEngine()
+        );
+
+        // Owner of current token
+        const owner = await erc721TokenCont
+          .ownerOf(new BigNumber(decimalnftTokenId))
+          .callAsync();
+        const isOwnerOfToken =
+          owner.toLowerCase() === this.account.address.toLowerCase();
+        if (!isOwnerOfToken) {
+          app.addToast(
+            "You are no owner of this token",
+            "You are no longer owner of this token, refresh to update the data",
+            {
+              type: "failure",
+            }
+          );
+          this.isLoading = false;
+          this.close();
+          return;
+        }
       }
       this.showApproveModal = true;
       this.approveStatus();
@@ -597,47 +758,100 @@ export default class SellToken extends Vue {
     this.isLoading = false;
   }
 
-  async approve0x(erc721TokenCont, contractWrappers, makerAddress) {
+  async approve0x(tokenCont, contractWrappers, makerAddress) {
     // Check if token is approved to 0x
     let matic = new Web3(this.networks.matic.rpc);
-    const isApprovedForAll = await erc721TokenCont
-      .isApprovedForAll(
-        makerAddress,
-        contractWrappers.contractAddresses.erc721Proxy
-      )
-      .callAsync();
+    let isApprovedForAll;
+    const nftContract = this.nftToken.category.getAddress(
+      this.networks.matic.chainId
+    );
+
+    if(this.nftToken.type === 'ERC721'){
+      isApprovedForAll = await tokenCont
+        .isApprovedForAll(
+          makerAddress,
+          contractWrappers.contractAddresses.erc721Proxy
+        )
+        .callAsync();
+    } else {
+      isApprovedForAll = await tokenCont.methods
+        .isApprovedForAll(
+          makerAddress,
+          contractWrappers.contractAddresses.erc1155Proxy
+        )
+        .call();
+    }
+
     if (!isApprovedForAll) {
       if (!this.category.isMetaTx) {
         if (
           window.ethereum.chainId ===
           "0x" + this.networks.matic.chainId.toString(16)
         ) {
-          const makerERC721ApprovalTxHash = await erc721TokenCont
-            .setApprovalForAll(contractWrappers.contractAddresses.erc721Proxy, true)
-            .sendTransactionAsync({
-              from: makerAddress,
-              gas: 8000000,
-              gasPrice: 1000000000,
-            });
+          if(this.nftToken.type === 'ERC721'){
+            const makerERC721ApprovalTxHash = await tokenCont
+              .setApprovalForAll(contractWrappers.contractAddresses.erc721Proxy, true)
+              .sendTransactionAsync({
+                from: makerAddress,
+                gas: 8000000,
+                gasPrice: 1000000000,
+              });
 
-          if (makerERC721ApprovalTxHash) {
-            console.log("Approve Hash", makerERC721ApprovalTxHash);
+            if (makerERC721ApprovalTxHash) {
+              console.log("Approve Hash", makerERC721ApprovalTxHash);
+              app.addToast(
+                "Approved successfully",
+                "You successfully approved the token to put on sale",
+                {
+                  type: "success",
+                }
+              );
+              return true;
+            }
             app.addToast(
-              "Approved successfully",
-              "You successfully approved the token to put on sale",
+              "Failed to approve",
+              "You need to approve the transaction to sale the NFT",
               {
-                type: "success",
+                type: "failure",
               }
             );
-            return true;
-          }
-          app.addToast(
-            "Failed to approve",
-            "You need to approve the transaction to sale the NFT",
-            {
-              type: "failure",
+
+          } else {
+            let maticWeb3 = new Web3(window.ethereum);
+            let cont = new maticWeb3.eth.Contract(
+              this.networkMeta.abi('ChildERC1155', 'pos'),
+              nftContract
+            )
+
+            const makerERC1155ApprovalTxHash = await cont.methods
+              .setApprovalForAll(contractWrappers.contractAddresses.erc1155Proxy, true)
+              .send({
+                from: makerAddress,
+                gas: 8000000,
+                gasPrice: 1000000000,
+              });
+
+            if (makerERC1155ApprovalTxHash) {
+              console.log("Approve Hash", makerERC1155ApprovalTxHash);
+              app.addToast(
+                "Approved successfully",
+                "You successfully approved the token to put on sale",
+                {
+                  type: "success",
+                }
+              );
+              return true;
             }
-          );
+            app.addToast(
+              "Failed to approve",
+              "You need to approve the transaction to sale the NFT",
+              {
+                type: "failure",
+              }
+            );
+
+          }
+          
         } else {
           this.showNetworkChangeNeeded = true;
           // app.addToast(
@@ -650,7 +864,12 @@ export default class SellToken extends Vue {
 
           return false;
         }
+
       } else {
+        let contractWrapperAddress = this.nftToken.type==="ERC1155"?
+          contractWrappers.contractAddresses.erc1155Proxy:
+          contractWrappers.contractAddresses.erc721Proxy
+        
         let data = await matic.eth.abi.encodeFunctionCall(
           {
             name: "setApprovalForAll",
@@ -666,7 +885,7 @@ export default class SellToken extends Vue {
               },
             ],
           },
-          [contractWrappers.contractAddresses.erc721Proxy, true]
+          [contractWrapperAddress, true]
         );
 
         let { sig } = await this.executeMetaTx(data);
@@ -769,25 +988,67 @@ export default class SellToken extends Vue {
       formData.maker_token_id = this.nftToken.token_id;
       formData.taker_token = this.selectedERC20Token.id;
       formData.signature = JSON.stringify(signedOrder);
-      formData.price = parseBalance(
-        this.price,
-        this.selectedERC20Token.decimal
-      ).toString(10);
       formData.usd_price = this.priceInUSD.toString();
+      formData.token_type = this.nftToken.type;
+      if(this.nftToken.type==='ERC1155'){
+        let pricePerUnit = new BigNumber(this.pricePerUnit)
+        let amount = new BigNumber(this.erc1155Amount)
+        let price = (amount.times(pricePerUnit)).toString(10)
+        formData.price_per_unit = parseBalance(
+          this.pricePerUnit,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+        formData.price = parseBalance(
+          price,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+        formData.quantity = this.erc1155Amount.toString(10)
+      } else {
+        formData.price = parseBalance(
+          this.price,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+      }
     } else if (formData.type === app.orderTypes.NEGOTIATION) {
       formData.taker_address = this.user.id;
       formData.taker_token = this.nftToken.categories_id;
       formData.taker_token_id = this.nftToken.token_id;
       formData.maker_token = this.selectedERC20Token.id;
-      formData.price = parseBalance(
-        this.price,
-        this.selectedERC20Token.decimal
-      ).toString(10);
+      formData.token_type = this.nftToken.type;
       formData.usd_price = this.priceInUSD.toString();
-      formData.min_price = parseBalance(
-        this.minPrice,
-        this.selectedERC20Token.decimal
-      ).toString(10);
+      if(this.nftToken.type==='ERC1155'){
+        let pricePerUnit = new BigNumber(this.pricePerUnit)
+        let minPricePerUnit = new BigNumber(this.minPricePerUnit)
+        let amount = new BigNumber(this.erc1155Amount)
+        let price = (amount.times(pricePerUnit)).toString(10)
+        let minPrice = (amount.times(minPricePerUnit)).toString(10)
+        formData.price_per_unit = parseBalance(
+          this.pricePerUnit,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+        formData.price = parseBalance(
+          price,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+        formData.min_price_per_unit = parseBalance(
+          this.minPricePerUnit,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+        formData.min_price = parseBalance(
+          minPrice,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+        formData.quantity = this.erc1155Amount.toString(10)
+      } else {
+        formData.price = parseBalance(
+          this.price,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+        formData.min_price = parseBalance(
+          this.minPrice,
+          this.selectedERC20Token.decimal
+        ).toString(10);
+      }
     } else if (formData.type === app.orderTypes.AUCTION) {
       formData.taker_address = this.user.id;
       formData.taker_token = this.nftToken.categories_id;
@@ -836,14 +1097,24 @@ export default class SellToken extends Vue {
       owner:
         this.nftToken.owner.toLowerCase() ===
         this.account.address.toLowerCase(),
-      price: !!this.price && this.price.gt(ZERO),
-      minPrice: this.negotiation
+      price: this.nftToken.type === 'ERC721' ? !!this.price && this.price.gt(ZERO) : true,
+      pricePerUnit: this.nftToken.type === 'ERC1155' ? !!this.pricePerUnit && this.pricePerUnit.gt(ZERO) : true,
+      minPrice: this.negotiation && this.nftToken.type === 'ERC721'
         ? !!this.minPrice &&
           this.minPrice.lt(this.price) &&
           this.minPrice.gt(ZERO)
         : true,
+      minPricePerUnit: this.negotiation && this.nftToken.type === 'ERC1155'
+        ? !!this.minPricePerUnit &&
+          this.minPricePerUnit.lt(this.pricePerUnit) &&
+          this.minPricePerUnit.gt(ZERO)
+        : true,
+      erc1155Amount: this.nftToken.type === 'ERC1155'? 
+        new BigNumber(this.erc1155Amount).lte(new BigNumber(this.nftToken.amount)) : 
+        true
     };
   }
+
   get EXPIRY_DURATION() {
     return EXPIRY_DURATION;
   }
@@ -866,17 +1137,39 @@ export default class SellToken extends Vue {
   }
 
   get priceInUSD() {
-    let equivalentUSD = this.convertPriceToUSD(this.price)
+    let equivalentUSD
+    if(this.nftToken.type === 'ERC721'){
+      equivalentUSD = this.convertPriceToUSD(this.price)
+    } else {
+      let pricePerUnit = new BigNumber(this.pricePerUnit)
+      let amount = new BigNumber(this.erc1155Amount)
+      let price = (amount.times(pricePerUnit)).toString(10)
+      equivalentUSD = this.convertPriceToUSD(price)
+    }
     return isNaN(equivalentUSD) ? 0 : equivalentUSD
   }
 
   get priceInUSDFormatted() {
-    let equivalentUSD = this.convertPriceToUSD(this.price)
+    let equivalentUSD = null;
+    if(this.nftToken.type === 'ERC1155'){
+      let pricePerUnit = new BigNumber(this.pricePerUnit)
+      let amount = new BigNumber(this.erc1155Amount)
+      equivalentUSD = this.convertPriceToUSD((pricePerUnit.times(amount)).toString(10))
+    } else {
+      equivalentUSD = this.convertPriceToUSD(this.price)
+    }
     return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
   }
 
   get minPriceInUSDFormatted() {
-    let equivalentUSD = this.convertPriceToUSD(this.minPrice)
+    let equivalentUSD = null;
+    if(this.nftToken.type === 'ERC1155'){
+      let minPricePerUnit = new BigNumber(this.minPricePerUnit)
+      let amount = new BigNumber(this.erc1155Amount)
+      equivalentUSD = this.convertPriceToUSD((minPricePerUnit.times(amount)).toString(10))
+    } else {
+      equivalentUSD = this.convertPriceToUSD(this.minPrice)
+    }
     return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
   }
 }
