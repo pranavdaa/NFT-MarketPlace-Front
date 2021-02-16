@@ -17,6 +17,37 @@
                 <div
                     class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border"
                 >
+                    <div v-if="nftToken.type==='ERC1155'"
+                        class="d-flex align-self-center ps-b-8">
+                        <div
+                            class="align-self-center font-heading-small font-semibold"
+                        >
+                            Enter Quantity to sale
+                        </div>
+                    </div>
+                    <div v-if="nftToken.type==='ERC1155'"
+                        class="d-flex ml-auto align-self-center ps-b-8">
+                        <div class="font-body-small text-gray-500 ms-l-4">
+                            Available : {{nftToken.amount}}
+                        </div>
+                    </div>
+                    <div class="col-md-12 p-0" v-if="nftToken.type==='ERC1155'">
+                        <Textfield
+                            v-if="nftToken.type==='ERC1155'"
+                            type="text"
+                            placeholder="0"
+                            :value="erc1155Amount"
+                            :disabled="isLoading"
+                            @input="handleERC1155Amount"
+                        />
+                        <div
+                            class="w-100 font-caption error-text ps-t-12"
+                            v-if="dirty && error==='invalidQuantity'"
+                        >
+                            Valid quantity is required
+                        </div><br>
+                    </div>
+                    
                     <div
                     class="col-md-12 px-0 font-heading-small font-semibold ps-b-8"
                     >
@@ -49,7 +80,7 @@
                                 rel="noopener noreferrer"
                                 >guide</a>)
                             </span>
-                            <span v-else>
+                            <span v-if="error !== 'selectMatic' && error !=='invalidQuantity'">
                                 {{ error }}
                             </span>
                         </div>
@@ -137,7 +168,7 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
     ...mapGetters("token", ["selectedERC20Token"]),
     ...mapGetters("account", ["account"]),
     ...mapGetters("auth", ["user"]),
-    ...mapGetters("network", ["networks"]),
+    ...mapGetters("network", ["networks", "networkMeta"]),
     ...mapGetters("category", ["categories"]),
   },
   methods: {},
@@ -148,12 +179,18 @@ export default class SendToken extends Vue {
     dirty = false;
     error = "";
     toAddress = null;
+    erc1155Amount = null;
     
-    mounted() {}
+    mounted() {console.log(this.nftToken)}
 
     handleAddressInput(input) {
         this.dirty = false
         this.toAddress = input
+    }
+
+    handleERC1155Amount(input) {
+        this.dirty = false
+        this.erc1155Amount = input
     }
 
     async metamaskValidation() {
@@ -181,6 +218,13 @@ export default class SendToken extends Vue {
             return false
         }
 
+        if(this.nftToken.type === 'ERC1155' && new BigNumber(this.erc1155Amount).gt(new BigNumber(this.nftToken.amount))){
+            this.error = "invalidQuantity"
+            this.isLoading = false
+            this.dirty = true;
+            return false
+        }
+
         this.dirty = false;
         this.error = ""
 
@@ -189,56 +233,97 @@ export default class SendToken extends Vue {
                 this.networks.matic.chainId
             );
             const decimalnftTokenId = this.nftToken.token_id;
+            let quantity = null
+            let erc721TokenCont = null;
 
-            // ERC721 contract
-            const erc721TokenCont = new ERC721TokenContract(
-                nftContract,
-                providerEngine()
-            );
-
-            // Owner of current token
-            const owner = await erc721TokenCont
-                .ownerOf(new BigNumber(decimalnftTokenId))
-                .callAsync();
-            const isOwnerOfToken =
-                owner.toLowerCase() === this.account.address.toLowerCase();
-            if (!isOwnerOfToken) {
-                app.addToast(
-                "You are no owner of this token",
-                "You are no longer owner of this token, refresh to update the data",
-                {
-                    type: "failure",
-                }
+            if(this.nftToken.type === 'ERC721'){
+                // ERC721 contract
+                erc721TokenCont = new ERC721TokenContract(
+                    nftContract,
+                    providerEngine()
                 );
-                this.isLoading = false;
-                this.close();
-                return;
+
+                // Owner of current token
+                const owner = await erc721TokenCont
+                    .ownerOf(new BigNumber(decimalnftTokenId))
+                    .callAsync();
+                const isOwnerOfToken =
+                    owner.toLowerCase() === this.account.address.toLowerCase();
+                if (!isOwnerOfToken) {
+                    app.addToast(
+                    "You are no owner of this token",
+                    "You are no longer owner of this token, refresh to update the data",
+                    {
+                        type: "failure",
+                    }
+                    );
+                    this.isLoading = false;
+                    this.close();
+                    return;
+                }
+            } else {
+                // ERC1155 contract
+                quantity = this.erc1155Amount
             }
 
             if(this.category.isMetaTx){
 
                 let matic = new Web3(this.networks.matic.rpc);
-                let data = await matic.eth.abi.encodeFunctionCall(
-                {
-                    name: "safeTransferFrom",
-                    type: "function",
-                    inputs: [
-                        {
-                            name: "from",
-                            type: "address",
-                        },
-                        {
-                            name: "to",
-                            type: "address",
-                        },
-                        {
-                            name: "tokenId",
-                            type: "uint256",
-                        },
-                    ],
-                },
-                [this.account.address, this.toAddress, decimalnftTokenId]
-                );
+                let data = null;
+                if(this.nft.type === 'ERC721'){
+                    data = await matic.eth.abi.encodeFunctionCall(
+                    {
+                        name: "safeTransferFrom",
+                        type: "function",
+                        inputs: [
+                            {
+                                name: "from",
+                                type: "address",
+                            },
+                            {
+                                name: "to",
+                                type: "address",
+                            },
+                            {
+                                name: "tokenId",
+                                type: "uint256",
+                            },
+                        ],
+                    },
+                    [this.account.address, this.toAddress, decimalnftTokenId]
+                    );
+                } else {
+                    data = await matic.eth.abi.encodeFunctionCall(
+                    {
+                        name: "safeTransferFrom",
+                        type: "function",
+                        inputs: [
+                            {
+                                name: "from",
+                                type: "address",
+                            },
+                            {
+                                name: "to",
+                                type: "address",
+                            },
+                            {
+                                name: "id",
+                                type: "uint256",
+                            },
+                            {
+                                name: "amount",
+                                type: "uint256",
+                            },
+                            {
+                                name: "data",
+                                type: "bytes",
+                            },
+                        ],
+                    },
+                    [this.account.address, this.toAddress, decimalnftTokenId, quantity, '0x']
+                    );
+                }
+                
 
                 let { sig } = await this.executeMetaTx(data);
 
@@ -283,33 +368,68 @@ export default class SendToken extends Vue {
                     this.isLoading = false
                     return
                 }
-                const erc721TransferTxHash = await erc721TokenCont
-                .safeTransferFrom1(this.account.address, this.toAddress, new BigNumber(decimalnftTokenId))
-                .sendTransactionAsync({
-                    from: this.account.address,
-                    gas: 8000000,
-                    gasPrice: 1000000000,
-                });
-                if (erc721TransferTxHash) {
-                    //console.log("Transfer Hash", erc721TransferTxHash);
-                    this.refreshNFTTokens();
+
+                if(this.nftToken.type === 'ERC721'){
+                    const erc721TransferTxHash = await erc721TokenCont
+                    .safeTransferFrom1(this.account.address, this.toAddress, new BigNumber(decimalnftTokenId))
+                    .sendTransactionAsync({
+                        from: this.account.address,
+                        gas: 8000000,
+                        gasPrice: 1000000000,
+                    });
+                    if (erc721TransferTxHash) {
+                        //console.log("Transfer Hash", erc721TransferTxHash);
+                        this.refreshNFTTokens();
+                        app.addToast(
+                        "Transferred successfully",
+                        "You successfully transferred the token",
+                        {
+                            type: "success",
+                        }
+                        );
+                        this.close()
+                        return true;
+                    }
                     app.addToast(
-                    "Transferred successfully",
-                    "You successfully transferred the token",
-                    {
-                        type: "success",
-                    }
+                        "Failed to transfer",
+                        "Failed to transfer token",
+                        {
+                            type: "failure",
+                        }
                     );
-                    this.close()
-                    return true;
-                }
-                app.addToast(
-                    "Failed to transfer",
-                    "Failed to transfer token",
-                    {
-                        type: "failure",
+                } else {
+                    let web3 = new Web3(window.ethereum)
+                    let erc1155TokenCont = new web3.eth.Contract(
+                        this.networkMeta.abi('ChildERC1155', 'pos'),
+                        nftContract
+                    )
+                    const erc1155TransferTxHash = await erc1155TokenCont.methods
+                    .safeTransferFrom(this.account.address, this.toAddress, decimalnftTokenId, quantity, '0x')
+                    .send({
+                        from: this.account.address,
+                        gas: 8000000,
+                        gasPrice: 1000000000,
+                    });
+                    if (erc1155TransferTxHash) {
+                        this.refreshNFTTokens();
+                        app.addToast(
+                        "Transferred successfully",
+                        "You successfully transferred the token",
+                        {
+                            type: "success",
+                        }
+                        );
+                        this.close()
+                        return true;
                     }
-                );
+                    app.addToast(
+                        "Failed to transfer",
+                        "Failed to transfer token",
+                        {
+                            type: "failure",
+                        }
+                    );
+                }
             }
 
         } catch (error) {

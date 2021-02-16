@@ -43,7 +43,6 @@
                     :value="erc1155Amount"
                     :disabled="isLoading"
                     @input="handleERC1155Amount"
-                    :showMax="true"
                   />
                   <div
                     class="w-100 font-caption error-text ps-t-12"
