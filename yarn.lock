@@ -1298,6 +1298,14 @@
     ethereumjs-util "^6.2.0"
     mqtt-regex "^1.0.5"
 
+"@maticnetwork/matic-design-system@^0.2.22":
+  version "0.2.22"
+  resolved "https://registry.yarnpkg.com/@maticnetwork/matic-design-system/-/matic-design-system-0.2.22.tgz#80b48ec89e58ad67c8fa5481600ee3c6330b3419"
+  integrity sha512-InL5M6YKLb3l/VfskWp4rVu7mSOe2yVY86EO2m8M4Hl/OzTyQNE7F/OXUVwob3fzhEXODT7XJD6+lU235/lAmg==
+  dependencies:
+    core-js "^3.6.5"
+    vue "^2.6.11"
+
 "@maticnetwork/maticjs@https://github.com/maticnetwork/matic.js.git#3ff67e1c69a97fa967e9871068b3d89697c5b2c8":
   version "2.0.16"
   resolved "https://github.com/maticnetwork/matic.js.git#3ff67e1c69a97fa967e9871068b3d89697c5b2c8"
@@ -4858,6 +4866,11 @@ core-js@^3.2.1:
   version "3.6.5"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.6.5.tgz#7395dc273af37fb2e50e9bd3d9fe841285231d1a"
   integrity sha512-vZVEEwZoIsI+vPEuoF9Iqf5H7/M3eeQqWlQnYa8FSKKePuYTf5MWnxb5SDAzCa60b3JBRS5g9b+Dq7b1y/RCrA==
+
+core-js@^3.6.5:
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.8.3.tgz#c21906e1f14f3689f93abcc6e26883550dd92dd0"
+  integrity sha512-KPYXeVZYemC2TkNEkX/01I+7yd+nX3KddKwZ1Ww7SKWdI2wQprSgLmrTddT8nw92AjEklTsPBoSdQBhbI1bQ6Q==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -15095,7 +15108,7 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue@^2.5.17, vue@^2.6.12:
+vue@^2.5.17, vue@^2.6.11, vue@^2.6.12:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==

@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="profile-info-wrapper align-self-center d-flex flex-column ps-16">
-      <h1 class="font-heading-medium font-semibold ms-b-8">{{order.token.name}}</h1>
+      <h1 class="font-heading-medium font-semibold ms-b-8">{{order.token.name}} {{order.token_type==='ERC1155'? '('+ order.quantity +')': ''}}</h1>
       <div class="font-body-small owner-info">
         Owned by
         <a href @click.prevent>{{shortAddress}}</a> in
