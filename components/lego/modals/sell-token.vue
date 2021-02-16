@@ -46,7 +46,7 @@
                   />
                   <div
                     class="w-100 font-caption error-text ps-t-12"
-                    v-if="nftToken.type==='ERC1155' && dirty && validation['minPrice'] && validation['minPricePerUnit']"
+                    v-if="nftToken.type==='ERC1155' && dirty && !validation['erc1155Amount']"
                   >
                     Valid quantity is required
                   </div><br>
@@ -96,7 +96,7 @@
                 <div class="col-md-12 p-0">
                   <div
                     class="w-100 font-caption error-text ps-t-12"
-                    v-if="dirty && !validation['price'] && !validation['pricePerUnit']"
+                    v-if="dirty && (nftToken.type==='ERC721' ? !validation['price'] : !validation['pricePerUnit'])"
                   >
                     Valid amount required
                   </div>
@@ -156,7 +156,7 @@
                     </div>        
                     <div
                       class="w-100 font-caption error-text ps-t-4"
-                      v-if="dirty && !validation['minPrice'] && !validation['minPricePerUnit']"
+                      v-if="dirty && (nftToken.type==='ERC721' ? !validation['minPrice'] : !validation['minPricePerUnit'])"
                     >
                       Valid amount is required for minimum price
                     </div>
@@ -707,10 +707,12 @@ export default class SellToken extends Vue {
       this.isLoading = false;
       return;
     }
-    if(this.nftToken.type==="ERC1155" && new BigNumber(this.erc1155Amount).gt(new BigNumber(this.nftToken.amount))){
-      this.dirty = true;
-      this.isLoading = false;
-      return;
+    if(this.nftToken.type==="ERC1155") {
+      if(!this.validation['erc1155Amount']){
+        this.dirty = true;
+        this.isLoading = false;
+        return;
+      }
     }
 
     this.dirty = false;
@@ -1110,7 +1112,9 @@ export default class SellToken extends Vue {
           this.minPricePerUnit.gt(ZERO)
         : true,
       erc1155Amount: this.nftToken.type === 'ERC1155'? 
-        new BigNumber(this.erc1155Amount).lte(new BigNumber(this.nftToken.amount)) : 
+        new BigNumber(this.erc1155Amount).lte(new BigNumber(this.nftToken.amount)) &&
+        parseFloat(this.erc1155Amount)===parseInt(this.erc1155Amount) && 
+        parseInt(this.erc1155Amount) > 0: 
         true
     };
   }

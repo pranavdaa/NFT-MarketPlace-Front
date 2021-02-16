@@ -218,7 +218,7 @@ export default class SendToken extends Vue {
             return false
         }
 
-        if(this.nftToken.type === 'ERC1155' && new BigNumber(this.erc1155Amount).gt(new BigNumber(this.nftToken.amount))){
+        if(this.nftToken.type === 'ERC1155' && !this.validation['erc1155Amount']){
             this.error = "invalidQuantity"
             this.isLoading = false
             this.dirty = true;
@@ -502,7 +502,12 @@ export default class SendToken extends Vue {
         return {
         owner:
             this.nftToken.owner.toLowerCase() ===
-            this.account.address.toLowerCase()
+            this.account.address.toLowerCase(),
+        erc1155Amount: this.nftToken.type === 'ERC1155'? 
+            new BigNumber(this.erc1155Amount).lte(new BigNumber(this.nftToken.amount)) &&
+            parseFloat(this.erc1155Amount)===parseInt(this.erc1155Amount) && 
+            parseInt(this.erc1155Amount) > 0: 
+            true
         };
     }
 
