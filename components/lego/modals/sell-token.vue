@@ -151,9 +151,14 @@
                         :disabled="isLoading"
                       />
                     </div>
-                    <div class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12">
-                      ~ {{ minPriceInUSDFormatted }}
-                    </div>        
+                    <div class="d-flex align-self-center justify-content-between">
+                      <div class="align-self-center font-body-small font-semibold ps-t-12">
+                        Total Price
+                      </div>
+                      <div class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12">
+                        {{ minPriceInUSDFormatted }}
+                      </div>
+                    </div>       
                     <div
                       class="w-100 font-caption error-text ps-t-4"
                       v-if="dirty && (nftToken.type==='ERC721' ? !validation['minPrice'] : !validation['minPricePerUnit'])"
