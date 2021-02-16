@@ -103,7 +103,7 @@
             block
             lg
             v-if="
-              (hasNextPage && displayedTokens && displayedTokens.length > 0) ||
+              (hasNextPage && searchedTokens && searchedTokens.length > 0) ||
               isLoadingTokens
             "
             color="light"
