@@ -229,8 +229,15 @@ const app = {
   },
 
   addToast(title, body, options = {}) {
+    const toastId = Date.now()
+    options.id = toastId
     options.details = body
     this.bus.$emit("toast:add", title, options)
+    setInterval(this.removeToast(toastId), 5000)
+  },
+
+  removeToast(id) {
+    this.bus.$emit('toast:remove', id)
   },
 
   refreshApp() {
