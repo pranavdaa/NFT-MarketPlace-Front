@@ -735,12 +735,8 @@ export default class TokenDetail extends Vue {
 .feature-info {
   &.mobile {
     min-height: auto;
-    position: relative;
   }
-  position: fixed;
-  // width: 100%;
-  margin-right: 1rem;
-  max-height: 500px;
+
   border: 1px solid #f3f4f7;
   border-radius: $default-card-box-border-radius;
 }
