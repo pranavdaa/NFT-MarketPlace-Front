@@ -105,7 +105,7 @@ export default {
 
         result = new BigNumber(r)
       } catch (e) {
-        console.error("error::loadTokenBalance", e)
+        //console.error("error::loadTokenBalance", e)
       }
 
       commit("setCache", {
