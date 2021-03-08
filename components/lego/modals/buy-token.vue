@@ -26,7 +26,7 @@
                       target="_blank"
                       rel="noopener noreferrer"
                       class="text-gray-900"
-                      >{{ order.token.name }} {{ order.token_type==='ERC1155' ? '( ' + order.quantity + ' )': ''}}
+                      >{{ order.token.name }} {{ isErc1155 ? '( ' + order.quantity + ' )': ''}}
                     </a>
                   </h3>
                   <img
@@ -471,6 +471,14 @@ export default class BuyToken extends Vue {
     return this.erc20Tokens.filter(
       (token) => token.id === this.order.erc20tokens_id
     )[0];
+  }
+
+  get isErc1155() {
+    return this.order.token_type ==='ERC1155'
+  }
+
+  get isErc721() {
+    return this.order.token_type ==='ERC721'
   }
 
   get approvalModalText() {

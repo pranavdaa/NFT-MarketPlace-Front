@@ -43,7 +43,7 @@
             class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
           >
             <h3 class="font-heading-medium font-semibold">
-              About {{ order.token.name }} {{order.token_type==='ERC1155'? `( ${order.quantity} )`: ''}}
+              About {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )`: ''}}
             </h3>
             <p
               class="font-body-medium"
@@ -218,7 +218,7 @@
         <div class="col-md-4 d-none d-lg-flex">
           <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
             <h3 class="font-heading-medium font-semibold">
-              About {{ order.token.name }} {{order.token_type==='ERC1155'? `( ${order.quantity} )`: ''}}
+              About {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )`: ''}}
             </h3>
             <p
               class="font-body-medium"
@@ -467,6 +467,14 @@ export default class TokenDetail extends Vue {
     return this.categories.filter(
       (item) => item.id === this.order.categories_id
     )[0];
+  }
+
+  get isErc1155() {
+    return this.order.token_type ==='ERC1155'
+  }
+
+  get isErc721() {
+    return this.order.token_type ==='ERC721'
   }
 
   get app() {

@@ -178,6 +178,14 @@ export default class BidderRow extends Vue {
     }
   }
 
+  get isErc1155() {
+    return this.order.token_type ==='ERC1155'
+  }
+
+  get isErc721() {
+    return this.order.token_type ==='ERC721'
+  }
+
   get timeRemaining() {
     const expiry = moment(this.bid.updated);
     const current = moment();
@@ -243,7 +251,7 @@ export default class BidderRow extends Vue {
         const takerAddress = this.account.address;
 
         let takerAssetAmount = null;
-        if(this.order.token_type ==='ERC1155'){
+        if(this.isErc1155){
           takerAssetAmount = new BigNumber(this.order.quantity);
         } else {
           takerAssetAmount = new BigNumber(1);
@@ -269,7 +277,7 @@ export default class BidderRow extends Vue {
         signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
 
         let tokenCont = null;
-        if(this.order.token_type==='ERC721') {
+        if(this.isErc721) {
           tokenCont = new ERC721TokenContract(
             nftContract,
             providerEngine()

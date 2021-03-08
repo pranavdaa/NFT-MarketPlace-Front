@@ -66,7 +66,7 @@
       class="w-100 title font-body-small font-medium ms-b-8 ps-x-12 ms-b-16"
       :title="token.name"
     >
-      {{ token.name }} {{ token.type==="ERC1155" ? '( '+ token.amount +' )': '' }}
+      {{ token.name }} {{ isErc1155 ? '( '+ token.amount +' )': '' }}
     </h3>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
@@ -197,6 +197,14 @@ export default class NFTTokenCard extends Vue {
     } catch (error) {
       this.bg = "#f3f4f7";
     }
+  }
+
+  get isErc1155() {
+    return this.token.type ==='ERC1155'
+  }
+
+  get isErc721() {
+    return this.token.type ==='ERC721'
   }
 
   // Handlers

@@ -17,10 +17,7 @@
               <div
                 class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border"
               >
-                <div
-                  v-if="nftToken.type === 'ERC1155'"
-                  class="d-flex align-self-center ps-b-8"
-                >
+                <div v-if="isErc1155" class="d-flex align-self-center ps-b-8">
                   <div
                     class="align-self-center font-heading-small font-semibold"
                   >
@@ -28,16 +25,16 @@
                   </div>
                 </div>
                 <div
-                  v-if="nftToken.type === 'ERC1155'"
+                  v-if="isErc1155"
                   class="d-flex ml-auto align-self-center ps-b-8"
                 >
                   <div class="font-body-small text-gray-500 ms-l-4">
                     Available : {{ nftToken.amount }}
                   </div>
                 </div>
-                <div class="col-md-12 p-0" v-if="nftToken.type === 'ERC1155'">
+                <div class="col-md-12 p-0" v-if="isErc1155">
                   <Textfield
-                    v-if="nftToken.type === 'ERC1155'"
+                    v-if="isErc1155"
                     type="text"
                     placeholder="0"
                     :value="erc1155Amount"
@@ -225,7 +222,7 @@ export default class SendToken extends Vue {
       return false;
     }
 
-    if (this.nftToken.type === "ERC1155" && !this.validation["erc1155Amount"]) {
+    if (this.isErc1155 && !this.validation["erc1155Amount"]) {
       this.error = "invalidQuantity";
       this.isLoading = false;
       this.dirty = true;
@@ -243,7 +240,7 @@ export default class SendToken extends Vue {
       let quantity = null;
       let erc721TokenCont = null;
 
-      if (this.nftToken.type === "ERC721") {
+      if (this.isErc721) {
         // ERC721 contract
         erc721TokenCont = new ERC721TokenContract(
           nftContract,
@@ -276,7 +273,7 @@ export default class SendToken extends Vue {
       if (this.category.isMetaTx) {
         let matic = new Web3(this.networks.matic.rpc);
         let data = null;
-        if (this.nft.type === "ERC721") {
+        if (this.isErc721) {
           data = await matic.eth.abi.encodeFunctionCall(
             {
               name: "safeTransferFrom",
@@ -378,7 +375,7 @@ export default class SendToken extends Vue {
           return;
         }
 
-        if (this.nftToken.type === "ERC721") {
+        if (this.isErc721) {
           const erc721TransferTxHash = await erc721TokenCont
             .safeTransferFrom1(
               this.account.address,
@@ -512,15 +509,24 @@ export default class SendToken extends Vue {
       owner:
         this.nftToken.owner.toLowerCase() ===
         this.account.address.toLowerCase(),
-      erc1155Amount:
-        this.nftToken.type === "ERC1155"
-          ? new BigNumber(this.erc1155Amount).lte(
-              new BigNumber(this.nftToken.amount)
-            ) &&
-            parseFloat(this.erc1155Amount) === parseInt(this.erc1155Amount) &&
-            parseInt(this.erc1155Amount) > 0
-          : true,
+      erc1155Amount: this.isErc1155
+        ? new BigNumber(this.erc1155Amount).lte(
+            new BigNumber(this.nftToken.amount)
+          ) &&
+          new BigNumber(parseFloat(this.erc1155Amount)).eq(
+            new BigNumber(parseInt(this.erc1155Amount))
+          ) &&
+          new BigNumber(parseInt(this.erc1155Amount)).gt(ZERO)
+        : true,
     };
+  }
+
+  get isErc1155() {
+    return this.nftToken.type === "ERC1155";
+  }
+
+  get isErc721() {
+    return this.nftToken.type === "ERC721";
   }
 
   get category() {
