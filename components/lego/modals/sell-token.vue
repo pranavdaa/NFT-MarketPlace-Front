@@ -1,7 +1,10 @@
 <template>
   <div class="section position-absolute">
     <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
-    <div class="modal transaction-prog-modal" v-bind:class="{ show: show, 'hide-modal': showApproveModal }">
+    <div
+      class="modal transaction-prog-modal"
+      v-bind:class="{ show: show, 'hide-modal': showApproveModal }"
+    >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
           <div class="box-body">
@@ -21,23 +24,27 @@
               <div
                 class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border flex"
               >
-                <div v-if="nftToken.type==='ERC1155'"
-                  class="d-flex align-self-center ps-b-8">
+                <div
+                  v-if="nftToken.type === 'ERC1155'"
+                  class="d-flex align-self-center ps-b-8"
+                >
                   <div
                     class="align-self-center font-heading-small font-semibold"
                   >
                     Enter Quantity to sale
                   </div>
                 </div>
-                <div v-if="nftToken.type==='ERC1155'"
-                  class="d-flex ml-auto align-self-center ps-b-8">
+                <div
+                  v-if="nftToken.type === 'ERC1155'"
+                  class="d-flex ml-auto align-self-center ps-b-8"
+                >
                   <div class="font-body-small text-gray-500 ms-l-4">
-                    Available : {{nftToken.amount}}
+                    Available : {{ nftToken.amount }}
                   </div>
                 </div>
-                <div class="col-md-12 p-0" v-if="nftToken.type==='ERC1155'">
+                <div class="col-md-12 p-0" v-if="nftToken.type === 'ERC1155'">
                   <Textfield
-                    v-if="nftToken.type==='ERC1155'"
+                    v-if="nftToken.type === 'ERC1155'"
                     type="text"
                     placeholder="0"
                     :value="erc1155Amount"
@@ -46,12 +53,17 @@
                   />
                   <div
                     class="w-100 font-caption error-text ps-t-12"
-                    v-if="nftToken.type==='ERC1155' && dirty && !validation['erc1155Amount']"
+                    v-if="
+                      nftToken.type === 'ERC1155' &&
+                      dirty &&
+                      !validation['erc1155Amount']
+                    "
                   >
                     Valid quantity is required
-                  </div><br>
+                  </div>
+                  <br />
                 </div>
-                
+
                 <div
                   class="col-md-12 px-0 font-heading-small font-semibold ps-b-8"
                 >
@@ -65,38 +77,47 @@
 
                 <div class="col-md-12 p-0">
                   <input-token
-                    v-if="nftToken.type==='ERC721'"
-                    :placeholder="'0.00'"
+                    v-if="nftToken.type === 'ERC721'"
+                    placeholder="0.00"
                     :integer="true"
                     :change="changePrice"
                     :disableToken="isLoading"
                     :disabled="isLoading"
                   />
                   <input-token
-                    v-if="nftToken.type==='ERC1155'"
-                    :placeholder="'0.00'"
+                    v-if="nftToken.type === 'ERC1155'"
+                    placeholder="0.00"
                     :integer="true"
                     :change="changePricePerUnit"
                     :disableToken="isLoading"
                     :disabled="isLoading"
                   />
                 </div>
-        
+
                 <div class="d-flex align-self-center">
-                  <div class="align-self-center font-body-small font-semibold ps-t-12">
+                  <div
+                    class="align-self-center font-body-small font-semibold ps-t-12"
+                  >
                     Total Price
                   </div>
                 </div>
                 <div class="d-flex ml-auto align-self-center">
-                  <div class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12">
+                  <div
+                    class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12"
+                  >
                     {{ priceInUSDFormatted }}
                   </div>
                 </div>
-      
+
                 <div class="col-md-12 p-0">
                   <div
                     class="w-100 font-caption error-text ps-t-12"
-                    v-if="dirty && (nftToken.type==='ERC721' ? !validation['price'] : !validation['pricePerUnit'])"
+                    v-if="
+                      dirty &&
+                      (nftToken.type === 'ERC721'
+                        ? !validation['price']
+                        : !validation['pricePerUnit'])
+                    "
                   >
                     Valid amount required
                   </div>
@@ -126,42 +147,58 @@
                 </div>
                 <transition name="fade">
                   <div class="col-md-12 p-0" v-if="negotiation">
-                    <div v-if="nftToken.type==='ERC721'"
-                      class="w-100 font-body-small ps-y-12 text-gray-500">
+                    <div
+                      v-if="nftToken.type === 'ERC721'"
+                      class="w-100 font-body-small ps-y-12 text-gray-500"
+                    >
                       Set minimum price
                     </div>
-                    <div v-else class="w-100 font-body-small ps-y-12 text-gray-500">
+                    <div
+                      v-else
+                      class="w-100 font-body-small ps-y-12 text-gray-500"
+                    >
                       Set minimum price per unit
                     </div>
                     <div class="w-100 p-0">
                       <input-token
-                        v-if="nftToken.type==='ERC721'"
-                        :placeholder="'0.00'"
+                        v-if="nftToken.type === 'ERC721'"
+                        placeholder="0.00"
                         :integer="true"
                         :change="changeMinPrice"
                         :disableToken="true"
                         :disabled="isLoading"
                       />
                       <input-token
-                        v-if="nftToken.type==='ERC1155'"
-                        :placeholder="'0.00'"
+                        v-if="nftToken.type === 'ERC1155'"
+                        placeholder="0.00"
                         :integer="true"
                         :change="changeMinPricePerUnit"
                         :disableToken="true"
                         :disabled="isLoading"
                       />
                     </div>
-                    <div class="d-flex align-self-center justify-content-between">
-                      <div class="align-self-center font-body-small font-semibold ps-t-12">
+                    <div
+                      class="d-flex align-self-center justify-content-between"
+                    >
+                      <div
+                        class="align-self-center font-body-small font-semibold ps-t-12"
+                      >
                         Total Price
                       </div>
-                      <div class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12">
+                      <div
+                        class="font-body-small font-semibold text-gray-500 ms-l-4 ps-t-12"
+                      >
                         {{ minPriceInUSDFormatted }}
                       </div>
-                    </div>       
+                    </div>
                     <div
                       class="w-100 font-caption error-text ps-t-4"
-                      v-if="dirty && (nftToken.type==='ERC721' ? !validation['minPrice'] : !validation['minPricePerUnit'])"
+                      v-if="
+                        dirty &&
+                        (nftToken.type === 'ERC721'
+                          ? !validation['minPrice']
+                          : !validation['minPricePerUnit'])
+                      "
                     >
                       Valid amount is required for minimum price
                     </div>
@@ -295,9 +332,7 @@ let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
 // let { BigNumber } = require("@0x/utils");
 let { Web3Wrapper } = require("@0x/web3-wrapper");
 import { getRandomFutureDateInSeconds } from "~/plugins/helpers/0x-utils";
-import {
-  Textfield,
-} from '@maticnetwork/matic-design-system'
+import { Textfield } from "@maticnetwork/matic-design-system";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
 
@@ -361,14 +396,14 @@ export default class SellToken extends Vue {
 
   approvalModalText = {
     approve: {
-      title: 'Approve',
-      subText: 'Approve 0x contract to transfer your NFT'
+      title: "Approve",
+      subText: "Approve 0x contract to transfer your NFT",
     },
     sign: {
-      title: 'Sign sell order',
-      subText: 'Sign sell transaction'
-    }
-  }
+      title: "Sign sell order",
+      subText: "Sign sell transaction",
+    },
+  };
 
   price = 0;
   minPrice = 0;
@@ -380,10 +415,12 @@ export default class SellToken extends Vue {
     {
       id: 0,
       title: "Fixed Price",
-      subtitle: this.nftToken.type==="ERC1155"? "Set price per Unit" : "Set price",
-      description: this.nftToken.type==="ERC1155"?
-        "Your asset will be sold at this price for 1 unit. It will be available for sale in marketplace until you cancel it." :
-        "Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.",
+      subtitle:
+        this.nftToken.type === "ERC1155" ? "Set price per Unit" : "Set price",
+      description:
+        this.nftToken.type === "ERC1155"
+          ? "Your asset will be sold at this price for 1 unit. It will be available for sale in marketplace until you cancel it."
+          : "Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.",
       commission: "",
       btnTitle: "List for Sale",
     },
@@ -400,8 +437,8 @@ export default class SellToken extends Vue {
   }
 
   handleERC1155Amount(input) {
-      this.dirty = false
-      this.erc1155Amount = input
+    this.dirty = false;
+    this.erc1155Amount = input;
   }
 
   toCustom() {
@@ -457,18 +494,20 @@ export default class SellToken extends Vue {
 
   convertPriceToUSD(amount) {
     let result = null;
-    if(this.selectedERC20Token){
-      result = parseBalance(amount, this.selectedERC20Token.decimal).toString(10) *
-      this.selectedERC20Token.usd;
+    if (this.selectedERC20Token) {
+      result = new BigNumber(
+        parseBalance(amount, this.selectedERC20Token.decimal)
+      )
+        .times(new BigNumber(this.selectedERC20Token.usd))
+        .toString(10);
     }
-    return result
+    return result;
   }
 
   // action
   async approveStatus() {
     this.approveLoading = true;
     try {
-
       const nftContract = this.nftToken.category.getAddress(
         this.networks.matic.chainId
       );
@@ -480,20 +519,19 @@ export default class SellToken extends Vue {
 
       let isApprovedForAll;
 
-      if(this.nftToken.type === 'ERC1155'){
-
+      if (this.nftToken.type === "ERC1155") {
         let matic = new Web3(this.networks.matic.rpc);
         const erc1155TokenCont = new matic.eth.Contract(
-          this.networkMeta.abi('ChildERC1155', 'pos'),
+          this.networkMeta.abi("ChildERC1155", "pos"),
           nftContract
         );
 
         isApprovedForAll = await erc1155TokenCont.methods
-        .isApprovedForAll(
-          makerAddress,
-          contractWrappers.contractAddresses.erc1155Proxy
-        )
-        .call();
+          .isApprovedForAll(
+            makerAddress,
+            contractWrappers.contractAddresses.erc1155Proxy
+          )
+          .call();
       } else {
         const erc721TokenCont = new ERC721TokenContract(
           nftContract,
@@ -501,25 +539,22 @@ export default class SellToken extends Vue {
         );
 
         isApprovedForAll = await erc721TokenCont
-        .isApprovedForAll(
-          makerAddress,
-          contractWrappers.contractAddresses.erc721Proxy
-        )
-        .callAsync();
+          .isApprovedForAll(
+            makerAddress,
+            contractWrappers.contractAddresses.erc721Proxy
+          )
+          .callAsync();
       }
 
       this.isApprovedStatus = isApprovedForAll;
       this.approveLoading = false;
-
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
-      this.approveLoading = false
+      this.approveLoading = false;
       app.addToast("Something went wrong", error.message.substring(0, 60), {
         type: "failure",
       });
     }
-
   }
 
   async approveClickedFunc() {
@@ -545,13 +580,13 @@ export default class SellToken extends Vue {
       let makerAssetAmount = new BigNumber(1);
       let takerAssetAmount = null;
       let takerAssetAmountPerUnit = null;
-      let minPrice= null;
-      let minPricePerUnit= null;
-      let erc721TokenCont = null
-      let erc1155TokenCont = null
+      let minPrice = null;
+      let minPricePerUnit = null;
+      let erc721TokenCont = null;
+      let erc1155TokenCont = null;
       let isApproved = false;
 
-      if(this.nftToken.type==='ERC721'){
+      if (this.nftToken.type === "ERC721") {
         takerAssetAmount = this.price.toString(10);
         minPrice = this.minPrice;
 
@@ -565,16 +600,19 @@ export default class SellToken extends Vue {
           contractWrappers,
           makerAddress
         );
-
       } else {
         takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit);
-        takerAssetAmount = (makerAssetAmount.times(takerAssetAmountPerUnit)).toString(10)
+        takerAssetAmount = makerAssetAmount
+          .times(takerAssetAmountPerUnit)
+          .toString(10);
         minPricePerUnit = this.minPricePerUnit;
-        minPrice = makerAssetAmount.times(new BigNumber(minPricePerUnit)).toString(10)
+        minPrice = makerAssetAmount
+          .times(new BigNumber(minPricePerUnit))
+          .toString(10);
 
         let matic = new Web3(this.networks.matic.rpc);
         const erc1155TokenCont = new matic.eth.Contract(
-          this.networkMeta.abi('ChildERC1155', 'pos'),
+          this.networkMeta.abi("ChildERC1155", "pos"),
           nftContract
         );
         console.log(erc1155TokenCont);
@@ -583,14 +621,13 @@ export default class SellToken extends Vue {
           contractWrappers,
           makerAddress
         );
-
       }
 
       this.isApprovedStatus = isApproved;
       this.approveLoading = false;
     } catch (error) {
       console.log(error);
-      this.approveLoading = false
+      this.approveLoading = false;
       app.addToast("Something went wrong", error.message.substring(0, 60), {
         type: "failure",
       });
@@ -621,39 +658,41 @@ export default class SellToken extends Vue {
       let makerAssetAmount = new BigNumber(1);
       let takerAssetAmount = null;
       let takerAssetAmountPerUnit = null;
-      let minPrice= null;
-      let minPricePerUnit= null;
-      let erc721TokenCont = null
-      let erc1155TokenCont = null
+      let minPrice = null;
+      let minPricePerUnit = null;
+      let erc721TokenCont = null;
+      let erc1155TokenCont = null;
       let isApproved = false;
       let makerAssetData = null;
       const takerAssetData = await contractWrappers.devUtils
         .encodeERC20AssetData(erc20Address)
         .callAsync();
 
-      if(this.nftToken.type === "ERC1155") {
+      if (this.nftToken.type === "ERC1155") {
         takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit);
-        takerAssetAmount = (makerAssetAmount.times(takerAssetAmountPerUnit)).toString(10)
+        takerAssetAmount = makerAssetAmount
+          .times(takerAssetAmountPerUnit)
+          .toString(10);
         minPricePerUnit = this.minPricePerUnit;
-        minPrice = makerAssetAmount.times(new BigNumber(minPricePerUnit)).toString(10)
+        minPrice = makerAssetAmount
+          .times(new BigNumber(minPricePerUnit))
+          .toString(10);
 
         makerAssetData = await contractWrappers.devUtils
-        .encodeERC1155AssetData(
-          nftContract, 
-          [new BigNumber(decimalnftTokenId)],
-          [new BigNumber(this.erc1155Amount)],
-          "0x"
+          .encodeERC1155AssetData(
+            nftContract,
+            [new BigNumber(decimalnftTokenId)],
+            [new BigNumber(this.erc1155Amount)],
+            "0x"
           )
-        .callAsync();
-        
+          .callAsync();
       } else {
         takerAssetAmount = this.price.toString(10);
         minPrice = this.minPrice;
 
         makerAssetData = await contractWrappers.devUtils
-        .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
-        .callAsync();
-        
+          .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
+          .callAsync();
       }
 
       const exchangeAddress = contractWrappers.contractAddresses.exchange;
@@ -712,8 +751,8 @@ export default class SellToken extends Vue {
       this.isLoading = false;
       return;
     }
-    if(this.nftToken.type==="ERC1155") {
-      if(!this.validation['erc1155Amount']){
+    if (this.nftToken.type === "ERC1155") {
+      if (!this.validation["erc1155Amount"]) {
         this.dirty = true;
         this.isLoading = false;
         return;
@@ -722,7 +761,7 @@ export default class SellToken extends Vue {
 
     this.dirty = false;
     try {
-      if(this.nftToken.type === "ERC721") {
+      if (this.nftToken.type === "ERC721") {
         const nftContract = this.nftToken.category.getAddress(
           this.networks.matic.chainId
         );
@@ -755,7 +794,6 @@ export default class SellToken extends Vue {
       }
       this.showApproveModal = true;
       this.approveStatus();
-
     } catch (error) {
       console.error(error);
       app.addToast("Something went wrong", error.message.substring(0, 60), {
@@ -773,7 +811,7 @@ export default class SellToken extends Vue {
       this.networks.matic.chainId
     );
 
-    if(this.nftToken.type === 'ERC721'){
+    if (this.nftToken.type === "ERC721") {
       isApprovedForAll = await tokenCont
         .isApprovedForAll(
           makerAddress,
@@ -795,9 +833,12 @@ export default class SellToken extends Vue {
           window.ethereum.chainId ===
           "0x" + this.networks.matic.chainId.toString(16)
         ) {
-          if(this.nftToken.type === 'ERC721'){
+          if (this.nftToken.type === "ERC721") {
             const makerERC721ApprovalTxHash = await tokenCont
-              .setApprovalForAll(contractWrappers.contractAddresses.erc721Proxy, true)
+              .setApprovalForAll(
+                contractWrappers.contractAddresses.erc721Proxy,
+                true
+              )
               .sendTransactionAsync({
                 from: makerAddress,
                 gas: 8000000,
@@ -822,16 +863,18 @@ export default class SellToken extends Vue {
                 type: "failure",
               }
             );
-
           } else {
             let maticWeb3 = new Web3(window.ethereum);
             let cont = new maticWeb3.eth.Contract(
-              this.networkMeta.abi('ChildERC1155', 'pos'),
+              this.networkMeta.abi("ChildERC1155", "pos"),
               nftContract
-            )
+            );
 
             const makerERC1155ApprovalTxHash = await cont.methods
-              .setApprovalForAll(contractWrappers.contractAddresses.erc1155Proxy, true)
+              .setApprovalForAll(
+                contractWrappers.contractAddresses.erc1155Proxy,
+                true
+              )
               .send({
                 from: makerAddress,
                 gas: 8000000,
@@ -856,9 +899,7 @@ export default class SellToken extends Vue {
                 type: "failure",
               }
             );
-
           }
-          
         } else {
           this.showNetworkChangeNeeded = true;
           // app.addToast(
@@ -871,12 +912,12 @@ export default class SellToken extends Vue {
 
           return false;
         }
-
       } else {
-        let contractWrapperAddress = this.nftToken.type==="ERC1155"?
-          contractWrappers.contractAddresses.erc1155Proxy:
-          contractWrappers.contractAddresses.erc721Proxy
-        
+        let contractWrapperAddress =
+          this.nftToken.type === "ERC1155"
+            ? contractWrappers.contractAddresses.erc1155Proxy
+            : contractWrappers.contractAddresses.erc721Proxy;
+
         let data = await matic.eth.abi.encodeFunctionCall(
           {
             name: "setApprovalForAll",
@@ -997,10 +1038,10 @@ export default class SellToken extends Vue {
       formData.signature = JSON.stringify(signedOrder);
       formData.usd_price = this.priceInUSD.toString();
       formData.token_type = this.nftToken.type;
-      if(this.nftToken.type==='ERC1155'){
-        let pricePerUnit = new BigNumber(this.pricePerUnit)
-        let amount = new BigNumber(this.erc1155Amount)
-        let price = (amount.times(pricePerUnit)).toString(10)
+      if (this.nftToken.type === "ERC1155") {
+        let pricePerUnit = new BigNumber(this.pricePerUnit);
+        let amount = new BigNumber(this.erc1155Amount);
+        let price = amount.times(pricePerUnit).toString(10);
         formData.price_per_unit = parseBalance(
           this.pricePerUnit,
           this.selectedERC20Token.decimal
@@ -1009,7 +1050,7 @@ export default class SellToken extends Vue {
           price,
           this.selectedERC20Token.decimal
         ).toString(10);
-        formData.quantity = this.erc1155Amount.toString(10)
+        formData.quantity = this.erc1155Amount.toString(10);
       } else {
         formData.price = parseBalance(
           this.price,
@@ -1023,12 +1064,12 @@ export default class SellToken extends Vue {
       formData.maker_token = this.selectedERC20Token.id;
       formData.token_type = this.nftToken.type;
       formData.usd_price = this.priceInUSD.toString();
-      if(this.nftToken.type==='ERC1155'){
-        let pricePerUnit = new BigNumber(this.pricePerUnit)
-        let minPricePerUnit = new BigNumber(this.minPricePerUnit)
-        let amount = new BigNumber(this.erc1155Amount)
-        let price = (amount.times(pricePerUnit)).toString(10)
-        let minPrice = (amount.times(minPricePerUnit)).toString(10)
+      if (this.nftToken.type === "ERC1155") {
+        let pricePerUnit = new BigNumber(this.pricePerUnit);
+        let minPricePerUnit = new BigNumber(this.minPricePerUnit);
+        let amount = new BigNumber(this.erc1155Amount);
+        let price = amount.times(pricePerUnit).toString(10);
+        let minPrice = amount.times(minPricePerUnit).toString(10);
         formData.price_per_unit = parseBalance(
           this.pricePerUnit,
           this.selectedERC20Token.decimal
@@ -1045,7 +1086,7 @@ export default class SellToken extends Vue {
           minPrice,
           this.selectedERC20Token.decimal
         ).toString(10);
-        formData.quantity = this.erc1155Amount.toString(10)
+        formData.quantity = this.erc1155Amount.toString(10);
       } else {
         formData.price = parseBalance(
           this.price,
@@ -1104,23 +1145,36 @@ export default class SellToken extends Vue {
       owner:
         this.nftToken.owner.toLowerCase() ===
         this.account.address.toLowerCase(),
-      price: this.nftToken.type === 'ERC721' ? !!this.price && this.price.gt(ZERO) : true,
-      pricePerUnit: this.nftToken.type === 'ERC1155' ? !!this.pricePerUnit && this.pricePerUnit.gt(ZERO) : true,
-      minPrice: this.negotiation && this.nftToken.type === 'ERC721'
-        ? !!this.minPrice &&
-          this.minPrice.lt(this.price) &&
-          this.minPrice.gt(ZERO)
-        : true,
-      minPricePerUnit: this.negotiation && this.nftToken.type === 'ERC1155'
-        ? !!this.minPricePerUnit &&
-          this.minPricePerUnit.lt(this.pricePerUnit) &&
-          this.minPricePerUnit.gt(ZERO)
-        : true,
-      erc1155Amount: this.nftToken.type === 'ERC1155'? 
-        new BigNumber(this.erc1155Amount).lte(new BigNumber(this.nftToken.amount)) &&
-        parseFloat(this.erc1155Amount)===parseInt(this.erc1155Amount) && 
-        parseInt(this.erc1155Amount) > 0: 
-        true
+      price:
+        this.nftToken.type === "ERC721"
+          ? !!this.price && this.price.gt(ZERO)
+          : true,
+      pricePerUnit:
+        this.nftToken.type === "ERC1155"
+          ? !!this.pricePerUnit && this.pricePerUnit.gt(ZERO)
+          : true,
+      minPrice:
+        this.negotiation && this.nftToken.type === "ERC721"
+          ? !!this.minPrice &&
+            this.minPrice.lt(this.price) &&
+            this.minPrice.gt(ZERO)
+          : true,
+      minPricePerUnit:
+        this.negotiation && this.nftToken.type === "ERC1155"
+          ? !!this.minPricePerUnit &&
+            this.minPricePerUnit.lt(this.pricePerUnit) &&
+            this.minPricePerUnit.gt(ZERO)
+          : true,
+      erc1155Amount:
+        this.nftToken.type === "ERC1155"
+          ? new BigNumber(this.erc1155Amount).lte(
+              new BigNumber(this.nftToken.amount)
+            ) &&
+            new BigNumber(parseFloat(this.erc1155Amount)).eq(
+              new BigNumber(parseInt(this.erc1155Amount))
+            ) &&
+            new BigNumber(parseInt(this.erc1155Amount)).gt(ZERO)
+          : true,
     };
   }
 
@@ -1146,40 +1200,44 @@ export default class SellToken extends Vue {
   }
 
   get priceInUSD() {
-    let equivalentUSD
-    if(this.nftToken.type === 'ERC721'){
-      equivalentUSD = this.convertPriceToUSD(this.price)
+    let equivalentUSD;
+    if (this.nftToken.type === "ERC721") {
+      equivalentUSD = this.convertPriceToUSD(this.price);
     } else {
-      let pricePerUnit = new BigNumber(this.pricePerUnit)
-      let amount = new BigNumber(this.erc1155Amount)
-      let price = (amount.times(pricePerUnit)).toString(10)
-      equivalentUSD = this.convertPriceToUSD(price)
+      let pricePerUnit = new BigNumber(this.pricePerUnit);
+      let amount = new BigNumber(this.erc1155Amount);
+      let price = amount.times(pricePerUnit).toString(10);
+      equivalentUSD = this.convertPriceToUSD(price);
     }
-    return isNaN(equivalentUSD) ? 0 : equivalentUSD
+    return isNaN(equivalentUSD) ? 0 : equivalentUSD;
   }
 
   get priceInUSDFormatted() {
     let equivalentUSD = null;
-    if(this.nftToken.type === 'ERC1155'){
-      let pricePerUnit = new BigNumber(this.pricePerUnit)
-      let amount = new BigNumber(this.erc1155Amount)
-      equivalentUSD = this.convertPriceToUSD((pricePerUnit.times(amount)).toString(10))
+    if (this.nftToken.type === "ERC1155") {
+      let pricePerUnit = new BigNumber(this.pricePerUnit);
+      let amount = new BigNumber(this.erc1155Amount);
+      equivalentUSD = this.convertPriceToUSD(
+        pricePerUnit.times(amount).toString(10)
+      );
     } else {
-      equivalentUSD = this.convertPriceToUSD(this.price)
+      equivalentUSD = this.convertPriceToUSD(this.price);
     }
-    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
+    return isNaN(equivalentUSD) ? "$0" : formatUSDValue(equivalentUSD);
   }
 
   get minPriceInUSDFormatted() {
     let equivalentUSD = null;
-    if(this.nftToken.type === 'ERC1155'){
-      let minPricePerUnit = new BigNumber(this.minPricePerUnit)
-      let amount = new BigNumber(this.erc1155Amount)
-      equivalentUSD = this.convertPriceToUSD((minPricePerUnit.times(amount)).toString(10))
+    if (this.nftToken.type === "ERC1155") {
+      let minPricePerUnit = new BigNumber(this.minPricePerUnit);
+      let amount = new BigNumber(this.erc1155Amount);
+      equivalentUSD = this.convertPriceToUSD(
+        minPricePerUnit.times(amount).toString(10)
+      );
     } else {
-      equivalentUSD = this.convertPriceToUSD(this.minPrice)
+      equivalentUSD = this.convertPriceToUSD(this.minPrice);
     }
-    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
+    return isNaN(equivalentUSD) ? "$0" : formatUSDValue(equivalentUSD);
   }
 }
 </script>

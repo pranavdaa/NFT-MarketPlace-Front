@@ -76,7 +76,6 @@
         $t("sell")
       }}</a>
       <a
-        v-if="true"
         class="btn btn-transparent w-100 align-self-center"
         @click="transfer()"
         >{{ $t("transfer") }}</a
