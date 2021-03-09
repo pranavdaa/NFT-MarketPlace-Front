@@ -26,7 +26,7 @@
                       target="_blank"
                       rel="noopener noreferrer"
                       class="text-gray-900"
-                      >{{ order.token.name }}
+                      >{{ order.token.name }} {{ isErc1155 ? '( ' + order.quantity + ' )': ''}}
                     </a>
                   </h3>
                   <img
@@ -473,6 +473,14 @@ export default class BuyToken extends Vue {
     )[0];
   }
 
+  get isErc1155() {
+    return this.order.token_type ==='ERC1155'
+  }
+
+  get isErc721() {
+    return this.order.token_type ==='ERC721'
+  }
+
   get approvalModalText() {
     return {
       approve: {
@@ -732,7 +740,7 @@ export default class BuyToken extends Vue {
         const makerAddress = this.account.address;
         // const takerAddress = this.account.address;
         const makerAssetAmount = this.makerAmount.toString(10);
-        const takerAssetAmount = new BigNumber(1);
+        let takerAssetAmount = null;
         const decimalnftTokenId = this.order.tokens_id;
         const contractWrappers = new ContractWrappers(providerEngine(), {
           chainId,
@@ -754,9 +762,25 @@ export default class BuyToken extends Vue {
         const makerAssetData = await contractWrappers.devUtils
           .encodeERC20AssetData(erc20Address)
           .callAsync();
-        const takerAssetData = await contractWrappers.devUtils
+        let takerAssetData = null;
+
+        if(this.isErc1155) {
+          takerAssetAmount = new BigNumber(this.order.quantity)
+          takerAssetData = await contractWrappers.devUtils
+          .encodeERC1155AssetData(
+            nftContract, 
+            [new BigNumber(decimalnftTokenId)],
+            [new BigNumber(this.order.quantity)],
+            "0x"
+            )
+          .callAsync();
+          
+        } else {
+          takerAssetAmount = new BigNumber(1)
+          takerAssetData = await contractWrappers.devUtils
           .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
           .callAsync();
+        }
 
         const orderTemplate = {
           chainId: chainId,

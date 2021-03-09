@@ -37,7 +37,7 @@
       :class="{ 'ms-b-16': onlyToken }"
       :title="order.token.name"
     >
-      {{ order.token.name }}
+      {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )`: ''}}
     </h3>
     <div class="price font-body-small ms-b-20" v-if="erc20Token && !onlyToken">
       {{ order.price }} {{ erc20Token.symbol }} &nbsp; ({{ priceInUSD }})
@@ -178,6 +178,14 @@ export default class SellCard extends Vue {
 
   get category() {
     return this.categories.find((item) => item.id === this.order.categories_id);
+  }
+
+  get isErc1155() {
+    return this.order.token_type ==='ERC1155'
+  }
+
+  get isErc721() {
+    return this.order.token_type ==='ERC721'
   }
 
   get sellTagData() {

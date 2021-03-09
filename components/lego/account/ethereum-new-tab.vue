@@ -75,6 +75,7 @@
             <button
               v-if="selectedCategory"
               class="btn btn-primary ps-x-32 ms-l-sm-20 ms-t-16 ms-t-sm-0 text-nowrap"
+              :disabled="searchedTokens.length === 0"
               @click="onDeposit()"
             >
               {{

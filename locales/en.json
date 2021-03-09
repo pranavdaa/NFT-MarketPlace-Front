@@ -112,7 +112,13 @@
     "onsale": "On sale",
     "owned": "Owned"
   },
+  "invalid": {
+    "address": "Valid address is required",
+    "owner": "You are no owner of this token"
+  },
   "submitToMarketplace": "List for Sale",
+  "transferToken": "Transfer",
+  "transferring": "Transferring",
   "submittingToMarketplace": "Submitting to Marketplace",
   "withdraw": {
     "title": "Move Collectibles to Ethereum",

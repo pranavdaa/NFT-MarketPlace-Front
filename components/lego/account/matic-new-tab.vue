@@ -117,6 +117,7 @@
             :onSelectToken="onSelectToken"
             :onWithdraw="onWithdraw"
             :onSell="onSellToken"
+            :onSend="onSendToken"
             :searchInput="searchInput"
             :totalSelected="selectedTokens.length"
           />
@@ -124,10 +125,17 @@
 
         <sell-token
           class="text-left"
-          :show="showSellModal"
           :close="onCloseSellModal"
           :nftToken="selectedToken"
           v-if="showSellModal"
+          :refreshNFTTokens="refreshNFTTokens"
+        />
+
+        <send-token
+          class="text-left"
+          :close="onCloseSendModal"
+          :nftToken="selectedToken"
+          v-if="showSendModal"
           :refreshNFTTokens="refreshNFTTokens"
         />
 
@@ -136,7 +144,6 @@
             (selectedCategory && showWithdrawModal) ||
             (selectedTokens.length > 0 && showWithdrawModal)
           "
-          :show="showWithdrawModal"
           :visible="onWithdraw"
           :cancel="onWithdrawClose"
           :tokens="selectedCateTokens"
@@ -192,6 +199,7 @@ import CategorySidebar from "~/components/lego/account/category-sidebar";
 import NFTTokenCard from "~/components/lego/nft-token-card";
 import PendingWithdrawals from "~/components/lego/account/pending-withdrawals";
 import SellToken from "~/components/lego/modals/sell-token";
+import SendToken from "~/components/lego/modals/send-token";
 import Withdraw from "~/components/lego/modals/withdraw";
 
 @Component({
@@ -205,6 +213,7 @@ import Withdraw from "~/components/lego/modals/withdraw";
     NoItem,
     NFTTokenCard,
     SellToken,
+    SendToken,
     CategorySidebar,
     Withdraw,
     PendingWithdrawals,
@@ -231,6 +240,7 @@ import Withdraw from "~/components/lego/modals/withdraw";
 export default class MaticNewTab extends Vue {
   // Modals
   showSellModal = false;
+  showSendModal = false;
   showWithdrawModal = false;
   selectedToken = null;
   selectedTokens = [];
@@ -258,6 +268,13 @@ export default class MaticNewTab extends Vue {
   }
   onCloseSellModal() {
     this.showSellModal = false;
+  }
+  onSendToken(token) {
+    this.selectedToken = token;
+    this.showSendModal = true;
+  }
+  onCloseSendModal() {
+    this.showSendModal = false;
   }
   onWithdraw(token = null) {
     if (token) {
@@ -419,7 +436,7 @@ export default class MaticNewTab extends Vue {
   }
   get searchedTokens() {
     if (this.searchInput !== null && this.displayedTokens.length > 0) {
-      return fuzzySearchResult(this.searchInput, this.displayedTokens)
+      return fuzzySearchResult(this.searchInput, this.displayedTokens);
     } else {
       return this.displayedTokens;
     }

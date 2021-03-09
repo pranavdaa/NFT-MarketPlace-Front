@@ -88,6 +88,7 @@ import { mapGetters } from "vuex";
 import BidModel from "~/components/model/bid";
 import { toChecksumAddress } from "ethereumjs-util";
 import moment from "moment";
+import Web3 from "web3";
 
 import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
@@ -134,7 +135,7 @@ const TEN = BigNumber(10);
   computed: {
     ...mapGetters("account", ["account"]),
     ...mapGetters("auth", ["user"]),
-    ...mapGetters("network", ["networks"]),
+    ...mapGetters("network", ["networks", "networkMeta"]),
   },
 })
 export default class BidderRow extends Vue {
@@ -175,6 +176,14 @@ export default class BidderRow extends Vue {
     if (this.order.type === app.orderTypes.AUCTION) {
       return true;
     }
+  }
+
+  get isErc1155() {
+    return this.order.token_type === "ERC1155";
+  }
+
+  get isErc721() {
+    return this.order.token_type === "ERC721";
   }
 
   get timeRemaining() {
@@ -241,7 +250,12 @@ export default class BidderRow extends Vue {
         const makerAddress = this.bid.users.address;
         const takerAddress = this.account.address;
 
-        const takerAssetAmount = new BigNumber(1);
+        let takerAssetAmount = null;
+        if (this.isErc1155) {
+          takerAssetAmount = new BigNumber(this.order.quantity);
+        } else {
+          takerAssetAmount = new BigNumber(1);
+        }
         // const makerAssetAmount = Web3Wrapper.toBaseUnitAmount(
         //   new BigNumber(this.bid.price),
         //   this.order.erc20tokens.decimal
@@ -262,34 +276,42 @@ export default class BidderRow extends Vue {
         signedOrder["salt"] = BigNumber(signedOrder.salt);
         signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
 
-        // ERC721 contract
-        const erc721TokenCont = new ERC721TokenContract(
-          nftContract,
-          providerEngine()
-        );
-
-        // Owner of current token
-        const owner = await erc721TokenCont
-          .ownerOf(new BigNumber(nftTokenId))
-          .callAsync();
-        const isOwnerOfToken =
-          owner.toLowerCase() === this.account.address.toLowerCase();
-        if (!isOwnerOfToken) {
-          app.addToast(
-            "You are no owner of this token",
-            "You are no longer owner of this token, refresh to update the data",
-            {
-              type: "failure",
-            }
+        let tokenContract = null;
+        if (this.isErc721) {
+          tokenContract = new ERC721TokenContract(
+            nftContract,
+            providerEngine()
           );
-          this.isLoading = false;
-          this.onAcceptClose();
-          return;
+
+          // Owner of current token
+          const owner = await tokenContract
+            .ownerOf(new BigNumber(nftTokenId))
+            .callAsync();
+          const isOwnerOfToken =
+            owner.toLowerCase() === this.account.address.toLowerCase();
+          if (!isOwnerOfToken) {
+            app.addToast(
+              "You are no owner of this token",
+              "You are no longer owner of this token, refresh to update the data",
+              {
+                type: "failure",
+              }
+            );
+            this.isLoading = false;
+            this.onAcceptClose();
+            return;
+          }
+        } else {
+          let matic = new Web3(this.networks.matic.rpc);
+          tokenContract = new matic.eth.Contract(
+            this.networkMeta.abi("ChildERC1155", "pos"),
+            nftContract
+          );
         }
 
         // Check Approve 0x, Approve if not
         const isApproved = await this.approve0x(
-          erc721TokenCont,
+          tokenContract,
           contractWrappers,
           takerAddress
         );
@@ -385,48 +407,100 @@ export default class BidderRow extends Vue {
     }
   }
 
-  async approve0x(erc721TokenCont, contractWrappers, makerAddress) {
+  async approve0x(tokenContract, contractWrappers, makerAddress) {
     try {
       // Check if token is approved to 0x
-      const isApprovedForAll = await erc721TokenCont
-        .isApprovedForAll(
-          makerAddress,
-          contractWrappers.contractAddresses.erc721Proxy
-        )
-        .callAsync();
+      let isApprovedForAll;
+      const nftContract = this.order.categories.categoriesaddresses[0].address;
+      if (this.isErc721) {
+        isApprovedForAll = await tokenContract
+          .isApprovedForAll(
+            makerAddress,
+            contractWrappers.contractAddresses.erc721Proxy
+          )
+          .callAsync();
+      } else {
+        isApprovedForAll = await tokenContract.methods
+          .isApprovedForAll(
+            makerAddress,
+            contractWrappers.contractAddresses.erc1155Proxy
+          )
+          .call();
+      }
       console.log("Approving 1", isApprovedForAll);
       if (!isApprovedForAll) {
-        console.log("Approving 2", {
-          isApprovedForAll,
-          erc721TokenCont: erc721TokenCont,
-          erc721Proxy: contractWrappers.contractAddresses.erc721Proxy,
-          makerAddress: makerAddress,
-        });
-        const makerERC721ApprovalTxHash = await erc721TokenCont
-          .setApprovalForAll(
-            contractWrappers.contractAddresses.erc721Proxy,
-            true
-          )
-          .sendTransactionAsync({
-            from: makerAddress,
-            gas: 8000000,
-            gasPrice: 1000000000,
+        if (this.isErc721) {
+          console.log("Approving 2", {
+            isApprovedForAll,
+            tokenContract: tokenContract,
+            erc721Proxy: contractWrappers.contractAddresses.erc721Proxy,
+            makerAddress: makerAddress,
           });
-        console.log("Approving 2");
-        if (makerERC721ApprovalTxHash) {
-          console.log("Approve Hash", makerERC721ApprovalTxHash);
-          app.addToast("Approved", "You successfully approved", {
-            type: "success",
-          });
-          return true;
-        }
-        app.addToast(
-          "Failed to approve",
-          "You need to approve the transaction to sale the NFT",
-          {
-            type: "failure",
+          const makerERC721ApprovalTxHash = await erc721TokenCont
+            .setApprovalForAll(
+              contractWrappers.contractAddresses.erc721Proxy,
+              true
+            )
+            .sendTransactionAsync({
+              from: makerAddress,
+              gas: 8000000,
+              gasPrice: 1000000000,
+            });
+          console.log("Approving 2");
+          if (makerERC721ApprovalTxHash) {
+            console.log("Approve Hash", makerERC721ApprovalTxHash);
+            app.addToast("Approved", "You successfully approved", {
+              type: "success",
+            });
+            return true;
           }
-        );
+          app.addToast(
+            "Failed to approve",
+            "You need to approve the transaction to sale the NFT",
+            {
+              type: "failure",
+            }
+          );
+        } else {
+          let maticWeb3 = new Web3(window.ethereum);
+          let contract = new maticWeb3.eth.Contract(
+            this.networkMeta.abi("ChildERC1155", "pos"),
+            nftContract
+          );
+
+          console.log("Approving 2", {
+            isApprovedForAll,
+            tokenContract: contract,
+            erc1155Proxy: contractWrappers.contractAddresses.erc1155Proxy,
+            makerAddress: makerAddress,
+          });
+
+          const makerERC1155ApprovalTxHash = await cont
+            .setApprovalForAll(
+              contractWrappers.contractAddresses.erc1155Proxy,
+              true
+            )
+            .send({
+              from: makerAddress,
+              gas: 8000000,
+              gasPrice: 1000000000,
+            });
+          console.log("Approving 2");
+          if (makerERC1155ApprovalTxHash) {
+            console.log("Approve Hash", makerERC1155ApprovalTxHash);
+            app.addToast("Approved", "You successfully approved", {
+              type: "success",
+            });
+            return true;
+          }
+          app.addToast(
+            "Failed to approve",
+            "You need to approve the transaction to sale the NFT",
+            {
+              type: "failure",
+            }
+          );
+        }
       }
       return true;
     } catch (error) {
