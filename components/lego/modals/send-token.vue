@@ -541,37 +541,8 @@ export default class SendToken extends Vue {
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";
 
-.hide-modal {
-  opacity: 0;
-}
-
 .text-gray-500 {
   color: dark-color("500");
-}
-.text-gray-300 {
-  color: dark-color("300");
-}
-.time-pill {
-  background-color: light-color("500");
-  color: dark-color("700");
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  margin-left: 0.75rem;
-  margin-right: 0.75rem;
-  border-radius: 20px;
-  cursor: pointer;
-
-  &.active {
-    background-color: dark-color("700");
-    color: light-color("700");
-  }
-}
-
-.icon {
-  width: 24px !important;
-  height: 24px !important;
 }
 
 .fade-enter-active,
@@ -593,10 +564,6 @@ export default class SendToken extends Vue {
 
 .error-text {
   color: red-color("400");
-}
-.ps-y-0 {
-  padding-top: 0px !important;
-  padding-bottom: 0px !important;
 }
 
 @media (max-width: 570px) {

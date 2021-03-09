@@ -179,11 +179,11 @@ export default class BidderRow extends Vue {
   }
 
   get isErc1155() {
-    return this.order.token_type ==='ERC1155'
+    return this.order.token_type === "ERC1155";
   }
 
   get isErc721() {
-    return this.order.token_type ==='ERC721'
+    return this.order.token_type === "ERC721";
   }
 
   get timeRemaining() {
@@ -251,7 +251,7 @@ export default class BidderRow extends Vue {
         const takerAddress = this.account.address;
 
         let takerAssetAmount = null;
-        if(this.isErc1155){
+        if (this.isErc1155) {
           takerAssetAmount = new BigNumber(this.order.quantity);
         } else {
           takerAssetAmount = new BigNumber(1);
@@ -276,15 +276,15 @@ export default class BidderRow extends Vue {
         signedOrder["salt"] = BigNumber(signedOrder.salt);
         signedOrder["takerFee"] = BigNumber(signedOrder.takerFee);
 
-        let tokenCont = null;
-        if(this.isErc721) {
-          tokenCont = new ERC721TokenContract(
+        let tokenContract = null;
+        if (this.isErc721) {
+          tokenContract = new ERC721TokenContract(
             nftContract,
             providerEngine()
           );
 
           // Owner of current token
-          const owner = await tokenCont
+          const owner = await tokenContract
             .ownerOf(new BigNumber(nftTokenId))
             .callAsync();
           const isOwnerOfToken =
@@ -303,15 +303,15 @@ export default class BidderRow extends Vue {
           }
         } else {
           let matic = new Web3(this.networks.matic.rpc);
-          tokenCont = new matic.eth.Contract(
-            this.networkMeta.abi('ChildERC1155', 'pos'),
+          tokenContract = new matic.eth.Contract(
+            this.networkMeta.abi("ChildERC1155", "pos"),
             nftContract
           );
         }
 
         // Check Approve 0x, Approve if not
         const isApproved = await this.approve0x(
-          tokenCont,
+          tokenContract,
           contractWrappers,
           takerAddress
         );
@@ -407,36 +407,32 @@ export default class BidderRow extends Vue {
     }
   }
 
-  async approve0x(tokenCont, contractWrappers, makerAddress) {
+  async approve0x(tokenContract, contractWrappers, makerAddress) {
     try {
       // Check if token is approved to 0x
       let isApprovedForAll;
-      const nftContract = this.order.categories.categoriesaddresses[0]
-          .address;
-      if(this.order.token_type ==='ERC721'){
-        isApprovedForAll = await tokenCont
-        .isApprovedForAll(
-          makerAddress,
-          contractWrappers.contractAddresses.erc721Proxy
-        )
-        .callAsync();
-
+      const nftContract = this.order.categories.categoriesaddresses[0].address;
+      if (this.order.token_type === "ERC721") {
+        isApprovedForAll = await tokenContract
+          .isApprovedForAll(
+            makerAddress,
+            contractWrappers.contractAddresses.erc721Proxy
+          )
+          .callAsync();
       } else {
-        isApprovedForAll = await tokenCont.methods
-        .isApprovedForAll(
-          makerAddress,
-          contractWrappers.contractAddresses.erc1155Proxy
-        )
-        .call();
-        
+        isApprovedForAll = await tokenContract.methods
+          .isApprovedForAll(
+            makerAddress,
+            contractWrappers.contractAddresses.erc1155Proxy
+          )
+          .call();
       }
       console.log("Approving 1", isApprovedForAll);
       if (!isApprovedForAll) {
-        if(this.order.token_type==='ERC721'){
-
+        if (this.order.token_type === "ERC721") {
           console.log("Approving 2", {
             isApprovedForAll,
-            tokenCont: tokenCont,
+            tokenContract: tokenContract,
             erc721Proxy: contractWrappers.contractAddresses.erc721Proxy,
             makerAddress: makerAddress,
           });
@@ -465,22 +461,20 @@ export default class BidderRow extends Vue {
               type: "failure",
             }
           );
-
         } else {
           let maticWeb3 = new Web3(window.ethereum);
-          let cont = new maticWeb3.eth.Contract(
-            this.networkMeta.abi('ChildERC1155', 'pos'),
+          let contract = new maticWeb3.eth.Contract(
+            this.networkMeta.abi("ChildERC1155", "pos"),
             nftContract
-          )
+          );
 
           console.log("Approving 2", {
             isApprovedForAll,
-            tokenCont: cont,
+            tokenContract: contract,
             erc1155Proxy: contractWrappers.contractAddresses.erc1155Proxy,
             makerAddress: makerAddress,
           });
 
-          
           const makerERC1155ApprovalTxHash = await cont
             .setApprovalForAll(
               contractWrappers.contractAddresses.erc1155Proxy,
@@ -506,9 +500,7 @@ export default class BidderRow extends Vue {
               type: "failure",
             }
           );
-
         }
-        
       }
       return true;
     } catch (error) {

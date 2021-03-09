@@ -22,7 +22,7 @@
                 >
               </nav>
               <div
-                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border flex"
+                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border d-flex"
               >
                 <div v-if="isErc1155" class="d-flex align-self-center ps-b-8">
                   <div
@@ -585,7 +585,7 @@ export default class SellToken extends Vue {
       let erc1155TokenCont = null;
       let isApproved = false;
 
-      if (this.nftToken.type === "ERC721") {
+      if (this.isErc721) {
         takerAssetAmount = this.price.toString(10);
         minPrice = this.minPrice;
 
@@ -810,7 +810,7 @@ export default class SellToken extends Vue {
       this.networks.matic.chainId
     );
 
-    if (this.nftToken.type === "ERC721") {
+    if (this.isErc721) {
       isApprovedForAll = await tokenCont
         .isApprovedForAll(
           makerAddress,
@@ -832,7 +832,7 @@ export default class SellToken extends Vue {
           window.ethereum.chainId ===
           "0x" + this.networks.matic.chainId.toString(16)
         ) {
-          if (this.nftToken.type === "ERC721") {
+          if (this.isErc721) {
             const makerERC721ApprovalTxHash = await tokenCont
               .setApprovalForAll(
                 contractWrappers.contractAddresses.erc721Proxy,
@@ -1036,7 +1036,7 @@ export default class SellToken extends Vue {
       formData.signature = JSON.stringify(signedOrder);
       formData.usd_price = this.priceInUSD.toString();
       formData.token_type = this.nftToken.type;
-      if (this.nftToken.type === "ERC1155") {
+      if (this.isErc1155) {
         let pricePerUnit = new BigNumber(this.pricePerUnit);
         let amount = new BigNumber(this.erc1155Amount);
         let price = amount.times(pricePerUnit).toString(10);
@@ -1194,7 +1194,7 @@ export default class SellToken extends Vue {
 
   get priceInUSD() {
     let equivalentUSD;
-    if (this.nftToken.type === "ERC721") {
+    if (this.isErc721) {
       equivalentUSD = this.convertPriceToUSD(this.price);
     } else {
       let pricePerUnit = new BigNumber(this.pricePerUnit);

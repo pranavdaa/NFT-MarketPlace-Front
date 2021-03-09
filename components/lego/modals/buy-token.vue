@@ -764,7 +764,7 @@ export default class BuyToken extends Vue {
           .callAsync();
         let takerAssetData = null;
 
-        if(this.order.token_type === "ERC1155") {
+        if(this.isErc1155) {
           takerAssetAmount = new BigNumber(this.order.quantity)
           takerAssetData = await contractWrappers.devUtils
           .encodeERC1155AssetData(
@@ -780,7 +780,6 @@ export default class BuyToken extends Vue {
           takerAssetData = await contractWrappers.devUtils
           .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
           .callAsync();
-          
         }
 
         const orderTemplate = {
