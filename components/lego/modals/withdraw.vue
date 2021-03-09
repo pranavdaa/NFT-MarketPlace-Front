@@ -67,7 +67,7 @@
       :cancel="onCloseConfirmWithdraw"
       :refreshBalance="refreshBalance"
     />
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div class="modal-backdrop show"></div>
   </div>
 </template>
 

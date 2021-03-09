@@ -412,7 +412,7 @@ export default class BidderRow extends Vue {
       // Check if token is approved to 0x
       let isApprovedForAll;
       const nftContract = this.order.categories.categoriesaddresses[0].address;
-      if (this.order.token_type === "ERC721") {
+      if (this.isErc721) {
         isApprovedForAll = await tokenContract
           .isApprovedForAll(
             makerAddress,
@@ -429,7 +429,7 @@ export default class BidderRow extends Vue {
       }
       console.log("Approving 1", isApprovedForAll);
       if (!isApprovedForAll) {
-        if (this.order.token_type === "ERC721") {
+        if (this.isErc721) {
           console.log("Approving 2", {
             isApprovedForAll,
             tokenContract: tokenContract,
