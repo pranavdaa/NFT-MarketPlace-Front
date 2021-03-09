@@ -1,10 +1,6 @@
 <template>
   <div class="section position-absolute">
-    <div
-      class="modal receive-modal-wrapper"
-      v-bsl="show"
-      v-bind:class="{ show: show && !hidden }"
-    >
+    <div class="modal receive-modal-wrapper show">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box withdraw-box">
           <div class="box-header justify-content-center">
@@ -93,11 +89,6 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
 
 @Component({
   props: {
-    show: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     visible: {
       type: Function,
       required: true,
@@ -290,7 +281,7 @@ export default class Withdraw extends Vue {
       // console.log(error);
     }
 
-    this.onSignatureDenied()
+    this.onSignatureDenied();
     return { sig: null };
   }
 

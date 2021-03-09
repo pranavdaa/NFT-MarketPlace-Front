@@ -125,7 +125,6 @@
 
         <sell-token
           class="text-left"
-          :show="showSellModal"
           :close="onCloseSellModal"
           :nftToken="selectedToken"
           v-if="showSellModal"
@@ -134,7 +133,6 @@
 
         <send-token
           class="text-left"
-          :show="showSendModal"
           :close="onCloseSendModal"
           :nftToken="selectedToken"
           v-if="showSendModal"
@@ -146,7 +144,6 @@
             (selectedCategory && showWithdrawModal) ||
             (selectedTokens.length > 0 && showWithdrawModal)
           "
-          :show="showWithdrawModal"
           :visible="onWithdraw"
           :cancel="onWithdrawClose"
           :tokens="selectedCateTokens"
@@ -439,7 +436,7 @@ export default class MaticNewTab extends Vue {
   }
   get searchedTokens() {
     if (this.searchInput !== null && this.displayedTokens.length > 0) {
-      return fuzzySearchResult(this.searchInput, this.displayedTokens)
+      return fuzzySearchResult(this.searchInput, this.displayedTokens);
     } else {
       return this.displayedTokens;
     }

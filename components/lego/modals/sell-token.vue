@@ -1,10 +1,7 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
-    <div
-      class="modal transaction-prog-modal"
-      v-bind:class="{ show: show, 'hide-modal': showApproveModal }"
-    >
+    <div class="modal-backdrop show"></div>
+    <div class="modal transaction-prog-modal show">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
           <div class="box-body">
@@ -340,10 +337,6 @@ const TEN = BigNumber(10);
 
 @Component({
   props: {
-    show: {
-      type: Boolean,
-      required: true,
-    },
     nftToken: {
       type: Object,
       required: true,
