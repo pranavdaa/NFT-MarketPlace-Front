@@ -54,10 +54,10 @@
           {{ $t("account.banner.WETHBalance") }}
         </div>
         <div
-          v-if="erc20Tokens[0]"
+          v-if="erc20Tokens[1]"
           class="white-color amount font-body-medium text-right"
         >
-          {{ formattedFullUSDBalance(0) }}
+          {{ formattedFullUSDBalance(1) }}
         </div>
       </div>
       <div
@@ -67,10 +67,10 @@
           {{ $t("account.banner.DAIBalance") }}
         </div>
         <div
-          v-if="erc20Tokens[1]"
+          v-if="erc20Tokens[0]"
           class="white-color amount font-body-medium text-right"
         >
-          {{ formattedFullUSDBalance(1) }}
+          {{ formattedFullUSDBalance(0) }}
         </div>
       </div>
 
