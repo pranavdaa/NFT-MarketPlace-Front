@@ -54,10 +54,10 @@
           {{ $t("account.banner.WETHBalance") }}
         </div>
         <div
-          v-if="erc20Tokens[1]"
+          v-if="erc20TokenBySymbol('WETH')"
           class="white-color amount font-body-medium text-right"
         >
-          {{ formattedFullUSDBalance(1) }}
+          {{ formattedFullUSDBalance("WETH") }}
         </div>
       </div>
       <div
@@ -67,10 +67,10 @@
           {{ $t("account.banner.DAIBalance") }}
         </div>
         <div
-          v-if="erc20Tokens[0]"
+          v-if="erc20TokenBySymbol('DAI')"
           class="white-color amount font-body-medium text-right"
         >
-          {{ formattedFullUSDBalance(0) }}
+          {{ formattedFullUSDBalance("DAI") }}
         </div>
       </div>
 
@@ -154,17 +154,27 @@ export default class AccountBanner extends Vue {
     window.maticWidgetEventsListener = this.maticWidgetEventsListener;
   }
 
-  formattedFullUSDBalance(index) {
+  erc20TokenBySymbol(symbol) {
+    let filteredItem = this.erc20Tokens.find((obj) => obj.symbol === symbol);
+    return filteredItem;
+  }
+
+  indexBySymbol(symbol) {
+    let filteredItem = this.erc20Tokens.find((obj) => obj.symbol === symbol);
+    return this.erc20Tokens.indexOf(filteredItem);
+  }
+
+  formattedFullUSDBalance(symbol) {
     let currencyBalance = this.totalCurrencyBalance;
-    for (let i = 0; i < currencyBalance.length; i++){
-      if(currencyBalance[i] && parseFloat(currencyBalance[i])>0){
-        currencyBalance[i] = parseFloat(currencyBalance[i].toFixed(3))
-      }
-      else{
-        currencyBalance[i] = "00.00"
+    for (let i = 0; i < currencyBalance.length; i++) {
+      if (currencyBalance[i] && parseFloat(currencyBalance[i]) > 0) {
+        currencyBalance[i] = parseFloat(currencyBalance[i].toFixed(3));
+      } else {
+        currencyBalance[i] = "00.00";
       }
     }
-    return currencyBalance[index]
+    let index = this.indexBySymbol(symbol);
+    return currencyBalance[index];
   }
 
   get widgetKey() {
