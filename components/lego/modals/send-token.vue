@@ -145,6 +145,8 @@ import { isValidAddress } from "ethereumjs-util";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
 
+const ZERO = BigNumber(0);
+
 @Component({
   props: {
     nftToken: {
@@ -179,9 +181,7 @@ export default class SendToken extends Vue {
   toAddress = null;
   erc1155Amount = null;
 
-  mounted() {
-    console.log(this.nftToken);
-  }
+  mounted() {}
 
   handleAddressInput(input) {
     this.dirty = false;
