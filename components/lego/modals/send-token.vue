@@ -385,9 +385,10 @@ export default class SendToken extends Vue {
             });
           if (erc721TransferTxHash) {
             //console.log("Transfer Hash", erc721TransferTxHash);
+            this.refreshNFTTokens()
             setTimeout(() => {
               this.refreshNFTTokens()
-            }, 7000);
+            }, 10000);
 
             app.addToast(
               "Transferred successfully",
@@ -422,9 +423,10 @@ export default class SendToken extends Vue {
               gasPrice: 1000000000,
             });
           if (erc1155TransferTxHash) {
+            this.refreshNFTTokens()
             setTimeout(() => {
               this.refreshNFTTokens()
-            }, 7000);
+            }, 10000);
 
             app.addToast(
               "Transferred successfully",
