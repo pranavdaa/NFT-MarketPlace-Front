@@ -54,10 +54,10 @@ export function fuzzySearchResult(inputVal, tokensList) {
 
   tokensList.forEach((token) => {
     if (
-      fuzzysearch(inputVal, token.name) ||
-      fuzzysearch(inputVal, token.description) ||
-      fuzzysearch(inputVal, token.token_id) ||
-      fuzzysearch(inputVal, token.category.name)
+      (token.name ? fuzzysearch(inputVal, token.name) : false) ||
+      (token.description ? fuzzysearch(inputVal, token.description) : false) ||
+      (token.token_id ? fuzzysearch(inputVal, token.token_id) : false) ||
+      (token.category.name ? fuzzysearch(inputVal, token.category.name) : false)
     ) {
       searchedTokensList.push(token);
     }
