@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="modal fade show" v-if="show">
+    <div class="modal fade show">
       <div class="modal-dialog align-self-center">
         <div class="box">
           <div class="box-body">
@@ -53,7 +53,7 @@
                       :disabled="approveLoading || isApproved === true"
                       :click="approveConfirm"
                     ></button-loader>
-                    <div 
+                    <div
                       class="text-danger mx-auto text-center font-body-small"
                       v-if="networkChangeNeeded===true"
                     >
@@ -109,7 +109,7 @@
       </div>
     </div>
 
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div class="modal-backdrop show"></div>
   </section>
 </template>
 
@@ -120,11 +120,6 @@ import Component from "nuxt-class-component";
 
 @Component({
   props: {
-    show: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
     close: {
       type: Function,
       required: false

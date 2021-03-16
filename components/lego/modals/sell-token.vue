@@ -1,7 +1,7 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop show"></div>
-    <div class="modal transaction-prog-modal show">
+    <div class="modal-backdrop show" v-if="!showApproveModal"></div>
+    <div class="modal transaction-prog-modal show" v-if="!showApproveModal">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
           <div class="box-body">
@@ -279,7 +279,7 @@
     </div>
 
     <approve-process
-      :show="showApproveModal"
+      v-if="showApproveModal"
       :close="closeApproveModal"
       :approveClicked="approveClickedFunc"
       :signClicked="signClickedFunc"
