@@ -76,7 +76,7 @@
               v-if="selectedCategory"
               class="btn btn-primary ps-x-32 ms-l-sm-20 ms-t-16 ms-t-sm-0 text-nowrap"
               @click.prevent="onWithdraw()"
-              :disabled="!selectedCategory.isOpenseaCompatible"
+              :disabled="displayedTokens.length <= 0 || !selectedCategory.isOpenseaCompatible"
             >
               {{
                 $t("maticTab.withdrawBtn", {

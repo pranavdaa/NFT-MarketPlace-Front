@@ -298,7 +298,7 @@
     />
 
     <approve-process
-      :show="showApproveModal"
+      v-if="showApproveModal"
       :close="closeApproveModal"
       :approveClicked="approveClickedFunc"
       :signClicked="signClickedFunc"
@@ -768,13 +768,13 @@ export default class BuyToken extends Vue {
           takerAssetAmount = new BigNumber(this.order.quantity)
           takerAssetData = await contractWrappers.devUtils
           .encodeERC1155AssetData(
-            nftContract, 
+            nftContract,
             [new BigNumber(decimalnftTokenId)],
             [new BigNumber(this.order.quantity)],
             "0x"
             )
           .callAsync();
-          
+
         } else {
           takerAssetAmount = new BigNumber(1)
           takerAssetData = await contractWrappers.devUtils
