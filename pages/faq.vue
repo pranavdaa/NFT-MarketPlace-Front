@@ -8,16 +8,60 @@
             <accordion-item :accordionItem="accordion">
               <template slot="accordion-header">
                 <div class="font-body-medium">
-                  NFT Marketplace URL ?
+                  How do I access OpenSea’s Matic marketplace?
                 </div>
                 <span class="spin">+</span>
               </template>
 
               <template slot="accordion-content">
                 <div class="font-body-medium ps-t-20 text-gray-500">
-                  <a href="https://matic.opensea.io/" target="_blank"
-                    >https://matic.opensea.io/</a
-                  >
+                  OpenSea's Matic marketplace is currently accessible at <a href="https://matic.opensea.io/" target="_blank">matic.opensea.io</a>. In the near future, we plan to integrate Matic assets directly into the core OpenSea marketplace at <a href="https://https://opensea.io" target="_blank">opensea.io</a>.
+                  
+                </div>
+              </template>
+            </accordion-item>
+
+            <accordion-item :accordionItem="accordion">
+              <template slot="accordion-header">
+                <div class="font-body-medium">
+                  How can I get customer support if I run into issues while using this marketplace?
+                </div>
+                <span class="spin">+</span>
+              </template>
+
+              <template slot="accordion-content">
+                <div class="font-body-medium ps-t-20 text-gray-500">
+                  We are creating a dedicated ticketing system to handle incoming support requests. In the meantime, please send support requests <a href="https://openseahelp.zendesk.com/hc/en-us/requests/new?ticket_form_id=1500000324402" target="_blank">here</a> and include the word 'Matic' in your ticket.
+                </div>
+              </template>
+            </accordion-item>
+
+            <accordion-item :accordionItem="accordion">
+              <template slot="accordion-header">
+                <div class="font-body-medium">
+                  Which wallets are supported for use with this marketplace?
+                </div>
+                <span class="spin">+</span>
+              </template>
+
+              <template slot="accordion-content">
+                <div class="font-body-medium ps-t-20 text-gray-500">
+                  <a href="https://metamask.io/" target="_blank">MetaMask</a> is currently supported as our recommended wallet provider, as the connection to Matic is more seamless than with most other wallets. We'll be evaluating other wallets soon.
+                </div>
+              </template>
+            </accordion-item>
+
+            <accordion-item :accordionItem="accordion">
+              <template slot="accordion-header">
+                <div class="font-body-medium">
+                  How to get WETH/DAI on Matic?
+                </div>
+                <span class="spin">+</span>
+              </template>
+
+              <template slot="accordion-content">
+                <div class="font-body-medium ps-t-20 text-gray-500">
+                  You can follow this <a href="https://docs.matic.network/docs/develop/wallets/matic-web-wallet/deposit-eth-dai-on-matic" target="_blank">guide</a> to understand how to get WETH/DAI on Matic. They can also be purchased directly on the Matic chain using the fiat on-ramp provider <a href="https://global.transak.com/" target="_blank">Transak</a>
                 </div>
               </template>
             </accordion-item>
@@ -55,79 +99,65 @@ import AccordionItem from "~/components/lego/accordion-item";
 
 const FAQS = [
   {
-    question: "Support Query Link - Telgram, Discord ?",
+    question: "What's an 'NFT marketplace'?",
     answer:
-      "It has been decided to handle all support queries using a ticketing system. Links should be available soon."
+      "An NFT marketplace is an exchange platform for ERC721 and ERC1155 collectibles. Users can place sell orders and also buy different listings placed by others on the platform. This marketplace is on the Matic platform, which facilitates gas-less meta-transactions. This means users can exchange their game assets without paying transaction fees: all that's needed to complete the exchange are ERC20 tokens."
   },
   {
-    question: "Supported Wallets ?",
-    answer: "Metamask"
-  },
-  {
-    question: "What is NFT Marketplace ?",
+    question: "How do I migrate NFTs from Ethereum to Matic?",
     answer:
-      "It is a exchange platform for ERC721 and ERC1155 collectibles. Users can place sell orders and also buy the different orders placed by others on the platform. It is on the matic platform and facilitates gas-less meta-transactions. This simply means users can exchange their game assets without paying any transaction fees. All they need is ERC20 tokens."
-  },
-  {
-    question: "How to move NFT's from Ethereum to Matic ? ",
-    answer:
-      "There is a bulk deposit option available on the NFT marketplace. Using that option, multiple tokens that belong to the same NFT category can be deposited from the Ethereum to Matic chain. This mechanism is facilitated by the PoS bridge that is built across Ethereum and Matic"
-  },
-  {
-    question: "Which network to use ? ",
-    answer:
-      "Users can choose to stay on the Ethereum network itself throughout their session on the NFT Marketplace. The NFT Marketplace is network agnostic enabled and all transactions are gas-less"
+      "There is a bulk deposit option available on the NFT marketplace. Using that option, multiple tokens that belong to the same NFT category can be deposited to the Matic chain from Ethereum. This mechanism is facilitated by the PoS bridge that is built across Ethereum and Matic."
   },
   {
     question:
-      "Do I need to have NFT and ERC20 tokens on Matic N/w to use the NFT Marketplace ?",
+      "Which network should I use while on this marketplace?",
     answer:
-      "Yes, the assets should be present on the Matic chain in order to place orders or buy orders. If there are no assets, then they can be brought to Matic from Ethereum Mainnet by bulk depositing."
+      "You can either stay on the Ethereum network or the Matic network. The NFT marketplace is network-agnostic and all transactions are gas-less."
   },
   {
-    question: "Which ERC20 tokens are supported ? ",
+    question: "Do I need to have NFT and ERC20 tokens on Matic in order to use the marketplace?",
     answer:
-      "Currently only WETH and DAI are the supported ERC20 tokens, using which NFT's can be purchased. "
+      "Yes, you should have assets present on the Matic chain in order to sell or buy items. If you don't have assets on Matic, they can be deposited to Matic from Ethereum through the bulk deposit process (see question above: 'How do I migrate NFTs from Ethereum to Matic')."
   },
   {
-    question: "How to list NFT's in the NFT Marketplace ? ",
+    question: "How can I buy NFTs on this marketplace? Which ERC20 tokens are supported?",
     answer:
-      "From the items on Matic section under the 'My Accounts' tab, the NFT asset balance can be viewed. Clicking on one of the tokens will redirect to a pop up that will have options to place Fixed Price and Negotiation orders."
+      "You can purchase NFTs on this marketplace with WETH and DAI."
   },
   {
-    question: "What is a FIXED and NEGOTIATION order ?",
+    question: "How do I list NFTs for sale in this marketplace?",
     answer:
-      "Fixed Price orders lets the seller place the order for a fixed price and this order can be bought only for that mentioned price. Negotiation orders lets the seller set a minimum price and an expected price for the sell order. The buyers then can start placing bids based on the minimum price. Accepting or rejecting the bid depends on the seller."
+      "Under the Matic section in the 'My Account' tab, you can view your NFT assets. Clicking on one of these NFTs will redirect you to a pop-up that will allow you to place Fixed Price and Negotiation listings, or 'orders.'"
   },
   {
-    question: "Can I bulk deposit NFT's ? ",
+    question: "What is a 'fixed price order' versus a 'negotiation order'?",
     answer:
-      "Yes. Bulk deposit option is available to move assets from Ethereum to Matic. It helps save transaction fees as well as time."
+      "Fixed Price orders allow the seller to place the order for a fixed price. This asset can then be purchased only for that price. Negotiation orders allow the seller to set a minimum price and an expected price for the sale. The buyers can then place bids based on the minimum price. The seller is able to decide whether to accept or reject each bid."
   },
   {
-    question: "Where can I see the order history ? ",
+    question: "Why is it recommended to bulk deposit my NFTs?",
     answer:
-      "Order history can be viewed under the Orders section in the 'My Accounts' tab"
+      "By using the bulk deposit option to move assets from Ethereum to Matic, you can save transaction fees as well as time."
   },
   {
-    question: "How to see the Deposit/Withdraw history ? ",
+    question: "Where can I find my order history?",
     answer:
-      "Deposit & Withdraw history can be viewed under the Deposit & Withdraw section in the 'My Account' tab"
+      "Your order history is viewable under the Orders section in the 'My Account' tab."
   },
   {
     question:
-      "What is the underlying DEX protocol being used for NFT marketplace ? ",
-    answer: "The 0x protocol is being used for this purpose."
+      "How can I see my deposit and withdrawal history?",
+    answer: "Deposit and withdrawal history can be viewed under the Deposit & Withdraw section in the 'My Account' tab."
   },
   {
-    question: "How to view NFT's available for sale ?",
+    question: "What is the underlying DEX (decentralized exchange) protocol that is being used for this marketplace?",
     answer:
-      "The active orders or the NFT's for sale can be viewed from the 'Discover' tab"
+      "We are using the 0x protocol for this marketplace."
   },
   {
-    question: "What are the different ways to get ERC20 tokens on Matic ? ",
+    question: "How do I view the NFTs that are available for sale?",
     answer:
-      "They can be deposited from Ethereum to Matic using the Matic web wallet ( https://wallet.matic.network/ ) or bought directly on the Matic chain using Transank Fiat on ramp solution. You can also receive tokens from any other address on Matic chain that has the ERC20 tokens. "
+      "The NFTs for sale can be viewed from the 'Discover' tab."
   },
   {
     question: "What can be used to buy NFT's ? ",
@@ -136,59 +166,55 @@ const FAQS = [
   },
   {
     question:
-      "Do I need to have MATIC on Matic Network to use the NFT marketplace ? ",
+      "How can I get ERC20 tokens on Matic?",
     answer:
-      "No. The NFT marketplace is meta transaction enabled and all the transactions are gas-less. However, some NFT's that exist only on the Matic chain do not have Matic meta-transaction support and hence MATIC tokens will be required to pay for gas when dealing with such tokens. "
+      "ERC20 tokens can be deposited from Ethereum to Matic using the Matic web wallet or can be purchased directly on the Matic chain using the fiat on-ramp provider Transak. You can also receive tokens from any other address on Matic that has ERC20 tokens."
   },
   {
-    question: "How to place a sell order ? ",
+    question: "Do I need to have the MATIC token on the Matic network to use this marketplace?",
     answer:
-      "Sell order can be placed by clicking on any token from the Items on Matic section of the 'My Accounts' tab. You can either place a Fixed or Negotiation order. "
+      "In most cases, you do not. This marketplace is meta-transaction-enabled and each of the transactions are gas-less. However, some NFTs that exist only on the Matic chain do not have Matic meta-transaction support, and when dealing with these tokens MATIC tokens will be required to pay for gas."
   },
   {
-    question: "How to place bids ? ",
+    question: "How do I place a sell order?",
     answer:
-      "Bids can be placed by clicking on the orders marked as Negotiation from the Discover page of the nFT-Marketplace"
+      "A sell order can be placed by clicking on any token from the 'Items on Matic' section of the 'My Accounts' tab. You will be able to place either a Fixed Price order or a Negotiation order."
   },
   {
-    question: "How to cancel orders ?",
+    question: "How do I place bids ? ",
     answer:
-      "The cancel button is available only on the 'order detail' page. Order detail page can be viewed by clicking on the order from the discover page or also by clicking on 'View order' button on the tokens that appear in the items on Matic section of the my accounts tab. You can also view the order detail page by clicking on the order from the order history section under my accounts"
+      "Bids can be placed by clicking on the orders marked as Negotiation orders from the 'Discover' page of the marketplace."
   },
   {
-    question: "How to accept/reject bids ? ",
+    question: "How do I cancel orders ?",
     answer:
-      "You can accept/reject bids by moving to the order detail page and clicking on accept/reject from the bid list that appears on the order detail page. "
+      "The cancel button is available only on the 'order detail' page. The order detail page can be viewed by clicking on the order from the 'Discover' page or also by clicking on the 'View Order' button on each NFT that appears in the 'Items on Matic' section of the 'My Accounts' tab. You can also view the order detail page by clicking on the order from the 'Order History' section of the 'My Accounts' tab."
   },
   {
-    question: "Items on Matic vs Items on Ethereum ? ",
+    question: "How do I accept/reject bids ? ",
     answer:
-      "The NFT's that you own on Matic will appear in the Items on Matic section and the NFT's that you own on Ethereum shall appear in the Items on Ethereum section"
+      "You can accept and reject bids from the order detail page by clicking on 'accept' or 'reject' from the bid list."
   },
   {
-    question: "How to bulk withdraw ? ",
+    question: "Where can I see which of my NFTs are on Matic and which of my NFTs are on Ethereum?",
     answer:
-      "Bulk withdraw is a feature that lets you move multiple NFT's that belong to the same category from Matic to Ethereum by using the PoS bridge that is built across the Matic and Ethereum network. You will have to move to the individual category view in order see the bulk withdraw option."
+      "The NFTs that you own on Matic will appear in the 'Items on Matic' section of the 'My Accounts' tab, whereas the items that you own on Ethereum will appear in the 'Items on Ethereum' section of the 'My Accounts' tab."
   },
   {
-    question: "What do I do in if checkpoint not happening ? ",
-    answer: "What do I do in if checkpoint not happening ? "
+    question: "How do I bulk withdraw from this marketplace?",
+    answer:
+      "Bulk withdrawal is a feature that allows you to move multiple NFTs that belong to the same category from Matic to Ethereum. This is done using the PoS bridge that is built across the Matic and Ethereum network. You will have to move to the individual category view in order to see the bulk withdrawal option."
   },
   {
-    question: "What do I do in if checkpoint not happening ? ",
+    question: "What can I do if a transaction is taking too long?",
     answer:
-      "Please ensure that you have logged into the same account from which you had logged in. If you still cant find it, please raise a ticket on our support system."
+      "Ethereum transactions can take longer periods of time to complete depending on network congestion. Please wait or increase the gas price to speed up the transaction."
   },
   {
-    question: "What can I do if the transaction taking too long ?",
+    question: "Can I change the gas limit or the gas price?",
     answer:
-      "Ethereum transactions take time depending on network congestion. Kindly wait or increase the gas price to speed up the transaction "
+      "The gas price can be changed, but the gas limit should not be changed as it's calculated by the wallet or app."
   },
-  {
-    question: "Can I change gas limit or gas price ? ",
-    answer:
-      "Gas price can be varied but gas limit should not be changed as it it set by the application based on some calculations. "
-  }
 ];
 
 @Component({
