@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="row ps-y-16 ps-x-md-16 justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-8 h-100">
           <div
             class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             v-bind:style="{ background: bg }"
@@ -117,7 +117,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 d-none d-lg-flex">
+        <div class="col-md-4 d-none d-lg-flex h-100">
           <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
             <h3 class="font-heading-medium font-semibold">
               About {{ token.name }}
