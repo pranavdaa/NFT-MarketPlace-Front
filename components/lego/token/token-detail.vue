@@ -549,15 +549,25 @@ export default class TokenDetail extends Vue {
       if (response.status === 200 && response.data.data) {
         let data = new OrderModel(response.data.data);
         this.order = data;
+      } else if (response.status === 202 && response.data.data) {
+        let data = new OrderModel(response.data.data);
+        let sellerAddress = data.seller_users.address;
+
+        if (this.account.address === sellerAddress) {
+          this.order = data
+        } else {
+          let res = await getAxios().post(`orders/validate`, { orderId: this.tokenId });
+
+          if (res.status === 200) {
+            app.addToast("Order Invalid", "This order is no longer valid or has been sold out. Please try to buy some other NFT.", {
+              type: "failure",
+            });
+            this.$router.push({ name: "index" });
+          }
+        }
       }
     } catch (error) {
-      let res = await getAxios().post(`orders/validate`, { orderId: this.tokenId });
-      if (res.status === 200) {
-        app.addToast("Order Invalid", "This order is no longer valid or has been sold out. Please try to buy some other NFT.", {
-          type: "failure",
-        });
-        this.$router.push({ name: "index" });
-      }
+      console.log(error);
     }
 
     this.isLoadingDetails = false;
