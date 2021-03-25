@@ -1,0 +1,358 @@
+// @import "./font.scss";
+
+//
+// Font
+//
+
+// font family
+$font-family-base: "Graphik", sans-serif;
+
+// font weights
+$font-weights: (
+  "light": 300,
+  "regular": 400,
+  "medium": 500,
+  "semibold": 600,
+  "bold": 700,
+);
+
+@function font-weight($base) {
+  @return map-get($font-weights, $base);
+}
+
+// font sizes
+$font-sizes: (
+  "caps": 12px,
+  "caption": 12px,
+  "body-small": 0.875rem,
+  "body-medium": 1rem,
+  "body-large": 1.125rem,
+  "heading-small": 1rem,
+  "heading-medium": 1.125rem,
+  "heading-large": 1.5rem,
+);
+
+$font-display-sizes-lg: (
+  "display-medium": 48px,
+  "display-large": 64px,
+  "extra-large": 96px,
+);
+
+$font-display-sizes-sm: (
+  "display-medium": 24px,
+  "display-large": 36px,
+  "extra-large": 48px,
+);
+
+@function font-size($base) {
+  @if map-has-key($font-display-sizes-lg, $base) {
+    @return map-get($font-display-sizes-lg, $base);
+  }
+
+  @return map-get($font-sizes, $base);
+}
+
+// line heights
+$line-heights: (
+  "caps": 16px,
+  "caption": 16px,
+  "body-small": 1.25rem,
+  "body-medium": 1.5rem,
+  "body-large": 1.75rem,
+  "heading-small": 1.25rem,
+  "heading-medium": 1.5rem,
+  "heading-large": 2rem,
+  "display-medium": 110%,
+  "display-large": 110%,
+  "extra-large": 110%,
+);
+
+@function line-height($base) {
+  @return map-get($line-heights, $base);
+}
+
+// font setting for font sizes
+@mixin font-setting($base, $weight: null) {
+  font-size: font-size($base);
+  line-height: line-height($base);
+  @if ($weight) {
+    font-weight: font-weight($weight);
+  }
+}
+
+//
+// Colors
+//
+
+// $primary-700: #002b80;
+// $primary-600: #003cb2;
+// $primary-500: #2b6def;
+// $primary-400: #558af2;
+// $primary-300: #aac5f9;
+// $primary-200: #d5e2fc;
+// $primary-100: #eaf0fd;
+
+$primary-colors: (
+  "700": #002b80,
+  "600": #003cb2,
+  "500": #2b6def,
+  "400": #558af2,
+  "300": #aac5f9,
+  "200": #d5e2fc,
+  "100": #eaf0fd,
+);
+
+@function primary-color($base) {
+  @return map-get($primary-colors, $base);
+}
+
+// $red-700: #c22a0c;
+// $red-600: #e03c1b;
+// $red-500: #f04c2b;
+// $red-400: #f37056;
+// $red-300: #f9b7aa;
+// $red-200: #fcdbd5;
+// $red-100: #fdedea;
+
+$red-colors: (
+  "700": #c22a0c,
+  "600": #e03c1b,
+  "500": #f04c2b,
+  "400": #f37056,
+  "300": #f9b7aa,
+  "200": #fcdbd5,
+  "100": #fdedea,
+);
+
+@function red-color($base) {
+  @return map-get($red-colors, $base);
+}
+
+@function danger-color($base) {
+  @return map-get($red-colors, $base);
+}
+
+// $yellow-700: #f0ae2b;
+// $yellow-600: #f0bf2b;
+// $yellow-500: #f0cf2b;
+// $yellow-400: #fae36e;
+// $yellow-300: #fdf1b7;
+// $yellow-200: #fef8db;
+// $yellow-100: #fefbed;
+
+$yellow-colors: (
+  "700": #f0ae2b,
+  "600": #f0bf2b,
+  "500": #f0cf2b,
+  "400": #fae36e,
+  "300": #fdf1b7,
+  "200": #fef8db,
+  "100": #fefbed,
+);
+
+@function yellow-color($base) {
+  @return map-get($yellow-colors, $base);
+}
+
+@function warning-color($base) {
+  @return map-get($yellow-colors, $base);
+}
+
+// $green-700: #008040;
+// $green-600: #00a050;
+// $green-500: #25cd79;
+// $green-400: #51d794;
+// $green-300: #a8ebc9;
+// $green-200: #d3f5e4;
+// $green-100: #e9faf2;
+
+$green-colors: (
+  "700": #008040,
+  "600": #00a050,
+  "500": #25cd79,
+  "400": #51d794,
+  "300": #a8ebc9,
+  "200": #d3f5e4,
+  "100": #e9faf2,
+);
+
+@function green-color($base) {
+  @return map-get($green-colors, $base);
+}
+
+@function success-color($base) {
+  @return map-get($green-colors, $base);
+}
+
+// $light-700: #ffffff;
+// $light-600: #f8f9fa;
+// $light-500: #f3f4f7;
+// $light-400: #e7e9ee;
+// $light-300: #dcdfe6;
+// $light-200: #cfd4dd;
+// $light-100: #b7bfcc;
+
+$light-colors: (
+  "700": #ffffff,
+  "600": #f8f9fa,
+  "500": #f3f4f7,
+  "400": #e7e9ee,
+  "300": #dcdfe6,
+  "200": #cfd4dd,
+  "100": #b7bfcc,
+);
+
+@function light-color($base) {
+  @return map-get($light-colors, $base);
+}
+
+// $dark-700: #061024;
+// $dark-600: #202a3d;
+// $dark-500: #3b465c;
+// $dark-400: #545f76;
+// $dark-300: #6e798f;
+// $dark-200: #8690a5;
+// $dark-100: #9fa8ba;
+
+$dark-colors: (
+  "900": #000000,
+  "700": #061024,
+  "600": #202a3d,
+  "500": #3b465c,
+  "400": #545f76,
+  "300": #6e798f,
+  "200": #8690a5,
+  "100": #9fa8ba,
+);
+
+@function dark-color($base) {
+  @return map-get($dark-colors, $base);
+}
+
+$supportive-colors: (
+  "700": #2517c2,
+  "600": #3828e0,
+  "500": #493af0,
+  "400": #7165f3,
+  "300": #b8b2f9,
+  "200": #dbd9fc,
+  "100": #edecfe,
+);
+
+@function supportive-color($base) {
+  @return map-get($supportive-colors, $base);
+}
+
+//
+// theme colors
+//
+
+$theme-colors: (
+  "primary": primary-color("600"),
+  "secondary": red-color("600"),
+  "success": green-color("600"),
+  "info": primary-color("600"),
+  "danger": red-color("600"),
+  "warning": yellow-color("600"),
+  "light": light-color("700"),
+  "dark": dark-color("700"),
+);
+
+// $theme-color-bases: (
+//   "primary": primary-color,
+//   "secondary": red-color,
+//   "success": green-color,
+//   "info": primary-color,
+//   "danger": red-color,
+//   "warning": yellow-color,
+//   "light": light-color,
+//   "dark": dark-color
+// );
+
+@function theme-color-with-weight($base, $weight) {
+  $theme-color-bases: (
+    "primary": primary-color($weight),
+    "secondary": red-color($weight),
+    "success": green-color($weight),
+    "info": primary-color($weight),
+    "danger": red-color($weight),
+    "warning": yellow-color($weight),
+    "light": light-color($weight),
+    "dark": dark-color($weight),
+  );
+
+  @return map-get($theme-color-bases, $base);
+}
+
+//
+// Other colors
+//
+
+$link-color: primary-color("600");
+$caption-color: dark-color("200");
+$disable-color: dark-color("300");
+$text-muted: dark-color("500");
+$body-bg: light-color("700");
+$body-color: light-color("700");
+
+// Border radius
+$border-radius-sm: 0.2rem;
+$border-radius: 0.3rem;
+$border-radius-lg: 0.4rem;
+$border-radius-xl: 0.5rem;
+
+// box shadow
+$box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.22);
+
+$badge-padding-y: 0.3em;
+$badge-padding-x: 0.4em;
+
+// navbar height
+$navbar-local-height: 80px;
+$navbar-second-local-height: 60px;
+
+// svg icon size
+$svg-icon-size: 16px;
+
+// breadcrumb
+$breadcrumb-divider: none;
+
+// padding sizes
+$paddingSizes: 0, 1, 2, 4, 6, 8, 12, 16, 20, 24, 28, 32, 40, 60, 80, 120;
+$paddingTypes: (
+  "ps": "padding",
+  "ms": "margin",
+);
+
+// Media queries constraines for devices
+
+// Extra small devices (portrait phones, less than 576px)
+$xs-devices: "(max-width: 575.98px)";
+// Small devices (landscape phones, 576px and up)
+$sm-devices: "(min-width: 576px)";
+// Medium devices (tablets, 768px and up)
+$md-devices: "(min-width: 768px)";
+// Large devices (desktops, 992px and up)
+$lg-devices: "(min-width: 992px)";
+// Extra large devices (large desktops, 1200px and up)
+$xl-devices: "(min-width: 1200px)";
+
+//
+// Mixins
+//
+
+// keyframes mixin
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content;
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-ms-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  }
+}
