@@ -1,5 +1,26 @@
 const uiconfig = require("./config/uiconfig")
 
+let scripts = [
+  // For GTM Google Analytics
+  {
+    hid: "gtm-script1",
+    src: "https://www.googletagmanager.com/gtag/js?id=G-W7PL7L7XJ8",
+    defer: true
+  },
+  {
+    hid: "gtm-script2",
+    innerHTML: `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-W7PL7L7XJ8');
+    `,
+    type: "text/javascript",
+    charset: "utf-8"
+  }
+];
+
 export default {
   mode: 'spa',
   /*
@@ -20,7 +41,9 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: "stylesheet", href: "/fonts/font.css" }
-    ]
+    ],
+    script: scripts,
+    __dangerouslyDisableSanitizers: ["script"] // to clean up url params in GTM Google Analytics script link
   },
   /*
    ** Environment variables
