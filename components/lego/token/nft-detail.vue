@@ -21,11 +21,9 @@
             v-bind:style="{ background: bg }"
           >
             <video autoplay loop height="500px" v-if="isVideoFormat">
-              <source
-                type="video/mp4"
-                :src="token.img_url"
-                @error="handleNotVideo"
-              />
+              <source :src="token.img_url" type="video/webm" @error="handleNotVideo" />
+              <source :src="token.img_url" type="video/ogg" @error="handleNotVideo" />
+              <source :src="token.img_url" type="video/mp4" @error="handleNotVideo" />
             </video>
             <img
               v-else
