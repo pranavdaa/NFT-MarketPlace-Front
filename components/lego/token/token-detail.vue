@@ -37,6 +37,7 @@
               :src="order.token.img_url"
               alt="Kitty"
               @load="onImageLoad"
+              @error="imageLoadError(category, $event)"
             />
           </div>
           <div
@@ -596,6 +597,11 @@ export default class TokenDetail extends Vue {
   }
   onCancelOrderClose() {
     this.showCancelConfirm = false;
+  }
+
+  imageLoadError (category, event) {
+    event.target.src = category.img_url
+    event.target.style.width = '100px';
   }
 
   async cancelOrder() {
