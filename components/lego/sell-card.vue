@@ -9,7 +9,15 @@
     <order-type-tag :type="sellOrderType" v-if="sellOrderType" />
 
     <div class="img-wrapper d-flex ps-t-12 justify-content-center">
+      <video autoplay loop width="100%" v-if="isVideoFormat">
+        <source
+          type="video/mp4"
+          :src="order.token.img_url"
+          @error="handleNotVideo"
+        />
+      </video>
       <img
+        v-else
         :src="order.token.img_url"
         class="asset-img align-self-center"
         :alt="order.token.name"
@@ -140,6 +148,7 @@ import OrderTypeTag from "~/components/lego/token/order-type-tag";
 })
 export default class SellCard extends Vue {
   bg = "#f3f4f7";
+  isVideoFormat = true;
 
   // Initial
   mounted() {}
@@ -239,6 +248,10 @@ export default class SellCard extends Vue {
   imageLoadError (event) {
     event.target.src = this.category.img_url
     event.target.style.width = '100px';
+  }
+
+  handleNotVideo() {
+    this.isVideoFormat = false;
   }
 }
 </script>

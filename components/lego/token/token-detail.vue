@@ -32,7 +32,15 @@
             class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             v-bind:style="{ background: bg }"
           >
+            <video autoplay loop height="500px" v-if="isVideoFormat">
+              <source
+                type="video/mp4"
+                :src="order.token.img_url"
+                @error="handleNotVideo"
+              />
+            </video>
             <img
+              v-else
               class="asset-img align-self-center"
               :src="order.token.img_url"
               alt="Kitty"
@@ -439,6 +447,7 @@ export default class TokenDetail extends Vue {
   isLoadingBids = false;
   isLoadingDetails = false;
   isLoading = false;
+  isVideoFormat = true;
 
   order = {};
 
@@ -604,6 +613,10 @@ export default class TokenDetail extends Vue {
   imageLoadError (event) {
     event.target.src = this.category.img_url
     event.target.style.width = '100px';
+  }
+
+  handleNotVideo() {
+    this.isVideoFormat = false;
   }
 
   async cancelOrder() {

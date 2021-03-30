@@ -30,7 +30,15 @@
       "
     >
       <div class="img-wrapper d-flex ps-t-12 justify-content-center">
+        <video autoplay loop width="100%" v-if="isVideoFormat">
+          <source
+            type="video/mp4"
+            :src="token.img_url"
+            @error="handleNotVideo"
+          />
+        </video>
         <img
+          v-else
           :src="token.img_url"
           class="asset-img align-self-center ps-x-12"
           :alt="token.name"
@@ -177,6 +185,7 @@ const colorThief = new ColorThief();
 export default class NFTTokenCard extends Vue {
   bg = "#f3f4f7";
   maxTokenSelection = app.uiconfig.maxBulkDeposit;
+  isVideoFormat = true;
 
   // Initial
   mounted() {}
@@ -246,6 +255,10 @@ export default class NFTTokenCard extends Vue {
   imageLoadError (event) {
     event.target.src = this.category.img_url
     event.target.style.width = '100px';
+  }
+
+  handleNotVideo() {
+    this.isVideoFormat = false;
   }
 
   // Get
