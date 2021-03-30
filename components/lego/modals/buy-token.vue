@@ -34,6 +34,7 @@
                     :src="order.token.img_url"
                     alt="order.token.name"
                     @load="onImageLoad"
+                    @error="imageLoadError(category, $event)"
                   />
                   <div
                     class="mt-auto w-100 d-flex flex-column fixed-price"
@@ -365,6 +366,10 @@ const TEN = BigNumber(10);
       type: Object,
       require: true,
     },
+    category: {
+      type: Object,
+      required: true
+    },
     close: {
       type: Function,
       required: true,
@@ -464,6 +469,11 @@ export default class BuyToken extends Vue {
   closeApproveModal() {
     this.showApproveModal = false;
     this.close();
+  }
+
+  imageLoadError (category, event) {
+    event.target.src = category.img_url
+    event.target.style.width = '100px';
   }
 
   // get

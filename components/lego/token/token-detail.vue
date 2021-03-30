@@ -318,6 +318,7 @@
       <buy-token
         :show="showBuyToken"
         :order="order"
+        :category="category"
         :refreshBids="refreshBids"
         :close="onBuyTokenClose"
         v-if="showBuyToken && order"
@@ -325,6 +326,7 @@
       <cancel-confirm
         :show="showCancelConfirm"
         :order="order"
+        :category="category"
         :isLoading="isLoading"
         :accept="cancelOrder"
         :close="onCancelOrderClose"
