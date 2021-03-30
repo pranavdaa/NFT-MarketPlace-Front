@@ -73,6 +73,19 @@
           {{ formattedFullUSDBalance("DAI") }}
         </div>
       </div>
+      <div
+        class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
+      >
+        <div class="white-color name ps-b-4 font-heading-small font-semibold">
+          {{ $t("account.banner.USDCBalance") }}
+        </div>
+        <div
+          v-if="erc20TokenBySymbol('USDC')"
+          class="white-color amount font-body-medium text-right"
+        >
+          {{ formattedFullUSDBalance("USDC") }}
+        </div>
+      </div>
 
       <div class="align-self-center">
         <button class="btn btn-light ml-auto" @click="depositModal = true">

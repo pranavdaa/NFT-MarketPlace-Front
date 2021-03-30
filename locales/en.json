@@ -38,6 +38,7 @@
       "totalNft": "Total NFT",
       "WETHBalance": "WETH",
       "DAIBalance": "DAI",
+      "USDCBalance": "USDC",
       "depositWeth": "Add Funds"
     },
     "deposit": {

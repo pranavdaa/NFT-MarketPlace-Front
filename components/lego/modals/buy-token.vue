@@ -307,6 +307,7 @@
       :isSignedStatus="isSignedStatus"
       :signLoading="signLoading"
       :modalTexts="approvalModalText"
+      :networkChangeNeeded="error==='selectMatic'"
     ></approve-process>
 
     <deposit-weth
@@ -392,6 +393,7 @@ export default class BuyToken extends Vue {
   isLoading = false;
   showMore = false;
   displayed = true;
+  error = '';
 
   showMakeOffer = false;
 
@@ -639,6 +641,7 @@ export default class BuyToken extends Vue {
 
   async approveClickedFunc() {
     this.approveLoading = true;
+    this.error = '';
 
     if (this.order.type === this.orderTypes.NEGOTIATION) {
       try {
@@ -648,7 +651,8 @@ export default class BuyToken extends Vue {
         const nftTokenId = this.order.tokens_id;
         const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
           .address;
-
+        const isMetaTx = this.order.erc20tokens.erc20tokensaddresses[0]
+          .isMetaTx;
         const makerAddress = this.account.address;
         // const takerAddress = this.account.address;
         const makerAssetAmount = this.makerAmount.toString(10);
@@ -668,7 +672,8 @@ export default class BuyToken extends Vue {
         const isApproved = this.approve0x(
           contractWrappers,
           erc20Address,
-          makerAddress
+          makerAddress,
+          isMetaTx
         ).then((result) => {
           this.isApprovedStatus = result;
           this.approveLoading = false;
@@ -687,6 +692,7 @@ export default class BuyToken extends Vue {
         const chainId = this.networks.matic.chainId;
         const takerAddress = this.account.address;
         const erc20Address = this.erc20Token.address;
+        const isMetaTx = this.erc20Token.isMetaTx;
         const takerAssetAmount = Web3Wrapper.toBaseUnitAmount(
           new BigNumber(this.order.price),
           this.erc20Token.decimal
@@ -710,7 +716,8 @@ export default class BuyToken extends Vue {
         const isApproved = await this.approve0x(
           contractWrappers,
           erc20Address,
-          takerAddress
+          takerAddress,
+          isMetaTx
         );
 
         this.isApprovedStatus = isApproved;
@@ -958,7 +965,7 @@ export default class BuyToken extends Vue {
     this.checkApprovestatus();
   }
 
-  async approve0x(contractWrappers, erc20Address, takerAddress) {
+  async approve0x(contractWrappers, erc20Address, takerAddress, isMetaTx) {
     let matic = new Web3(this.networks.matic.rpc);
     const erc20TokenCont = new ERC20TokenContract(
       erc20Address,
@@ -970,48 +977,86 @@ export default class BuyToken extends Vue {
       .callAsync();
 
     if (!allowance.gt(ZERO)) {
-      let data = await matic.eth.abi.encodeFunctionCall(
-        {
-          name: "approve",
-          type: "function",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-            },
-            {
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-        },
-        [
-          contractWrappers.contractAddresses.erc20Proxy,
-          "115792089237316195423570985008687907853269984665640564039457584007913129639935",
-        ]
-      );
+      if(isMetaTx){
+        let data = await matic.eth.abi.encodeFunctionCall(
+          {
+            name: "approve",
+            type: "function",
+            inputs: [
+              {
+                name: "spender",
+                type: "address",
+              },
+              {
+                name: "amount",
+                type: "uint256",
+              },
+            ],
+          },
+          [
+            contractWrappers.contractAddresses.erc20Proxy,
+            "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+          ]
+        );
 
-      let { sig } = await this.executeMetaTx(data);
+        let { sig } = await this.executeMetaTx(data);
 
-      let tx = {
-        intent: sig,
-        fnSig: data,
-        from: this.account.address,
-        contractAddress: matic.utils.toChecksumAddress(
-          this.order.erc20tokens.erc20tokensaddresses[0].address
-        ),
-      };
+        let tx = {
+          intent: sig,
+          fnSig: data,
+          from: this.account.address,
+          contractAddress: matic.utils.toChecksumAddress(
+            this.order.erc20tokens.erc20tokensaddresses[0].address
+          ),
+        };
 
-      if (tx) {
+        if (tx) {
+          try {
+            let response = await getAxios().post(`orders/executeMetaTx`, tx);
+            if (response.status === 200) {
+              console.log("Approved");
+              app.addToast("Approved", "You successfully approved", {
+                type: "success",
+              });
+              return true;
+            }
+          } catch (error) {
+            console.log(error);
+            app.addToast(
+              "Failed to approve",
+              "You need to approve the transaction to sale the NFT",
+              {
+                type: "failure",
+              }
+            );
+          }
+        }
+        return false;
+      } else {
+        if (!(await this.metamaskValidation())) {
+          this.approveLoading = false;
+          return;
+        }
         try {
-          let response = await getAxios().post(`orders/executeMetaTx`, tx);
-          if (response.status === 200) {
+          let amount = new BigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+          const erc20Approve = await erc20TokenCont
+              .approve(
+                contractWrappers.contractAddresses.erc20Proxy, 
+                amount
+              )
+              .sendTransactionAsync({
+                from: this.account.address,
+                gas: 8000000,
+                gasPrice: 1000000000,
+              });
+          if (erc20Approve) {
             console.log("Approved");
             app.addToast("Approved", "You successfully approved", {
               type: "success",
             });
             return true;
           }
+
         } catch (error) {
           console.log(error);
           app.addToast(
@@ -1022,7 +1067,17 @@ export default class BuyToken extends Vue {
             }
           );
         }
+        return false;
       }
+    }
+    return true;
+  }
+
+  async metamaskValidation() {
+    const web3obj = new Web3(window.ethereum);
+    const chainId = await web3obj.eth.getChainId();
+    if (chainId !== this.networks.matic.chainId) {
+      this.error = "selectMatic";
       return false;
     }
     return true;
