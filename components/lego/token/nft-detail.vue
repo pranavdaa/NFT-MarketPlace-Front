@@ -25,7 +25,7 @@
               :src="token.img_url"
               alt="Kitty"
               @load="onImageLoad"
-              @error="imageLoadError(category, $event)"
+              @error="imageLoadError"
             />
           </div>
           <div class="details-section">
@@ -245,8 +245,8 @@ export default class NftDetail extends Vue {
     } catch (error) {}
   }
 
-  imageLoadError (category, event) {
-    event.target.src = category.img_url
+  imageLoadError (event) {
+    event.target.src = this.category.img_url
     event.target.style.width = '100px';
   }
 

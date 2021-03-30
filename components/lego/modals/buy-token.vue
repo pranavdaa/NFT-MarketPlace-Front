@@ -34,7 +34,7 @@
                     :src="order.token.img_url"
                     alt="order.token.name"
                     @load="onImageLoad"
-                    @error="imageLoadError(category, $event)"
+                    @error="imageLoadError"
                   />
                   <div
                     class="mt-auto w-100 d-flex flex-column fixed-price"
@@ -471,8 +471,8 @@ export default class BuyToken extends Vue {
     this.close();
   }
 
-  imageLoadError (category, event) {
-    event.target.src = category.img_url
+  imageLoadError (event) {
+    event.target.src = this.category.img_url
     event.target.style.width = '100px';
   }
 
