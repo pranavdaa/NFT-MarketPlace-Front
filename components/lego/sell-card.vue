@@ -14,6 +14,7 @@
         class="asset-img align-self-center"
         :alt="order.token.name"
         @load="onImageLoad"
+        @error="imageLoadError"
       />
     </div>
     <div
@@ -233,6 +234,11 @@ export default class SellCard extends Vue {
   }
   removeFromMarketplace() {
     console.log("removeFromMarketplace");
+  }
+
+  imageLoadError (event) {
+    event.target.src = this.category.img_url
+    event.target.style.width = '100px';
   }
 }
 </script>

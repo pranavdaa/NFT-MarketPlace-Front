@@ -35,6 +35,7 @@
           class="asset-img align-self-center ps-x-12"
           :alt="token.name"
           @load="onImageLoad"
+          @error="imageLoadError"
         />
       </div>
 
@@ -240,6 +241,11 @@ export default class NFTTokenCard extends Vue {
     if (this.order) {
       this.$router.push({ name: "tokens", parms: { id: this.order.id } });
     }
+  }
+
+  imageLoadError (event) {
+    event.target.src = this.category.img_url
+    event.target.style.width = '100px';
   }
 
   // Get

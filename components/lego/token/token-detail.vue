@@ -37,6 +37,7 @@
               :src="order.token.img_url"
               alt="Kitty"
               @load="onImageLoad"
+              @error="imageLoadError"
             />
           </div>
           <div
@@ -317,6 +318,7 @@
       <buy-token
         :show="showBuyToken"
         :order="order"
+        :category="category"
         :refreshBids="refreshBids"
         :close="onBuyTokenClose"
         v-if="showBuyToken && order"
@@ -324,6 +326,7 @@
       <cancel-confirm
         :show="showCancelConfirm"
         :order="order"
+        :category="category"
         :isLoading="isLoading"
         :accept="cancelOrder"
         :close="onCancelOrderClose"
@@ -596,6 +599,11 @@ export default class TokenDetail extends Vue {
   }
   onCancelOrderClose() {
     this.showCancelConfirm = false;
+  }
+
+  imageLoadError (event) {
+    event.target.src = this.category.img_url
+    event.target.style.width = '100px';
   }
 
   async cancelOrder() {

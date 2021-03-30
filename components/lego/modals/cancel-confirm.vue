@@ -24,6 +24,7 @@
                     :src="order.token.img_url"
                     :alt="order.token.name"
                     @load="onImageLoad"
+                    @error="imageLoadError"
                   />
                 </div>
                 <div class="col-md-12">
@@ -88,6 +89,10 @@ const colorThief = new ColorThief();
       type: Object,
       required: true,
     },
+    category: {
+      type: Object,
+      required: true
+    },
     btnTexts: {
       type: Object,
       required: false,
@@ -129,6 +134,11 @@ export default class CancelConfirm extends Vue {
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
       } else this.bg = "#f3f4f7";
     } catch (error) {}
+  }
+
+  imageLoadError (event) {
+    event.target.src = this.category.img_url
+    event.target.style.width = '50px';
   }
 }
 </script>
