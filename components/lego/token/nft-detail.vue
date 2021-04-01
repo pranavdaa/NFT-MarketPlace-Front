@@ -44,7 +44,7 @@
               <p
                 class="font-body-medium"
                 :class="{ 'show-less': showMore, 'show-more': !showMore }"
-                v-if="token.description && token.description.length > 200"
+                v-if="tokenDescription && tokenDescription.length > 200"
               >
                 {{ tokenDescription.slice(0, (tokenDescription.length / 2)) }}
                 <span class="dots">...</span>
@@ -138,7 +138,7 @@
             <p
               class="font-body-medium"
               :class="{ 'show-less': showMore, 'show-more': !showMore }"
-              v-if="token.description && token.description.length > 200"
+              v-if="tokenDescription && tokenDescription.length > 200"
             >
               {{ tokenDescription.slice(0, (tokenDescription.length / 2)) }}
               <span class="dots">...</span>
