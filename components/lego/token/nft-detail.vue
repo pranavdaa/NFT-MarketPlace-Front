@@ -20,7 +20,13 @@
             class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             v-bind:style="{ background: bg }"
           >
+            <video autoplay loop height="500px" v-if="isVideoFormat">
+              <source :src="token.img_url" type="video/webm" @error="handleNotVideo" />
+              <source :src="token.img_url" type="video/ogg" @error="handleNotVideo" />
+              <source :src="token.img_url" type="video/mp4" @error="handleNotVideo" />
+            </video>
             <img
+              v-else
               class="asset-img align-self-center"
               :src="token.img_url"
               alt="Kitty"
@@ -32,18 +38,17 @@
             <div
               class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
             >
-              <h2>{{ token.description }}</h2>
               <h3 class="font-heading-medium font-semibold">
                 About {{ token.name }}
               </h3>
               <p
                 class="font-body-medium"
                 :class="{ 'show-less': showMore, 'show-more': !showMore }"
-                v-if="token.description"
+                v-if="tokenDescription && tokenDescription.length > 200"
               >
-                {{ token.description }}
+                {{ tokenDescription.slice(0, (tokenDescription.length / 2)) }}
                 <span class="dots">...</span>
-                <span class="more">{{ token.description }}</span>
+                <span class="more">{{ tokenDescription.slice((tokenDescription.length / 2), tokenDescription.length) }}</span>
                 <a
                   class="font-body-small d-flex ps-t-8 font-medium"
                   href="#more-info"
@@ -59,6 +64,13 @@
                   >Show less</a
                 >
               </p>
+              <p
+                class="font-body-medium"
+                v-else
+              >
+                {{ tokenDescription }}
+              </p>
+
             </div>
             <div class="d-flex flex-column py-4" v-if="category">
               <h3 class="font-heading-medium font-semibold category">
@@ -119,18 +131,18 @@
           </div>
         </div>
         <div class="col-md-4 d-none d-lg-flex h-100">
-          <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
+          <div class="feature-info d-flex flex-column ps-16 ps-lg-40 w-100">
             <h3 class="font-heading-medium font-semibold">
               About {{ token.name }}
             </h3>
             <p
               class="font-body-medium"
               :class="{ 'show-less': showMore, 'show-more': !showMore }"
-              v-if="token.description"
+              v-if="tokenDescription && tokenDescription.length > 200"
             >
-              {{ token.description }}
+              {{ tokenDescription.slice(0, (tokenDescription.length / 2)) }}
               <span class="dots">...</span>
-              <span class="more">{{ token.description }}</span>
+              <span class="more">{{ tokenDescription.slice((tokenDescription.length / 2), tokenDescription.length) }}</span>
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
@@ -145,6 +157,12 @@
                 @click.prevent="showMore = false"
                 >Show less</a
               >
+            </p>
+            <p
+              class="font-body-medium"
+              v-else
+            >
+              {{ tokenDescription }}
             </p>
           </div>
         </div>
@@ -220,6 +238,7 @@ export default class NftDetail extends Vue {
 
   isLoadingDetails = false;
   isLoading = false;
+  isVideoFormat = true;
 
   token = {};
 
@@ -250,6 +269,10 @@ export default class NftDetail extends Vue {
     event.target.style.width = '100px';
   }
 
+  handleNotVideo() {
+    this.isVideoFormat = false;
+  }
+
   // Get
   get category() {
     return this.categories.filter(
@@ -259,6 +282,10 @@ export default class NftDetail extends Vue {
 
   get app() {
     return app;
+  }
+
+  get tokenDescription() {
+    return this.token.description
   }
 
   // async
