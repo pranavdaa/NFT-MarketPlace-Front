@@ -348,8 +348,7 @@ export default class Index extends Vue {
   max-width: 348px;
   height: 100%;
   border-right: 1px solid light-color("500");
-  max-height: 77vh;
-  min-height: 77vh;
+  height: 90vh;
   border-right: 1px solid #f3f4f7;
   overflow-y: scroll;
 
