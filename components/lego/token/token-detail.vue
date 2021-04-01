@@ -55,11 +55,11 @@
             <p
               class="font-body-medium"
               :class="{ 'show-less': showMore, 'show-more': !showMore }"
-              v-if="order.token.description"
+              v-if="order.token.description && order.token.description.length > 200"
             >
-              {{ order.token.description }}
+              {{ orderDescription.slice(0, (orderDescription.length / 2)) }}
               <span class="dots">...</span>
-              <span class="more">{{ order.token.description }}</span>
+              <span class="more">{{ orderDescription.slice((orderDescription.length / 2), orderDescription.length) }}</span>
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
@@ -74,6 +74,12 @@
                 @click.prevent="showMore = false"
                 >Show less</a
               >
+            </p>
+            <p
+              class="font-body-medium"
+              v-else
+            >
+              {{ orderDescription }}
             </p>
 
             <div class="ms-t-16" v-if="showListedDetails">
@@ -223,18 +229,18 @@
         </div>
 
         <div class="col-md-4 d-none d-lg-flex h-100">
-          <div class="feature-info d-flex flex-column ps-16 ps-lg-40">
+          <div class="feature-info d-flex flex-column ps-16 ps-lg-40 w-100">
             <h3 class="font-heading-medium font-semibold">
               About {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )`: ''}}
             </h3>
             <p
               class="font-body-medium"
               :class="{ 'show-less': showMore, 'show-more': !showMore }"
-              v-if="order.token.description"
+              v-if="order.token.description && order.token.description.length > 200"
             >
-              {{ order.token.description }}
+              {{ orderDescription.slice(0, (orderDescription.length / 2)) }}
               <span class="dots">...</span>
-              <span class="more">{{ order.token.description }}</span>
+              <span class="more">{{ orderDescription.slice((orderDescription.length / 2), orderDescription.length) }}</span>
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
@@ -249,6 +255,12 @@
                 @click.prevent="showMore = false"
                 >Show less</a
               >
+            </p>
+            <p
+              class="font-body-medium"
+              v-else
+            >
+              {{ orderDescription }}
             </p>
 
             <div class="mt-auto" v-if="showListedDetails">
@@ -473,6 +485,10 @@ export default class TokenDetail extends Vue {
   }
 
   // Get
+  get orderDescription() {
+    return this.order.token.description
+  }
+
   get category() {
     return this.categories.filter(
       (item) => item.id === this.order.categories_id
