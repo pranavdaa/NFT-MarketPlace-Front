@@ -30,7 +30,7 @@ const app = {
     AUCTION: "AUCTION"
   },
 
-  async init(store) {
+  async init(store, sentry) {
     // store vuex store in this app
     this.vuexStore = store
 
@@ -43,7 +43,7 @@ const app = {
     this.setNetworks(store)
 
     // TODO: initialize Authentication
-    await this.initAuthentication(store)
+    await this.initAuthentication(store, sentry)
 
     // Initialize Categories
     this.initCategories(store)
@@ -163,18 +163,20 @@ const app = {
     }
   },
 
-  async initAuthentication(store) {
+  async initAuthentication(store, sentry) {
     // Check auth token is there and is valid or not
     await store.dispatch("auth/checkLogin")
 
     // Initialize account
-    this.initAccount(store)
+    await this.initAccount(store)
+    const user = store.getters["auth/user"]
 
+    sentry.setUser({ id: user.address })
   },
 
   async initAccount(store) {
     // store commit
-    store.commit(
+    await store.commit(
       "account/account",
       new AccountModel({
         address: store.getters["auth/address"]

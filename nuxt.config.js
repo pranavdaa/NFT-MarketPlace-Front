@@ -154,6 +154,8 @@ export default {
 
   sentry: {
     dsn: uiconfig.sentryDsn,
-    config: {}, // Additional config
+    config: {
+      environment: uiconfig.matic.deployment.network,
+    },
   },
 }
