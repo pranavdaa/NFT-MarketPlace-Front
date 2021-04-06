@@ -169,9 +169,7 @@ const app = {
 
     // Initialize account
     await this.initAccount(store)
-    const user = store.getters["auth/user"]
-
-    sentry.setUser({ id: user.address })
+    sentry.setUser({ id: store.getters["auth/address"] })
   },
 
   async initAccount(store) {
