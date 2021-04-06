@@ -869,12 +869,12 @@ export default class SellToken extends Vue {
           );
         } else {
           let maticWeb3 = new Web3(window.ethereum);
-          let cont = new maticWeb3.eth.Contract(
+          let contract = new maticWeb3.eth.Contract(
             this.networkMeta.abi("ChildERC1155", "pos"),
             nftContract
           );
 
-          const makerERC1155ApprovalTxHash = await cont.methods
+          const makerERC1155ApprovalTxHash = await contract.methods
             .setApprovalForAll(
               contractWrappers.contractAddresses.erc1155Proxy,
               true
