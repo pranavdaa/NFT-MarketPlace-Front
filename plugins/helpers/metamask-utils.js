@@ -1,5 +1,6 @@
 import MetamaskProvider from "@maticnetwork/metamask-provider"
 import Web3 from "web3"
+import app from '~/plugins/app'
 
 // check metamask
 export function isMetamask() {
@@ -150,4 +151,33 @@ export function registerNetworkChange(fn) {
 // export get metamask provider
 export function getMetamaskProvider(options = {}) {
   return new MetamaskProvider(window.ethereum, options)
+}
+
+// register network in metamask
+export async function registerNetwork() {
+  const web3Obj = new Web3(window.ethereum)
+  const ethereumNetworks = app.vuexStore.getters['network/networks']
+  const chainIdHex = web3Obj.utils.toHex(ethereumNetworks.matic.chainId)
+
+  // add custom network for Matic
+  await web3Obj.currentProvider.request(
+    {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'wallet_addEthereumChain',
+      params: [
+        {
+          chainId: chainIdHex,
+          chainName: ethereumNetworks.matic.name,
+          rpcUrls: [ethereumNetworks.matic.publicRPC],
+          nativeCurrency: {
+            name: 'MATIC',
+            symbol: 'MATIC',
+            decimals: app.uiconfig.maticDecimals,
+          },
+          blockExplorerUrls: [app.uiconfig.maticExplorer],
+        },
+      ],
+    },
+  )
 }

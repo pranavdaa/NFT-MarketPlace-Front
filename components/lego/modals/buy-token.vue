@@ -335,6 +335,7 @@ import { formatUSDValue } from "~/plugins/helpers/index";
 import PlaceBid from "~/components/lego/modals/place-bid";
 import ApproveProcess from "~/components/lego/modals/approve-process";
 import DepositWeth from "~/components/lego/modals/deposit-weth";
+import { registerNetwork } from '~/plugins/helpers/metamask-utils';
 
 const { getTypedData } = require("~/plugins/meta-tx");
 
@@ -1051,7 +1052,7 @@ export default class BuyToken extends Vue {
           let amount = new BigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
           const erc20Approve = await erc20TokenCont
               .approve(
-                contractWrappers.contractAddresses.erc20Proxy, 
+                contractWrappers.contractAddresses.erc20Proxy,
                 amount
               )
               .sendTransactionAsync({
@@ -1087,8 +1088,7 @@ export default class BuyToken extends Vue {
     const web3obj = new Web3(window.ethereum);
     const chainId = await web3obj.eth.getChainId();
     if (chainId !== this.networks.matic.chainId) {
-      this.error = "selectMatic";
-      return false;
+      await registerNetwork();
     }
     return true;
   }

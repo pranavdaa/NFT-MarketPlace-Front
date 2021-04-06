@@ -92,6 +92,7 @@ const app = {
         parentNetworkId: main.ChainId,
         historyHost: matic.Explorer,
         rpc: this.uiconfig.maticRPC,
+        publicRPC: matic.RPC,
         isMatic: true,
         default: true,
         syncerUrl: matic.SyncerAPI,

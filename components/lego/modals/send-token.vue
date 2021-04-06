@@ -144,6 +144,7 @@ import { Textfield } from "@maticnetwork/matic-design-system";
 import { isValidAddress } from "ethereumjs-util";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
+import { registerNetwork } from '~/plugins/helpers/metamask-utils';
 
 const ZERO = BigNumber(0);
 
@@ -197,8 +198,7 @@ export default class SendToken extends Vue {
     const web3obj = new Web3(window.ethereum);
     const chainId = await web3obj.eth.getChainId();
     if (chainId !== this.networks.matic.chainId) {
-      this.error = "selectMatic";
-      return false;
+      await registerNetwork();
     }
     return true;
   }

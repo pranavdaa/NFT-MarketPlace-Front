@@ -200,7 +200,7 @@ export default class Login extends Vue {
         host: '',
         version: "1",
         verifyingContract: "0x0",
-        chainId: this.networks.main.chainId,
+        chainId: "",
       },
       primaryType: "Test",
       message: {
@@ -230,7 +230,9 @@ export default class Login extends Vue {
     }
     if (
       window.ethereum.chainId !=
-      "0x" + this.networks.main.chainId.toString(16)
+      "0x" + this.networks.main.chainId.toString(16) &&
+      window.ethereum.chainId !=
+      "0x" + this.networks.matic.chainId.toString(16)
     ) {
       this.metamaskNetworkError = true;
       this.metamaskLoading = false;
