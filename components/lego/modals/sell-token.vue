@@ -325,6 +325,7 @@ import { getRandomFutureDateInSeconds } from "~/plugins/helpers/0x-utils";
 import { Textfield } from "@maticnetwork/matic-design-system";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
+import { registerNetwork } from '~/plugins/helpers/metamask-utils';
 
 const EXPIRY_DURATION = {
   ONE_WEEK: 0,
@@ -795,6 +796,15 @@ export default class SellToken extends Vue {
     this.isLoading = false;
   }
 
+  async metamaskValidation() {
+    const web3obj = new Web3(window.ethereum);
+    const chainId = await web3obj.eth.getChainId();
+    if (chainId !== this.networks.matic.chainId) {
+      await registerNetwork();
+    }
+    return true;
+  }
+
   async approve0x(tokenCont, contractWrappers, makerAddress) {
     // Check if token is approved to 0x
     let matic = new Web3(this.networks.matic.rpc);
@@ -821,88 +831,78 @@ export default class SellToken extends Vue {
 
     if (!isApprovedForAll) {
       if (!this.category.isMetaTx) {
-        if (
-          window.ethereum.chainId ===
-          "0x" + this.networks.matic.chainId.toString(16)
-        ) {
-          if (this.isErc721) {
-            const makerERC721ApprovalTxHash = await tokenCont
-              .setApprovalForAll(
-                contractWrappers.contractAddresses.erc721Proxy,
-                true
-              )
-              .sendTransactionAsync({
-                from: makerAddress,
-                gas: 8000000,
-                gasPrice: 1000000000,
-              });
 
-            if (makerERC721ApprovalTxHash) {
-              console.log("Approve Hash", makerERC721ApprovalTxHash);
-              app.addToast(
-                "Approved successfully",
-                "You successfully approved the token to put on sale",
-                {
-                  type: "success",
-                }
-              );
-              return true;
-            }
+        if (!(await this.metamaskValidation())) {
+          this.isLoading = false;
+          return;
+        }
+
+        if (this.isErc721) {
+          const makerERC721ApprovalTxHash = await tokenCont
+            .setApprovalForAll(
+              contractWrappers.contractAddresses.erc721Proxy,
+              true
+            )
+            .sendTransactionAsync({
+              from: makerAddress,
+              gas: 8000000,
+              gasPrice: 1000000000,
+            });
+
+          if (makerERC721ApprovalTxHash) {
+            console.log("Approve Hash", makerERC721ApprovalTxHash);
             app.addToast(
-              "Failed to approve",
-              "You need to approve the transaction to sale the NFT",
+              "Approved successfully",
+              "You successfully approved the token to put on sale",
               {
-                type: "failure",
+                type: "success",
               }
             );
-          } else {
-            let maticWeb3 = new Web3(window.ethereum);
-            let cont = new maticWeb3.eth.Contract(
-              this.networkMeta.abi("ChildERC1155", "pos"),
-              nftContract
-            );
-
-            const makerERC1155ApprovalTxHash = await cont.methods
-              .setApprovalForAll(
-                contractWrappers.contractAddresses.erc1155Proxy,
-                true
-              )
-              .send({
-                from: makerAddress,
-                gas: 8000000,
-                gasPrice: 1000000000,
-              });
-
-            if (makerERC1155ApprovalTxHash) {
-              console.log("Approve Hash", makerERC1155ApprovalTxHash);
-              app.addToast(
-                "Approved successfully",
-                "You successfully approved the token to put on sale",
-                {
-                  type: "success",
-                }
-              );
-              return true;
-            }
-            app.addToast(
-              "Failed to approve",
-              "You need to approve the transaction to sale the NFT",
-              {
-                type: "failure",
-              }
-            );
+            return true;
           }
+          app.addToast(
+            "Failed to approve",
+            "You need to approve the transaction to sale the NFT",
+            {
+              type: "failure",
+            }
+          );
         } else {
-          this.showNetworkChangeNeeded = true;
-          // app.addToast(
-          //   "Change network",
-          //   "Please change the network to Matic",
-          //   {
-          //     type: "failure",
-          //   }
-          // );
+          let maticWeb3 = new Web3(window.ethereum);
+          let cont = new maticWeb3.eth.Contract(
+            this.networkMeta.abi("ChildERC1155", "pos"),
+            nftContract
+          );
 
-          return false;
+          const makerERC1155ApprovalTxHash = await cont.methods
+            .setApprovalForAll(
+              contractWrappers.contractAddresses.erc1155Proxy,
+              true
+            )
+            .send({
+              from: makerAddress,
+              gas: 8000000,
+              gasPrice: 1000000000,
+            });
+
+          if (makerERC1155ApprovalTxHash) {
+            console.log("Approve Hash", makerERC1155ApprovalTxHash);
+            app.addToast(
+              "Approved successfully",
+              "You successfully approved the token to put on sale",
+              {
+                type: "success",
+              }
+            );
+            return true;
+          }
+          app.addToast(
+            "Failed to approve",
+            "You need to approve the transaction to sale the NFT",
+            {
+              type: "failure",
+            }
+          );
         }
       } else {
         let contractWrapperAddress = this.isErc1155
