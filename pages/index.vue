@@ -202,6 +202,7 @@ export default class Index extends Vue {
   @VueWatch("selectedFilters", { immediate: true, deep: true })
   async onFilterChanged() {
     this.hasNextPage = true;
+    this.orderFullList.length = 0;
     await this.fetchOrders({ filtering: true });
   }
 
