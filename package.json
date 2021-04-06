@@ -27,6 +27,7 @@
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/pwa": "^3.0.0-0",
+    "@nuxtjs/sentry": "^5.0.3",
     "@portis/web3": "^2.0.0-beta.49",
     "@walletconnect/browser": "1.0.0-beta.44",
     "@walletconnect/qrcode-modal": "1.0.0-beta.44",

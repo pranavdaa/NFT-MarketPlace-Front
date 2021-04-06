@@ -32,6 +32,7 @@ module.exports = {
   maxBulkDeposit: process.env.MAX_BULK_DEPOSIT || 20,
   mainExplorer: process.env.MAIN_EXPLORER || "https://etherscan.io/",
   maticExplorer: process.env.MATIC_EXPLORER || "http://explorer.matic.network/",
+  sentryDsn: process.env.SENTRY_DSN || 'https://ab96a87b1b2f49c3984587361063a2f2@o562377.ingest.sentry.io/5707254',
 
   // 0x
   ONE_SECOND_MS: 1000,

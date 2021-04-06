@@ -97,6 +97,7 @@ export default {
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
+    '@nuxtjs/sentry',
   ],
   /*
   ** Axios module configuration
@@ -149,5 +150,10 @@ export default {
       config.resolve.alias["nuxt-class-component"] =
         "~/plugins/nuxt-class-component"
     }
-  }
+  },
+
+  sentry: {
+    dsn: uiconfig.sentryDsn,
+    config: {}, // Additional config
+  },
 }
