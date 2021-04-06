@@ -32,7 +32,7 @@
             class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             v-bind:style="{ background: bg }"
           >
-            <video autoplay loop height="500px" v-if="isVideoFormat">
+            <video controls autoplay muted loop height="500px" v-if="isVideoFormat">
               <source :src="order.token.img_url" type="video/webm" @error="handleNotVideo" />
               <source :src="order.token.img_url" type="video/ogg" @error="handleNotVideo" />
               <source :src="order.token.img_url" type="video/mp4" @error="handleNotVideo" />

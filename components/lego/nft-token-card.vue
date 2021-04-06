@@ -30,7 +30,7 @@
       "
     >
       <div class="img-wrapper d-flex ps-t-12 justify-content-center">
-        <video autoplay loop width="100%" v-if="isVideoFormat">
+        <video autoplay muted loop width="100%" v-if="isVideoFormat">
           <source :src="token.img_url" type="video/webm" @error="handleNotVideo" />
           <source :src="token.img_url" type="video/ogg" @error="handleNotVideo" />
           <source :src="token.img_url" type="video/mp4" @error="handleNotVideo" />
