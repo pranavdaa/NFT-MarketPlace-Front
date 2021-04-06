@@ -924,6 +924,13 @@ export default class BuyToken extends Vue {
           }
         } else {
           console.log("Order is already sold");
+          let res = await getAxios().post(`orders/validate`, { orderId: this.order.id });
+          if (res.status === 200) {
+            app.addToast("Order Invalid", "This order is no longer valid or has been sold out. Please try to buy some other NFT.", {
+              type: "failure",
+            });
+            this.$router.push({ name: "index" });
+          }
         }
       } catch (error) {
         console.log(error);
