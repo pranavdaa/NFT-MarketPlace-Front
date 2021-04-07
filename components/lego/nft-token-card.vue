@@ -22,8 +22,8 @@
       :to="
         !order
           ? {
-              name: 'token-tokenId',
-              params: { tokenId: token.token_id },
+              name: 'category-contractAddress-tokenId',
+              params: { contractAddress: token.contract, tokenId: token.token_id },
               query: { chainId: token.chainId },
             }
           : { name: 'order-id', params: { id: order.id } }
