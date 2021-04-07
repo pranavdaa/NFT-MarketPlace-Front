@@ -349,7 +349,7 @@ export default class BidderRow extends Vue {
           let zrx = {
             salt: generatePseudoRandomSalt(),
             expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-            gasPrice: 10000000000,
+            gasPrice: 1000000000,
             signerAddress: takerAddress,
             data: dataVal.data.data,
             domain: {
@@ -443,7 +443,7 @@ export default class BidderRow extends Vue {
             )
             .sendTransactionAsync({
               from: makerAddress,
-              gas: 8000000,
+              gas: 100000,
               gasPrice: 1000000000,
             });
           console.log("Approving 2");
@@ -482,7 +482,7 @@ export default class BidderRow extends Vue {
             )
             .send({
               from: makerAddress,
-              gas: 8000000,
+              gas: 100000,
               gasPrice: 1000000000,
             });
           console.log("Approving 2");
@@ -566,7 +566,7 @@ export default class BidderRow extends Vue {
         let zrx = {
           salt: generatePseudoRandomSalt(),
           expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-          gasPrice: 10000000000,
+          gasPrice: 1000000000,
           signerAddress: signedOrder.makerAddress,
           data: dataVal.data.data,
           domain: {

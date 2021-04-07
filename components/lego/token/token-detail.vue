@@ -665,7 +665,7 @@ export default class TokenDetail extends Vue {
         let zrx = {
           salt: generatePseudoRandomSalt(),
           expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-          gasPrice: 10000000000,
+          gasPrice: 1000000000,
           signerAddress: signedOrder.makerAddress,
           data: dataVal.data.data,
           domain: {

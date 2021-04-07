@@ -845,7 +845,7 @@ export default class SellToken extends Vue {
             )
             .sendTransactionAsync({
               from: makerAddress,
-              gas: 8000000,
+              gas: 100000,
               gasPrice: 1000000000,
             });
 
@@ -881,7 +881,7 @@ export default class SellToken extends Vue {
             )
             .send({
               from: makerAddress,
-              gas: 8000000,
+              gas: 100000,
               gasPrice: 1000000000,
             });
 

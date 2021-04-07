@@ -110,10 +110,6 @@ const app = {
   async initNetworks(store) {
     // store networks
     await store.dispatch("network/setNetworks", this.ethereumNetworks)
-
-    // avoid reloading when metamask network is changed
-    window.ethereum.autoRefreshOnNetworkChange = false
-
     // set network depending upon the login strategy
     if (this.isMetaMaskConnected()) {
       const metamaskNetworkChangeHandler = async (chainId) => {
@@ -121,6 +117,9 @@ const app = {
           this.uiconfig.matic.deployment.network,
           this.uiconfig.matic.deployment.version
         )
+        if(!chainId){
+          chainId = window.ethereum.chainId
+        }
 
         const main = network.Main
         const matic = network.Matic
