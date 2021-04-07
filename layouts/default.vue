@@ -42,7 +42,7 @@ export default {
   height: 24px;
 }
 .content-container {
-  margin-top: 130px;
+  margin-top: 150px;
 }
 @media (max-width: 768px) {
   .logo-container {
