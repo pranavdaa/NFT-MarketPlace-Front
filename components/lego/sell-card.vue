@@ -1,6 +1,6 @@
 <template>
   <nuxt-link
-    :to="{ name: 'tokens-id', params: { id: order.id } }"
+    :to="{ name: 'order-id', params: { id: order.id } }"
     class="sell-card text-center cursor-pointer"
     v-bind:style="{ background: bg }"
   >

@@ -26,7 +26,7 @@
               params: { tokenId: token.token_id },
               query: { chainId: token.chainId },
             }
-          : { name: 'tokens-id', params: { id: order.id } }
+          : { name: 'order-id', params: { id: order.id } }
       "
     >
       <div class="img-wrapper d-flex ps-t-12 justify-content-center">
@@ -96,7 +96,7 @@
     >
       <NuxtLink
         class="btn btn-transparent w-100 align-self-center"
-        :to="{ name: 'tokens-id', params: { id: order.id } }"
+        :to="{ name: 'order-id', params: { id: order.id } }"
         >View Order</NuxtLink
       >
     </div>
