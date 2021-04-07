@@ -120,7 +120,7 @@
             <button
               class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0"
-              :disabled="isUser && !validation['balance']"
+              :disabled="true || (isUser && !validation['balance'])"
               @click="buyOrder()"
             >
               {{ buttonVal }}
@@ -301,7 +301,7 @@
             <button
               class="btn btn-primary"
               v-if="!isOwnersToken && order.status === 0"
-              :disabled="isUser && !validation['balance']"
+              :disabled="true || (isUser && !validation['balance'])"
               @click="buyOrder()"
             >
               {{ buttonVal }}

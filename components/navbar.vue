@@ -1,374 +1,387 @@
 <template>
-  <nav class="navbar navbar-expand-lg fixed-top p-0">
-    <div class="container-fluid h-100">
-      <div class="row mx-auto ps-x-16 w-100 h-100">
-        <nuxt-link class="logo-container d-flex" :to="{ name: 'index' }">
-          <button
-            class="navbar-toggler"
-            role="button"
-            type="button"
-            :class="{ open: openMenu }"
-            @click.prevent.stop="handleOpenMenu(!openMenu)"
-          >
-            <svg-sprite-icon
-              name="grabber"
-              class="icon navbar-toggler-icon"
-            ></svg-sprite-icon>
-            <svg-sprite-icon
-              name="close"
-              class="icon close-icon"
-            ></svg-sprite-icon>
-          </button>
-          <div class="d-flex">
-            <div class="d-flex">
-              <img
-                src="~assets/img/open-sea-logo.svg"
-                alt="Open Sea Logo"
-                class="logo align-self-center"
-              />
-            </div>
-            <div
-              class="d-flex flex-column justify-content-center logo-desc-container"
-            >
-              <div>
-                <span class="logo-title">OpenSea</span>
-                <span class="logo-product-name">L2</span>
-                <span class="tag">BETA</span>
-              </div>
-              <div class="logo-description">Powered by Matic Network</div>
-            </div>
-          </div>
-        </nuxt-link>
-        <div
-          class="navbar-collapse collapse d-flex col p-0 justify-content-center"
-          :class="{ show: openMenu }"
-          @click="handleOpenMenu(!openMenu)"
-        >
-          <ul class="navbar-nav main-nav mx-md-auto">
-            <li class="nav-item">
-              <nuxt-link
-                class="nav-link d-flex justify-content-lg-center"
-                :to="{ name: 'index' }"
-                :class="{ active: checkIfNestedRoute('index') }"
-              >
-                <span class="align-self-center">{{ $t("home.title") }}</span>
-              </nuxt-link>
-            </li>
-            <li class="nav-item">
-              <nuxt-link
-                class="nav-link d-flex justify-content-lg-center"
-                :to="{ name: 'account' }"
-                :class="{ active: checkIfNestedRoute('account') }"
-              >
-                <span class="align-self-center">{{ $t("account.title") }}</span>
-              </nuxt-link>
-            </li>
-            <li class="nav-item">
-              <nuxt-link
-                class="nav-link d-flex justify-content-lg-center"
-                :to="{ name: 'faq' }"
-                :class="{ active: checkIfNestedRoute('faq') }"
-              >
-                <span class="align-self-center">{{ $t("faq.title") }}</span>
-              </nuxt-link>
-            </li>
-            <!-- <li class="nav-item">
-              <a
-                class="nav-link d-flex justify-content-lg-center"
-                href="https://t.me/maticwalletweb"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <span class="align-self-center">{{ $t("support.title") }}</span>
-              </a>
-            </li> -->
-            <div class="extra-links">
-              <li class="nav-item">
-                <a
-                  class="nav-link d-flex justify-content-lg-center"
-                  href="#"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <span class="align-self-center">{{ $t("whatsNew") }}</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link d-flex justify-content-lg-center"
-                  href="#"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <span class="align-self-center">{{ $t("helpCenter") }}</span>
-                </a>
-              </li>
-            </div>
-          </ul>
-        </div>
-        <div class="profile-navbar d-flex ml-auto ps-l-16">
-          <div class="d-flex align-self-center" v-if="user && false">
-            <nuxt-link
-              class="nav-link d-flex"
-              :to="{ name: 'index-notification' }"
-              :class="{ active: checkIfNestedRoute('index-notification') }"
-            >
-              <span class="notification-icon d-flex justify-content-center">
-                <svg-sprite-icon
-                  name="notification"
-                  class="align-self-center"
-                ></svg-sprite-icon>
-              </span>
-            </nuxt-link>
-          </div>
-          <div
-            class="nav-profile-container d-flex align-self-center"
-            @click.prevent.stop="handleOpenProfile(!openProfile)"
-            v-if="user"
-          >
-            <img src="~assets/svg/metamask.svg" />
-            <span class="navbar-user-address">
-              {{ formattedUserAddress }}
-            </span>
-
-            <span
-              class="down-icon align-self-center d-none d-md-flex justify-content-center"
+  <div class="navbar-wrapper fixed-top">
+    <nav class="navbar navbar-expand-lg p-0">
+      <div class="container-fluid h-100">
+        <div class="row mx-auto ps-x-16 w-100 h-100">
+          <nuxt-link class="logo-container d-flex" :to="{ name: 'index' }">
+            <button
+              class="navbar-toggler"
+              role="button"
+              type="button"
+              :class="{ open: openMenu }"
+              @click.prevent.stop="handleOpenMenu(!openMenu)"
             >
               <svg-sprite-icon
-                class="align-self-center"
-                name="right-arrow"
+                name="grabber"
+                class="icon navbar-toggler-icon"
               ></svg-sprite-icon>
-            </span>
-          </div>
-
-          <ul class="navbar-nav right-nav ps-x-16 pr-1" v-if="!user">
-            <li class="nav-item d-flex">
-              <nuxt-link
-                class="align-self-center btn btn-primary login-button d-flex"
-                role="button"
-                :to="{ name: 'login' }"
+              <svg-sprite-icon
+                name="close"
+                class="icon close-icon"
+              ></svg-sprite-icon>
+            </button>
+            <div class="d-flex">
+              <div class="d-flex">
+                <img
+                  src="~assets/img/open-sea-logo.svg"
+                  alt="Open Sea Logo"
+                  class="logo align-self-center"
+                />
+              </div>
+              <div
+                class="d-flex flex-column justify-content-center logo-desc-container"
               >
-                <span class="d-flex with-icon">
+                <div>
+                  <span class="logo-title">OpenSea</span>
+                  <span class="logo-product-name">L2</span>
+                  <span class="tag">BETA</span>
+                </div>
+                <div class="logo-description">Powered by Matic Network</div>
+              </div>
+            </div>
+          </nuxt-link>
+          <div
+            class="navbar-collapse collapse d-flex col p-0 justify-content-center"
+            :class="{ show: openMenu }"
+            @click="handleOpenMenu(!openMenu)"
+          >
+            <ul class="navbar-nav main-nav mx-md-auto">
+              <li class="nav-item">
+                <nuxt-link
+                  class="nav-link d-flex justify-content-lg-center"
+                  :to="{ name: 'index' }"
+                  :class="{ active: checkIfNestedRoute('index') }"
+                >
+                  <span class="align-self-center">{{ $t("home.title") }}</span>
+                </nuxt-link>
+              </li>
+              <li class="nav-item">
+                <nuxt-link
+                  class="nav-link d-flex justify-content-lg-center"
+                  :to="{ name: 'account' }"
+                  :class="{ active: checkIfNestedRoute('account') }"
+                >
+                  <span class="align-self-center">{{ $t("account.title") }}</span>
+                </nuxt-link>
+              </li>
+              <li class="nav-item">
+                <nuxt-link
+                  class="nav-link d-flex justify-content-lg-center"
+                  :to="{ name: 'faq' }"
+                  :class="{ active: checkIfNestedRoute('faq') }"
+                >
+                  <span class="align-self-center">{{ $t("faq.title") }}</span>
+                </nuxt-link>
+              </li>
+              <!-- <li class="nav-item">
+                <a
+                  class="nav-link d-flex justify-content-lg-center"
+                  href="https://t.me/maticwalletweb"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span class="align-self-center">{{ $t("support.title") }}</span>
+                </a>
+              </li> -->
+              <div class="extra-links">
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-lg-center"
+                    href="#"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <span class="align-self-center">{{ $t("whatsNew") }}</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-lg-center"
+                    href="#"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <span class="align-self-center">{{ $t("helpCenter") }}</span>
+                  </a>
+                </li>
+              </div>
+            </ul>
+          </div>
+          <div class="profile-navbar d-flex ml-auto ps-l-16">
+            <div class="d-flex align-self-center" v-if="user && false">
+              <nuxt-link
+                class="nav-link d-flex"
+                :to="{ name: 'index-notification' }"
+                :class="{ active: checkIfNestedRoute('index-notification') }"
+              >
+                <span class="notification-icon d-flex justify-content-center">
                   <svg-sprite-icon
-                    name="login"
+                    name="notification"
                     class="align-self-center"
                   ></svg-sprite-icon>
                 </span>
-                <span>{{ $t("login") }}</span>
               </nuxt-link>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <!-- Profile Dropdown -->
-    <div
-      class="profile-dropdown-menu no-top-border-radius dropdown-menu dropdown-menu-right show"
-      v-if="openProfile"
-      v-click-outside="() => (openProfile = false)"
-    >
-      <div class="profile-container">
-        <div class="d-flex ps-16 ps-md-32">
-          <span class="profile-icon profile-with-status align-self-center">
-            <svg-sprite-icon
-              name="profile"
-              class="profile-logo"
-            ></svg-sprite-icon>
-            <!-- <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon> -->
-            <!-- <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" /> -->
-            <div class="profile-status d-none">
-              <svg
-                class="status-icon"
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g filter="url(#filter0_d)">
-                  <circle cx="16" cy="15" r="12" fill="white" />
-                </g>
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M19.6095 11H21.3335C22.0688 11 22.6668 11.598 22.6668 12.3333V19.6667C22.6668 20.402 22.0688 21 21.3335 21H10.6668C9.9315 21 9.3335 20.402 9.3335 19.6667V12.3333C9.3335 11.598 9.9315 11 10.6668 11H12.3908L14.1955 9.19534C14.2573 9.13331 14.3308 9.08412 14.4117 9.05059C14.4925 9.01707 14.5793 8.99988 14.6668 9H17.3335C17.4211 8.99988 17.5078 9.01707 17.5887 9.05059C17.6696 9.08412 17.743 9.13331 17.8048 9.19534L19.6095 11ZM12.6668 15.6667C12.6668 17.4733 14.1935 19 16.0002 19C17.8068 19 19.3335 17.4733 19.3335 15.6667C19.3335 13.86 17.8068 12.3333 16.0002 12.3333C14.1935 12.3333 12.6668 13.86 12.6668 15.6667ZM14 15.6665C14 14.5825 14.916 13.6665 16 13.6665C17.084 13.6665 18 14.5825 18 15.6665C18 16.7505 17.084 17.6665 16 17.6665C14.916 17.6665 14 16.7505 14 15.6665Z"
-                  fill="#6E798F"
-                />
-                <defs>
-                  <filter
-                    id="filter0_d"
-                    x="0"
-                    y="0"
-                    width="32"
-                    height="32"
-                    filterUnits="userSpaceOnUse"
-                    color-interpolation-filters="sRGB"
-                  >
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                    <feColorMatrix
-                      in="SourceAlpha"
-                      type="matrix"
-                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                    />
-                    <feOffset dy="1" />
-                    <feGaussianBlur stdDeviation="2" />
-                    <feColorMatrix
-                      type="matrix"
-                      values="0 0 0 0 0.0235294 0 0 0 0 0.0627451 0 0 0 0 0.141176 0 0 0 0.12 0"
-                    />
-                    <feBlend
-                      mode="normal"
-                      in2="BackgroundImageFix"
-                      result="effect1_dropShadow"
-                    />
-                    <feBlend
-                      mode="normal"
-                      in="SourceGraphic"
-                      in2="effect1_dropShadow"
-                      result="shape"
-                    />
-                  </filter>
-                </defs>
-              </svg>
-            </div>
-          </span>
-          <div class="ps-l-20 profile-details w-100">
-            <div class="d-flex w-100">
-              <div class="font-body-small font-medium">
-                {{ formattedUserAddress }}
-              </div>
-              <div class="font-caption ml-auto text-gray">
-                {{ rootChainNetwork.name || rootChainNetwork.key }}
-              </div>
             </div>
             <div
-              class="d-flex justify-content-center ps-t-12"
-              v-if="account"
-              @click.stop.prevent="copyAddress"
+              class="nav-profile-container d-flex align-self-center"
+              @click.prevent.stop="handleOpenProfile(!openProfile)"
+              v-if="user"
             >
-              <div class="profile-address d-flex w-100">
-                <div
-                  class="col p-0 d-none d-md-block address mr-auto align-self-center"
-                >
-                  {{ account.address }}
-                </div>
-                <div
-                  class="col p-0 d-block d-md-none address mr-auto align-self-center"
-                >
-                  {{ this.account.shortChecksumAddress }}
-                </div>
-                <div class="copy-wrapper justify-content-center">
-                  <svg-sprite-icon
-                    class="copy-icon align-self-center"
-                    name="copy"
-                    v-if="copyAnim === false"
-                  ></svg-sprite-icon>
+              <img src="~assets/svg/metamask.svg" />
+              <span class="navbar-user-address">
+                {{ formattedUserAddress }}
+              </span>
 
-                  <lottie
-                    class="copy-anim align-self-center"
-                    :options="defaultOptions"
-                    :width="24"
-                    :height="24"
-                    v-if="copyAnim === true"
+              <span
+                class="down-icon align-self-center d-none d-md-flex justify-content-center"
+              >
+                <svg-sprite-icon
+                  class="align-self-center"
+                  name="right-arrow"
+                ></svg-sprite-icon>
+              </span>
+            </div>
+
+            <ul class="navbar-nav right-nav ps-x-16 pr-1" v-if="!user">
+              <li class="nav-item d-flex">
+                <nuxt-link
+                  class="align-self-center btn btn-primary login-button d-flex"
+                  role="button"
+                  :to="{ name: 'login' }"
+                >
+                  <span class="d-flex with-icon">
+                    <svg-sprite-icon
+                      name="login"
+                      class="align-self-center"
+                    ></svg-sprite-icon>
+                  </span>
+                  <span>{{ $t("login") }}</span>
+                </nuxt-link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Profile Dropdown -->
+      <div
+        class="profile-dropdown-menu no-top-border-radius dropdown-menu dropdown-menu-right show"
+        v-if="openProfile"
+        v-click-outside="() => (openProfile = false)"
+      >
+        <div class="profile-container">
+          <div class="d-flex ps-16 ps-md-32">
+            <span class="profile-icon profile-with-status align-self-center">
+              <svg-sprite-icon
+                name="profile"
+                class="profile-logo"
+              ></svg-sprite-icon>
+              <!-- <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon> -->
+              <!-- <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" /> -->
+              <div class="profile-status d-none">
+                <svg
+                  class="status-icon"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g filter="url(#filter0_d)">
+                    <circle cx="16" cy="15" r="12" fill="white" />
+                  </g>
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M19.6095 11H21.3335C22.0688 11 22.6668 11.598 22.6668 12.3333V19.6667C22.6668 20.402 22.0688 21 21.3335 21H10.6668C9.9315 21 9.3335 20.402 9.3335 19.6667V12.3333C9.3335 11.598 9.9315 11 10.6668 11H12.3908L14.1955 9.19534C14.2573 9.13331 14.3308 9.08412 14.4117 9.05059C14.4925 9.01707 14.5793 8.99988 14.6668 9H17.3335C17.4211 8.99988 17.5078 9.01707 17.5887 9.05059C17.6696 9.08412 17.743 9.13331 17.8048 9.19534L19.6095 11ZM12.6668 15.6667C12.6668 17.4733 14.1935 19 16.0002 19C17.8068 19 19.3335 17.4733 19.3335 15.6667C19.3335 13.86 17.8068 12.3333 16.0002 12.3333C14.1935 12.3333 12.6668 13.86 12.6668 15.6667ZM14 15.6665C14 14.5825 14.916 13.6665 16 13.6665C17.084 13.6665 18 14.5825 18 15.6665C18 16.7505 17.084 17.6665 16 17.6665C14.916 17.6665 14 16.7505 14 15.6665Z"
+                    fill="#6E798F"
                   />
+                  <defs>
+                    <filter
+                      id="filter0_d"
+                      x="0"
+                      y="0"
+                      width="32"
+                      height="32"
+                      filterUnits="userSpaceOnUse"
+                      color-interpolation-filters="sRGB"
+                    >
+                      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                      <feColorMatrix
+                        in="SourceAlpha"
+                        type="matrix"
+                        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                      />
+                      <feOffset dy="1" />
+                      <feGaussianBlur stdDeviation="2" />
+                      <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.0235294 0 0 0 0 0.0627451 0 0 0 0 0.141176 0 0 0 0.12 0"
+                      />
+                      <feBlend
+                        mode="normal"
+                        in2="BackgroundImageFix"
+                        result="effect1_dropShadow"
+                      />
+                      <feBlend
+                        mode="normal"
+                        in="SourceGraphic"
+                        in2="effect1_dropShadow"
+                        result="shape"
+                      />
+                    </filter>
+                  </defs>
+                </svg>
+              </div>
+            </span>
+            <div class="ps-l-20 profile-details w-100">
+              <div class="d-flex w-100">
+                <div class="font-body-small font-medium">
+                  {{ formattedUserAddress }}
+                </div>
+                <div class="font-caption ml-auto text-gray">
+                  {{ rootChainNetwork.name || rootChainNetwork.key }}
+                </div>
+              </div>
+              <div
+                class="d-flex justify-content-center ps-t-12"
+                v-if="account"
+                @click.stop.prevent="copyAddress"
+              >
+                <div class="profile-address d-flex w-100">
+                  <div
+                    class="col p-0 d-none d-md-block address mr-auto align-self-center"
+                  >
+                    {{ account.address }}
+                  </div>
+                  <div
+                    class="col p-0 d-block d-md-none address mr-auto align-self-center"
+                  >
+                    {{ this.account.shortChecksumAddress }}
+                  </div>
+                  <div class="copy-wrapper justify-content-center">
+                    <svg-sprite-icon
+                      class="copy-icon align-self-center"
+                      name="copy"
+                      v-if="copyAnim === false"
+                    ></svg-sprite-icon>
+
+                    <lottie
+                      class="copy-anim align-self-center"
+                      :options="defaultOptions"
+                      :width="24"
+                      :height="24"
+                      v-if="copyAnim === true"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="dropdown-divider"></div>
-        <div class="d-flex ps-6 ps-md-12">
-          <ul class="profile-option-list w-100">
-            <li class="option-item" @click="openQrCode = !openQrCode">
-              <div class="d-flex">
-                <div class="align-self-center">
-                  <img
-                    src="~/static/icons/qr-code.svg"
-                    alt="qr-code"
-                    class="option-icon inactive"
-                  />
-                  <img
-                    src="~/static/icons/active/qr-code.svg"
-                    alt="qr-code"
-                    class="option-icon active"
-                  />
-                </div>
-                <div
-                  class="option-text font-body-medium align-self-center ps-x-16"
-                >
-                  Show QR Code
-                </div>
-                <div
-                  class="align-elf-center d-flex justify-content-center ml-auto"
-                >
-                  <svg
-                    class="align-self-center right-arrow"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M13.2929 12L8 6.70706L9.41421 5.29285L16.1213 12L9.41421 18.7071L8 17.2928L13.2929 12Z"
-                      fill="#B4B7BD"
+          <div class="dropdown-divider"></div>
+          <div class="d-flex ps-6 ps-md-12">
+            <ul class="profile-option-list w-100">
+              <li class="option-item" @click="openQrCode = !openQrCode">
+                <div class="d-flex">
+                  <div class="align-self-center">
+                    <img
+                      src="~/static/icons/qr-code.svg"
+                      alt="qr-code"
+                      class="option-icon inactive"
                     />
-                  </svg>
+                    <img
+                      src="~/static/icons/active/qr-code.svg"
+                      alt="qr-code"
+                      class="option-icon active"
+                    />
+                  </div>
+                  <div
+                    class="option-text font-body-medium align-self-center ps-x-16"
+                  >
+                    Show QR Code
+                  </div>
+                  <div
+                    class="align-elf-center d-flex justify-content-center ml-auto"
+                  >
+                    <svg
+                      class="align-self-center right-arrow"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.2929 12L8 6.70706L9.41421 5.29285L16.1213 12L9.41421 18.7071L8 17.2928L13.2929 12Z"
+                        fill="#B4B7BD"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </li>
+              </li>
 
-            <li class="option-item" @click="openLogout = true">
-              <div class="d-flex">
-                <div class="align-self-center">
-                  <img
-                    src="~/static/icons/logout.svg"
-                    alt="qr-code"
-                    class="option-icon inactive"
-                  />
-                  <img
-                    src="~/static/icons/active/logout.svg"
-                    alt="qr-code"
-                    class="option-icon active"
-                  />
-                </div>
-                <div
-                  class="option-text font-body-medium align-self-center ps-x-16"
-                >
-                  Logout
-                </div>
-                <div
-                  class="align-elf-center d-flex justify-content-center ml-auto"
-                >
-                  <svg
-                    class="align-self-center right-arrow"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M13.2929 12L8 6.70706L9.41421 5.29285L16.1213 12L9.41421 18.7071L8 17.2928L13.2929 12Z"
-                      fill="#B4B7BD"
+              <li class="option-item" @click="openLogout = true">
+                <div class="d-flex">
+                  <div class="align-self-center">
+                    <img
+                      src="~/static/icons/logout.svg"
+                      alt="qr-code"
+                      class="option-icon inactive"
                     />
-                  </svg>
+                    <img
+                      src="~/static/icons/active/logout.svg"
+                      alt="qr-code"
+                      class="option-icon active"
+                    />
+                  </div>
+                  <div
+                    class="option-text font-body-medium align-self-center ps-x-16"
+                  >
+                    Logout
+                  </div>
+                  <div
+                    class="align-elf-center d-flex justify-content-center ml-auto"
+                  >
+                    <svg
+                      class="align-self-center right-arrow"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.2929 12L8 6.70706L9.41421 5.29285L16.1213 12L9.41421 18.7071L8 17.2928L13.2929 12Z"
+                        fill="#B4B7BD"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </li>
-          </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
+      <!-- ./ Profile Dropdown -->
+      <receive-qr-code
+        :show="openQrCode"
+        :uri="account.address"
+        :close="qrClose"
+        v-if="user"
+      />
+      <logout-confirm :show="openLogout" :logout="logout" :close="logoutClose" />
+    </nav>
+    <div
+      class="alert alert-dismissible text-center ms-0 fade show w-100"
+      role="alert"
+    >
+      <div class="text-white pt-1 alert-text">
+        <strong>Warning:</strong> Buy/sell trades on the NFT marketplace have
+        been disabled temporarily since a bug has been reported that leads to
+        incorrect token IDs being listed for sale. Trading will resume once this
+        issue is fixed.
+      </div>
     </div>
-    <!-- ./ Profile Dropdown -->
-    <receive-qr-code
-      :show="openQrCode"
-      :uri="account.address"
-      :close="qrClose"
-      v-if="user"
-    />
-    <logout-confirm :show="openLogout" :logout="logout" :close="logoutClose" />
-  </nav>
+  </div>
 </template>
 
 
@@ -527,6 +540,27 @@ export default class Navbar extends Vue {
       color: dark-color("500");
     }
   }
+}
+
+.alert {
+  background-color: maroon;
+  z-index: 46;
+  border-radius: 0;
+  font-size: 15px;
+  padding: 5px 0;
+  margin-bottom: 50px;
+}
+.alert-dismissible {
+  .close {
+    padding: 0;
+    margin-right: 6px;
+  }
+}
+
+.alert-text {
+  max-width: 800px;
+  text-align: center;
+  margin : 0 auto;
 }
 
 .user-name,

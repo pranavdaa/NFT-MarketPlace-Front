@@ -26,7 +26,7 @@ export default {
 @import "~assets/css/theme/_theme";
 
 .nuxt-section {
-  margin-top: $navbar-local-height;
+  margin-top: 150px;
 }
 
 .logo-container {
@@ -42,7 +42,7 @@ export default {
   height: 24px;
 }
 .content-container {
-  margin-top: $navbar-local-height;
+  margin-top: 150px;
 }
 @media (max-width: 768px) {
   .logo-container {
