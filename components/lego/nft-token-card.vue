@@ -79,12 +79,13 @@
       class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
       v-if="!isMainToken && !order"
     >
-      <a class="btn btn-transparent w-100 align-self-center" @click="sell()">{{
+      <a class="btn btn-transparent disabled w-100 align-self-center" @click="sell()">{{
         $t("sell")
       }}</a>
       <a
-        class="btn btn-transparent w-100 align-self-center"
+        class="btn btn-transparent disabled w-100 align-self-center"
         @click="transfer()"
+
         >{{ $t("transfer") }}</a
       >
     </div>
