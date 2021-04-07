@@ -123,7 +123,7 @@ import app from "~/plugins/app";
 import { fuzzysearch } from "~/plugins/helpers/index";
 import { fuzzySearchResult } from "~/plugins/helpers/index";
 import getAxios from "~/plugins/axios";
-import { VueWatch } from "~/components/decorator";
+import { VueWatch, VueDebounce } from "~/components/decorator";
 
 import SellCard from "~/components/lego/sell-card";
 import CategoriesSelector from "~/components/lego/categories-selector";
@@ -200,6 +200,7 @@ export default class Index extends Vue {
 
   // Wathers
   @VueWatch("selectedFilters", { immediate: true, deep: true })
+  @VueDebounce(1000)
   async onFilterChanged() {
     this.hasNextPage = true;
     this.orderFullList.length = 0;
