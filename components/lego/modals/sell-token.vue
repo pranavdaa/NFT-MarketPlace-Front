@@ -596,6 +596,7 @@ export default class SellToken extends Vue {
           contractWrappers,
           makerAddress
         );
+        this.$logger.track("approve0x-721-complete:sell-token", {isApproved});
       } else {
         takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit);
         takerAssetAmount = makerAssetAmount
@@ -618,8 +619,8 @@ export default class SellToken extends Vue {
           contractWrappers,
           makerAddress
         );
+        this.$logger.track("approve0x-1155-complete:sell-token", {isApproved});
       }
-      this.$logger.track("approve0x-success:sell-token");
       this.isApprovedStatus = isApproved;
       this.approveLoading = false;
     } catch (error) {

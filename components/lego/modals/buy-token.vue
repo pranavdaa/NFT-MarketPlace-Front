@@ -1033,7 +1033,7 @@ export default class BuyToken extends Vue {
     let allowance = await erc20TokenCont
       .allowance(takerAddress, contractWrappers.contractAddresses.erc20Proxy)
       .callAsync();
-
+    this.$logger.track("approving-0x:buy-token", {allowance});
     if (!allowance.gt(ZERO)) {
       if (isMetaTx) {
         let data = await matic.eth.abi.encodeFunctionCall(
@@ -1072,6 +1072,7 @@ export default class BuyToken extends Vue {
           try {
             let response = await getAxios().post(`orders/executeMetaTx`, tx);
             if (response.status === 200) {
+              this.$logger.track("approving-0x-complete-non-meta-tx:buy-token", {response});
               console.log("Approved");
               app.addToast("Approved", "You successfully approved", {
                 type: "success",
@@ -1111,6 +1112,7 @@ export default class BuyToken extends Vue {
             app.addToast("Approved", "You successfully approved", {
               type: "success",
             });
+            this.$logger.track("approving-0x-complete-non-meta-tx:buy-token", {erc20Approve});
             return true;
           }
         } catch (error) {
