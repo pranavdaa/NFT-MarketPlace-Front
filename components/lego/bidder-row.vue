@@ -31,7 +31,7 @@
         </div>
 
         <button
-          class="btn btn-light disbaled btn-deny align-self-center ms-r-12 ps-x-16"
+          class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
           v-if="isUsersBid && this.bid.order.status === 0"
           @click="onCancel()"
         >
@@ -39,7 +39,7 @@
         </button>
 
         <button
-          class="btn btn-light  disbaled btn-deny align-self-center ms-r-12 ps-x-16"
+          class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
           v-if="isOwnersToken && this.bid.order.status === 0"
           @click="onDeny()"
         >
@@ -47,7 +47,7 @@
         </button>
         <button
           v-if="isOwnersToken && this.bid.order.status === 0"
-          class="btn btn-light disbaled align-self-center ps-x-16"
+          class="btn btn-light align-self-center ps-x-16"
           @click="onAccept()"
         >
           Accept
