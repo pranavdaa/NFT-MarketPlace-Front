@@ -25,8 +25,8 @@
         class="d-flex message flex-column align-self-center ps-x-16 ps-l-md-0 ps-r-md-16"
       >
         <div class="font-body-small" v-if="true">
-          <nuxt-link 
-          :to="{ name: 'tokens-id', params: { id: activity.order_id } }"
+          <nuxt-link
+          :to="{ name: 'order-id', params: { id: activity.order_id } }"
           >{{ activity.message }}</nuxt-link
         >
         </div>

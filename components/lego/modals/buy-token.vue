@@ -453,8 +453,8 @@ export default class BuyToken extends Vue {
   }
 
   convertPriceToUSD(amount) {
-    let amountVal = new BigNumber(parseFloat(amount))
-    let usdVal = new BigNumber(this.selectedERC20Token.usd)
+    let amountVal = new BigNumber(amount)
+    let usdVal = new BigNumber(this.erc20Token.usd)
     let result = amountVal.times(usdVal)
     return result
   }
@@ -662,8 +662,7 @@ export default class BuyToken extends Vue {
         const nftTokenId = this.order.tokens_id;
         const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
           .address;
-        const isMetaTx = this.order.erc20tokens.erc20tokensaddresses[0]
-          .isMetaTx;
+        const isMetaTx = this.order.erc20tokens.isMetaTx;
         const makerAddress = this.account.address;
         // const takerAddress = this.account.address;
         const makerAssetAmount = this.makerAmount.toString(10);
@@ -679,7 +678,6 @@ export default class BuyToken extends Vue {
             moment(this.order.expiry_date).format("x")
           );
         }
-
         const isApproved = this.approve0x(
           contractWrappers,
           erc20Address,
@@ -902,7 +900,7 @@ export default class BuyToken extends Vue {
           let zrx = {
             salt: generatePseudoRandomSalt(),
             expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-            gasPrice: 10000000000,
+            gasPrice: 1000000000,
             signerAddress: takerAddress,
             data: dataVal.data.data,
             domain: {
@@ -1064,7 +1062,7 @@ export default class BuyToken extends Vue {
               )
               .sendTransactionAsync({
                 from: this.account.address,
-                gas: 8000000,
+                gas: 100000,
                 gasPrice: 1000000000,
               });
           if (erc20Approve) {

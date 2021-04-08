@@ -1,4 +1,5 @@
 /* eslint no-param-reassign: 0 */
+import Vue from 'vue'
 
 export default {
   namespaced: true,
@@ -14,10 +15,10 @@ export default {
 
   mutations: {
     selectedCategory(state, category) {
-      state.selectedFilters.selectedCategory = category || null
+      Vue.set(state.selectedFilters, 'selectedCategory', category || null)
     },
     selectedSort(state, sortBy) {
-      state.selectedFilters.selectedSort = sortBy || null
+      Vue.set(state.selectedFilters, 'selectedSort', sortBy || null)
     },
   },
 

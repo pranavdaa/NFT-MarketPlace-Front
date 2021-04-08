@@ -214,6 +214,10 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
       type: [Number, String],
       required: false,
     },
+    contractAddress : {
+      type: [Number, String],
+      required: false,
+    },
   },
   components: {
     TokenShortInfo,
@@ -302,7 +306,7 @@ export default class NftDetail extends Vue {
       if (response.status === 200 && response.data.data) {
         // should use a endpoint that returns detail for just one token
         let currentToken = response.data.data.filter((token) => {
-          return token.token_id == this.tokenId;
+          return token.token_id === this.tokenId && token.contract.match(new RegExp(this.contractAddress, 'i'));
         });
 
         if (currentToken.length > 0) currentToken = currentToken[0];

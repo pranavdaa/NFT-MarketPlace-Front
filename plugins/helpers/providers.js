@@ -19,7 +19,6 @@ export function getWalletProvider({ networks, primaryProvider }) {
   let provider = null;
   switch (configStore.get("loginStrategy")) {
     case app.strategies.METAMASK:
-      window.ethereum.enable()
       provider = new MetamaskProvider(window.ethereum, {
         url: network.rpc
       });
