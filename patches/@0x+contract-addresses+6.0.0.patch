@@ -47,14 +47,15 @@ index a349df4..5683e9f 100644
      }
  }
 diff --git a/node_modules/@0x/contract-addresses/lib/src/index.js b/node_modules/@0x/contract-addresses/lib/src/index.js
-index d4d9aa8..17c163d 100644
+index d4d9aa8..bd553fc 100644
 --- a/node_modules/@0x/contract-addresses/lib/src/index.js
 +++ b/node_modules/@0x/contract-addresses/lib/src/index.js
-@@ -13,6 +13,7 @@ var ChainId;
+@@ -13,6 +13,8 @@ var ChainId;
      ChainId[ChainId["Kovan"] = 42] = "Kovan";
      ChainId[ChainId["Ganache"] = 1337] = "Ganache";
      ChainId[ChainId["BSC"] = 56] = "BSC";
 +    ChainId[ChainId["Matic"] = 137] = "Matic";
++    ChainId[ChainId["Mumbai"] = 80001] = "Mumbai";
  })(ChainId = exports.ChainId || (exports.ChainId = {}));
  /**
   * Used to get addresses of contracts that have been deployed to either the
