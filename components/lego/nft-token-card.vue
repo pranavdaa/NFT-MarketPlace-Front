@@ -83,7 +83,7 @@
         $t("sell")
       }}</a>
       <a
-        class="btn btn-transparent disabled w-100 align-self-center"
+        class="btn btn-transparent w-100 align-self-center"
         @click="transfer()"
 
         >{{ $t("transfer") }}</a
