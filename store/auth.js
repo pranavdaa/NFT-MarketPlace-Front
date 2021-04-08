@@ -2,6 +2,7 @@
 import { clearStore, config as configStore } from "~/plugins/localstore"
 import { getAxios } from "~/plugins/axios"
 import app from "~/plugins/app"
+import Vue from "vue"
 
 export default {
   namespaced: true,
@@ -95,6 +96,7 @@ export default {
       commit("authToken", null)
       commit("address", null)
       dispatch("trunk/resetBalances", {}, { root: true });
+      Vue.logger.stopTrack()
       clearStore()
     },
 
