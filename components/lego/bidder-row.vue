@@ -358,7 +358,7 @@ export default class BidderRow extends Vue {
           let zrx = {
             salt: generatePseudoRandomSalt(),
             expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-            gasPrice: 1000000000,
+            gasPrice: app.uiconfig.TX_DEFAULTS.gasPrice,
             signerAddress: takerAddress,
             data: dataVal.data.data,
             domain: {
@@ -580,7 +580,7 @@ export default class BidderRow extends Vue {
         let zrx = {
           salt: generatePseudoRandomSalt(),
           expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-          gasPrice: 1000000000,
+          gasPrice: app.uiconfig.TX_DEFAULTS.gasPrice,
           signerAddress: signedOrder.makerAddress,
           data: dataVal.data.data,
           domain: {
