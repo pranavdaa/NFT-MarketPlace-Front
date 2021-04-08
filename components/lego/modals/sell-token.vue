@@ -298,6 +298,7 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import { formatUSDValue } from "~/plugins/helpers/index";
+import { txShowError } from "~/plugins/helpers/transaction-utils";
 import Web3 from "web3";
 import moment from "moment";
 
@@ -325,7 +326,7 @@ import { getRandomFutureDateInSeconds } from "~/plugins/helpers/0x-utils";
 import { Textfield } from "@maticnetwork/matic-design-system";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
-import { registerNetwork } from '~/plugins/helpers/metamask-utils';
+import { registerNetwork } from "~/plugins/helpers/metamask-utils";
 
 const EXPIRY_DURATION = {
   ONE_WEEK: 0,
@@ -544,9 +545,7 @@ export default class SellToken extends Vue {
     } catch (error) {
       console.log(error);
       this.approveLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
   }
 
@@ -621,9 +620,7 @@ export default class SellToken extends Vue {
     } catch (error) {
       console.log(error);
       this.approveLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
   }
 
@@ -731,9 +728,7 @@ export default class SellToken extends Vue {
     } catch (error) {
       console.log(error);
       this.signLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
   }
 
@@ -789,9 +784,7 @@ export default class SellToken extends Vue {
       this.approveStatus();
     } catch (error) {
       console.error(error);
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
     this.isLoading = false;
   }
@@ -831,7 +824,6 @@ export default class SellToken extends Vue {
 
     if (!isApprovedForAll) {
       if (!this.category.isMetaTx) {
-
         if (!(await this.metamaskValidation())) {
           this.isLoading = false;
           return;

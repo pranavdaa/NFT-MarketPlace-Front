@@ -32,10 +32,29 @@
             class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             v-bind:style="{ background: bg }"
           >
-            <video controls autoplay muted loop height="500px" v-if="isVideoFormat">
-              <source :src="order.token.img_url" type="video/webm" @error="handleNotVideo" />
-              <source :src="order.token.img_url" type="video/ogg" @error="handleNotVideo" />
-              <source :src="order.token.img_url" type="video/mp4" @error="handleNotVideo" />
+            <video
+              controls
+              autoplay
+              muted
+              loop
+              height="500px"
+              v-if="isVideoFormat"
+            >
+              <source
+                :src="order.token.img_url"
+                type="video/webm"
+                @error="handleNotVideo"
+              />
+              <source
+                :src="order.token.img_url"
+                type="video/ogg"
+                @error="handleNotVideo"
+              />
+              <source
+                :src="order.token.img_url"
+                type="video/mp4"
+                @error="handleNotVideo"
+              />
             </video>
             <img
               v-else
@@ -50,16 +69,22 @@
             class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
           >
             <h3 class="font-heading-medium font-semibold">
-              About {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )`: ''}}
+              About {{ order.token.name }}
+              {{ isErc1155 ? `( ${order.quantity} )` : "" }}
             </h3>
             <p
               class="font-body-medium"
               :class="{ 'show-less': showMore, 'show-more': !showMore }"
               v-if="orderDescription && orderDescription.length > 200"
             >
-              {{ orderDescription.slice(0, (orderDescription.length / 2)) }}
+              {{ orderDescription.slice(0, orderDescription.length / 2) }}
               <span class="dots">...</span>
-              <span class="more">{{ orderDescription.slice((orderDescription.length / 2), orderDescription.length) }}</span>
+              <span class="more">{{
+                orderDescription.slice(
+                  orderDescription.length / 2,
+                  orderDescription.length
+                )
+              }}</span>
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
@@ -75,17 +100,12 @@
                 >Show less</a
               >
             </p>
-            <p
-              class="font-body-medium"
-              v-else
-            >
+            <p class="font-body-medium" v-else>
               {{ orderDescription }}
             </p>
 
             <div class="ms-t-16" v-if="showListedDetails">
-              <div class="font-body-small text-gray-300 ps-y-4">
-                Listed for
-              </div>
+              <div class="font-body-small text-gray-300 ps-y-4">Listed for</div>
               <div
                 class="font-heading-large font-semibold ps-b-16"
                 v-if="erc20Token"
@@ -127,13 +147,21 @@
             </button>
             <div
               class="font-body-small text-danger text-center ps-t-12"
-              v-if="isInsufficientBalance && !validation['balance'] && order.status === 0"
+              v-if="
+                isInsufficientBalance &&
+                !validation['balance'] &&
+                order.status === 0
+              "
             >
               You have insufficient balance in your account
             </div>
             <div
               class="font-body-medium font-semibold text-primary text-center cursor-pointer ps-t-16"
-              v-if="isInsufficientBalance && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
+              v-if="
+                isInsufficientBalance &&
+                order.status === 0 &&
+                (order.type === app.orderTypes.FIXED || !validation['balance'])
+              "
               @click="depositModal = true"
             >
               Add Funds
@@ -231,16 +259,22 @@
         <div class="col-md-4 d-none d-lg-flex h-100">
           <div class="feature-info d-flex flex-column ps-16 ps-lg-40 w-100">
             <h3 class="font-heading-medium font-semibold">
-              About {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )`: ''}}
+              About {{ order.token.name }}
+              {{ isErc1155 ? `( ${order.quantity} )` : "" }}
             </h3>
             <p
               class="font-body-medium"
               :class="{ 'show-less': showMore, 'show-more': !showMore }"
               v-if="orderDescription && orderDescription.length > 200"
             >
-              {{ orderDescription.slice(0, (orderDescription.length / 2)) }}
+              {{ orderDescription.slice(0, orderDescription.length / 2) }}
               <span class="dots">...</span>
-              <span class="more">{{ orderDescription.slice((orderDescription.length / 2), orderDescription.length) }}</span>
+              <span class="more">{{
+                orderDescription.slice(
+                  orderDescription.length / 2,
+                  orderDescription.length
+                )
+              }}</span>
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
@@ -256,17 +290,12 @@
                 >Show less</a
               >
             </p>
-            <p
-              class="font-body-medium"
-              v-else
-            >
+            <p class="font-body-medium" v-else>
               {{ orderDescription }}
             </p>
 
             <div class="mt-auto" v-if="showListedDetails">
-              <div class="font-body-small text-gray-300 ps-y-4">
-                Listed for
-              </div>
+              <div class="font-body-small text-gray-300 ps-y-4">Listed for</div>
               <div
                 class="font-heading-large font-semibold ps-b-20"
                 v-if="erc20Token"
@@ -308,13 +337,21 @@
             </button>
             <div
               class="font-body-small text-danger text-center ps-t-12"
-              v-if="isInsufficientBalance && !validation['balance'] && order.status === 0"
+              v-if="
+                isInsufficientBalance &&
+                !validation['balance'] &&
+                order.status === 0
+              "
             >
               You have insufficient balance in your account
             </div>
             <div
               class="font-body-medium font-semibold text-primary text-center cursor-pointer ps-t-16"
-              v-if="isInsufficientBalance && order.status === 0 && (order.type === app.orderTypes.FIXED || !validation['balance'])"
+              v-if="
+                isInsufficientBalance &&
+                order.status === 0 &&
+                (order.type === app.orderTypes.FIXED || !validation['balance'])
+              "
               @click="depositModal = true"
             >
               Add Funds
@@ -383,6 +420,7 @@ import BidderRow from "~/components/lego/bidder-row";
 import BuyToken from "~/components/lego/modals/buy-token";
 import CancelConfirm from "~/components/lego/modals/cancel-confirm";
 import DepositWeth from "~/components/lego/modals/deposit-weth";
+import { txShowError } from "~/plugins/helpers/transaction-utils";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
 import ColorThief from "color-thief";
@@ -420,7 +458,7 @@ const TEN = BigNumber(10);
     BidderRow,
     BuyToken,
     CancelConfirm,
-    DepositWeth
+    DepositWeth,
   },
   computed: {
     ...mapGetters("category", ["categories"]),
@@ -440,8 +478,8 @@ const TEN = BigNumber(10);
   methods: {
     closeDepositModal() {
       this.depositModal = false;
-    }
-  }
+    },
+  },
 })
 export default class TokenDetail extends Vue {
   bg = "#ffffff";
@@ -464,7 +502,6 @@ export default class TokenDetail extends Vue {
   // initialize
   async mounted() {
     await this.fetchOrder();
-
   }
 
   onImageLoad() {
@@ -486,7 +523,7 @@ export default class TokenDetail extends Vue {
 
   // Get
   get orderDescription() {
-    return this.order.token.description
+    return this.order.token.description;
   }
 
   get category() {
@@ -496,11 +533,11 @@ export default class TokenDetail extends Vue {
   }
 
   get isErc1155() {
-    return this.order.token_type ==='ERC1155'
+    return this.order.token_type === "ERC1155";
   }
 
   get isErc721() {
-    return this.order.token_type ==='ERC721'
+    return this.order.token_type === "ERC721";
   }
 
   get app() {
@@ -508,11 +545,11 @@ export default class TokenDetail extends Vue {
   }
 
   get isUser() {
-    return this.user
+    return this.user;
   }
 
   get isInsufficientBalance() {
-    return this.user && !this.isOwnersToken
+    return this.user && !this.isOwnersToken;
   }
 
   get erc20Token() {
@@ -551,7 +588,7 @@ export default class TokenDetail extends Vue {
   }
 
   get buttonVal() {
-    return this.order.type === app.orderTypes.FIXED ? "Buy Now" : "Place a Bid"
+    return this.order.type === app.orderTypes.FIXED ? "Buy Now" : "Place a Bid";
   }
 
   get validation() {
@@ -561,7 +598,7 @@ export default class TokenDetail extends Vue {
   }
 
   get showListedDetails() {
-    return !(this.order.status === 3)
+    return !(this.order.status === 3);
   }
 
   // async
@@ -580,14 +617,18 @@ export default class TokenDetail extends Vue {
         let sellerAddress = data.seller_users.address;
 
         if (this.account.address === sellerAddress) {
-          this.order = data
+          this.order = data;
         } else {
-          let res = await getAxios().post(`orders/validate`, { orderId: this.tokenId });
+          let res = await getAxios().post(`orders/validate`, {
+            orderId: this.tokenId,
+          });
 
           if (res.status === 200) {
-            app.addToast("Order Invalid", "This order is no longer valid or has been sold out. Please try to buy some other NFT.", {
-              type: "failure",
-            });
+            txShowError(
+              error,
+              "Order Invalid",
+              "This order is no longer valid or has been sold out. Please try to buy some other NFT."
+            );
             this.$router.push({ name: "index" });
           }
         }
@@ -597,7 +638,10 @@ export default class TokenDetail extends Vue {
     }
 
     this.isLoadingDetails = false;
-    if (Object.keys(this.order).length !== 0 && this.order.type !== app.orderTypes.FIXED) {
+    if (
+      Object.keys(this.order).length !== 0 &&
+      this.order.type !== app.orderTypes.FIXED
+    ) {
       await this.fetchBidders();
     }
   }
@@ -624,9 +668,9 @@ export default class TokenDetail extends Vue {
     this.showCancelConfirm = false;
   }
 
-  imageLoadError (event) {
-    event.target.src = this.category.img_url
-    event.target.style.width = '100px';
+  imageLoadError(event) {
+    event.target.src = this.category.img_url;
+    event.target.style.width = "100px";
   }
 
   handleNotVideo() {
@@ -714,9 +758,7 @@ export default class TokenDetail extends Vue {
       }
     } catch (error) {
       console.error(error);
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
   }
 

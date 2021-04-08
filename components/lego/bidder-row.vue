@@ -39,7 +39,7 @@
         </button>
 
         <button
-          class="btn btn-light  disbaled btn-deny align-self-center ms-r-12 ps-x-16"
+          class="btn btn-light disbaled btn-deny align-self-center ms-r-12 ps-x-16"
           v-if="isOwnersToken && this.bid.order.status === 0"
           @click="onDeny()"
         >
@@ -94,6 +94,7 @@ import app from "~/plugins/app";
 import getAxios from "~/plugins/axios";
 
 import BidConfirmation from "~/components/lego/modals/bid-confirmation";
+import { txShowError } from "~/plugins/helpers/transaction-utils";
 
 // 0X
 let {
@@ -290,12 +291,10 @@ export default class BidderRow extends Vue {
           const isOwnerOfToken =
             owner.toLowerCase() === this.account.address.toLowerCase();
           if (!isOwnerOfToken) {
-            app.addToast(
+            txShowError(
+              null,
               "You are no owner of this token",
-              "You are no longer owner of this token, refresh to update the data",
-              {
-                type: "failure",
-              }
+              "You are no longer owner of this token, refresh to update the data"
             );
             this.isLoading = false;
             this.onAcceptClose();
@@ -373,9 +372,7 @@ export default class BidderRow extends Vue {
       } catch (error) {
         // throw error;
         console.error(error);
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
     this.isLoading = false;
@@ -454,12 +451,10 @@ export default class BidderRow extends Vue {
             });
             return true;
           }
-          app.addToast(
+          txShowError(
+            error,
             "Failed to approve",
-            "You need to approve the transaction to sale the NFT",
-            {
-              type: "failure",
-            }
+            "You need to approve the transaction to sale the NFT"
           );
         } else {
           let maticWeb3 = new Web3(window.ethereum);
@@ -493,12 +488,10 @@ export default class BidderRow extends Vue {
             });
             return true;
           }
-          app.addToast(
+          txShowError(
+            error,
             "Failed to approve",
-            "You need to approve the transaction to sale the NFT",
-            {
-              type: "failure",
-            }
+            "You need to approve the transaction to sale the NFT"
           );
         }
       }
@@ -527,9 +520,7 @@ export default class BidderRow extends Vue {
         }
       } catch (error) {
         console.error(error);
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
   }
@@ -617,9 +608,7 @@ export default class BidderRow extends Vue {
         }
       } catch (error) {
         console.error(error);
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
     this.$store.dispatch("category/fetchCategories");

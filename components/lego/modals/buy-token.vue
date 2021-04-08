@@ -7,7 +7,10 @@
     <div
       class="modal transaction-prog-modal"
       v-bsl="show"
-      v-bind:class="{ show: show && displayed, 'hide-modal': showApproveModal && depositModal }"
+      v-bind:class="{
+        show: show && displayed,
+        'hide-modal': showApproveModal && depositModal,
+      }"
     >
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
@@ -26,7 +29,8 @@
                       target="_blank"
                       rel="noopener noreferrer"
                       class="text-gray-900"
-                      >{{ order.token.name }} {{ isErc1155 ? '( ' + order.quantity + ' )': ''}}
+                      >{{ order.token.name }}
+                      {{ isErc1155 ? "( " + order.quantity + " )" : "" }}
                     </a>
                   </h3>
                   <img
@@ -96,7 +100,6 @@
                       {{ errorMessage }}
                     </div>
 
-
                     <div class="d-flex justify-content-between">
                       <div>
                         <div class="font-body-small text-gray-300 ps-y-4">
@@ -116,14 +119,11 @@
                         </div>
                       </div>
 
-
                       <div class="text-right" v-if="order.highest_bid">
                         <div class="font-body-small text-gray-300 ps-y-4">
                           Last offer
                         </div>
-                        <div
-                          class="font-heading-large font-semibold"
-                        >
+                        <div class="font-heading-large font-semibold">
                           {{ order.highest_bid }} {{ erc20Token.symbol }}
                         </div>
                         <div
@@ -138,9 +138,7 @@
                         <div class="font-body-small text-gray-300 ps-y-4">
                           Min Price
                         </div>
-                        <div
-                          class="font-heading-large font-semibold"
-                        >
+                        <div class="font-heading-large font-semibold">
                           {{ order.min_price }} {{ erc20Token.symbol }}
                         </div>
                         <div
@@ -152,11 +150,11 @@
                       </div>
                     </div>
 
-                      <!-- <div
+                    <!-- <div
                         class="font-heading-large font-semibold ps-b-20"
                         v-if="erc20Token"
                       >{{order.getPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
-                      <!-- <div
+                    <!-- <div
                         class="font-heading-large font-semibold ps-b-20 ml-auto"
                         v-if="erc20Token"
                       >{{order.getMinPrice().toString(10)}} {{erc20Token.symbol}}</div>-->
@@ -308,7 +306,7 @@
       :isSignedStatus="isSignedStatus"
       :signLoading="signLoading"
       :modalTexts="approvalModalText"
-      :networkChangeNeeded="error==='selectMatic'"
+      :networkChangeNeeded="error === 'selectMatic'"
     ></approve-process>
 
     <deposit-weth
@@ -335,7 +333,7 @@ import { formatUSDValue } from "~/plugins/helpers/index";
 import PlaceBid from "~/components/lego/modals/place-bid";
 import ApproveProcess from "~/components/lego/modals/approve-process";
 import DepositWeth from "~/components/lego/modals/deposit-weth";
-import { registerNetwork } from '~/plugins/helpers/metamask-utils';
+import { registerNetwork } from "~/plugins/helpers/metamask-utils";
 
 const { getTypedData } = require("~/plugins/meta-tx");
 
@@ -354,6 +352,7 @@ import {
 } from "~/plugins/helpers/0x-utils";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
+import { txShowError } from "~/plugins/helpers/transaction-utils";
 
 const ZERO = BigNumber(0);
 const TEN = BigNumber(10);
@@ -370,7 +369,7 @@ const TEN = BigNumber(10);
     },
     category: {
       type: Object,
-      required: true
+      required: true,
     },
     close: {
       type: Function,
@@ -399,7 +398,7 @@ export default class BuyToken extends Vue {
   isLoading = false;
   showMore = false;
   displayed = true;
-  error = '';
+  error = "";
 
   showMakeOffer = false;
 
@@ -453,10 +452,10 @@ export default class BuyToken extends Vue {
   }
 
   convertPriceToUSD(amount) {
-    let amountVal = new BigNumber(amount)
-    let usdVal = new BigNumber(this.erc20Token.usd)
-    let result = amountVal.times(usdVal)
-    return result
+    let amountVal = new BigNumber(amount);
+    let usdVal = new BigNumber(this.erc20Token.usd);
+    let result = amountVal.times(usdVal);
+    return result;
   }
 
   closeDepositModal() {
@@ -474,9 +473,9 @@ export default class BuyToken extends Vue {
     this.close();
   }
 
-  imageLoadError (event) {
-    event.target.src = this.category.img_url
-    event.target.style.width = '100px';
+  imageLoadError(event) {
+    event.target.src = this.category.img_url;
+    event.target.style.width = "100px";
   }
 
   // get
@@ -487,24 +486,24 @@ export default class BuyToken extends Vue {
   }
 
   get isErc1155() {
-    return this.order.token_type ==='ERC1155'
+    return this.order.token_type === "ERC1155";
   }
 
   get isErc721() {
-    return this.order.token_type ==='ERC721'
+    return this.order.token_type === "ERC721";
   }
 
   get approvalModalText() {
     return {
       approve: {
-        title: 'Approve',
-        subText: `Approve 0x contract to transfer your ${this.erc20Token.symbol}`
+        title: "Approve",
+        subText: `Approve 0x contract to transfer your ${this.erc20Token.symbol}`,
       },
       sign: {
-        title: 'Sign buy order',
-        subText: ''
-      }
-    }
+        title: "Sign buy order",
+        subText: "",
+      },
+    };
   }
 
   get orderTypes() {
@@ -512,15 +511,17 @@ export default class BuyToken extends Vue {
   }
 
   get priceInUSD() {
-    return this.order.usd_price ? formatUSDValue(parseFloat(this.order.usd_price)) : '$0'
+    return this.order.usd_price
+      ? formatUSDValue(parseFloat(this.order.usd_price))
+      : "$0";
   }
   get minPriceInUSD() {
-    let equivalentUSD = this.convertPriceToUSD(this.order.min_price)
-    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
+    let equivalentUSD = this.convertPriceToUSD(this.order.min_price);
+    return isNaN(equivalentUSD) ? "$0" : formatUSDValue(equivalentUSD);
   }
   get lastPriceInUSD() {
-    let equivalentUSD = this.convertPriceToUSD(this.order.highest_bid)
-    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
+    let equivalentUSD = this.convertPriceToUSD(this.order.highest_bid);
+    return isNaN(equivalentUSD) ? "$0" : formatUSDValue(equivalentUSD);
   }
 
   get isBid() {
@@ -599,18 +600,18 @@ export default class BuyToken extends Vue {
         );
 
         let allowance = await erc20TokenCont
-          .allowance(makerAddress, contractWrappers.contractAddresses.erc20Proxy)
+          .allowance(
+            makerAddress,
+            contractWrappers.contractAddresses.erc20Proxy
+          )
           .callAsync();
 
-        this.isApprovedStatus = allowance.gt(ZERO)
+        this.isApprovedStatus = allowance.gt(ZERO);
         this.approveLoading = false;
-
       } catch (error) {
         console.error(error);
         this.approveLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     } else if (this.order.type === this.orderTypes.FIXED) {
       try {
@@ -633,32 +634,32 @@ export default class BuyToken extends Vue {
         );
 
         let allowance = await erc20TokenCont
-          .allowance(takerAddress, contractWrappers.contractAddresses.erc20Proxy)
+          .allowance(
+            takerAddress,
+            contractWrappers.contractAddresses.erc20Proxy
+          )
           .callAsync();
-
 
         this.isApprovedStatus = allowance.gt(ZERO);
         this.approveLoading = false;
       } catch (error) {
         console.error(error);
         this.approveLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
   }
 
-
   async approveClickedFunc() {
     this.approveLoading = true;
-    this.error = '';
+    this.error = "";
 
     if (this.order.type === this.orderTypes.NEGOTIATION) {
       try {
         const yearInSec = moment().add(365, "days").format("x");
         const chainId = this.networks.matic.chainId;
-        const nftContract = this.order.categories.categoriesaddresses[0].address;
+        const nftContract = this.order.categories.categoriesaddresses[0]
+          .address;
         const nftTokenId = this.order.tokens_id;
         const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
           .address;
@@ -683,18 +684,18 @@ export default class BuyToken extends Vue {
           erc20Address,
           makerAddress,
           isMetaTx
-        ).then((result) => {
-          this.isApprovedStatus = result;
-          this.approveLoading = false;
-        }).catch(e => {
-          this.approveLoading = false;
-        });
+        )
+          .then((result) => {
+            this.isApprovedStatus = result;
+            this.approveLoading = false;
+          })
+          .catch((e) => {
+            this.approveLoading = false;
+          });
       } catch (error) {
         console.error(error);
         this.approveLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     } else if (this.order.type === this.orderTypes.FIXED) {
       try {
@@ -711,7 +712,9 @@ export default class BuyToken extends Vue {
           chainId: signedOrder.chainId,
         });
 
-        signedOrder["makerAssetAmount"] = BigNumber(signedOrder.makerAssetAmount);
+        signedOrder["makerAssetAmount"] = BigNumber(
+          signedOrder.makerAssetAmount
+        );
         signedOrder["takerAssetAmount"] = takerAssetAmount;
         signedOrder["expirationTimeSeconds"] = BigNumber(
           signedOrder.expirationTimeSeconds
@@ -734,9 +737,7 @@ export default class BuyToken extends Vue {
       } catch (error) {
         console.error(error);
         this.approveLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
   }
@@ -748,7 +749,8 @@ export default class BuyToken extends Vue {
       try {
         const yearInSec = moment().add(365, "days").format("x");
         const chainId = this.networks.matic.chainId;
-        const nftContract = this.order.categories.categoriesaddresses[0].address;
+        const nftContract = this.order.categories.categoriesaddresses[0]
+          .address;
         const nftTokenId = this.order.tokens_id;
         const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
           .address;
@@ -780,22 +782,24 @@ export default class BuyToken extends Vue {
           .callAsync();
         let takerAssetData = null;
 
-        if(this.isErc1155) {
-          takerAssetAmount = new BigNumber(this.order.quantity)
+        if (this.isErc1155) {
+          takerAssetAmount = new BigNumber(this.order.quantity);
           takerAssetData = await contractWrappers.devUtils
-          .encodeERC1155AssetData(
-            nftContract,
-            [new BigNumber(decimalnftTokenId)],
-            [new BigNumber(this.order.quantity)],
-            "0x"
+            .encodeERC1155AssetData(
+              nftContract,
+              [new BigNumber(decimalnftTokenId)],
+              [new BigNumber(this.order.quantity)],
+              "0x"
             )
-          .callAsync();
-
+            .callAsync();
         } else {
-          takerAssetAmount = new BigNumber(1)
+          takerAssetAmount = new BigNumber(1);
           takerAssetData = await contractWrappers.devUtils
-          .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
-          .callAsync();
+            .encodeERC721AssetData(
+              nftContract,
+              new BigNumber(decimalnftTokenId)
+            )
+            .callAsync();
         }
 
         const orderTemplate = {
@@ -856,9 +860,7 @@ export default class BuyToken extends Vue {
         console.log(error);
         this.isSignedStatus = false;
         this.signLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     } else if (this.order.type === this.orderTypes.FIXED) {
       try {
@@ -922,11 +924,15 @@ export default class BuyToken extends Vue {
           }
         } else {
           console.log("Order is already sold");
-          let res = await getAxios().post(`orders/validate`, { orderId: this.order.id });
+          let res = await getAxios().post(`orders/validate`, {
+            orderId: this.order.id,
+          });
           if (res.status === 200) {
-            app.addToast("Order Invalid", "This order is no longer valid or has been sold out. Please try to buy some other NFT.", {
-              type: "failure",
-            });
+            txShowError(
+              null,
+              "Order Invalid",
+              "This order is no longer valid or has been sold out. Please try to buy some other NFT."
+            );
             this.$router.push({ name: "index" });
           }
         }
@@ -934,9 +940,7 @@ export default class BuyToken extends Vue {
         console.log(error);
         this.isSignedStatus = false;
         this.signLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
   }
@@ -993,7 +997,7 @@ export default class BuyToken extends Vue {
       .callAsync();
 
     if (!allowance.gt(ZERO)) {
-      if(isMetaTx){
+      if (isMetaTx) {
         let data = await matic.eth.abi.encodeFunctionCall(
           {
             name: "approve",
@@ -1038,12 +1042,10 @@ export default class BuyToken extends Vue {
             }
           } catch (error) {
             console.log(error);
-            app.addToast(
+            txShowError(
+              null,
               "Failed to approve",
-              "You need to approve the transaction to sale the NFT",
-              {
-                type: "failure",
-              }
+              "You need to approve the transaction to sale the NFT"
             );
           }
         }
@@ -1054,17 +1056,16 @@ export default class BuyToken extends Vue {
           return;
         }
         try {
-          let amount = new BigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+          let amount = new BigNumber(
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          );
           const erc20Approve = await erc20TokenCont
-              .approve(
-                contractWrappers.contractAddresses.erc20Proxy,
-                amount
-              )
-              .sendTransactionAsync({
-                from: this.account.address,
-                gas: 100000,
-                gasPrice: 1000000000,
-              });
+            .approve(contractWrappers.contractAddresses.erc20Proxy, amount)
+            .sendTransactionAsync({
+              from: this.account.address,
+              gas: 100000,
+              gasPrice: 1000000000,
+            });
           if (erc20Approve) {
             console.log("Approved");
             app.addToast("Approved", "You successfully approved", {
@@ -1072,15 +1073,12 @@ export default class BuyToken extends Vue {
             });
             return true;
           }
-
         } catch (error) {
           console.log(error);
-          app.addToast(
+          txShowError(
+            null,
             "Failed to approve",
-            "You need to approve the transaction to sale the NFT",
-            {
-              type: "failure",
-            }
+            "You need to approve the transaction to sale the NFT"
           );
         }
         return false;
@@ -1163,12 +1161,10 @@ export default class BuyToken extends Vue {
       }
     } catch (error) {
       console.log(error);
-      app.addToast(
+      txShowError(
+        null,
         "Failed to buy order",
-        "Something went wrong while buying order",
-        {
-          type: "failure",
-        }
+        "Something went wrong while buying order"
       );
     }
     this.$store.dispatch("category/fetchCategories");

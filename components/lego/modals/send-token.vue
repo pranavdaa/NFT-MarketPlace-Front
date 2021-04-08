@@ -144,7 +144,8 @@ import { Textfield } from "@maticnetwork/matic-design-system";
 import { isValidAddress } from "ethereumjs-util";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
-import { registerNetwork } from '~/plugins/helpers/metamask-utils';
+import { registerNetwork } from "~/plugins/helpers/metamask-utils";
+import { txShowError } from "~/plugins/helpers/transaction-utils";
 
 const ZERO = BigNumber(0);
 
@@ -250,12 +251,10 @@ export default class SendToken extends Vue {
         const isOwnerOfToken =
           owner.toLowerCase() === this.account.address.toLowerCase();
         if (!isOwnerOfToken) {
-          app.addToast(
+          txShowError(
+            null,
             "You are no owner of this token",
-            "You are no longer owner of this token, refresh to update the data",
-            {
-              type: "failure",
-            }
+            "You are no longer owner of this token, refresh to update the data"
           );
           this.isLoading = false;
           this.close();
@@ -360,9 +359,7 @@ export default class SendToken extends Vue {
             }
           } catch (error) {
             console.error(error);
-            app.addToast("Failed to Transfer", "Failed to transfer asset", {
-              type: "failure",
-            });
+            txShowError(null, "Failed to Transfer", "Failed to transfer asset");
           }
         }
       } else {
@@ -385,9 +382,9 @@ export default class SendToken extends Vue {
             });
           if (erc721TransferTxHash) {
             //console.log("Transfer Hash", erc721TransferTxHash);
-            this.refreshNFTTokens()
+            this.refreshNFTTokens();
             setTimeout(() => {
-              this.refreshNFTTokens()
+              this.refreshNFTTokens();
             }, 10000);
 
             app.addToast(
@@ -400,9 +397,7 @@ export default class SendToken extends Vue {
             this.close();
             return true;
           }
-          app.addToast("Failed to transfer", "Failed to transfer token", {
-            type: "failure",
-          });
+          txShowError(error, "Failed to transfer", "Failed to transfer token");
         } else {
           let web3 = new Web3(window.ethereum);
           let erc1155TokenCont = new web3.eth.Contract(
@@ -423,9 +418,9 @@ export default class SendToken extends Vue {
               gasPrice: 1000000000,
             });
           if (erc1155TransferTxHash) {
-            this.refreshNFTTokens()
+            this.refreshNFTTokens();
             setTimeout(() => {
-              this.refreshNFTTokens()
+              this.refreshNFTTokens();
             }, 10000);
 
             app.addToast(
@@ -438,16 +433,12 @@ export default class SendToken extends Vue {
             this.close();
             return true;
           }
-          app.addToast("Failed to transfer", "Failed to transfer token", {
-            type: "failure",
-          });
+          txShowError(error, "Failed to transfer", "Failed to transfer token");
         }
       }
     } catch (error) {
       console.error(error);
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
     this.isLoading = false;
   }
