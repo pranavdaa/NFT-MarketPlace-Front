@@ -3,29 +3,30 @@ import mixpanel from 'mixpanel-browser';
 const uiconfig = require("~/config/uiconfig")
 
 export default {
-
+    
     install() {
         if (process.env.NODE_ENV === "production") {
             mixpanel.init(uiconfig.MIXPANEL_TOKEN);
         }
         let shouldTrack = false;
-
         const logger = {
             initTrack(user) {
-                if(user){
-                    mixpanel.people.set(user);
+                if(user && process.env.NODE_ENV === "production"){
+                    mixpanel.identify(user.address)
+                } else {
+                    user = {}
                 }
                 shouldTrack = true;
             },
-            stockTrack() {
+            stopTrack() {
                 shouldTrack = false;
             },
-            track(event, payload) {
+            track(event, payload={}) {
                 if (process.env.NODE_ENV != "production") {
-                    console.log(event, payload);
+                    console.log(event, JSON.parse(JSON.stringify(payload)));
                 }
                 else if (shouldTrack) {
-                    mixpanel.track(event, payload);
+                    mixpanel.track(event, JSON.parse(JSON.stringify(payload)));
                 }
             },
             error(err) {
@@ -38,6 +39,7 @@ export default {
                 console.log(args);
             }
         };
+        Vue.logger = logger
         Vue.mixin({
             beforeCreate() {
                 this.$logger = logger
