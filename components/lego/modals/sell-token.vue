@@ -325,7 +325,7 @@ import { getRandomFutureDateInSeconds } from "~/plugins/helpers/0x-utils";
 import { Textfield } from "@maticnetwork/matic-design-system";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
-import { registerNetwork } from '~/plugins/helpers/metamask-utils';
+import { registerNetwork } from "~/plugins/helpers/metamask-utils";
 
 const EXPIRY_DURATION = {
   ONE_WEEK: 0,
@@ -414,6 +414,7 @@ export default class SellToken extends Vue {
   mounted() {
     // initialize duration
     this.changeDuration(this.EXPIRY_DURATION.ONE_WEEK);
+    this.$logger.track("mounted:sell-token");
   }
 
   // Handlers
@@ -554,6 +555,7 @@ export default class SellToken extends Vue {
     this.approveLoading = true;
 
     try {
+      this.$logger.track("approval-start:sell-token");
       const yearInSec = moment().add(365, "days").format("x");
       const expiry_date_time = this.expiry_date_time
         ? this.expiry_date_time.format("x")
@@ -588,6 +590,7 @@ export default class SellToken extends Vue {
           providerEngine()
         );
         console.log(erc721TokenCont);
+        this.$logger.track("approve0x-721-start:sell-token");
         isApproved = await this.approve0x(
           erc721TokenCont,
           contractWrappers,
@@ -609,13 +612,14 @@ export default class SellToken extends Vue {
           nftContract
         );
         console.log(erc1155TokenCont);
+        this.$logger.track("approve0x-1155-start:sell-token");
         isApproved = await this.approve0x(
           erc1155TokenCont,
           contractWrappers,
           makerAddress
         );
       }
-
+      this.$logger.track("approve0x-success:sell-token");
       this.isApprovedStatus = isApproved;
       this.approveLoading = false;
     } catch (error) {
@@ -629,7 +633,7 @@ export default class SellToken extends Vue {
 
   async signClickedFunc() {
     this.signLoading = true;
-
+    this.$logger.track("sign-start:sell-token");
     try {
       const yearInSec = moment().add(365, "days").format("x");
       const expiry_date_time = this.expiry_date_time
@@ -717,6 +721,7 @@ export default class SellToken extends Vue {
       // Sign if FIXED order
       let signedOrder = "";
       if (orderType === app.orderTypes.FIXED) {
+        this.$logger.track("sign-fixed-order-start:sell-token");
         signedOrder = await signatureUtils.ecSignOrderAsync(
           providerEngine(),
           orderTemplate,
@@ -726,8 +731,9 @@ export default class SellToken extends Vue {
       // add extra info
       orderTemplate.orderType = orderType;
       orderTemplate.expiry_date_time = expiry_date_time;
-
+      this.$logger.track("handle-sign-server:sell-token");
       await this.handleSellSign(orderTemplate, signedOrder);
+      this.$logger.track("sign-success:sell-token");
     } catch (error) {
       console.log(error);
       this.signLoading = false;
@@ -739,6 +745,7 @@ export default class SellToken extends Vue {
 
   async submitToMarketplace() {
     this.isLoading = true;
+    this.$logger.track("submit-to-marketplace:sell-token");
     if (!this.isValid) {
       this.dirty = true;
       this.isLoading = false;
@@ -751,6 +758,7 @@ export default class SellToken extends Vue {
         return;
       }
     }
+    this.$logger.track("submit-to-marketplace-validation-complete:sell-token");
 
     this.dirty = false;
     try {
@@ -773,6 +781,10 @@ export default class SellToken extends Vue {
         const isOwnerOfToken =
           owner.toLowerCase() === this.account.address.toLowerCase();
         if (!isOwnerOfToken) {
+          this.$logger.track(
+            "submit-to-marketplace-not-token-owner:sell-token",
+            { nftToken, owner, address: this.account.address }
+          );
           app.addToast(
             "You are no owner of this token",
             "You are no longer owner of this token, refresh to update the data",
@@ -831,7 +843,6 @@ export default class SellToken extends Vue {
 
     if (!isApprovedForAll) {
       if (!this.category.isMetaTx) {
-
         if (!(await this.metamaskValidation())) {
           this.isLoading = false;
           return;
