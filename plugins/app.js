@@ -180,6 +180,9 @@ const app = {
       })
     )
 
+    console.log("user", store.getters["auth/address"])
+    Vue.logger.initTrack({address: store.getters["auth/address"]})
+
     await store.dispatch("token/reloadBalances")
 
     // user profile data

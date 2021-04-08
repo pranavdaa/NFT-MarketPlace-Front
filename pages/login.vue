@@ -197,7 +197,7 @@ export default class Login extends Vue {
       },
       domain: {
         name: "Opensea on Matic",
-        host: '',
+        host: "",
         version: "1",
         verifyingContract: "0x0",
         chainId: "",
@@ -230,9 +230,8 @@ export default class Login extends Vue {
     }
     if (
       window.ethereum.chainId !=
-      "0x" + this.networks.main.chainId.toString(16) &&
-      window.ethereum.chainId !=
-      "0x" + this.networks.matic.chainId.toString(16)
+        "0x" + this.networks.main.chainId.toString(16) &&
+      window.ethereum.chainId != "0x" + this.networks.matic.chainId.toString(16)
     ) {
       this.metamaskNetworkError = true;
       this.metamaskLoading = false;
@@ -275,14 +274,14 @@ export default class Login extends Vue {
 
   async login(address, signature, options) {
     this.loading = true;
-
+    this.$logger.track("user-login-start:login", { address });
     try {
       // login
       await this.$store.dispatch("auth/doLogin", {
         address,
         signature,
       });
-
+      this.$logger.track("user-login-complete:login", { address });
       this.moveToNext();
     } catch (e) {
       this.error =
