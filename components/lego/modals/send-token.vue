@@ -144,7 +144,7 @@ import { Textfield } from "@maticnetwork/matic-design-system";
 import { isValidAddress } from "ethereumjs-util";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
-import { registerNetwork } from '~/plugins/helpers/metamask-utils';
+import { registerNetwork } from "~/plugins/helpers/metamask-utils";
 
 const ZERO = BigNumber(0);
 
@@ -183,7 +183,7 @@ export default class SendToken extends Vue {
   erc1155Amount = null;
 
   mounted() {
-    this.$logger.track("mounted:transfer-token", this.nftToken)
+    this.$logger.track("mounted:transfer-token", this.nftToken);
   }
 
   handleAddressInput(input) {
@@ -210,7 +210,7 @@ export default class SendToken extends Vue {
     this.$logger.track("click:transfer-token", {
       isValidAddress: this.isValidAddress,
       isValidOwner: this.validation["owner"],
-    })
+    });
     if (!this.isValidAddress) {
       this.error = this.$t("invalid.address");
       this.isLoading = false;
@@ -233,7 +233,7 @@ export default class SendToken extends Vue {
     this.$logger.track("validations-passed:transfer-token", {
       isValidAddress: this.isValidAddress,
       isValidOwner: this.validation["owner"],
-    })
+    });
 
     this.dirty = false;
     this.error = "";
@@ -259,11 +259,11 @@ export default class SendToken extends Vue {
           .callAsync();
         const isOwnerOfToken =
           owner.toLowerCase() === this.account.address.toLowerCase();
-        
+
         this.$logger.track("ownership-for-erc721:transfer-token", {
           isOwnerOfToken: isOwnerOfToken,
-        })
-        
+        });
+
         if (!isOwnerOfToken) {
           app.addToast(
             "You are no owner of this token",
@@ -346,7 +346,7 @@ export default class SendToken extends Vue {
 
         this.$logger.track("meta-tx-signing:transfer-token", {
           data: data,
-        })
+        });
 
         let { sig } = await this.executeMetaTx(data);
 
@@ -363,7 +363,7 @@ export default class SendToken extends Vue {
 
         if (tx) {
           try {
-            this.$logger.track("service-call-execute-meta-tx:transfer-token")
+            this.$logger.track("service-call-execute-meta-tx:transfer-token");
             let response = await getAxios().post(`orders/executeMetaTx`, tx);
             this.refreshNFTTokens();
             if (response.status === 200) {
@@ -376,7 +376,7 @@ export default class SendToken extends Vue {
                 }
               );
               this.close();
-              this.$logger.track("success-meta-tx:transfer-token")
+              this.$logger.track("success-meta-tx:transfer-token");
               return true;
             }
           } catch (error) {
@@ -391,9 +391,7 @@ export default class SendToken extends Vue {
           this.isLoading = false;
           return;
         }
-        this.$logger.track("non-meta-tx-start:transfer-token", {
-          isOwnerOfToken: data,
-        })
+        this.$logger.track("non-meta-tx-start:transfer-token");
 
         if (this.isErc721) {
           const erc721TransferTxHash = await erc721TokenCont
@@ -409,9 +407,9 @@ export default class SendToken extends Vue {
             });
           if (erc721TransferTxHash) {
             //console.log("Transfer Hash", erc721TransferTxHash);
-            this.refreshNFTTokens()
+            this.refreshNFTTokens();
             setTimeout(() => {
-              this.refreshNFTTokens()
+              this.refreshNFTTokens();
             }, 10000);
 
             app.addToast(
@@ -422,7 +420,7 @@ export default class SendToken extends Vue {
               }
             );
             this.close();
-            this.$logger.track("success-non-meta-tx-ERC721:transfer-token")
+            this.$logger.track("success-non-meta-tx-ERC721:transfer-token");
             return true;
           }
           app.addToast("Failed to transfer", "Failed to transfer token", {
@@ -448,9 +446,9 @@ export default class SendToken extends Vue {
               gasPrice: 1000000000,
             });
           if (erc1155TransferTxHash) {
-            this.refreshNFTTokens()
+            this.refreshNFTTokens();
             setTimeout(() => {
-              this.refreshNFTTokens()
+              this.refreshNFTTokens();
             }, 10000);
 
             app.addToast(
@@ -461,7 +459,7 @@ export default class SendToken extends Vue {
               }
             );
             this.close();
-            this.$logger.track("success-non-meta-tx-ERC1155:transfer-token")
+            this.$logger.track("success-non-meta-tx-ERC1155:transfer-token");
             return true;
           }
           app.addToast("Failed to transfer", "Failed to transfer token", {
