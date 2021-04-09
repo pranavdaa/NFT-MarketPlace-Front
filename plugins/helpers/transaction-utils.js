@@ -145,7 +145,7 @@ export function beautifyErrorMessage(message) {
 
 export function txShowError(error, errorHeader, defaultMessage = '') {
   // error toast
-  app.addToast(errorHeader || "Error", beautifyErrorMessage(error.message) || defaultMessage, {
+  app.addToast(errorHeader || "Error", beautifyErrorMessage(error ? error?.message : null) || defaultMessage, {
     type: "danger"
   })
 }
