@@ -1,4 +1,5 @@
 import BigNumber from "~/plugins/bignumber"
+import moment from 'moment'
 
 const ZERO = new BigNumber(0)
 const TEN = new BigNumber(10)
@@ -29,6 +30,10 @@ export function formatMetaAttributes(attributes) {
 
       if (element.trait_type === 'generation') {
         element = { ...element, value: element.value.replace(/_/g, ' ').replace(/\b\w/g , char => char.toUpperCase()) }
+      }
+
+      if (element.trait_type === 'birthday') {
+        element = { ...element, value: moment.unix(element.value).format('ddd, MMMM Do, YYYY',) }
       }
 
       return element

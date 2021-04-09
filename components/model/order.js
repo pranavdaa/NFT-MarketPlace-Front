@@ -1,7 +1,6 @@
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
 import BigNumber from "~/plugins/bignumber"
-import moment from 'moment'
 import Web3 from "web3"
 import { parseBalance, toTokenAmount, formatMetaAttributes } from "~/plugins/helpers/token-utils"
 
