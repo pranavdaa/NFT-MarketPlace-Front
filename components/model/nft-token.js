@@ -1,6 +1,7 @@
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
 import Web3 from "web3"
+import { formatMetaAttributes } from "~/plugins/helpers/token-utils"
 
 export default class NFTToken extends Model {
 
@@ -26,20 +27,6 @@ export default class NFTToken extends Model {
     return this.category.id
   }
 
-  get metaAttributes() {
-    const formattedMetaAttr = this.attributes.map(element => {
-      element = { ...element, trait_type: element.trait_type.replace(/_/g, ' ') }
-
-      if (element.trait_type === 'generation') {
-        element = { ...element, value: element.value.replace(/_/g, ' ').replace(/\b\w/g , char => char.toUpperCase()) }
-      }
-
-      return element
-    })
-
-    return formattedMetaAttr
-  }
-
   get token() {
     return {
       contract: this.contract,
@@ -47,7 +34,7 @@ export default class NFTToken extends Model {
       name: this.name,
       owner: this.owner,
       img_url: this.img_url,
-      attributes_metadata: this.metaAttributes,
+      attributes_metadata: formatMetaAttributes(this.attributes),
     }
   }
 

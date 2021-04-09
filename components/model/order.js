@@ -3,7 +3,7 @@ import app from "~/plugins/app"
 import BigNumber from "~/plugins/bignumber"
 import moment from 'moment'
 import Web3 from "web3"
-import { parseBalance, toTokenAmount } from "~/plugins/helpers/token-utils"
+import { parseBalance, toTokenAmount, formatMetaAttributes } from "~/plugins/helpers/token-utils"
 
 const ZERO = new BigNumber(0)
 const TEN = new BigNumber(10)
@@ -14,20 +14,6 @@ export default class Order extends Model {
   }
   get erc20tokens_id() {
     return this.erc20tokens.id
-  }
-
-  get metaAttributes() {
-    const formattedMetaAttr = this.attributes.map(element => {
-      element = { ...element, trait_type: element.trait_type.replace(/_/g, ' ') }
-
-      if (element.trait_type === 'generation') {
-        element = { ...element, value: element.value.replace(/_/g, ' ').replace(/\b\w/g , char => char.toUpperCase()) }
-      }
-
-      return element
-    })
-
-    return formattedMetaAttr
   }
 
   get token() {
@@ -54,7 +40,7 @@ export default class Order extends Model {
       img_url: img,
       owner: owner,
       description: description,
-      attributes_metadata: this.metaAttributes,
+      attributes_metadata: formatMetaAttributes(this.attributes),
     }
   }
 

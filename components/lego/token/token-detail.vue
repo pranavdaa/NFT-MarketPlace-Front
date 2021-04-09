@@ -173,8 +173,6 @@
                 v-if="showCategoryInfo && category.description"
               >
                 {{ category.description }}
-                <br><br><br>
-                {{ order.token.attributes_metadata }}
               </p>
             </div>
 
