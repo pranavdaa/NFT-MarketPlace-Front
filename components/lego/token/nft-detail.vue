@@ -167,9 +167,16 @@
 
             <button
               class="btn btn-primary ms-t-32"
-              @click="onSellToken()"
+              @click="onSellToken"
             >
               {{ $t("sell") }}
+            </button>
+
+            <button
+              class="btn btn-primary ms-t-16"
+              @click="onTransferToken"
+            >
+              {{ $t("transfer") }}
             </button>
           </div>
         </div>
@@ -195,6 +202,14 @@
         v-if="showSellModal"
         :refreshNFTTokens="refreshNFTTokens"
       />
+
+      <send-token
+        class="text-left"
+        :close="onCloseSendModal"
+        :nftToken="token"
+        v-if="showSendModal"
+        :refreshNFTTokens="refreshNFTTokens"
+      />
     </div>
   </div>
 </template>
@@ -212,6 +227,7 @@ import TokenShortInfo from "~/components/lego/token/token-short-info";
 import WishlistButton from "~/components/lego/wishlist-button";
 import BuyToken from "~/components/lego/modals/buy-token";
 import SellToken from "~/components/lego/modals/sell-token";
+import SendToken from "~/components/lego/modals/send-token";
 import CancelConfirm from "~/components/lego/modals/cancel-confirm";
 
 import rgbToHsl from "~/plugins/helpers/color-algorithm";
@@ -240,6 +256,7 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
     WishlistButton,
     BuyToken,
     SellToken,
+    SendToken,
     CancelConfirm,
   },
   computed: {
@@ -261,6 +278,7 @@ export default class NftDetail extends Vue {
   isLoading = false;
   isVideoFormat = true;
   showSellModal = false;
+  showSendModal = false;
 
   token = {};
 
@@ -299,8 +317,16 @@ export default class NftDetail extends Vue {
     this.showSellModal = false;
   }
 
+  onCloseSendModal() {
+    this.showSendModal = false;
+  }
+
   onSellToken() {
     this.showSellModal = true;
+  }
+
+  onTransferToken() {
+    this.showSendModal = true;
   }
 
   async refreshNFTTokens() {
