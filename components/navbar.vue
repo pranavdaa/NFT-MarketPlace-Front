@@ -72,16 +72,16 @@
                 <span class="align-self-center">{{ $t("faq.title") }}</span>
               </nuxt-link>
             </li>
-            <!-- <li class="nav-item">
+            <li class="nav-item">
               <a
                 class="nav-link d-flex justify-content-lg-center"
-                href="https://t.me/maticwalletweb"
+                href="https://wallet-support.matic.network/portal/en/newticket"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 <span class="align-self-center">{{ $t("support.title") }}</span>
               </a>
-            </li> -->
+            </li>
             <div class="extra-links">
               <li class="nav-item">
                 <a

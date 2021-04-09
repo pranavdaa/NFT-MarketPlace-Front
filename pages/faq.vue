@@ -31,7 +31,8 @@
 
               <template slot="accordion-content">
                 <div class="font-body-medium ps-t-20 text-gray-500">
-                  We are creating a dedicated ticketing system to handle incoming support requests. In the meantime, please send support requests <a href="https://openseahelp.zendesk.com/hc/en-us/requests/new?ticket_form_id=1500000324402" target="_blank">here</a> and include the word 'Matic' in your ticket.
+                  We are creating a dedicated ticketing system to handle incoming support requests. In the meantime, please send support requests <a href="https://wallet-support.matic.network/portal/en/newticket
+" target="_blank">here</a> and include the word 'Opensea' in your ticket.
                 </div>
               </template>
             </accordion-item>
