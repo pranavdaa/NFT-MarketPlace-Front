@@ -9,7 +9,8 @@ export default {
       selectedFilters: {
         selectedCategory: null,
         selectedSort: null
-      }
+      },
+      isCategoryFetching: false,
     }
   },
 
@@ -19,6 +20,9 @@ export default {
     },
     selectedSort(state, sortBy) {
       Vue.set(state.selectedFilters, 'selectedSort', sortBy || null)
+    },
+    setIsCategoryFetching(state, isCategoryFetching) {
+      state.isCategoryFetching = isCategoryFetching
     },
   },
 
