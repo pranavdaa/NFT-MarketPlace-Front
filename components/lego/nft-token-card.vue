@@ -76,18 +76,27 @@
       {{ token.name }} {{ isErc1155 ? '( '+ token.amount +' )': '' }}
     </h3>
     <div
-      class="actions matic-chain d-flex justify-content-between text-center w-100 d-flex"
+      class="actions matic-chain d-flex justify-content-between text-center w-100"
       v-if="!isMainToken && !order"
     >
-      <a class="btn btn-transparent w-100 align-self-center" @click="sell()">{{
-        $t("sell")
-      }}</a>
-      <a
-        class="btn btn-transparent w-100 align-self-center"
-        @click="transfer()"
-
-        >{{ $t("transfer") }}</a
+      <NuxtLink
+        class="d-flex justify-content-between w-100"
+        :to="{
+          name: 'category-contractAddress-tokenId',
+          params: { contractAddress: token.contract, tokenId: token.token_id },
+          query: { chainId: token.chainId }
+        }"
       >
+        <a
+          class="btn btn-transparent w-100 align-self-center"
+          >{{ $t("sell") }}</a
+        >
+
+        <a
+          class="btn btn-transparent w-100 align-self-center"
+          >{{ $t("transfer") }}</a
+        >
+      </NuxtLink>
     </div>
 
     <div
