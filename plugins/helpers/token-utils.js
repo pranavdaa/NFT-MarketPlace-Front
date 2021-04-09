@@ -29,7 +29,7 @@ export function formatMetaAttributes(attributes) {
       element = { ...element, trait_type: element.trait_type.replace(/_/g, ' ') }
 
       if (element.trait_type === 'generation') {
-        element = { ...element, value: element.value.replace(/_/g, ' ').replace(/\b\w/g , char => char.toUpperCase()) }
+        element = { ...element, value: element.value.toString().replace(/_/g, ' ').replace(/\b\w/g , char => char.toUpperCase()) }
       }
 
       if (element.trait_type === 'birthday') {
