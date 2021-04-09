@@ -70,55 +70,57 @@
               >
                 {{ tokenDescription }}
               </p>
-
             </div>
-            <div class="d-flex flex-column py-4" v-if="category">
-              <h3 class="font-heading-medium font-semibold category">
-                About {{ category.name }}
-                <a
-                  class="ps-l-12"
-                  :href="category.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Visit Website</a
-                >
 
-                <span
-                  class="float-right cursor-pointer right-arrow"
-                  :class="{ 'down-icon': showCategoryInfo }"
-                  @click="showCategoryInfo = !showCategoryInfo"
-                  v-if="category.description"
-                >
-                  <svg-sprite-icon name="right-arrow" />
-                </span>
-              </h3>
+            <div class="d-flex flex-column details-section--dropdown" v-if="category">
+              <div class="header-wrapper cursor-pointer py-4 ps-l-16" @click="showCategoryInfo = !showCategoryInfo">
+                <h3 class="font-heading-medium font-semibold category m-0">
+                  About {{ category.name }}
+                  <a
+                    class="ps-l-12"
+                    :href="category.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Visit Website</a
+                  >
+
+                  <span
+                    class="float-right right-arrow"
+                    :class="{ 'down-icon': showCategoryInfo }"
+                    v-if="category.description"
+                  >
+                    <svg-sprite-icon name="right-arrow" />
+                  </span>
+                </h3>
+              </div>
               <p
-                class="font-body-medium ps-t-20"
+                class="font-body-medium ps-t-20 ps-l-16"
                 v-if="showCategoryInfo && category.description"
               >
                 {{ category.description }}
               </p>
             </div>
 
-            <div class="properties py-4" v-if="token.token.attributes_metadata">
-              <h3 class="font-heading-medium font-semibold mb-4">
-                Properties
-                <span
-                  class="float-right cursor-pointer right-arrow"
-                  :class="{ 'down-icon': showProperties }"
-                  @click="showProperties = !showProperties"
-                >
-                  <svg-sprite-icon name="right-arrow" />
-                </span>
-              </h3>
-              <div class="d-flex flex-row flex-wrap" v-if="showProperties">
+            <div class="properties details-section--dropdown" v-if="token.token.attributes_metadata">
+              <div class="header-wrapper cursor-pointer py-4 ps-l-16" @click="showProperties = !showProperties">
+                <h3 class="font-heading-medium font-semibold m-0">
+                  Properties
+                  <span
+                    class="float-right right-arrow"
+                    :class="{ 'down-icon': showProperties }"
+                  >
+                    <svg-sprite-icon name="right-arrow" />
+                  </span>
+                </h3>
+              </div>
+              <div class="d-flex flex-row flex-wrap ps-t-16 ps-l-16" v-if="showProperties">
                 <div
-                  class="col-md-4 p-0 pr-4 justify-content-between"
+                  class="col-md-3 p-0 pr-4 justify-content-between"
                   v-bind:key="`${attribute.trait_type}-${attribute.value}`"
                   v-for="attribute in token.token.attributes_metadata"
                 >
-                  <div class="d-flex flex-column properties-pill p-3 mb-4">
-                    <p class="property-title m-0 p-0 text-truncate">
+                  <div class="d-flex flex-column text-center properties-pill p-3 mb-4">
+                    <p class="property-title m-0 p-0 text-truncate text-capitalize">
                       {{ attribute.trait_type }}
                     </p>
                     <p class="property-detail m-0 pt-1 text-truncate">
@@ -271,8 +273,8 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
 export default class NftDetail extends Vue {
   bg = "#ffffff";
   showMore = false;
-  showCategoryInfo = false;
-  showProperties = false;
+  showCategoryInfo = true;
+  showProperties = true;
 
   isLoadingDetails = false;
   isLoading = false;
@@ -409,8 +411,14 @@ export default class NftDetail extends Vue {
   }
 }
 .details-section {
-  > :not(:last-child) {
-    border-bottom: 1px solid light-color("400");
+  &--dropdown {
+    border: 1px solid light-color("500");
+    border-radius: 6px;
+    margin-bottom: 20px;
+
+    .header-wrapper {
+      background-color: light-color("500");
+    }
   }
 }
 .right-arrow {
@@ -452,6 +460,7 @@ export default class NftDetail extends Vue {
   }
   .property-title {
     @include font-setting("body-medium", "700");
+    font-weight: 600;
   }
   .property-detail {
     @include font-setting("body-large", "500");

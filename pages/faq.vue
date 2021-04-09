@@ -16,7 +16,6 @@
               <template slot="accordion-content">
                 <div class="font-body-medium ps-t-20 text-gray-500">
                   OpenSea's Matic marketplace is currently accessible at <a href="https://matic.opensea.io/" target="_blank">matic.opensea.io</a>. In the near future, we plan to integrate Matic assets directly into the core OpenSea marketplace at <a href="https://https://opensea.io" target="_blank">opensea.io</a>.
-                  
                 </div>
               </template>
             </accordion-item>

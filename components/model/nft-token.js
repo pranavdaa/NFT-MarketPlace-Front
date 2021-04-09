@@ -1,6 +1,7 @@
 import Model from "~/components/model/model"
 import app from "~/plugins/app"
 import Web3 from "web3"
+import { formatMetaAttributes } from "~/plugins/helpers/token-utils"
 
 export default class NFTToken extends Model {
 
@@ -33,7 +34,7 @@ export default class NFTToken extends Model {
       name: this.name,
       owner: this.owner,
       img_url: this.img_url,
-      attributes_metadata: this.attributes,
+      attributes_metadata: formatMetaAttributes(this.attributes),
     }
   }
 
