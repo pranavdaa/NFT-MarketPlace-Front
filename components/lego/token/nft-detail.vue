@@ -119,7 +119,7 @@
                   v-bind:key="`${attribute.trait_type}-${attribute.value}`"
                   v-for="attribute in token.token.attributes_metadata"
                 >
-                  <div class="d-flex flex-column properties-pill p-3 mb-4">
+                  <div class="d-flex flex-column text-center properties-pill p-3 mb-4">
                     <p class="property-title m-0 p-0 text-truncate text-capitalize">
                       {{ attribute.trait_type }}
                     </p>
@@ -404,6 +404,7 @@ export default class NftDetail extends Vue {
   }
   .property-title {
     @include font-setting("body-medium", "700");
+    font-weight: 600;
   }
   .property-detail {
     @include font-setting("body-large", "500");
