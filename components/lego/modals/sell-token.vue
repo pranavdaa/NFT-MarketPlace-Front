@@ -298,6 +298,7 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 import { mapGetters } from "vuex";
 import { formatUSDValue } from "~/plugins/helpers/index";
+import { txShowError } from "~/plugins/helpers/transaction-utils";
 import Web3 from "web3";
 import moment from "moment";
 
@@ -545,9 +546,7 @@ export default class SellToken extends Vue {
     } catch (error) {
       console.log(error);
       this.approveLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
   }
 
@@ -626,9 +625,7 @@ export default class SellToken extends Vue {
     } catch (error) {
       console.log(error);
       this.approveLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
   }
 
@@ -738,9 +735,7 @@ export default class SellToken extends Vue {
     } catch (error) {
       console.log(error);
       this.signLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
   }
 
@@ -802,9 +797,7 @@ export default class SellToken extends Vue {
       this.approveStatus();
     } catch (error) {
       console.error(error);
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      txShowError(error, null, "Something went wrong");
     }
     this.isLoading = false;
   }

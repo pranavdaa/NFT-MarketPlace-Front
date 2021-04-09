@@ -352,6 +352,7 @@ import {
 } from "~/plugins/helpers/0x-utils";
 
 import { providerEngine } from "~/plugins/helpers/provider-engine";
+import { txShowError } from "~/plugins/helpers/transaction-utils";
 
 const ZERO = BigNumber(0);
 const TEN = BigNumber(10);
@@ -612,9 +613,7 @@ export default class BuyToken extends Vue {
       } catch (error) {
         console.error(error);
         this.approveLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     } else if (this.order.type === this.orderTypes.FIXED) {
       try {
@@ -648,9 +647,7 @@ export default class BuyToken extends Vue {
       } catch (error) {
         console.error(error);
         this.approveLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
   }
@@ -704,9 +701,7 @@ export default class BuyToken extends Vue {
       } catch (error) {
         console.error(error);
         this.approveLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     } else if (this.order.type === this.orderTypes.FIXED) {
       try {
@@ -750,9 +745,7 @@ export default class BuyToken extends Vue {
       } catch (error) {
         console.error(error);
         this.approveLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
   }
@@ -879,9 +872,7 @@ export default class BuyToken extends Vue {
         console.log(error);
         this.isSignedStatus = false;
         this.signLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     } else if (this.order.type === this.orderTypes.FIXED) {
       try {
@@ -962,12 +953,10 @@ export default class BuyToken extends Vue {
             orderId: this.order.id,
           });
           if (res.status === 200) {
-            app.addToast(
+            txShowError(
+              null,
               "Order Invalid",
-              "This order is no longer valid or has been sold out. Please try to buy some other NFT.",
-              {
-                type: "failure",
-              }
+              "This order is no longer valid or has been sold out. Please try to buy some other NFT."
             );
             this.$router.push({ name: "index" });
           }
@@ -976,9 +965,7 @@ export default class BuyToken extends Vue {
         console.log(error);
         this.isSignedStatus = false;
         this.signLoading = false;
-        app.addToast("Something went wrong", error.message.substring(0, 60), {
-          type: "failure",
-        });
+        txShowError(error, null, "Something went wrong");
       }
     }
   }
@@ -1081,12 +1068,10 @@ export default class BuyToken extends Vue {
             }
           } catch (error) {
             console.log(error);
-            app.addToast(
+            txShowError(
+              null,
               "Failed to approve",
-              "You need to approve the transaction to sale the NFT",
-              {
-                type: "failure",
-              }
+              "You need to approve the transaction to sale the NFT"
             );
           }
         }
@@ -1117,12 +1102,10 @@ export default class BuyToken extends Vue {
           }
         } catch (error) {
           console.log(error);
-          app.addToast(
+          txShowError(
+            null,
             "Failed to approve",
-            "You need to approve the transaction to sale the NFT",
-            {
-              type: "failure",
-            }
+            "You need to approve the transaction to sale the NFT"
           );
         }
         return false;
@@ -1205,12 +1188,10 @@ export default class BuyToken extends Vue {
       }
     } catch (error) {
       console.log(error);
-      app.addToast(
+      txShowError(
+        null,
         "Failed to buy order",
-        "Something went wrong while buying order",
-        {
-          type: "failure",
-        }
+        "Something went wrong while buying order"
       );
     }
     this.$store.dispatch("category/fetchCategories");
