@@ -434,7 +434,9 @@ export default class BuyToken extends Vue {
   makerAmount = null;
   depositModal = false;
 
-  mounted() {}
+  mounted() {
+    this.$logger.track("mounted:buy-token");
+  }
 
   onImageLoad() {
     try {
@@ -653,9 +655,11 @@ export default class BuyToken extends Vue {
   async approveClickedFunc() {
     this.approveLoading = true;
     this.error = "";
+    this.$logger.track("approve-start:buy-token");
 
     if (this.order.type === this.orderTypes.NEGOTIATION) {
       try {
+        this.$logger.track("approve-start-negotiation:buy-token");
         const yearInSec = moment().add(365, "days").format("x");
         const chainId = this.networks.matic.chainId;
         const nftContract = this.order.categories.categoriesaddresses[0]
@@ -679,6 +683,7 @@ export default class BuyToken extends Vue {
             moment(this.order.expiry_date).format("x")
           );
         }
+        this.$logger.track("approve-start-negotiation-0x:buy-token");
         const isApproved = this.approve0x(
           contractWrappers,
           erc20Address,
@@ -686,6 +691,7 @@ export default class BuyToken extends Vue {
           isMetaTx
         )
           .then((result) => {
+            this.$logger.track("approve-negotiation-success:buy-token");
             this.isApprovedStatus = result;
             this.approveLoading = false;
           })
@@ -699,6 +705,7 @@ export default class BuyToken extends Vue {
       }
     } else if (this.order.type === this.orderTypes.FIXED) {
       try {
+        this.$logger.track("approve-start-fixed:buy-token");
         const chainId = this.networks.matic.chainId;
         const takerAddress = this.account.address;
         const erc20Address = this.erc20Token.address;
@@ -725,13 +732,14 @@ export default class BuyToken extends Vue {
         console.log(signedOrder);
 
         // Check Approve 0x, Approve if not
+        this.$logger.track("approve-start-fixed-0x:buy-token");
         const isApproved = await this.approve0x(
           contractWrappers,
           erc20Address,
           takerAddress,
           isMetaTx
         );
-
+        this.$logger.track("approve-fixed-success:buy-token");
         this.isApprovedStatus = isApproved;
         this.approveLoading = false;
       } catch (error) {
@@ -744,7 +752,7 @@ export default class BuyToken extends Vue {
 
   async signClickedFunc() {
     this.signLoading = true;
-
+    this.$logger.track("sign-start:buy-token");
     if (this.order.type === this.orderTypes.NEGOTIATION) {
       try {
         const yearInSec = moment().add(365, "days").format("x");
@@ -820,13 +828,13 @@ export default class BuyToken extends Vue {
           makerFee: ZERO,
           takerFee: ZERO,
         };
-
+        this.$logger.track("signing-start-negotiation:buy-token");
         const signedOrder = await signatureUtils.ecSignOrderAsync(
           providerEngine(),
           orderTemplate,
           makerAddress
         );
-
+        this.$logger.track("sign-metamask-complete-negotiation:buy-token");
         if (signedOrder) {
           let data = {};
           data.bid = parseBalance(
@@ -836,6 +844,7 @@ export default class BuyToken extends Vue {
           data.signature = JSON.stringify(signedOrder);
 
           // Store bid with signature
+          this.$logger.track("sign-server-start-negotiation:buy-token");
           let response = await getAxios().patch(
             `orders/${this.order.id}/buy`,
             data
@@ -849,6 +858,9 @@ export default class BuyToken extends Vue {
               {
                 type: "success",
               }
+            );
+            this.$logger.track(
+              "sign-server-complete-bid-negotiation:buy-token"
             );
 
             this.isSignedStatus = true;
@@ -883,6 +895,11 @@ export default class BuyToken extends Vue {
         ] = await contractWrappers.devUtils
           .getOrderRelevantState(signedOrder, signedOrder.signature)
           .callAsync();
+        this.$logger.track("validation-start-fixed:buy-token", {
+          orderStatus,
+          remainingFillableAmount,
+          isValidSignature,
+        });
         console.log("is fillable", {
           orderStatus,
           orderHash,
@@ -895,14 +912,15 @@ export default class BuyToken extends Vue {
           remainingFillableAmount.isGreaterThan(0) &&
           isValidSignature
         ) {
+          this.$logger.track("sign-server-fixed-fill-order:buy-token");
           let dataVal = await getAxios().get(
             `orders/exchangedata/encoded?orderId=${this.order.id}&functionName=fillOrder`
           );
-
+          this.$logger.track("sign-server-complete-fill-order:buy-token");
           let zrx = {
             salt: generatePseudoRandomSalt(),
             expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-            gasPrice: 1000000000,
+            gasPrice: app.uiconfig.TX_DEFAULTS.gasPrice,
             signerAddress: takerAddress,
             data: dataVal.data.data,
             domain: {
@@ -912,17 +930,24 @@ export default class BuyToken extends Vue {
               verifyingContract: contractWrappers.contractAddresses.exchange,
             },
           };
-
+          this.$logger.track("metamask-sign-fixed-start:buy-token");
           const takerSign = await signatureUtils.ecSignTransactionAsync(
             providerEngine(),
             zrx,
             takerAddress
           );
-
+          this.$logger.track("metamask-sign-fixed-complete:buy-token");
           if (takerSign) {
+            this.$logger.track("handle-buy-final-sign-fixed:buy-token");
             await this.handleBuyToken(takerSign);
+            this.$logger.track("buy-final-sign-fixed-success:buy-token");
           }
         } else {
+          this.$logger.track("buy-already-sold-fixed:buy-token", {
+            orderStatus,
+            remainingFillableAmount,
+            isValidSignature,
+          });
           console.log("Order is already sold");
           let res = await getAxios().post(`orders/validate`, {
             orderId: this.order.id,
@@ -995,7 +1020,7 @@ export default class BuyToken extends Vue {
     let allowance = await erc20TokenCont
       .allowance(takerAddress, contractWrappers.contractAddresses.erc20Proxy)
       .callAsync();
-
+    this.$logger.track("approving-0x:buy-token", {allowance});
     if (!allowance.gt(ZERO)) {
       if (isMetaTx) {
         let data = await matic.eth.abi.encodeFunctionCall(
@@ -1034,6 +1059,7 @@ export default class BuyToken extends Vue {
           try {
             let response = await getAxios().post(`orders/executeMetaTx`, tx);
             if (response.status === 200) {
+              this.$logger.track("approving-0x-complete-non-meta-tx:buy-token", {response});
               console.log("Approved");
               app.addToast("Approved", "You successfully approved", {
                 type: "success",
@@ -1071,6 +1097,7 @@ export default class BuyToken extends Vue {
             app.addToast("Approved", "You successfully approved", {
               type: "success",
             });
+            this.$logger.track("approving-0x-complete-non-meta-tx:buy-token", {erc20Approve});
             return true;
           }
         } catch (error) {

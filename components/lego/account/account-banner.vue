@@ -1,5 +1,5 @@
 <template>
-  <div class="row ps-y-16 ps-x-16 account-banner">
+  <div class="row ps-y-16 ps-x-16 account-banner fixed">
     <div
       class="col-12 col-lg d-flex flex-column flex-md-row justify-content-center justify-content-lg-start"
     >

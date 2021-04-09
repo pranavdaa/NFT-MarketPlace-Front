@@ -118,7 +118,7 @@
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import app from "~/plugins/app";
 import { fuzzysearch } from "~/plugins/helpers/index";
 import { fuzzySearchResult } from "~/plugins/helpers/index";
@@ -146,6 +146,7 @@ import CategorySidebar from "~/components/lego/account/category-sidebar";
   },
   computed: {
     ...mapGetters("page", ["selectedFilters", "selectedCategory"]),
+    ...mapState("page", ["isCategoryFetching"]),
     ...mapGetters("category", ["categories", "allCategory"]),
     ...mapGetters("token", ["erc20Tokens"]),
   },
@@ -200,11 +201,16 @@ export default class Index extends Vue {
 
   // Wathers
   @VueWatch("selectedFilters", { immediate: true, deep: true })
-  @VueDebounce(1000)
+  @VueDebounce(500)
   async onFilterChanged() {
+    if (this.isCategoryFetching) {
+      return;
+    }
     this.hasNextPage = true;
     this.orderFullList.length = 0;
+    this.$store.commit("page/setIsCategoryFetching", true);
     await this.fetchOrders({ filtering: true });
+    this.$store.commit("page/setIsCategoryFetching", false);
   }
 
   // handlers
@@ -234,7 +240,7 @@ export default class Index extends Vue {
         ) {
           searchedTokensList.push(order);
         }
-      })
+      });
     } else {
       return this.orderFullList;
     }

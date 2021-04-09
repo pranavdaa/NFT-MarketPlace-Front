@@ -183,7 +183,9 @@ export default class SendToken extends Vue {
   toAddress = null;
   erc1155Amount = null;
 
-  mounted() {}
+  mounted() {
+    this.$logger.track("mounted:transfer-token", this.nftToken);
+  }
 
   handleAddressInput(input) {
     this.dirty = false;
@@ -206,6 +208,10 @@ export default class SendToken extends Vue {
 
   async transferToken() {
     this.isLoading = true;
+    this.$logger.track("click:transfer-token", {
+      isValidAddress: this.isValidAddress,
+      isValidOwner: this.validation["owner"],
+    });
     if (!this.isValidAddress) {
       this.error = this.$t("invalid.address");
       this.isLoading = false;
@@ -225,6 +231,10 @@ export default class SendToken extends Vue {
       this.dirty = true;
       return false;
     }
+    this.$logger.track("validations-passed:transfer-token", {
+      isValidAddress: this.isValidAddress,
+      isValidOwner: this.validation["owner"],
+    });
 
     this.dirty = false;
     this.error = "";
@@ -250,6 +260,11 @@ export default class SendToken extends Vue {
           .callAsync();
         const isOwnerOfToken =
           owner.toLowerCase() === this.account.address.toLowerCase();
+
+        this.$logger.track("ownership-for-erc721:transfer-token", {
+          isOwnerOfToken: isOwnerOfToken,
+        });
+
         if (!isOwnerOfToken) {
           txShowError(
             null,
@@ -328,6 +343,10 @@ export default class SendToken extends Vue {
           );
         }
 
+        this.$logger.track("meta-tx-signing:transfer-token", {
+          data: data,
+        });
+
         let { sig } = await this.executeMetaTx(data);
 
         let tx = {
@@ -343,6 +362,7 @@ export default class SendToken extends Vue {
 
         if (tx) {
           try {
+            this.$logger.track("service-call-execute-meta-tx:transfer-token");
             let response = await getAxios().post(`orders/executeMetaTx`, tx);
             this.refreshNFTTokens();
             if (response.status === 200) {
@@ -355,6 +375,7 @@ export default class SendToken extends Vue {
                 }
               );
               this.close();
+              this.$logger.track("success-meta-tx:transfer-token");
               return true;
             }
           } catch (error) {
@@ -367,6 +388,7 @@ export default class SendToken extends Vue {
           this.isLoading = false;
           return;
         }
+        this.$logger.track("non-meta-tx-start:transfer-token");
 
         if (this.isErc721) {
           const erc721TransferTxHash = await erc721TokenCont
@@ -395,6 +417,7 @@ export default class SendToken extends Vue {
               }
             );
             this.close();
+            this.$logger.track("success-non-meta-tx-ERC721:transfer-token");
             return true;
           }
           txShowError(error, "Failed to transfer", "Failed to transfer token");
@@ -431,6 +454,7 @@ export default class SendToken extends Vue {
               }
             );
             this.close();
+            this.$logger.track("success-non-meta-tx-ERC1155:transfer-token");
             return true;
           }
           txShowError(error, "Failed to transfer", "Failed to transfer token");

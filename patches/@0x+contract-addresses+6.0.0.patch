@@ -1,0 +1,61 @@
+diff --git a/node_modules/@0x/contract-addresses/lib/addresses.json b/node_modules/@0x/contract-addresses/lib/addresses.json
+index a349df4..5683e9f 100644
+--- a/node_modules/@0x/contract-addresses/lib/addresses.json
++++ b/node_modules/@0x/contract-addresses/lib/addresses.json
+@@ -244,5 +244,43 @@
+             "fillQuoteTransformer": "0x99356167edba8fbdc36959e3f5d0c43d1ba9c6db",
+             "positiveSlippageFeeTransformer": "0x45b3a72221e571017c0f0ec42189e11d149d0ace"
+         }
++    },
++    "80001":{
++        "erc20Proxy": "0x0b47076aaa5246411458fcf85494f41bbfdb8470",
++        "erc721Proxy": "0xff7ca10af37178bdd056628ef42fd7f799fac77c",
++        "erc1155Proxy": "0x53d791f18155c211ff8b58671d0f7e9b50e596ad",
++        "zrxToken": "0x5af2b282779c7d4ffc69ca4e6e16676747f5c56b",
++        "etherToken": "0x5b5e11e4818cceba3e82ca9b97cd0ab80be75ad3",
++        "exchange": "0x533dc89624dcc012c7323b41f286bd2df478800b",
++        "exchangeProxy": "0x533dc89624dcc012c7323b41f286bd2df478800b",
++        "erc20BridgeProxy": "0x5638a4b19f121adc4436de3f0e845173b33b594c",
++        "forwarder": "0x6dcf02d3a963f22dbf85c4025b86a834fef16c15",
++        "coordinatorRegistry": "0x6f5b9e0456c4849224c7b59dc15f05c48641c4e3",
++        "coordinator": "0x6669d66979f729445826fee33021090599ad7bd2",
++        "multiAssetProxy": "0x14f346789675cea7ac3aefd9a5522649c305331b",
++        "staticCallProxy": "0x4338ef5217239aa2096e83fdba729d782da46790",
++        "devUtils": "0x7a2d89c4cb4b28b9cef9f269d48b3aecf0f549b7",
++        "zrxVault": "0xe01ac7c9eb19c63b063134ed2bb5eb7dcc847be9",
++        "staking": "0x68ec2c09eb634ae0fdbf023c0127c5f4bf3dd92d",
++        "stakingProxy": "0xb0da4ecb2f7cba700e49c1161bd229cd7c75929e"
++    },
++    "137": {
++        "erc20Proxy": "0x411b0bcf1b6ea88cb7229558c89994a2449c302c",
++        "erc721Proxy": "0x58807bad0b376efc12f5ad86aac70e78ed67deae",
++        "erc1155Proxy": "0x207fa8df3a17d96ca7ea4f2893fcdcb78a304101",
++        "zrxToken": "0x03e1d56dfe6f4000ae38c7f8d002a6b0af55331c",
++        "etherToken": "0x0849b784a770027817301cc46cef753e9016b604",
++        "exchange": "0xfede379e48c873c75f3cc0c81f7c784ad730a8f7",
++        "exchangeProxy": "0xfede379e48c873c75f3cc0c81f7c784ad730a8f7",
++        "erc20BridgeProxy": "0x864a564a21af4d04afee508d3c563a638dc7f065",
++        "forwarder": "0x4fd0f7b482f3daf50cfbaf4eef913d2024e27568",
++        "coordinatorRegistry": "0x12824d0ba9972458426d9000ab61ee906c8bd87e",
++        "coordinator": "0xe45880fea5442a1914ddaa2e12411889f2b47a7d",
++        "multiAssetProxy": "0x752808f6c398de66d292ea7938936df3e35ff163",
++        "staticCallProxy": "0x296e6794a3e002e07bed7ad0c2690d211bd68e31",
++        "devUtils": "0x68724fda24ce973ad8ad75a333ca1d7e046e1aa0",
++        "zrxVault": "0x0ec8c273ce5a2c4ce08d9371245fa65ef90ef6c2",
++        "staking": "0x9a84177225ba9cbb8e49698ec2e75cc1f55e89d3",
++        "stakingProxy": "0xa98abd673d89f187b5f1e66d05b7a7df14128a91"
+     }
+ }
+diff --git a/node_modules/@0x/contract-addresses/lib/src/index.js b/node_modules/@0x/contract-addresses/lib/src/index.js
+index d4d9aa8..52ee2b3 100644
+--- a/node_modules/@0x/contract-addresses/lib/src/index.js
++++ b/node_modules/@0x/contract-addresses/lib/src/index.js
+@@ -13,6 +13,8 @@ var ChainId;
+     ChainId[ChainId["Kovan"] = 42] = "Kovan";
+     ChainId[ChainId["Ganache"] = 1337] = "Ganache";
+     ChainId[ChainId["BSC"] = 56] = "BSC";
++    ChainId[ChainId["Matic"] = 137] = "Matic";
++    ChainId[ChainId["Mumbai"] = 80001] = "Mumbai";
+ })(ChainId = exports.ChainId || (exports.ChainId = {}));
+ /**
+  * Used to get addresses of contracts that have been deployed to either the

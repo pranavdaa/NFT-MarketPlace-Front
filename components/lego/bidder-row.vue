@@ -31,7 +31,7 @@
         </div>
 
         <button
-          class="btn btn-light disbaled btn-deny align-self-center ms-r-12 ps-x-16"
+          class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
           v-if="isUsersBid && this.bid.order.status === 0"
           @click="onCancel()"
         >
@@ -39,7 +39,7 @@
         </button>
 
         <button
-          class="btn btn-light disbaled btn-deny align-self-center ms-r-12 ps-x-16"
+          class="btn btn-light btn-deny align-self-center ms-r-12 ps-x-16"
           v-if="isOwnersToken && this.bid.order.status === 0"
           @click="onDeny()"
         >
@@ -47,7 +47,7 @@
         </button>
         <button
           v-if="isOwnersToken && this.bid.order.status === 0"
-          class="btn btn-light disbaled align-self-center ps-x-16"
+          class="btn btn-light align-self-center ps-x-16"
           @click="onAccept()"
         >
           Accept
@@ -238,6 +238,7 @@ export default class BidderRow extends Vue {
 
   async acceptBid() {
     // Exchange the nft with this user
+    this.$logger.track("accept-bid-start:bid-options");
     this.isLoading = true;
     if (this.order.taker_address == this.user.id) {
       try {
@@ -309,15 +310,18 @@ export default class BidderRow extends Vue {
         }
 
         // Check Approve 0x, Approve if not
+        this.$logger.track("accept-bid-approve-start:bid-options");
         const isApproved = await this.approve0x(
           tokenContract,
           contractWrappers,
           takerAddress
         );
         if (!isApproved) {
+          this.$logger.track("accept-bid-not-approved:bid-options");
           return;
         }
 
+        this.$logger.track("accept-bid-approved:bid-options");
         const [
           { orderStatus, orderHash },
           remainingFillableAmount,
@@ -326,6 +330,11 @@ export default class BidderRow extends Vue {
           .getOrderRelevantState(signedOrder, signedOrder.signature)
           .callAsync();
 
+        this.$logger.track("accept-bid-order-validation:bid-options", {
+          orderStatus,
+          remainingFillableAmount,
+          isValidSignature,
+        });
         console.log("is fillable", {
           orderStatus,
           orderHash,
@@ -340,15 +349,15 @@ export default class BidderRow extends Vue {
           isValidSignature
         ) {
           console.log("Fillable");
-
+          this.$logger.track("accept-bid-fill-order:bid-options");
           let dataVal = await getAxios().get(
             `orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=fillOrder`
           );
-
+          this.$logger.track("accept-bid-fill-order-complete:bid-options");
           let zrx = {
             salt: generatePseudoRandomSalt(),
             expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-            gasPrice: 1000000000,
+            gasPrice: app.uiconfig.TX_DEFAULTS.gasPrice,
             signerAddress: takerAddress,
             data: dataVal.data.data,
             domain: {
@@ -358,15 +367,17 @@ export default class BidderRow extends Vue {
               verifyingContract: contractWrappers.contractAddresses.exchange,
             },
           };
-
+          this.$logger.track("accept-metamask-sign-start:bid-options");
           const takerSign = await signatureUtils.ecSignTransactionAsync(
             providerEngine(),
             zrx,
             takerAddress
           );
-
+          this.$logger.track("accept-metamask-sign-complete:bid-options");
           if (takerSign) {
+            this.$logger.track("handle-bid-accept-sign:bid-options");
             await this.handleBidAccept(takerSign);
+            this.$logger.track("bid-accept-sign-completed:bid-options");
           }
         }
       } catch (error) {
@@ -503,12 +514,14 @@ export default class BidderRow extends Vue {
   }
 
   async denyBid() {
+    this.$logger.track("deny-bid-start:bid-options");
     if (this.bid.order.taker_address == this.user.id) {
       try {
         let response = await getAxios().patch(
           `orders/bid/${this.bid.id}/cancel`
         );
         if (response.status === 200) {
+          this.$logger.track("deny-bid-success:bid-options");
           app.addToast(
             "Bid declined successfully",
             "You declined bid successfully",
@@ -527,6 +540,7 @@ export default class BidderRow extends Vue {
 
   async cancelBid() {
     this.isLoading = true;
+    this.$logger.track("cancel-bid-start:bid-options");
     try {
       if (this.order.type === app.orderTypes.NEGOTIATION) {
         let signedOrder = JSON.parse(this.bid.signature);
@@ -549,15 +563,15 @@ export default class BidderRow extends Vue {
         const contractWrappers = new ContractWrappers(providerEngine(), {
           chainId: chainId,
         });
-
+        this.$logger.track("cancel-bid-api-cancel-order:bid-options");
         let dataVal = await getAxios().get(
           `orders/exchangedata/encodedbid?bidId=${this.bid.id}&functionName=cancelOrder`
         );
-
+        this.$logger.track("cancel-bid-api-cancel-order-completed:bid-options");
         let zrx = {
           salt: generatePseudoRandomSalt(),
           expirationTimeSeconds: signedOrder.expirationTimeSeconds,
-          gasPrice: 1000000000,
+          gasPrice: app.uiconfig.TX_DEFAULTS.gasPrice,
           signerAddress: signedOrder.makerAddress,
           data: dataVal.data.data,
           domain: {
@@ -567,18 +581,22 @@ export default class BidderRow extends Vue {
             verifyingContract: contractWrappers.contractAddresses.exchange,
           },
         };
-
+        this.$logger.track("cancel-bid-metamask-start:bid-options");
         const takerSign = await signatureUtils.ecSignTransactionAsync(
           providerEngine(),
           zrx,
           signedOrder.makerAddress
         );
-
+        this.$logger.track("cancel-bid-metamask-complete:bid-options");
         if (takerSign) {
+          this.$logger.track("handle-cancel-bid-start-taker-sign:bid-options");
           await this.handleCancelBid(takerSign);
+          this.$logger.track("handle-cancel-bid-completed-taker-sign:bid-options");
         }
       } else {
+        this.$logger.track("handle-cancel-bid-start:bid-options");
         await this.handleCancelBid();
+        this.$logger.track("handle-cancel-bid-completed:bid-options");
       }
     } catch (error) {
       console.log(error);

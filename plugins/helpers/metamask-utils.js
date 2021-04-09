@@ -38,13 +38,15 @@ export function isMetamaskLocked() {
 
 // get accounts
 export function getAccounts() {
-  const web3 = new Web3(window.ethereum)
-  return new Promise((resolve, reject) => {
-    web3.eth.getAccounts((err, result) => {
-      if (err) {
-        return reject(err)
-      }
-      return resolve(result)
+  return window.ethereum.enable().then(() => {
+    const web3 = new Web3(window.ethereum)
+    return new Promise((resolve, reject) => {
+      web3.eth.getAccounts((err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        return resolve(result)
+      })
     })
   })
 }
