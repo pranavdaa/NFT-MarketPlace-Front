@@ -618,8 +618,9 @@ export default class TokenDetail extends Vue {
         let data = new OrderModel(response.data.data);
         let sellerAddress = data.seller_users.address;
 
+        this.order = data;
         if (this.account.address === sellerAddress) {
-          this.order = data;
+          // Do nothing
         } else {
           let res = await getAxios().post(`orders/validate`, {
             orderId: this.tokenId,
@@ -627,7 +628,7 @@ export default class TokenDetail extends Vue {
 
           if (res.status === 200) {
             txShowError(
-              error,
+              "Order Invalid",
               "Order Invalid",
               "This order is no longer valid or has been sold out. Please try to buy some other NFT."
             );
