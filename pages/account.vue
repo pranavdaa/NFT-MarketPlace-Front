@@ -84,10 +84,7 @@ export default class Index extends Vue {
 
   onNotificationOpen() {
     this.showNotification = true;
-
-    if (!localStorage.getItem('WalletSwapFeature')) {
-      localStorage.setItem('WalletSwapFeature', true);
-    }
+    localStorage.setItem('WalletSwapFeature', true);
   }
 
   onNotificationClose() {
