@@ -20,10 +20,29 @@
             class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             v-bind:style="{ background: bg }"
           >
-            <video controls autoplay muted loop height="500px" v-if="isVideoFormat">
-              <source :src="token.img_url" type="video/webm" @error="handleNotVideo" />
-              <source :src="token.img_url" type="video/ogg" @error="handleNotVideo" />
-              <source :src="token.img_url" type="video/mp4" @error="handleNotVideo" />
+            <video
+              controls
+              autoplay
+              muted
+              loop
+              height="500px"
+              v-if="isVideoFormat"
+            >
+              <source
+                :src="token.img_url"
+                type="video/webm"
+                @error="handleNotVideo"
+              />
+              <source
+                :src="token.img_url"
+                type="video/ogg"
+                @error="handleNotVideo"
+              />
+              <source
+                :src="token.img_url"
+                type="video/mp4"
+                @error="handleNotVideo"
+              />
             </video>
             <img
               v-else
@@ -46,9 +65,14 @@
                 :class="{ 'show-less': showMore, 'show-more': !showMore }"
                 v-if="tokenDescription && tokenDescription.length > 200"
               >
-                {{ tokenDescription.slice(0, (tokenDescription.length / 2)) }}
+                {{ tokenDescription.slice(0, tokenDescription.length / 2) }}
                 <span class="dots">...</span>
-                <span class="more">{{ tokenDescription.slice((tokenDescription.length / 2), tokenDescription.length) }}</span>
+                <span class="more">{{
+                  tokenDescription.slice(
+                    tokenDescription.length / 2,
+                    tokenDescription.length
+                  )
+                }}</span>
                 <a
                   class="font-body-small d-flex ps-t-8 font-medium"
                   href="#more-info"
@@ -64,16 +88,27 @@
                   >Show less</a
                 >
               </p>
-              <p
-                class="font-body-medium"
-                v-else
-              >
+              <p class="font-body-medium" v-else>
                 {{ tokenDescription }}
               </p>
+
+              <button class="btn btn-primary ms-t-32" @click="onSellToken">
+                {{ $t("sell") }}
+              </button>
+
+              <button class="btn btn-primary ms-t-16" @click="onTransferToken">
+                {{ $t("transfer") }}
+              </button>
             </div>
 
-            <div class="d-flex flex-column details-section--dropdown" v-if="category">
-              <div class="header-wrapper cursor-pointer py-4 ps-l-16" @click="showCategoryInfo = !showCategoryInfo">
+            <div
+              class="d-flex flex-column details-section--dropdown"
+              v-if="category"
+            >
+              <div
+                class="header-wrapper cursor-pointer py-4 ps-l-16"
+                @click="showCategoryInfo = !showCategoryInfo"
+              >
                 <h3 class="font-heading-medium font-semibold category m-0">
                   About {{ category.name }}
                   <a
@@ -101,8 +136,14 @@
               </p>
             </div>
 
-            <div class="properties details-section--dropdown" v-if="token.token.attributes_metadata">
-              <div class="header-wrapper cursor-pointer py-4 ps-l-16" @click="showProperties = !showProperties">
+            <div
+              class="properties details-section--dropdown"
+              v-if="token.token.attributes_metadata"
+            >
+              <div
+                class="header-wrapper cursor-pointer py-4 ps-l-16"
+                @click="showProperties = !showProperties"
+              >
                 <h3 class="font-heading-medium font-semibold m-0">
                   Properties
                   <span
@@ -113,14 +154,21 @@
                   </span>
                 </h3>
               </div>
-              <div class="d-flex flex-row flex-wrap ps-t-16 ps-l-16" v-if="showProperties">
+              <div
+                class="d-flex flex-row flex-wrap ps-t-16 ps-l-16"
+                v-if="showProperties"
+              >
                 <div
                   class="col-md-3 p-0 pr-4 justify-content-between"
                   v-bind:key="`${attribute.trait_type}-${attribute.value}`"
                   v-for="attribute in token.token.attributes_metadata"
                 >
-                  <div class="d-flex flex-column text-center properties-pill p-3 mb-4">
-                    <p class="property-title m-0 p-0 text-truncate text-capitalize">
+                  <div
+                    class="d-flex flex-column text-center properties-pill p-3 mb-4"
+                  >
+                    <p
+                      class="property-title m-0 p-0 text-truncate text-capitalize"
+                    >
                       {{ attribute.trait_type }}
                     </p>
                     <p class="property-detail m-0 pt-1 text-truncate">
@@ -142,9 +190,9 @@
               :class="{ 'show-less': showMore, 'show-more': !showMore }"
               v-if="tokenDescription && tokenDescription.length > 200"
             >
-              {{ tokenDescription.slice(0, (tokenDescription.length / 2)) }}
+              {{ tokenDescriptionFirstHalf }}
               <span class="dots">...</span>
-              <span class="more">{{ tokenDescription.slice((tokenDescription.length / 2), tokenDescription.length) }}</span>
+              <span class="more">{{ tokenDescriptionSecondHalf }}</span>
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
@@ -160,24 +208,15 @@
                 >Show less</a
               >
             </p>
-            <p
-              class="font-body-medium"
-              v-else
-            >
+            <p class="font-body-medium" v-else>
               {{ tokenDescription }}
             </p>
 
-            <button
-              class="btn btn-primary ms-t-32"
-              @click="onSellToken"
-            >
+            <button class="btn btn-primary ms-t-32" @click="onSellToken">
               {{ $t("sell") }}
             </button>
 
-            <button
-              class="btn btn-primary ms-t-16"
-              @click="onTransferToken"
-            >
+            <button class="btn btn-primary ms-t-16" @click="onTransferToken">
               {{ $t("transfer") }}
             </button>
           </div>
@@ -248,7 +287,7 @@ import { providerEngine } from "~/plugins/helpers/provider-engine";
       type: [Number, String],
       required: false,
     },
-    contractAddress : {
+    contractAddress: {
       type: [Number, String],
       required: false,
     },
@@ -306,9 +345,9 @@ export default class NftDetail extends Vue {
     } catch (error) {}
   }
 
-  imageLoadError (event) {
-    event.target.src = this.category.img_url
-    event.target.style.width = '100px';
+  imageLoadError(event) {
+    event.target.src = this.category.img_url;
+    event.target.style.width = "100px";
   }
 
   handleNotVideo() {
@@ -347,7 +386,18 @@ export default class NftDetail extends Vue {
   }
 
   get tokenDescription() {
-    return this.token.description
+    return this.token.description;
+  }
+
+  get tokenDescriptionFirstHalf() {
+    this.tokenDescription.slice(0, this.tokenDescription.length / 2);
+  }
+
+  get tokenDescriptionSecondHalf() {
+    this.tokenDescription.slice(
+      this.tokenDescription.length / 2,
+      this.tokenDescription.length
+    );
   }
 
   // async
@@ -364,7 +414,10 @@ export default class NftDetail extends Vue {
       if (response.status === 200 && response.data.data) {
         // should use a endpoint that returns detail for just one token
         let currentToken = response.data.data.filter((token) => {
-          return token.token_id === this.tokenId && token.contract.match(new RegExp(this.contractAddress, 'i'));
+          return (
+            token.token_id === this.tokenId &&
+            token.contract.match(new RegExp(this.contractAddress, "i"))
+          );
         });
 
         if (currentToken.length > 0) currentToken = currentToken[0];

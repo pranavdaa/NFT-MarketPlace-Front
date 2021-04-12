@@ -595,7 +595,7 @@ export default class SellToken extends Vue {
           contractWrappers,
           makerAddress
         );
-        this.$logger.track("approve0x-721-complete:sell-token", {isApproved});
+        this.$logger.track("approve0x-721-complete:sell-token", { isApproved });
       } else {
         takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit);
         takerAssetAmount = makerAssetAmount
@@ -618,7 +618,9 @@ export default class SellToken extends Vue {
           contractWrappers,
           makerAddress
         );
-        this.$logger.track("approve0x-1155-complete:sell-token", {isApproved});
+        this.$logger.track("approve0x-1155-complete:sell-token", {
+          isApproved,
+        });
       }
       this.isApprovedStatus = isApproved;
       this.approveLoading = false;
@@ -806,7 +808,13 @@ export default class SellToken extends Vue {
     const web3obj = new Web3(window.ethereum);
     const chainId = await web3obj.eth.getChainId();
     if (chainId !== this.networks.matic.chainId) {
-      await registerNetwork();
+      try {
+        await registerNetwork();
+        return true;
+      } catch (error) {
+        this.error = "selectMatic";
+        return false;
+      }
     }
     return true;
   }

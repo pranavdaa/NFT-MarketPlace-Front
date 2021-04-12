@@ -82,6 +82,43 @@
                 <span class="align-self-center">{{ $t("support.title") }}</span>
               </a>
             </li>
+            <li class="nav-item d-md-none">
+              <div
+                class="d-flex ms-x-16 nav-profile-container align-self-center"
+                @click.prevent.stop="handleOpenProfile(!openProfile)"
+                v-if="user"
+              >
+                <img src="~assets/svg/metamask.svg" />
+                <span class="navbar-user-address">
+                  {{ formattedUserAddress }}
+                </span>
+
+                <span
+                  class="down-icon align-self-center d-none d-md-flex justify-content-center"
+                >
+                  <svg-sprite-icon
+                    class="align-self-center"
+                    name="right-arrow"
+                  ></svg-sprite-icon>
+                </span>
+              </div>
+            </li>
+            <li class="nav-item d-md-none">
+              <nuxt-link
+                v-if="!user"
+                class="ms-x-16 align-self-center btn btn-primary login-button d-flex"
+                role="button"
+                :to="{ name: 'login' }"
+              >
+                <span class="d-flex with-icon">
+                  <svg-sprite-icon
+                    name="login"
+                    class="align-self-center"
+                  ></svg-sprite-icon>
+                </span>
+                <span>{{ $t("login") }}</span>
+              </nuxt-link>
+            </li>
             <div class="extra-links">
               <li class="nav-item">
                 <a
@@ -106,7 +143,7 @@
             </div>
           </ul>
         </div>
-        <div class="profile-navbar d-flex ml-auto ps-l-16">
+        <div class="d-none d-sm-flex profile-navbar ml-auto ps-l-16">
           <div class="d-flex align-self-center" v-if="user && false">
             <nuxt-link
               class="nav-link d-flex"
@@ -122,7 +159,7 @@
             </nuxt-link>
           </div>
           <div
-            class="nav-profile-container d-flex align-self-center"
+            class="d-flex nav-profile-container align-self-center"
             @click.prevent.stop="handleOpenProfile(!openProfile)"
             v-if="user"
           >
