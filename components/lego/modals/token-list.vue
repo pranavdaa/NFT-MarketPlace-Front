@@ -58,9 +58,9 @@
                           class="table-column col ml-auto ms-r-md-8 ms-r-0 justify-content-end"
                         >
                           <div class="text-right d-flex flex-column">
-                            <span class="font-body-medium font-medium"
-                              >{{ token.formattedFullUSDBalance }}</span
-                            >
+                            <span class="font-body-medium font-medium">{{
+                              token.formattedFullUSDBalance
+                            }}</span>
                             <span class="text-gray font-body-medium mt-1"
                               >{{ token.formattedBalance }}
                               {{ token.symbol }}</span

@@ -175,8 +175,14 @@
             </button>
           </div>
           <div class="details-section">
-            <div class="d-flex flex-column details-section--dropdown" v-if="category">
-              <div class="header-wrapper cursor-pointer py-4 ps-l-16" @click="showCategoryInfo = !showCategoryInfo">
+            <div
+              class="d-flex flex-column details-section--dropdown"
+              v-if="category"
+            >
+              <div
+                class="header-wrapper cursor-pointer py-4 ps-l-16"
+                @click="showCategoryInfo = !showCategoryInfo"
+              >
                 <h3 class="font-heading-medium font-semibold category m-0">
                   About {{ category.name }}
                   <a
@@ -204,8 +210,14 @@
               </p>
             </div>
 
-            <div class="properties details-section--dropdown" v-if="order.token.attributes_metadata">
-              <div class="header-wrapper cursor-pointer py-4 ps-l-16" @click="showProperties = !showProperties">
+            <div
+              class="properties details-section--dropdown"
+              v-if="order.token.attributes_metadata"
+            >
+              <div
+                class="header-wrapper cursor-pointer py-4 ps-l-16"
+                @click="showProperties = !showProperties"
+              >
                 <h3 class="font-heading-medium font-semibold m-0">
                   Properties
                   <span
@@ -216,14 +228,21 @@
                   </span>
                 </h3>
               </div>
-              <div class="d-flex flex-row flex-wrap ps-t-16 ps-l-16" v-if="showProperties">
+              <div
+                class="d-flex flex-row flex-wrap ps-t-16 ps-l-16"
+                v-if="showProperties"
+              >
                 <div
                   class="col-md-3 p-0 pr-4 justify-content-between"
                   v-bind:key="`${attribute.trait_type}-${attribute.value}`"
                   v-for="attribute in order.token.attributes_metadata"
                 >
-                  <div class="d-flex flex-column text-center properties-pill p-3 mb-4">
-                    <p class="property-title m-0 p-0 text-truncate text-capitalize">
+                  <div
+                    class="d-flex flex-column text-center properties-pill p-3 mb-4"
+                  >
+                    <p
+                      class="property-title m-0 p-0 text-truncate text-capitalize"
+                    >
                       {{ attribute.trait_type }}
                     </p>
                     <p class="property-detail m-0 pt-1 text-truncate">
@@ -519,7 +538,9 @@ export default class TokenDetail extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#ffffff";
+      } else {
+        this.bg = "#ffffff";
+      }
     } catch (error) {}
   }
 

@@ -1,10 +1,13 @@
-let { RPCSubprovider, Web3ProviderEngine, MetamaskSubprovider } = require('@0x/subproviders');
+let {
+  RPCSubprovider,
+  Web3ProviderEngine,
+  MetamaskSubprovider,
+} = require('@0x/subproviders');
 let { providerUtils } = require('@0x/utils');
 
 import app from "~/plugins/app";
 
 export const providerEngine = () => {
-
   const pe = new Web3ProviderEngine();
 
   // this is where I'm making a change, using SignerSubProvider was causing the error

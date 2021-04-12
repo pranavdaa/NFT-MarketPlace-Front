@@ -1,7 +1,7 @@
 <template>
   <div class="section position-absolute">
     <PreventUnload
-      :when="(transactionStatus === STATUS.EXITING) && !!(this.transactionHash)"
+      :when="transactionStatus === STATUS.EXITING && !!this.transactionHash"
       message="Please stay on this page until the withdraw transaction is confirmed on Ethereum!"
     />
     <div
@@ -20,7 +20,10 @@
             <span
               @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
-              :class="{'disabled-cursor': transactionStatus === STATUS.EXITING && transactionHash }"
+              :class="{
+                'disabled-cursor':
+                  transactionStatus === STATUS.EXITING && transactionHash,
+              }"
             >
               <svg-sprite-icon
                 name="close"
@@ -198,12 +201,14 @@
                         >{{ this.$t("viewOnEtherscan") }}</a
                       >
                     </div>
-                    <div class="ps-b-16 text-red font-semibold"
+                    <div
+                      class="ps-b-16 text-red font-semibold"
                       v-if="
-                        transactionStatus === STATUS.EXITING &&
-                        transactionHash
+                        transactionStatus === STATUS.EXITING && transactionHash
                       "
-                    >{{ this.$t("preventUserWithdrawModalClose") }}</div>
+                    >
+                      {{ this.$t("preventUserWithdrawModalClose") }}
+                    </div>
                   </div>
                 </div>
                 <div class="col-12 p-0">
@@ -229,7 +234,9 @@
                       class="ps-l-2"
                       v-if="transactionStatus >= STATUS.EXITED"
                     >
-                      {{ "It will take ~2 minutes for the NFT to appear in your Ethereum account." }}
+                      {{
+                        "It will take ~2 minutes for the NFT to appear in your Ethereum account."
+                      }}
                     </span>
                   </div>
                 </div>
@@ -270,7 +277,6 @@
     <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
   </div>
 </template>
-
 
 <script>
 import Vue from "vue";
@@ -330,7 +336,7 @@ const STATUS = {
     },
   },
   components: {
-    PreventUnload
+    PreventUnload,
   },
   methods: {},
   computed: {
@@ -502,13 +508,13 @@ export default class WithdrawConfirmationModal extends Vue {
       const maticPoS = this.getMaticPOS();
       const burnHash = this.transaction.txhash;
 
-      let exited = await maticPoS.isBatchERC721ExitProcessed(burnHash)
-      if(exited){
-        console.log("exited before")
+      let exited = await maticPoS.isBatchERC721ExitProcessed(burnHash);
+      if (exited) {
+        console.log("exited before");
         await this.handleExitedTokens();
         this.isLoading = false;
         this.cancel();
-        return
+        return;
       }
 
       let txHash = await maticPoS.exitBatchERC721(burnHash, {
@@ -517,12 +523,11 @@ export default class WithdrawConfirmationModal extends Vue {
           this.transactionHash = txHash;
         },
         onReceipt: async (txHash) => {
-          console.log("exited now")
+          console.log("exited now");
           await this.handleExit(txHash);
           this.isLoading = false;
         },
       });
-
     } catch (error) {
       this.isLoading = false;
       this.error = error.message;
@@ -546,7 +551,9 @@ export default class WithdrawConfirmationModal extends Vue {
   }
 
   async handleCheckpointInclusion() {
-    if (!this.transaction.id) return;
+    if (!this.transaction.id) {
+return;
+}
     try {
       let data = {
         status: 1,
@@ -597,12 +604,13 @@ export default class WithdrawConfirmationModal extends Vue {
   }
 
   onCancel() {
-    if (this.transactionStatus === STATUS.EXITING && this.transactionHash) return;
+    if (this.transactionStatus === STATUS.EXITING && this.transactionHash) {
+    {
+return;
+}
     this.cancel();
   }
 }
-
-
 </script>
 
 <style lang="scss" scoped>

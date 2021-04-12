@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex" :class="{'search-box': true, 'd-flex': true, disabled}">
+  <div class="d-flex" :class="{ 'search-box': true, 'd-flex': true, disabled }">
     <input
       class="form-control font-body-small align-self-center"
       type="text"
@@ -7,11 +7,21 @@
       v-model.trim="searchInput"
       :disabled="disabled"
     />
-    <div class="align-self-center d-flex" v-if="searching && searchInput && searchInput.length > 0">
+    <div
+      class="align-self-center d-flex"
+      v-if="searching && searchInput && searchInput.length > 0"
+    >
       <div class="spinner align-self-center" />
     </div>
-    <div class="align-self-center d-flex" v-if="searchInput" @click="() => searchInput = null">
-      <svg-sprite-icon name="close" class="close-icon align-self-center"></svg-sprite-icon>
+    <div
+      class="align-self-center d-flex"
+      v-if="searchInput"
+      @click="() => (searchInput = null)"
+    >
+      <svg-sprite-icon
+        name="close"
+        class="close-icon align-self-center"
+      ></svg-sprite-icon>
     </div>
   </div>
 </template>
@@ -26,22 +36,22 @@ import { VueWatch, VueDebounce } from "~/components/decorator";
   props: {
     change: {
       type: Function,
-      required: true
+      required: true,
     },
     placeholder: {
       type: String,
-      default: "Search"
+      default: "Search",
     },
     value: {
       type: String,
       required: false,
-      default: null
+      default: null,
     },
     disabled: {
       type: Boolean,
-      default: false
-    }
-  }
+      default: false,
+    },
+  },
 })
 export default class SearchBox extends Vue {
   searchInput = false;
@@ -60,7 +70,7 @@ export default class SearchBox extends Vue {
       .then(() => {
         this.searching = false;
       })
-      .catch(e => {
+      .catch((e) => {
         this.searching = false;
       });
   }

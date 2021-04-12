@@ -1,16 +1,23 @@
 <template>
   <a
     class="btn btn-light align-self-center action"
-    :class="{'listed': wishlisted}"
+    :class="{ listed: wishlisted }"
     @click="addToWishList()"
   >
-    <img src="~/static/icons/heart.svg" alt="favorite" class="icon option-icon inactive" />
-    <img src="~/static/icons/active/heart.svg" alt="favorited" class="icon option-icon active" />
+    <img
+      src="~/static/icons/heart.svg"
+      alt="favorite"
+      class="icon option-icon inactive"
+    />
+    <img
+      src="~/static/icons/active/heart.svg"
+      alt="favorited"
+      class="icon option-icon active"
+    />
     <span v-if="!wishlisted">Wishlist</span>
     <span v-if="wishlisted">Wishlisted</span>
   </a>
 </template>
-
 
 <script>
 import Vue from "vue";
@@ -21,16 +28,16 @@ import Component from "nuxt-class-component";
     wishlisted: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     onClick: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {},
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class WishlistButton extends Vue {
   mounted() {}

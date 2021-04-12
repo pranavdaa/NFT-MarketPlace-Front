@@ -1,6 +1,9 @@
 <template>
   <div class="section position-absolute">
-    <PreventUnload :when="(transactionStatus === STATUS.DEPOSITING) && !!(this.transactionHash)" message="Please stay on this page until the deposit transaction is confirmed on Ethereum!" />
+    <PreventUnload
+      :when="transactionStatus === STATUS.DEPOSITING && !!this.transactionHash"
+      message="Please stay on this page until the deposit transaction is confirmed on Ethereum!"
+    />
     <div
       class="modal receive-modal-wrapper"
       v-bsl="show"
@@ -17,7 +20,10 @@
             <span
               @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
-              :class="{'disabled-cursor': transactionStatus === STATUS.DEPOSITING && transactionHash }"
+              :class="{
+                'disabled-cursor':
+                  transactionStatus === STATUS.DEPOSITING && transactionHash,
+              }"
             >
               <svg-sprite-icon
                 name="close"
@@ -136,12 +142,15 @@
                         >{{ this.$t("viewOnEtherscan") }}</a
                       >
                     </div>
-                    <div class="ps-b-16 text-red font-semibold"
+                    <div
+                      class="ps-b-16 text-red font-semibold"
                       v-if="
                         transactionStatus === STATUS.DEPOSITING &&
                         transactionHash
                       "
-                    >{{ this.$t("preventUserDepositModalClose") }}</div>
+                    >
+                      {{ this.$t("preventUserDepositModalClose") }}
+                    </div>
                   </div>
                 </div>
                 <div class="col-12 p-0">
@@ -174,9 +183,9 @@
               </div>
               <div class="row" v-if="error">
                 <div class="col-12 ps-x-32 ps-b-12 text-center text-red">
-                  <div
-                    class="font-body-small text-red text-center mx-auto"
-                  >Please try again</div>
+                  <div class="font-body-small text-red text-center mx-auto">
+                    Please try again
+                  </div>
                 </div>
               </div>
               <div class="row p-0">
@@ -202,7 +211,6 @@
     <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
   </div>
 </template>
-
 
 <script>
 import Vue from "vue";
@@ -280,7 +288,9 @@ export default class DepositConfirmationModal extends Vue {
       return STATUS.INITIATED;
     } else if (!this.isApproving && this.isLoading && !this.isDeposited) {
       return STATUS.DEPOSITING;
-    } else if (this.isDeposited) return STATUS.DEPOSITED;
+    } else if (this.isDeposited) {
+return STATUS.DEPOSITED;
+}
   }
 
   get parentNetwork() {
@@ -386,7 +396,10 @@ export default class DepositConfirmationModal extends Vue {
   }
 
   onCancel() {
-    if (this.transactionStatus === STATUS.DEPOSITING && this.transactionHash) return;
+    if (this.transactionStatus === STATUS.DEPOSITING && this.transactionHash) {
+    {
+return;
+}
     this.cancel();
   }
 }

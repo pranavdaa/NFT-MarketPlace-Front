@@ -98,8 +98,10 @@ const TEN = new BigNumber(10);
       let value = $event.target.value;
       if (value && value.toString().split(".")[1]) {
         let decimals = $event.target.value.toString().split(".")[1].length || 0;
-        if (decimals > this.defaultSelectedToken.decimal)
-          $event.preventDefault();
+        if (decimals > this.defaultSelectedToken.decimal) {
+        {
+$event.preventDefault();
+}
       }
     },
   },
@@ -135,7 +137,7 @@ export default class InputToken extends Vue {
       this.inputAmount !== null &&
       this.inputAmount.toString().trim() !== ""
     ) {
-      BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
+      BigNumber.config({ EXPONENTIAL_AT: 1e9 });
       this.inputAmount = new BigNumber(parseFloat(this.inputAmount));
       const decimals = new BigNumber(this.defaultSelectedToken.decimal);
       result = this.inputAmount.times(TEN.pow(decimals));
@@ -166,7 +168,6 @@ export default class InputToken extends Vue {
   }
 }
 </script>
-
 
 <style lang="scss" scoped="">
 @import "~assets/css/theme/_theme";

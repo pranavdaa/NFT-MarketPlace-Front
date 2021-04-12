@@ -361,7 +361,7 @@ export default class EthereumNewTab extends Vue {
   }
   get searchedTokens() {
     if (this.searchInput !== null && this.displayedTokens.length > 0) {
-      return fuzzySearchResult(this.searchInput, this.displayedTokens)
+      return fuzzySearchResult(this.searchInput, this.displayedTokens);
     } else {
       return this.displayedTokens;
     }

@@ -1,30 +1,30 @@
-import Model from "~/components/model/model"
-import app from "~/plugins/app"
-import Web3 from "web3"
-import { formatMetaAttributes } from "~/plugins/helpers/token-utils"
+import Model from "~/components/model/model";
+import app from "~/plugins/app";
+import Web3 from "web3";
+import { formatMetaAttributes } from "~/plugins/helpers/token-utils";
 
 export default class NFTToken extends Model {
-
   get name() {
-    return `Token ${this.token_id}`
+    return `Token ${this.token_id}`;
   }
 
   get img_url() {
     if (this.image) {
-      return this.image
+      return this.image;
     }
     return "";
   }
 
   get category() {
     const category = app.vuexStore.getters['category/categories'].find(
-      c => c.getAddress(this.chainId).toLowerCase() == this.contract.toLowerCase()
-    )
-    return category
+      (c) =>
+        c.getAddress(this.chainId).toLowerCase() == this.contract.toLowerCase()
+    );
+    return category;
   }
 
   get categories_id() {
-    return this.category.id
+    return this.category.id;
   }
 
   get token() {
@@ -35,7 +35,6 @@ export default class NFTToken extends Model {
       owner: this.owner,
       img_url: this.img_url,
       attributes_metadata: formatMetaAttributes(this.attributes),
-    }
+    };
   }
-
 }

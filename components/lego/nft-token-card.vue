@@ -23,7 +23,10 @@
         !order
           ? {
               name: 'category-contractAddress-tokenId',
-              params: { contractAddress: token.contract, tokenId: token.token_id },
+              params: {
+                contractAddress: token.contract,
+                tokenId: token.token_id,
+              },
               query: { chainId: token.chainId },
             }
           : { name: 'order-id', params: { id: order.id } }
@@ -31,9 +34,21 @@
     >
       <div class="img-wrapper d-flex ps-t-12 justify-content-center">
         <video autoplay muted loop width="100%" v-if="isVideoFormat">
-          <source :src="token.img_url" type="video/webm" @error="handleNotVideo" />
-          <source :src="token.img_url" type="video/ogg" @error="handleNotVideo" />
-          <source :src="token.img_url" type="video/mp4" @error="handleNotVideo" />
+          <source
+            :src="token.img_url"
+            type="video/webm"
+            @error="handleNotVideo"
+          />
+          <source
+            :src="token.img_url"
+            type="video/ogg"
+            @error="handleNotVideo"
+          />
+          <source
+            :src="token.img_url"
+            type="video/mp4"
+            @error="handleNotVideo"
+          />
         </video>
         <img
           v-else
@@ -49,7 +64,9 @@
         class="gradient"
         v-bind:style="{
           background:
-            'linear-gradient( 360deg,' + bg + '0%, rgba(236, 235, 223, 0) 100%)',
+            'linear-gradient( 360deg,' +
+            bg +
+            '0%, rgba(236, 235, 223, 0) 100%)',
         }"
       ></div>
     </NuxtLink>
@@ -73,7 +90,7 @@
       class="w-100 title font-body-small font-medium ms-b-8 ps-x-12 ms-b-16"
       :title="token.name"
     >
-      {{ token.name }} {{ isErc1155 ? '( '+ token.amount +' )': '' }}
+      {{ token.name }} {{ isErc1155 ? "( " + token.amount + " )" : "" }}
     </h3>
     <div
       class="actions matic-chain d-flex justify-content-between text-center w-100"
@@ -84,18 +101,16 @@
         :to="{
           name: 'category-contractAddress-tokenId',
           params: { contractAddress: token.contract, tokenId: token.token_id },
-          query: { chainId: token.chainId }
+          query: { chainId: token.chainId },
         }"
       >
-        <a
-          class="btn btn-transparent w-100 align-self-center"
-          >{{ $t("sell") }}</a
-        >
+        <a class="btn btn-transparent w-100 align-self-center">{{
+          $t("sell")
+        }}</a>
 
-        <a
-          class="btn btn-transparent w-100 align-self-center"
-          >{{ $t("transfer") }}</a
-        >
+        <a class="btn btn-transparent w-100 align-self-center">{{
+          $t("transfer")
+        }}</a>
       </NuxtLink>
     </div>
 
@@ -211,18 +226,20 @@ export default class NFTTokenCard extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+      } else {
+        this.bg = "#f3f4f7";
+      }
     } catch (error) {
       this.bg = "#f3f4f7";
     }
   }
 
   get isErc1155() {
-    return this.token.type ==='ERC1155'
+    return this.token.type === 'ERC1155';
   }
 
   get isErc721() {
-    return this.token.type ==='ERC721'
+    return this.token.type === 'ERC721';
   }
 
   // Handlers
@@ -260,8 +277,8 @@ export default class NFTTokenCard extends Vue {
     }
   }
 
-  imageLoadError (event) {
-    event.target.src = this.category.img_url
+  imageLoadError(event) {
+    event.target.src = this.category.img_url;
     event.target.style.width = '100px';
   }
 
@@ -287,9 +304,9 @@ export default class NFTTokenCard extends Vue {
 
   get showCheckbox() {
     if (!this.isMainToken) {
-      return !this.isAllCategories && !this.order && (this.isOpenseaCompatible)
+      return !this.isAllCategories && !this.order && this.isOpenseaCompatible;
     } else {
-      return !this.isAllCategories && !this.order
+      return !this.isAllCategories && !this.order;
     }
   }
 

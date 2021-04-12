@@ -6,21 +6,21 @@ export default {
   state: () => {
     return {
       locales: ["en"],
-      locale: "en"
-    }
+      locale: "en",
+    };
   },
 
   mutations: {
     set(state, locale) {
       if (state.locales.indexOf(locale) !== -1) {
-        state.locale = locale
+        state.locale = locale;
       }
-    }
+    },
   },
 
   getters: {
     current(state) {
-      return state.locale
-    }
-  }
-}
+      return state.locale;
+    },
+  },
+};

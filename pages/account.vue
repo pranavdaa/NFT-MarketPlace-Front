@@ -45,7 +45,7 @@ import ActivityDepositWithdrawTab from "~/components/lego/account/activity-depos
     MaticNewTab,
     EthereumNewTab,
     ActivityOrderTab,
-    ActivityDepositWithdrawTab
+    ActivityDepositWithdrawTab,
   },
   middleware: ["auth"],
   mixins: [],

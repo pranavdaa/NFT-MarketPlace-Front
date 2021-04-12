@@ -34,9 +34,9 @@ import Component from "nuxt-class-component";
   props: {
     accordionItem: {
       type: Object,
-      required: false
-    }
-  }
+      required: false,
+    },
+  },
 })
 export default class AccordionItem extends Vue {
   index = null;

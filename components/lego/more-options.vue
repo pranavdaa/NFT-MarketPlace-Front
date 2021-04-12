@@ -1,8 +1,14 @@
 <template>
   <div class="more-action-container" v-if="options && options.length > 0">
     <div class="position-relative" v-click-outside="hide">
-      <div class="more-action-btn d-flex justify-content-center" @click="toggleOptions()">
-        <svg-sprite-icon name="more-menu" class="align-self-center mx-auto"></svg-sprite-icon>
+      <div
+        class="more-action-btn d-flex justify-content-center"
+        @click="toggleOptions()"
+      >
+        <svg-sprite-icon
+          name="more-menu"
+          class="align-self-center mx-auto"
+        ></svg-sprite-icon>
       </div>
       <div class="more-action-menu ps-8" v-if="showOptions">
         <div
@@ -11,7 +17,7 @@
           :key="option.title"
           @click="optionClicked(option)"
         >
-          <span class="font-body-small text-nowrap">{{option.title}}</span>
+          <span class="font-body-small text-nowrap">{{ option.title }}</span>
         </div>
       </div>
     </div>
@@ -90,4 +96,5 @@ export default class MoreOptions extends Vue {
     }
   }
 }
-</style>>
+</style>
+>

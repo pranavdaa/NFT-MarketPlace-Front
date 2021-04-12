@@ -108,7 +108,9 @@ export default class SubmittingToMarketplace extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+      } else {
+        this.bg = "#f3f4f7";
+      }
     } catch (error) {}
   }
 }

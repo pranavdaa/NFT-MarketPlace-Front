@@ -2,19 +2,44 @@
   <div class="btn-loader">
     <div
       v-if="loading"
-      :class="['loading-btn', 'd-flex', 'justify-content-center', 'btn', 'btn-' + color, {'btn-block': block}, {'disabled':  disabled}, {'btn-sm': sm}, {'btn-lg': lg}, {'btn-pill': pill}, ...classes]"
+      :class="[
+        'loading-btn',
+        'd-flex',
+        'justify-content-center',
+        'btn',
+        'btn-' + color,
+        { 'btn-block': block },
+        { disabled: disabled },
+        { 'btn-sm': sm },
+        { 'btn-lg': lg },
+        { 'btn-pill': pill },
+        ...classes,
+      ]"
     >
       <div class="spinner inverse align-self-center"></div>
-      <div v-if="loadingText" class="mx-3 font-16 align-self-center">{{loadingText}}</div>
+      <div v-if="loadingText" class="mx-3 font-16 align-self-center">
+        {{ loadingText }}
+      </div>
     </div>
     <button
       v-if="!loading"
-      :class="['btn', 'btn-' + color, {'btn-block': block}, {'disabled':  disabled}, {'btn-sm': sm}, {'btn-lg': lg}, {'btn-pill': pill}, ...classes]"
+      :class="[
+        'btn',
+        'btn-' + color,
+        { 'btn-block': block },
+        { disabled: disabled },
+        { 'btn-sm': sm },
+        { 'btn-lg': lg },
+        { 'btn-pill': pill },
+        ...classes,
+      ]"
       role="button"
       :type="click ? 'button' : 'submit'"
       v-on:click="click ? click() : false"
       :disabled="disabled"
-    >{{ text }}</button>
+    >
+      {{ text }}
+    </button>
   </div>
 </template>
 
@@ -74,7 +99,6 @@ import Component from "nuxt-class-component";
 })
 export default class ButtonLoader extends Vue {}
 </script>
-
 
 <style lang="scss" scoped="">
 @import "~assets/css/theme/_theme";

@@ -1,6 +1,10 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bsl="show" v-bind:class="{ show: show }"></div>
+    <div
+      class="modal-backdrop"
+      v-bsl="show"
+      v-bind:class="{ show: show }"
+    ></div>
     <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box accept-box">
@@ -91,7 +95,7 @@ const colorThief = new ColorThief();
     },
     category: {
       type: Object,
-      required: true
+      required: true,
     },
     btnTexts: {
       type: Object,
@@ -132,12 +136,14 @@ export default class CancelConfirm extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+      } else {
+        this.bg = "#f3f4f7";
+      }
     } catch (error) {}
   }
 
-  imageLoadError (event) {
-    event.target.src = this.category.img_url
+  imageLoadError(event) {
+    event.target.src = this.category.img_url;
     event.target.style.width = '50px';
   }
 }

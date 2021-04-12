@@ -4,7 +4,11 @@
       <div class="tt-header d-flex" v-if="!item.details">
         <div class="tt-header-container d-flex mr-auto">
           <div class="mr-3">
-            <svg-sprite-icon name="dummy" class="tt-icon align-self-center" :class="item.type"></svg-sprite-icon>
+            <svg-sprite-icon
+              name="dummy"
+              class="tt-icon align-self-center"
+              :class="item.type"
+            ></svg-sprite-icon>
           </div>
           <div class="align-self-center">{{ item.title }}</div>
         </div>
@@ -20,20 +24,30 @@
           <div
             class="text-button font-body-medium font-medium align-self-center"
             v-if="!item.closeButton"
-          >Dismiss</div>
+          >
+            Dismiss
+          </div>
         </div>
       </div>
 
       <div class="tt-details-header d-flex" v-if="item.details">
         <div class="mr-3">
-          <svg-sprite-icon name="dummy" class="tt-icon align-self-center" :class="item.type"></svg-sprite-icon>
+          <svg-sprite-icon
+            name="dummy"
+            class="tt-icon align-self-center"
+            :class="item.type"
+          ></svg-sprite-icon>
         </div>
         <div class="tt-body-container w-100">
           <div class="font-semibold mb-2">{{ item.title }}</div>
           <div class="mb-4">{{ item.details }}</div>
           <div class="d-flex justify-content-end">
-            <button class="btn btn-sm btn-light mr-2" v-if="item.acceptButton">Accept</button>
-            <button class="btn btn-sm" @click="removeToast(item)">Dismiss</button>
+            <button class="btn btn-sm btn-light mr-2" v-if="item.acceptButton">
+              Accept
+            </button>
+            <button class="btn btn-sm" @click="removeToast(item)">
+              Dismiss
+            </button>
           </div>
         </div>
       </div>

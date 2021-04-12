@@ -91,16 +91,17 @@ export default class ActivityDepositWithdrawRow extends Vue {
   explorerLink = "";
 
   async mounted() {
-    if(this.activity.type==="DEPOSIT"){
-        this.explorerLink = app.uiconfig.mainExplorer + "tx/" + this.activity.txhash;
-    }
-    else if (this.activity.type ==="WITHDRAW"){
-        if(this.activity.status === 0 || this.activity.status === 1){
-            this.explorerLink = app.uiconfig.maticExplorer + "tx/" + this.activity.txhash;
-        }
-        else if (this.activity.status === 2 || this.activity.status === 3){
-            this.explorerLink = app.uiconfig.mainExplorer + "tx/" + this.activity.exit_txhash;
-        }
+    if (this.activity.type === 'DEPOSIT') {
+      this.explorerLink =
+        app.uiconfig.mainExplorer + "tx/" + this.activity.txhash;
+    } else if (this.activity.type === "WITHDRAW") {
+      if (this.activity.status === 0 || this.activity.status === 1) {
+        this.explorerLink =
+          app.uiconfig.maticExplorer + "tx/" + this.activity.txhash;
+      } else if (this.activity.status === 2 || this.activity.status === 3) {
+        this.explorerLink =
+          app.uiconfig.mainExplorer + "tx/" + this.activity.exit_txhash;
+      }
     }
   }
 
@@ -115,12 +116,14 @@ export default class ActivityDepositWithdrawRow extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#ffffff";
+      } else {
+        this.bg = "#ffffff";
+      }
     } catch (error) {}
   }
 
   get imgUrl() {
-    return `${app.uiconfig.apis.FILE_HOST}${this.activity.categories.img_url}`
+    return `${app.uiconfig.apis.FILE_HOST}${this.activity.categories.img_url}`;
   }
 
   get timeRemaining() {
@@ -169,7 +172,6 @@ export default class ActivityDepositWithdrawRow extends Vue {
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";

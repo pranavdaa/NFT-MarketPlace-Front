@@ -5,9 +5,8 @@ exports.getTypedData = function({
   verifyingContract,
   nonce,
   from,
-  functionSignature
+  functionSignature,
 }) {
-
   if (
     (name !== null || name !== undefined) &&
     (version !== null || version !== undefined) &&
@@ -22,48 +21,48 @@ exports.getTypedData = function({
         EIP712Domain: [
           {
             name: "name",
-            type: "string"
+            type: "string",
           },
           {
             name: "version",
-            type: "string"
+            type: "string",
           },
           {
             name: "verifyingContract",
-            type: "address"
+            type: "address",
           },
           {
             name: "salt",
-            type: "bytes32"
-          }
+            type: "bytes32",
+          },
         ],
         MetaTransaction: [
           {
             name: "nonce",
-            type: "uint256"
+            type: "uint256",
           },
           {
             name: "from",
-            type: "address"
+            type: "address",
           },
           {
             name: "functionSignature",
-            type: "bytes"
-          }
-        ]
+            type: "bytes",
+          },
+        ],
       },
       domain: {
         name,
         version,
         verifyingContract,
-        salt
+        salt,
       },
       primaryType: "MetaTransaction",
       message: {
         nonce,
         from,
-        functionSignature
-      }
+        functionSignature,
+      },
     };
   }
   return null;

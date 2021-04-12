@@ -26,9 +26,9 @@
       >
         <div class="font-body-small" v-if="true">
           <nuxt-link
-          :to="{ name: 'order-id', params: { id: activity.order_id } }"
-          >{{ activity.message }}</nuxt-link
-        >
+            :to="{ name: 'order-id', params: { id: activity.order_id } }"
+            >{{ activity.message }}</nuxt-link
+          >
         </div>
         <div class="font-caption text-gray-300">
           {{ remainingTimeinWords }} ago
@@ -96,14 +96,16 @@ export default class ActivityOrderRow extends Vue {
   showExplorerLink = false;
 
   async mounted() {
-    this.explorerLink = app.uiconfig.maticExplorer + "tx/" + this.activity.orders.txhash;
-    if(this.activity.type==="SWAP"){
+    this.explorerLink =
+      app.uiconfig.maticExplorer + "tx/" + this.activity.orders.txhash;
+    if (this.activity.type === 'SWAP') {
       this.showExplorerLink = true;
-    }
-    else if (this.activity.type ==="CANCELLED" && this.activity.orders.type === "FIXED"){
+    } else if (
+      this.activity.type === "CANCELLED" &&
+      this.activity.orders.type === "FIXED"
+    ) {
       this.showExplorerLink = true;
-    }
-    else {
+    } else {
       this.showExplorerLink = false;
     }
   }
@@ -119,12 +121,14 @@ export default class ActivityOrderRow extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#ffffff";
+      } else {
+        this.bg = "#ffffff";
+      }
     } catch (error) {}
   }
 
   get imgUrl() {
-    return `${app.uiconfig.apis.FILE_HOST}${this.activity.orders.categories.img_url}`
+    return `${app.uiconfig.apis.FILE_HOST}${this.activity.orders.categories.img_url}`;
   }
 
   get timeRemaining() {
@@ -173,7 +177,6 @@ export default class ActivityOrderRow extends Vue {
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";

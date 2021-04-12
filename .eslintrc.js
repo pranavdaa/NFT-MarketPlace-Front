@@ -2,16 +2,16 @@ module.exports = {
   root: true,
   parser: "vue-eslint-parser",
   extends: [
-    "eslint:recommended",
+    // "eslint:recommended",
     'plugin:prettier/recommended',
     "prettier",
-    "standard",
-    "plugin:vue/recommended",
+    // "standard",
+    // "plugin:vue/recommended",
   ],
   parserOptions: {
-    "parser": "babel-eslint",
-    "sourceType": "module",
-    "allowImportExportEverywhere": false,
+    parser: 'babel-eslint',
+    sourceType: "module",
+    allowImportExportEverywhere: false,
     ecmaFeatures: {
       legacyDecorators: true,
     },

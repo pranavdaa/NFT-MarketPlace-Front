@@ -341,7 +341,9 @@ export default class NftDetail extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#ffffff";
+      } else {
+        this.bg = "#ffffff";
+      }
     } catch (error) {}
   }
 
@@ -420,8 +422,11 @@ export default class NftDetail extends Vue {
           );
         });
 
-        if (currentToken.length > 0) currentToken = currentToken[0];
-        else return;
+        if (currentToken.length > 0) {
+          currentToken = currentToken[0];
+        } else {
+          return;
+        }
 
         currentToken.chainId = this.chainId;
         let data = new NFTTokenModel(currentToken);

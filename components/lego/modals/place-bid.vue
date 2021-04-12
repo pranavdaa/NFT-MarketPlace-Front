@@ -81,10 +81,9 @@
                 <div
                   class="col-md-12 ps-x-40 ps-y-8 ps-b-20 font-caption text-gray-300"
                 >
-                  Account balance: {{
-                    defaultSelectedToken.formattedFullUSDBalance
-                  }}
-                  = {{ defaultSelectedToken.formattedBalance }}
+                  Account balance:
+                  {{ defaultSelectedToken.formattedFullUSDBalance }} =
+                  {{ defaultSelectedToken.formattedBalance }}
                   {{ defaultSelectedToken.symbol }}
                 </div>
 
@@ -202,7 +201,9 @@ export default class PlaceBid extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+      } else {
+        this.bg = "#f3f4f7";
+      }
     } catch (error) {}
   }
 
@@ -212,7 +213,7 @@ export default class PlaceBid extends Vue {
     if (this.validatePrice()) {
       this.submitOfferButtonDisabled = true;
       return;
-    }else{
+    } else {
       this.submitOfferButtonDisabled = false;
       return;
     }
@@ -234,24 +235,21 @@ export default class PlaceBid extends Vue {
   validatePrice() {
     this.noEnoughBalance = false;
 
-    if (!this.inputAmount){
-      return this.validationMessage = ' ';
-    }
-    else if (!this.inputAmount || !this.inputAmount.gt(ZERO)) {
-      return this.validationMessage = "Enter a valid amount";
-    }
-    else if (!this.defaultSelectedToken.fullBalance.gte(this.inputAmount || ZERO)) {
+    if (!this.inputAmount) {
+      return (this.validationMessage = ' ');
+    } else if (!this.inputAmount || !this.inputAmount.gt(ZERO)) {
+      return (this.validationMessage = 'Enter a valid amount');
+    } else if (
+      !this.defaultSelectedToken.fullBalance.gte(this.inputAmount || ZERO)
+    ) {
       this.noEnoughBalance = true;
-      return this.validationMessage = "You don't have sufficient balance";
-    }
-    else if (!this.inputAmount.gte(this.order.getMinPriceInBN())) {
-      return this.validationMessage = `Minimum ${this.order.min_price} ${this.defaultSelectedToken.symbol} required`;
-    }
-    else if (!this.inputAmount.lte(this.order.getPriceInBN())) {
-      return this.validationMessage = `Maximum ${this.order.price} ${this.defaultSelectedToken.symbol} allowed`;
-    }
-    else {
-      return this.validationMessage = '';
+      return (this.validationMessage = "You don't have sufficient balance");
+    } else if (!this.inputAmount.gte(this.order.getMinPriceInBN())) {
+      return (this.validationMessage = `Minimum ${this.order.min_price} ${this.defaultSelectedToken.symbol} required`);
+    } else if (!this.inputAmount.lte(this.order.getPriceInBN())) {
+      return (this.validationMessage = `Maximum ${this.order.price} ${this.defaultSelectedToken.symbol} allowed`);
+    } else {
+      return (this.validationMessage = '');
     }
   }
 

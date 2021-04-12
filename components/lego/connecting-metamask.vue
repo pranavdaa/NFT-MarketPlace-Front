@@ -5,7 +5,9 @@
         <div class="box">
           <div class="box-body">
             <div class="ps-16 ps-md-32 box-header">
-              <span class="font-heading-medium font-semibold col text-center">Metamask</span>
+              <span class="font-heading-medium font-semibold col text-center"
+                >Metamask</span
+              >
             </div>
 
             <div class="container">
@@ -20,7 +22,9 @@
                 </div>
                 <div
                   class="col-12 font-body-small text-center text-muted ps-t-8"
-                >Waiting for confirmation from Metamask</div>
+                >
+                  Waiting for confirmation from Metamask
+                </div>
               </div>
 
               <!-- <div class="row justify-content-center wallet-download-info">
@@ -37,7 +41,7 @@
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ 'show': loaded }"></div>
+    <div class="modal-backdrop" v-bind:class="{ show: loaded }"></div>
   </section>
 </template>
 
@@ -47,11 +51,11 @@ import Component from "nuxt-class-component";
 
 @Component({
   props: {
-    loaded: { type: Boolean, required: true }
+    loaded: { type: Boolean, required: true },
   },
   components: {},
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class ConnectingMetamask extends Vue {
   mounted() {}

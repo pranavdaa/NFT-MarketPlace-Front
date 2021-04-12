@@ -149,7 +149,9 @@ export default class TokenVerticleList extends Vue {
   }
 
   notifyChange() {
-    if (this.onSelectionChange) this.onSelectionChange(this.selectedTokens);
+    if (this.onSelectionChange) {
+      this.onSelectionChange(this.selectedTokens);
+    }
   }
 
   // Getters

@@ -1,6 +1,10 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bsl="show" v-bind:class="{ show: show }"></div>
+    <div
+      class="modal-backdrop"
+      v-bsl="show"
+      v-bind:class="{ show: show }"
+    ></div>
     <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box accept-box">
@@ -121,7 +125,9 @@ export default class BidConfirmationModal extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+      } else {
+        this.bg = "#f3f4f7";
+      }
     } catch (error) {}
   }
 }

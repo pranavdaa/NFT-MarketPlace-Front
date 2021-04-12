@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-md-12 text-md-left text-center ps-y-32" v-if="notifications > 0">
+      <div
+        class="col-md-12 text-md-left text-center ps-y-32"
+        v-if="notifications > 0"
+      >
         Here's a list of your requested transactions. Remember, once
         transactions make it onto the blockchain, the app takes a couple minutes
         to receive the updates, so keep checking!
@@ -18,11 +21,9 @@
     <no-item
       class="ps-b-120"
       :message="exmptyMsg"
-      v-if="
-        notifications.length <= 0 && !isLoading
-      "
+      v-if="notifications.length <= 0 && !isLoading"
     />
-    
+
     <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
       <!-- matic loader here -->
       <button-loader
@@ -123,7 +124,6 @@ export default class ActivityOrderTab extends Vue {
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 @import "~assets/css/theme/_theme";

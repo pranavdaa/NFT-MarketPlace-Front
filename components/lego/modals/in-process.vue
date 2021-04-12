@@ -1,18 +1,27 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
-    <div class="modal transaction-prog-modal" v-bind:class="{ 'show': show }">
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div class="modal transaction-prog-modal" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box in-process-box">
           <div class="box-body">
             <div class="container-fluid">
               <div class="row ps-y-60 ps-y-sm-80">
                 <div class="col-md-12 d-flex justify-content-center">
-                  <lottie :options="defaultOptions" :width="264" :height="264" class="process" />
+                  <lottie
+                    :options="defaultOptions"
+                    :width="264"
+                    :height="264"
+                    class="process"
+                  />
                 </div>
                 <div class="col-md-12 text-center">
-                  <div class="font-heading-medium font-semibold ps-t-28">Transaction in process</div>
-                  <div class="font-body-small ps-t-4 message">Wait for your transaction to complete.</div>
+                  <div class="font-heading-medium font-semibold ps-t-28">
+                    Transaction in process
+                  </div>
+                  <div class="font-body-small ps-t-4 message">
+                    Wait for your transaction to complete.
+                  </div>
                 </div>
               </div>
             </div>
@@ -34,18 +43,18 @@ import * as animationData from "~/static/lottie-animations/ripple-loader.json";
     show: {
       type: Boolean,
       required: false,
-      default: false
-    }
+      default: false,
+    },
   },
   components: { Lottie },
   data() {
     return {
       defaultOptions: { animationData: animationData.default },
-      animationSpeed: 1
+      animationSpeed: 1,
     };
   },
   methods: {},
-  mixins: []
+  mixins: [],
 })
 export default class InProcess extends Vue {
   transactions = [];

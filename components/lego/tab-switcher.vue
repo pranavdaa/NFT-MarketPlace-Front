@@ -4,19 +4,29 @@
     v-if="tabs && tabs.length > 0"
   >
     <ul class="tabs navbar-nav flex-row align-self-center">
-      <li class="nav-item" @click="onChangeTab(tab.id)" v-for="tab in tabs" :key="tab.id">
+      <li
+        class="nav-item"
+        @click="onChangeTab(tab.id)"
+        v-for="tab in tabs"
+        :key="tab.id"
+      >
         <div
           class="nav-link d-flex justify-content-lg-center"
-          :class="{'active': activeTab === tab.id}"
+          :class="{ active: activeTab === tab.id }"
         >
-          <span class="align-self-center font-body-medium">{{ tab.title }}</span>
-          <span class="align-self-center count font-body-medium" v-if="tab.count">{{tab.count}}</span>
+          <span class="align-self-center font-body-medium">{{
+            tab.title
+          }}</span>
+          <span
+            class="align-self-center count font-body-medium"
+            v-if="tab.count"
+            >{{ tab.count }}</span
+          >
         </div>
       </li>
     </ul>
   </div>
 </template>
-
 
 <script>
 import Vue from "vue";

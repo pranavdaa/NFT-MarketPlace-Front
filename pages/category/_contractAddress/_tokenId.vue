@@ -1,6 +1,11 @@
 <template>
   <div class="container-fluid p-0">
-    <nft-detail v-if="chainId" :tokenId="tokenId" :chainId="chainId" :contractAddress="contractAddress" />
+    <nft-detail
+      v-if="chainId"
+      :tokenId="tokenId"
+      :chainId="chainId"
+      :contractAddress="contractAddress"
+    />
   </div>
 </template>
 
@@ -13,10 +18,10 @@ import NftDetail from "~/components/lego/token/nft-detail";
 @Component({
   props: {},
   components: {
-    NftDetail
+    NftDetail,
   },
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class Token extends Vue {
   get contractAddress() {

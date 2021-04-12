@@ -55,10 +55,14 @@
                     ></button-loader>
                     <div
                       class="text-danger mx-auto text-center font-body-small"
-                      v-if="networkChangeNeeded===true"
+                      v-if="networkChangeNeeded === true"
                     >
-                      Please select Matic Mainnet in Metamask <br>
-                      <a href="https://docs.matic.network/docs/develop/metamask/config-matic/#matic-mainnet" target="_blank" rel="noopener noreferrer">
+                      Please select Matic Mainnet in Metamask <br />
+                      <a
+                        href="https://docs.matic.network/docs/develop/metamask/config-matic/#matic-mainnet"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         (guide)
                       </a>
                     </div>
@@ -97,7 +101,11 @@
                       lg
                       color="primary"
                       :loading="signLoading"
-                      :disabled="(isApproved === false || signLoading === true) || isSigned === true"
+                      :disabled="
+                        isApproved === false ||
+                        signLoading === true ||
+                        isSigned === true
+                      "
                       :click="signConfirm"
                     ></button-loader>
                   </div>
@@ -122,41 +130,41 @@ import Component from "nuxt-class-component";
   props: {
     close: {
       type: Function,
-      required: false
+      required: false,
     },
     approveClicked: {
       type: Function,
-      required: false
+      required: false,
     },
     signClicked: {
       type: Function,
-      required: false
+      required: false,
     },
     isApprovedStatus: {
       type: Boolean,
-      required: false
+      required: false,
     },
     isSignedStatus: {
       type: Boolean,
-      required: false
+      required: false,
     },
     approveLoading: {
       type: Boolean,
-      required: false
+      required: false,
     },
     signLoading: {
       type: Boolean,
-      required: false
+      required: false,
     },
     modalTexts: {
       type: Object,
-      required: false
+      required: false,
     },
     networkChangeNeeded: {
       type: Boolean,
-      required: false
-    }
-  }
+      required: false,
+    },
+  },
 })
 export default class ApproveProcess extends Vue {
   mounted() {}
@@ -192,7 +200,7 @@ export default class ApproveProcess extends Vue {
 }
 
 .status-check {
-  height:55px;
+  height: 55px;
   width: 55px;
 
   .icon {

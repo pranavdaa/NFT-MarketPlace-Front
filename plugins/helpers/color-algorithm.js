@@ -1,21 +1,21 @@
 export default function rgbToHsl({ r, g, b }) {
-
   // convert rgb values to the range of 0-1
-  var h, s = 25, l = 90;
-  r /= 255, g /= 255, b /= 255;
+  var h,
+    s = 25,
+    l = 90;
+  (r /= 255), (g /= 255), (b /= 255);
 
   // find min and max values out of r,g,b components
-  var max = Math.max(r, g, b), min = Math.min(r, g, b);
+  var max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
 
   if (max == r) {
     // if red is the predominent color
     h = (g - b) / (max - min);
-  }
-  else if (max == g) {
+  } else if (max == g) {
     // if green is the predominent color
     h = 2 + (b - r) / (max - min);
-  }
-  else if (max == b) {
+  } else if (max == b) {
     // if blue is the predominent color
     h = 4 + (r - g) / (max - min);
   }
@@ -26,13 +26,16 @@ export default function rgbToHsl({ r, g, b }) {
   if (h > 0) {
     // h is a positive angle in the color wheel
     h = Math.floor(h);
-    if (!h) h = 0
-    return { h, s, l }
-  }
-  else {
+    if (!h) {
+      h = 0;
+    }
+    return { h, s, l };
+  } else {
     // h is a negative angle.
     h = Math.floor(360 - h);
-    if (!h) h = 0
-    return { h, s, l }
+    if (!h) {
+      h = 0;
+    }
+    return { h, s, l };
   }
 }

@@ -1,11 +1,20 @@
 <template>
   <div class="container-fluid">
-    <div class="row ps-b-32" :class="{'ps-t-32': !message.img}">
-      <div class="col-md-12 d-flex justify-content-center ps-t-80 ps-b-32" v-if="message.img">
+    <div class="row ps-b-32" :class="{ 'ps-t-32': !message.img }">
+      <div
+        class="col-md-12 d-flex justify-content-center ps-t-80 ps-b-32"
+        v-if="message.img"
+      >
         <img src="~/assets/svg/dummy-item.svg" alt="Marketplace" />
       </div>
-      <div class="col-md-12 text-center font-heading-large font-semibold ps-b-4">{{message.title}}</div>
-      <div class="col-md-12 text-center font-body-medium">{{message.description}}</div>
+      <div
+        class="col-md-12 text-center font-heading-large font-semibold ps-b-4"
+      >
+        {{ message.title }}
+      </div>
+      <div class="col-md-12 text-center font-body-medium">
+        {{ message.description }}
+      </div>
     </div>
   </div>
 </template>
@@ -17,10 +26,10 @@ import Component from "nuxt-class-component";
   props: {
     message: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
-  components: {}
+  components: {},
 })
 export default class NoItem extends Vue {
   mounted() {}

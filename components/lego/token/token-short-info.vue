@@ -6,16 +6,17 @@
         <svg-sprite-icon name="profile" class="status-icon align-self-center" />
       </div>
     </div>
-    <div class="profile-info-wrapper align-self-center d-flex flex-column ps-16">
-      <h1 class="font-heading-medium font-semibold ms-b-8">{{order.token.name}} {{ isErc1155 ? `( ${order.quantity} )`: ''}}</h1>
+    <div
+      class="profile-info-wrapper align-self-center d-flex flex-column ps-16"
+    >
+      <h1 class="font-heading-medium font-semibold ms-b-8">
+        {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )` : "" }}
+      </h1>
       <div class="font-body-small owner-info">
         Owned by
-        <a href @click.prevent>{{shortAddress}}</a> in
-        <a
-          :href="order.external_link"
-          target="_blank"
-          rel="noopener noreferrer"
-          >{{category.name}}
+        <a href @click.prevent>{{ shortAddress }}</a> in
+        <a :href="order.external_link" target="_blank" rel="noopener noreferrer"
+          >{{ category.name }}
         </a>
       </div>
     </div>
@@ -30,17 +31,17 @@ import Component from "nuxt-class-component";
   props: {
     order: {
       type: Object,
-      required: false
+      required: false,
     },
     category: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {},
   computed: {},
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class TokenShortInfo extends Vue {
   mounted() {}
@@ -56,11 +57,11 @@ export default class TokenShortInfo extends Vue {
   }
 
   get isErc1155() {
-    return this.order.token_type ==='ERC1155'
+    return this.order.token_type === 'ERC1155';
   }
 
   get isErc721() {
-    return this.order.token_type ==='ERC721'
+    return this.order.token_type === 'ERC721';
   }
 }
 </script>

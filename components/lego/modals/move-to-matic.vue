@@ -1,12 +1,17 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ 'show': show }"></div>
-    <div class="modal add-token-modal-wrapper" v-bind:class="{ 'show': show }">
+    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
       <div class="modal-dialog w-sm-100 align-self-center" role="document">
         <div class="box accept-box">
           <div
             class="box-body"
-            v-bind:style="{background: 'linear-gradient( 180deg,'+bg+' 0%, rgba(236, 235, 223, 0) 80%)'}"
+            v-bind:style="{
+              background:
+                'linear-gradient( 180deg,' +
+                bg +
+                ' 0%, rgba(236, 235, 223, 0) 80%)',
+            }"
           >
             <div class="close-wrapper" @click="close()">
               <svg-sprite-icon name="close-modal" class="close" />
@@ -22,7 +27,9 @@
                   />
                 </div>
                 <div class="col-md-12 ps-t-8 ps-b-40">
-                  <div class="font-heading-large title font-semibold">{{token.name}}</div>
+                  <div class="font-heading-large title font-semibold">
+                    {{ token.name }}
+                  </div>
                 </div>
 
                 <div class="col-md-12 ps-t-8 ps-b-40 ps-x-40">
@@ -104,7 +111,9 @@ export default class MoveToMatic extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+      } else {
+        this.bg = "#f3f4f7";
+      }
     } catch (error) {}
   }
   // PoS withdraw

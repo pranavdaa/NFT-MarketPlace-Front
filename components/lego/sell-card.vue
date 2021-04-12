@@ -10,9 +10,21 @@
 
     <div class="img-wrapper d-flex ps-t-12 justify-content-center">
       <video autoplay muted loop width="100%" v-if="isVideoFormat">
-        <source :src="order.token.img_url" type="video/webm" @error="handleNotVideo" />
-        <source :src="order.token.img_url" type="video/ogg" @error="handleNotVideo" />
-        <source :src="order.token.img_url" type="video/mp4" @error="handleNotVideo" />
+        <source
+          :src="order.token.img_url"
+          type="video/webm"
+          @error="handleNotVideo"
+        />
+        <source
+          :src="order.token.img_url"
+          type="video/ogg"
+          @error="handleNotVideo"
+        />
+        <source
+          :src="order.token.img_url"
+          type="video/mp4"
+          @error="handleNotVideo"
+        />
       </video>
       <img
         v-else
@@ -44,7 +56,7 @@
       :class="{ 'ms-b-16': onlyToken }"
       :title="order.token.name"
     >
-      {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )`: ''}}
+      {{ order.token.name }} {{ isErc1155 ? `( ${order.quantity} )` : "" }}
     </h3>
     <div class="price font-body-small ms-b-20" v-if="erc20Token && !onlyToken">
       {{ order.price }} {{ erc20Token.symbol }} &nbsp; ({{ priceInUSD }})
@@ -164,7 +176,9 @@ export default class SellCard extends Vue {
           b: rgbColor[2],
         });
         this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+      } else {
+        this.bg = "#f3f4f7";
+      }
     } catch (error) {
       this.bg = "#f3f4f7";
     }
@@ -189,11 +203,11 @@ export default class SellCard extends Vue {
   }
 
   get isErc1155() {
-    return this.order.token_type ==='ERC1155'
+    return this.order.token_type === 'ERC1155';
   }
 
   get isErc721() {
-    return this.order.token_type ==='ERC721'
+    return this.order.token_type === 'ERC721';
   }
 
   get sellTagData() {
@@ -222,11 +236,13 @@ export default class SellCard extends Vue {
   }
 
   get sellOrderType() {
-    return this.order.type
+    return this.order.type;
   }
 
   get priceInUSD() {
-    return this.order.usd_price ? formatUSDValue(parseFloat(this.order.usd_price)) : '$0'
+    return this.order.usd_price
+      ? formatUSDValue(parseFloat(this.order.usd_price))
+      : '$0';
   }
 
   // Actions
@@ -243,8 +259,8 @@ export default class SellCard extends Vue {
     console.log("removeFromMarketplace");
   }
 
-  imageLoadError (event) {
-    event.target.src = this.category.img_url
+  imageLoadError(event) {
+    event.target.src = this.category.img_url;
     event.target.style.width = '100px';
   }
 

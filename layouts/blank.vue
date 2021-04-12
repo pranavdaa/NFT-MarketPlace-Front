@@ -11,7 +11,7 @@ import Toast from "~/components/toast";
 
 export default {
   components: {
-    Toast
-  }
+    Toast,
+  },
 };
 </script>

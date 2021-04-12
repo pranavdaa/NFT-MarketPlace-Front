@@ -13,10 +13,10 @@ import TokenDetail from "~/components/lego/token/token-detail";
 @Component({
   props: {},
   components: {
-    TokenDetail
+    TokenDetail,
   },
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class Token extends Vue {
   tokenId = null;

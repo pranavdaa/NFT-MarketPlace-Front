@@ -591,7 +591,9 @@ export default class BidderRow extends Vue {
         if (takerSign) {
           this.$logger.track("handle-cancel-bid-start-taker-sign:bid-options");
           await this.handleCancelBid(takerSign);
-          this.$logger.track("handle-cancel-bid-completed-taker-sign:bid-options");
+          this.$logger.track(
+            "handle-cancel-bid-completed-taker-sign:bid-options"
+          );
         }
       } else {
         this.$logger.track("handle-cancel-bid-start:bid-options");

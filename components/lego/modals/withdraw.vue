@@ -71,7 +71,6 @@
   </div>
 </template>
 
-
 <script>
 import Vue from "vue";
 import Component from "nuxt-class-component";
@@ -228,7 +227,9 @@ export default class Withdraw extends Vue {
       encodedFunction
     );
 
-    if (!sig) return false;
+    if (!sig) {
+      return false;
+    }
 
     return {
       intent: sig,
