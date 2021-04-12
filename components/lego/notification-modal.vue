@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="modal notification-wrapper" :class="{ show: show }">
+    <div class="modal notification-wrapper show">
       <div class="align-self-center">
         <div class="modal-dialog w-sm-100" role="document">
           <div class="box info-box">
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="modal-backdrop" :class="{ show: show }" />
+    <div class="modal-backdrop show" />
   </section>
 </template>
 
@@ -51,21 +51,11 @@ import Vue from "vue";
 import Component from "nuxt-class-component";
 
 @Component({
-  props: {
-    show: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    cancel: {
-      type: Function,
-      required: true
-    }
-  }
+  props: {}
 })
 export default class NotificationBanner extends Vue {
   closeModal() {
-    this.cancel();
+    this.$emit('close');
   }
 }
 </script>

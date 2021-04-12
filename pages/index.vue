@@ -114,8 +114,8 @@
     </div>
 
     <notification-modal
-      :show="showNotification"
-      :cancel="onNotificationClose"
+      v-if="showNotification"
+      @close="onNotificationClose"
     />
   </div>
 </template>
@@ -171,18 +171,6 @@ export default class Index extends Vue {
   };
   showNotification = false;
 
-  onNotificationOpen() {
-    this.showNotification = true;
-
-    if (!localStorage.WalletSwapFeature) {
-      localStorage.setItem('WalletSwapFeature', true);
-    }
-  }
-
-  onNotificationClose() {
-    this.showNotification = false;
-  }
-
   sortItems = [
     {
       id: 0,
@@ -218,7 +206,7 @@ export default class Index extends Vue {
     // this.fetchOrders();
     this.$store.dispatch("token/reloadBalances");
 
-    if (!localStorage.WalletSwapFeature) {
+    if (!localStorage.getItem('WalletSwapFeature')) {
       this.onNotificationOpen();
     }
   }
@@ -240,6 +228,18 @@ export default class Index extends Vue {
   // handlers
   onSortSelect(item) {
     this.$store.commit("page/selectedSort", item.filter);
+  }
+
+  onNotificationOpen() {
+    this.showNotification = true;
+
+    if (!localStorage.getItem('WalletSwapFeature')) {
+      localStorage.setItem('WalletSwapFeature', true);
+    }
+  }
+
+  onNotificationClose() {
+    this.showNotification = false;
   }
 
   onModalShow() {

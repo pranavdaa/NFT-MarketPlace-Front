@@ -15,8 +15,8 @@
     </div>
 
     <notification-modal
-      :show="showNotification"
-      :cancel="onNotificationClose"
+      v-if="showNotification"
+      @close="onNotificationClose"
     />
   </div>
 </template>
@@ -74,24 +74,24 @@ export default class Index extends Vue {
 
   showNotification = false;
 
+  async mounted() {
+    this.fetchTotalTokens();
+
+    if (!localStorage.getItem('WalletSwapFeature')) {
+      this.onNotificationOpen();
+    }
+  }
+
   onNotificationOpen() {
     this.showNotification = true;
 
-    if (!localStorage.WalletSwapFeature) {
+    if (!localStorage.getItem('WalletSwapFeature')) {
       localStorage.setItem('WalletSwapFeature', true);
     }
   }
 
   onNotificationClose() {
     this.showNotification = false;
-  }
-
-  async mounted() {
-    this.fetchTotalTokens();
-
-    if (!localStorage.WalletSwapFeature) {
-      this.onNotificationOpen();
-    }
   }
 
   async fetchTotalTokens() {
