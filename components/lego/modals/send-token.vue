@@ -468,7 +468,15 @@ export default class SendToken extends Vue {
       }
     } catch (error) {
       console.error(error);
-      txShowError(error, null, "Something went wrong");
+      if (
+        error.message.includes(
+          "MetaMask is having trouble connecting to the network"
+        )
+      ) {
+        txShowError(error, null, "Please Try Again");
+      } else {
+        txShowError(error, null, "Something went wrong");
+      }
     }
     this.isLoading = false;
   }

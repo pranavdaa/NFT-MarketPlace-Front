@@ -435,7 +435,7 @@ export default class BuyToken extends Vue {
   depositModal = false;
 
   mounted() {
-    this.$logger.track("mounted:buy-token");
+    this.$logger.track("mounted:buy-token", {order: this.order.id, category: this.category});
   }
 
   onImageLoad() {
@@ -1107,11 +1107,19 @@ export default class BuyToken extends Vue {
           }
         } catch (error) {
           console.log(error);
-          txShowError(
-            null,
-            "Failed to approve",
-            "You need to approve the transaction to sale the NFT"
-          );
+          if (
+            error.message.includes(
+              "MetaMask is having trouble connecting to the network"
+            )
+          ) {
+            txShowError(error, null, "Please Try Again");
+          } else {
+            txShowError(
+              null,
+              "Failed to approve",
+              "You need to approve the transaction to sale the NFT"
+            );
+          }
         }
         return false;
       }

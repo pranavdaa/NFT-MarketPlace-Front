@@ -238,7 +238,11 @@ export default class BidderRow extends Vue {
 
   async acceptBid() {
     // Exchange the nft with this user
-    this.$logger.track("accept-bid-start:bid-options");
+    this.$logger.track("accept-bid-start:bid-options", {
+      order: this.bid.order.id,
+      user: this.bid.users_id,
+      erc20Token: this.bid.erc20Token,
+    });
     this.isLoading = true;
     if (this.order.taker_address == this.user.id) {
       try {
@@ -514,7 +518,11 @@ export default class BidderRow extends Vue {
   }
 
   async denyBid() {
-    this.$logger.track("deny-bid-start:bid-options");
+    this.$logger.track("deny-bid-start:bid-options", {
+      order: this.bid.order.id,
+      user: this.bid.users_id,
+      erc20Token: this.bid.erc20Token,
+    });
     if (this.bid.order.taker_address == this.user.id) {
       try {
         let response = await getAxios().patch(
@@ -540,7 +548,11 @@ export default class BidderRow extends Vue {
 
   async cancelBid() {
     this.isLoading = true;
-    this.$logger.track("cancel-bid-start:bid-options");
+    this.$logger.track("cancel-bid-start:bid-options", {
+      order: this.bid.order.id,
+      user: this.bid.users_id,
+      erc20Token: this.bid.erc20Token,
+    });
     try {
       if (this.order.type === app.orderTypes.NEGOTIATION) {
         let signedOrder = JSON.parse(this.bid.signature);
@@ -591,7 +603,9 @@ export default class BidderRow extends Vue {
         if (takerSign) {
           this.$logger.track("handle-cancel-bid-start-taker-sign:bid-options");
           await this.handleCancelBid(takerSign);
-          this.$logger.track("handle-cancel-bid-completed-taker-sign:bid-options");
+          this.$logger.track(
+            "handle-cancel-bid-completed-taker-sign:bid-options"
+          );
         }
       } else {
         this.$logger.track("handle-cancel-bid-start:bid-options");
