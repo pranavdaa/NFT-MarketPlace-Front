@@ -1020,7 +1020,7 @@ export default class BuyToken extends Vue {
     let allowance = await erc20TokenCont
       .allowance(takerAddress, contractWrappers.contractAddresses.erc20Proxy)
       .callAsync();
-    this.$logger.track("approving-0x:buy-token", {allowance});
+    this.$logger.track("approving-0x:buy-token", { allowance });
     if (!allowance.gt(ZERO)) {
       if (isMetaTx) {
         let data = await matic.eth.abi.encodeFunctionCall(
@@ -1059,7 +1059,10 @@ export default class BuyToken extends Vue {
           try {
             let response = await getAxios().post(`orders/executeMetaTx`, tx);
             if (response.status === 200) {
-              this.$logger.track("approving-0x-complete-non-meta-tx:buy-token", {response});
+              this.$logger.track(
+                "approving-0x-complete-non-meta-tx:buy-token",
+                { response }
+              );
               console.log("Approved");
               app.addToast("Approved", "You successfully approved", {
                 type: "success",
@@ -1097,7 +1100,9 @@ export default class BuyToken extends Vue {
             app.addToast("Approved", "You successfully approved", {
               type: "success",
             });
-            this.$logger.track("approving-0x-complete-non-meta-tx:buy-token", {erc20Approve});
+            this.$logger.track("approving-0x-complete-non-meta-tx:buy-token", {
+              erc20Approve,
+            });
             return true;
           }
         } catch (error) {
@@ -1118,7 +1123,13 @@ export default class BuyToken extends Vue {
     const web3obj = new Web3(window.ethereum);
     const chainId = await web3obj.eth.getChainId();
     if (chainId !== this.networks.matic.chainId) {
-      await registerNetwork();
+      try {
+        await registerNetwork();
+        return true;
+      } catch (error) {
+        this.error = "selectMatic";
+        return false;
+      }
     }
     return true;
   }
