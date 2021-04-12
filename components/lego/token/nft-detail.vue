@@ -190,14 +190,9 @@
               :class="{ 'show-less': showMore, 'show-more': !showMore }"
               v-if="tokenDescription && tokenDescription.length > 200"
             >
-              {{ tokenDescription.slice(0, tokenDescription.length / 2) }}
+              {{ tokenDescriptionFirstHalf }}
               <span class="dots">...</span>
-              <span class="more">{{
-                tokenDescription.slice(
-                  tokenDescription.length / 2,
-                  tokenDescription.length
-                )
-              }}</span>
+              <span class="more">{{ tokenDescriptionSecondHalf }}</span>
               <a
                 class="font-body-small d-flex ps-t-8 font-medium"
                 href="#more-info"
@@ -392,6 +387,17 @@ export default class NftDetail extends Vue {
 
   get tokenDescription() {
     return this.token.description;
+  }
+
+  get tokenDescriptionFirstHalf() {
+    this.tokenDescription.slice(0, this.tokenDescription.length / 2);
+  }
+
+  get tokenDescriptionSecondHalf() {
+    this.tokenDescription.slice(
+      this.tokenDescription.length / 2,
+      this.tokenDescription.length
+    );
   }
 
   // async
