@@ -435,7 +435,7 @@ export default class BuyToken extends Vue {
   depositModal = false;
 
   mounted() {
-    this.$logger.track("mounted:buy-token");
+    this.$logger.track("mounted:buy-token", {order: this.order.id, category: this.category});
   }
 
   onImageLoad() {

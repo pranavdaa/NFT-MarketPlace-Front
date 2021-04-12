@@ -415,7 +415,7 @@ export default class SellToken extends Vue {
   mounted() {
     // initialize duration
     this.changeDuration(this.EXPIRY_DURATION.ONE_WEEK);
-    this.$logger.track("mounted:sell-token");
+    this.$logger.track("mounted:sell-token", this.nftToken);
   }
 
   // Handlers
