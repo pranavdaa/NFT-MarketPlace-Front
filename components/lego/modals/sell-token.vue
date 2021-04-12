@@ -551,6 +551,7 @@ export default class SellToken extends Vue {
   }
 
   async approveClickedFunc() {
+    this.showNetworkChangeNeeded = false;
     this.approveLoading = true;
 
     try {
@@ -813,6 +814,7 @@ export default class SellToken extends Vue {
         return true;
       } catch (error) {
         this.error = "selectMatic";
+        this.showNetworkChangeNeeded = true;
         return false;
       }
     }
@@ -851,35 +853,47 @@ export default class SellToken extends Vue {
         }
 
         if (this.isErc721) {
-          const makerERC721ApprovalTxHash = await tokenCont
-            .setApprovalForAll(
-              contractWrappers.contractAddresses.erc721Proxy,
-              true
-            )
-            .sendTransactionAsync({
-              from: makerAddress,
-              gas: 100000,
-              gasPrice: 1000000000,
-            });
+          try {
+            const makerERC721ApprovalTxHash = await tokenCont
+              .setApprovalForAll(
+                contractWrappers.contractAddresses.erc721Proxy,
+                true
+              )
+              .sendTransactionAsync({
+                from: makerAddress,
+                gas: 100000,
+                gasPrice: 1000000000,
+              });
 
-          if (makerERC721ApprovalTxHash) {
-            console.log("Approve Hash", makerERC721ApprovalTxHash);
-            app.addToast(
-              "Approved successfully",
-              "You successfully approved the token to put on sale",
-              {
-                type: "success",
-              }
-            );
-            return true;
-          }
-          app.addToast(
-            "Failed to approve",
-            "You need to approve the transaction to sale the NFT",
-            {
-              type: "failure",
+            if (makerERC721ApprovalTxHash) {
+              console.log("Approve Hash", makerERC721ApprovalTxHash);
+              app.addToast(
+                "Approved successfully",
+                "You successfully approved the token to put on sale",
+                {
+                  type: "success",
+                }
+              );
+              return true;
             }
-          );
+          } catch (error) {
+            console.log(error);
+            if (
+              error.message.includes(
+                "MetaMask is having trouble connecting to the network"
+              )
+            ) {
+              txShowError(error, null, "Please Try Again");
+            } else {
+              app.addToast(
+                "Failed to approve",
+                "You need to approve the transaction to sale the NFT",
+                {
+                  type: "failure",
+                }
+              );
+            }
+          }
         } else {
           let maticWeb3 = new Web3(window.ethereum);
           let contract = new maticWeb3.eth.Contract(
