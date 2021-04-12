@@ -1,4 +1,4 @@
-import Component from 'vue-class-component';
+import Component from 'vue-class-component'
 
 Component.registerHooks([
   'beforeRouteEnter',
@@ -9,6 +9,6 @@ Component.registerHooks([
   'layout',
   'transition',
   'scrollToTop',
-]);
+])
 
-export default Component;
+export default Component

@@ -1,14 +1,14 @@
 <template>
   <div
-    class="row tabs-wrapper ps-y-0 ps-x-0 ps-x-md-16 justify-content-center d-flex"
     v-if="tabs && tabs.length > 0"
+    class="row tabs-wrapper ps-y-0 ps-x-0 ps-x-md-16 justify-content-center d-flex"
   >
     <ul class="tabs navbar-nav flex-row align-self-center">
       <li
-        class="nav-item"
-        @click="onChangeTab(tab.id)"
         v-for="tab in tabs"
         :key="tab.id"
+        class="nav-item"
+        @click="onChangeTab(tab.id)"
       >
         <div
           class="nav-link d-flex justify-content-lg-center"
@@ -18,10 +18,9 @@
             tab.title
           }}</span>
           <span
-            class="align-self-center count font-body-medium"
             v-if="tab.count"
-            >{{ tab.count }}</span
-          >
+            class="align-self-center count font-body-medium"
+          >{{ tab.count }}</span>
         </div>
       </li>
     </ul>
@@ -29,8 +28,8 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {

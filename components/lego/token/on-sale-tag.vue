@@ -5,12 +5,15 @@
         {{ $t("token.onsale") }}
       </div>
     </div>
-    <div class="time-left-pill d-flex" v-if="time">
+    <div
+      v-if="time"
+      class="time-left-pill d-flex"
+    >
       <img
         src="~/assets/svg/clock-analog.svg"
         alt="Cryptokitty"
         class="icon ms-r-4 align-self-center"
-      />
+      >
       <div class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1">
         {{ time }}
       </div>
@@ -19,15 +22,15 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
     time: {
       type: String,
       required: false,
-      default: "",
+      default: '',
     },
   },
   components: {},

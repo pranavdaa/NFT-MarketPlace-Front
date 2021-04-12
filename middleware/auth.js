@@ -1,7 +1,7 @@
-import { getDefaultAccount } from "~/plugins/helpers/metamask-utils";
-export default async function ({ store, redirect, route, error }) {
-  const user = store.getters['auth/user'];
-  const selectedAddress = await getDefaultAccount();
+import { getDefaultAccount } from '~/plugins/helpers/metamask-utils'
+export default async function({ store, redirect, route, error }) {
+  const user = store.getters['auth/user']
+  const selectedAddress = await getDefaultAccount()
 
   // is initialized but not authenticated redirect to login
   if (
@@ -12,7 +12,7 @@ export default async function ({ store, redirect, route, error }) {
   ) {
     return redirect('/login', {
       next: route.fullPath,
-    });
+    })
   }
 
   // check for email and redirect to "complete login"

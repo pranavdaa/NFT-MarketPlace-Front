@@ -1,7 +1,10 @@
 <template>
   <div class="section position-absolute">
     <div class="modal receive-modal-wrapper show">
-      <div class="modal-dialog w-sm-100 align-self-center" role="document">
+      <div
+        class="modal-dialog w-sm-100 align-self-center"
+        role="document"
+      >
         <div class="box withdraw-box">
           <div class="box-header justify-content-center">
             <div
@@ -10,13 +13,13 @@
               {{ $t("withdraw.title") }}
             </div>
             <span
-              @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
+              @click="onCancel()"
             >
               <svg-sprite-icon
                 name="close"
                 class="close align-self-center float-left cursor-pointer"
-              ></svg-sprite-icon>
+              />
             </span>
           </div>
           <div class="box-body">
@@ -29,12 +32,15 @@
                 :onSelectionChange="onSelectionChange"
               />
 
-              <div class="row ps-x-32 ps-b-8" v-if="error">
+              <div
+                v-if="error"
+                class="row ps-x-32 ps-b-8"
+              >
                 <div
                   class="font-body-small text-danger text-center mx-auto"
                   v-html="error"
-                ></div>
-                <div class="mx-auto text-gray-300 font-caption"></div>
+                />
+                <div class="mx-auto text-gray-300 font-caption" />
               </div>
               <div class="row p-0">
                 <div class="col-12 p-0 d-flex justify-content-space-between">
@@ -48,7 +54,7 @@
                     :text="'Withdraw to Ethereum Network'"
                     :click="initWithdraw"
                     :disabled="selectedTokens.length <= 0"
-                  ></button-loader>
+                  />
                 </div>
               </div>
             </div>
@@ -67,24 +73,24 @@
       :cancel="onCloseConfirmWithdraw"
       :refreshBalance="refreshBalance"
     />
-    <div class="modal-backdrop show"></div>
+    <div class="modal-backdrop show" />
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
-import app from "~/plugins/app";
-import Web3 from "web3";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
+import app from '~/plugins/app'
+import Web3 from 'web3'
 
-import getAxios from "~/plugins/axios";
-import { getWalletProvider } from "~/plugins/helpers/providers";
-const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
-const { getTypedData } = require("~/plugins/meta-tx");
+import getAxios from '~/plugins/axios'
+import { getWalletProvider } from '~/plugins/helpers/providers'
 
-import WithdrawConfirmationModal from "~/components/lego/modals/withdraw-confirmation-modal";
-import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
+import WithdrawConfirmationModal from '~/components/lego/modals/withdraw-confirmation-modal'
+import TokenVerticleList from '~/components/lego/modals/token-verticle-list'
+const MaticPOSClient = require('@maticnetwork/maticjs').MaticPOSClient
+const { getTypedData } = require('~/plugins/meta-tx')
 
 @Component({
   props: {
@@ -116,9 +122,9 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
   },
   methods: {},
   computed: {
-    ...mapGetters("account", ["account"]),
-    ...mapGetters("network", ["networks", "networkMeta"]),
-    ...mapGetters("page", ["selectedCategory"]),
+    ...mapGetters('account', ['account']),
+    ...mapGetters('network', ['networks', 'networkMeta']),
+    ...mapGetters('page', ['selectedCategory']),
   },
 })
 export default class Withdraw extends Vue {
@@ -133,49 +139,54 @@ export default class Withdraw extends Vue {
   lastCategory = {};
 
   async mounted() {
-    this.selectedTokens = this.preSelectedTokens;
+    this.selectedTokens = this.preSelectedTokens
   }
 
   // Getters
   get showTokenList() {
-    return this.show && this.selectingTokens;
+    return this.show && this.selectingTokens
   }
+
   get parentNetwork() {
-    return this.networks.main;
+    return this.networks.main
   }
+
   get childNetwork() {
-    return this.networks.matic;
+    return this.networks.matic
   }
+
   get networkID() {
-    return this.childNetwork.chainId;
+    return this.childNetwork.chainId
   }
+
   get category() {
     if (this.selectedCategory) {
-      this.lastCategory = this.selectedCategory;
-      return this.selectedCategory;
+      this.lastCategory = this.selectedCategory
+      return this.selectedCategory
     } else if (this.selectedTokens && this.selectedTokens.length > 0) {
-      this.lastCategory = this.selectedTokens[0].category;
-      return this.selectedTokens[0].category;
+      this.lastCategory = this.selectedTokens[0].category
+      return this.selectedTokens[0].category
     }
-    return null;
+    return null
   }
+
   get selectedTokenIds() {
-    let token_ids = [];
+    const token_ids = []
     if (this.selectedTokens && this.selectedTokens.length > 0) {
-      this.selectedTokens.forEach((token) => token_ids.push(token.token_id));
+      this.selectedTokens.forEach((token) => token_ids.push(token.token_id))
     }
-    return token_ids;
+    return token_ids
   }
 
   getMaticPOS() {
     const maticProvider = getWalletProvider({
       networks: this.networks,
-      primaryProvider: "matic",
-    });
+      primaryProvider: 'matic',
+    })
     const parentProvider = getWalletProvider({
       networks: this.networks,
-      primaryProvider: "main",
-    });
+      primaryProvider: 'main',
+    })
 
     return new MaticPOSClient({
       network: app.uiconfig.matic.deployment.network,
@@ -187,48 +198,50 @@ export default class Withdraw extends Vue {
       posERC20Predicate: this.networkMeta.Main.POSContracts.ERC20PredicateProxy,
       posERC721Predicate: this.networkMeta.Main.POSContracts
         .ERC721PredicateProxy,
-    });
+    })
   }
 
   // Handlers
   onCancel() {
-    this.cancel();
+    this.cancel()
   }
+
   onSelectionChange(tokens) {
-    this.selectedTokens = tokens;
+    this.selectedTokens = tokens
   }
+
   onSignatureDenied() {
-    this.showWithdrawConfirmation = false;
-    this.isLoading = false;
-    this.hidden = false;
+    this.showWithdrawConfirmation = false
+    this.isLoading = false
+    this.hidden = false
   }
 
   async prepareMetaTx(network, ERC721Address, name, tokenIds, address) {
-    let web3 = new Web3(network.rpc);
-    let encodedFunction = await web3.eth.abi.encodeFunctionCall(
+    const web3 = new Web3(network.rpc)
+    const encodedFunction = await web3.eth.abi.encodeFunctionCall(
       {
-        name: "withdrawBatch",
-        type: "function",
+        name: 'withdrawBatch',
+        type: 'function',
         inputs: [
           {
-            name: "tokenIds",
-            type: "uint256[]",
+            name: 'tokenIds',
+            type: 'uint256[]',
           },
         ],
       },
-      [tokenIds]
-    );
+      [tokenIds],
+    )
 
-    let { sig } = await this.requestSignature(
+    const { sig } = await this.requestSignature(
       network,
       ERC721Address,
       name,
       address,
-      encodedFunction
-    );
+      encodedFunction,
+    )
 
     if (!sig) {
-      return false;
+      return false
     }
 
     return {
@@ -236,154 +249,156 @@ export default class Withdraw extends Vue {
       fnSig: encodedFunction,
       from: address,
       contractAddress: ERC721Address,
-    };
+    }
   }
 
   async requestSignature(network, ERC721Address, name, address, functionSig) {
     try {
-      const child_provider = new Web3.providers.HttpProvider(network.rpc);
-      const mumbai = new Web3(child_provider);
+      const child_provider = new Web3.providers.HttpProvider(network.rpc)
+      const mumbai = new Web3(child_provider)
 
-      let data = await mumbai.eth.abi.encodeFunctionCall(
+      const data = await mumbai.eth.abi.encodeFunctionCall(
         {
-          name: "getNonce",
-          type: "function",
+          name: 'getNonce',
+          type: 'function',
           inputs: [
             {
-              name: "user",
-              type: "address",
+              name: 'user',
+              type: 'address',
             },
           ],
         },
-        [address]
-      );
-      let _nonce = await mumbai.eth.call({
+        [address],
+      )
+      const _nonce = await mumbai.eth.call({
         to: ERC721Address,
         data,
-      });
+      })
       const dataToSign = getTypedData({
         name: name,
-        version: "1",
+        version: '1',
         salt: app.uiconfig.SALT,
         verifyingContract: ERC721Address,
         nonce: parseInt(_nonce),
         from: address,
         functionSignature: functionSig,
-      });
-      const msgParams = [address, JSON.stringify(dataToSign)];
-      let sign = await window.ethereum.request({
-        method: "eth_signTypedData_v3",
+      })
+      const msgParams = [address, JSON.stringify(dataToSign)]
+      const sign = await window.ethereum.request({
+        method: 'eth_signTypedData_v3',
         params: msgParams,
-      });
+      })
       return {
         sig: sign,
-      };
+      }
     } catch (error) {
       // console.log(error);
     }
 
-    this.onSignatureDenied();
-    return { sig: null };
+    this.onSignatureDenied()
+    return { sig: null }
   }
 
   async executeMetaTx(network, ERC721Address, name, tokenIds, address) {
-    let tx = await this.prepareMetaTx(
+    const tx = await this.prepareMetaTx(
       network,
       ERC721Address,
       name,
       tokenIds,
-      address
-    );
+      address,
+    )
     if (tx) {
       try {
-        let response = await getAxios().post(`orders/executeMetaTx`, tx);
+        const response = await getAxios().post(`orders/executeMetaTx`, tx)
         if (response.status === 200) {
           // To send transction receipt
-          return response.data.data;
+          return response.data.data
         }
       } catch (error) {
         app.addToast(
-          "Failed to init withdraw",
-          "You need to sign the transaction to start withdraw",
+          'Failed to init withdraw',
+          'You need to sign the transaction to start withdraw',
           {
-            type: "failure",
-          }
-        );
-        throw error;
+            type: 'failure',
+          },
+        )
+        throw error
       }
     }
   }
 
   async initWithdraw() {
     if (this.isLoading || this.selectedTokens.length <= 0) {
-      return;
+      return
     }
 
     try {
-      this.isLoading = true;
-      this.error = null;
-      this.onShowWithdrawConfirmation();
+      this.isLoading = true
+      this.error = null
+      this.onShowWithdrawConfirmation()
 
-      const network = this.networks.matic;
+      const network = this.networks.matic
       const ERC721 = Web3.utils.toChecksumAddress(
-        this.selectedTokens[0].contract
-      );
-      const name = this.category.name;
-      const address = Web3.utils.toChecksumAddress(this.account.address);
-      const token_ids = this.selectedTokenIds;
+        this.selectedTokens[0].contract,
+      )
+      const name = this.category.name
+      const address = Web3.utils.toChecksumAddress(this.account.address)
+      const token_ids = this.selectedTokenIds
 
-      this.withdrawTransaction = {};
-      this.withdrawTransaction["token_array"] = token_ids;
-      this.withdrawTransaction["type"] = "WITHDRAW";
-      this.withdrawTransaction["category_id"] = this.category.id;
+      this.withdrawTransaction = {}
+      this.withdrawTransaction.token_array = token_ids
+      this.withdrawTransaction.type = 'WITHDRAW'
+      this.withdrawTransaction.category_id = this.category.id
 
       // Network agnostic calls
-      let txHash = await this.executeMetaTx(
+      const txHash = await this.executeMetaTx(
         network,
         ERC721,
         name,
         token_ids,
-        address
-      );
+        address,
+      )
 
       // TODO make sure this txHash is the transaction receipt if not then
       // fetch from the Web3 call need blockNumber and txHash
 
       if (txHash) {
-        this.burnTransactionHash = txHash.transactionHash;
-        this.withdrawTransaction["txhash"] = txHash.transactionHash;
+        this.burnTransactionHash = txHash.transactionHash
+        this.withdrawTransaction.txhash = txHash.transactionHash
 
-        await this.handleBurnTransaction(txHash);
-        this.isLoading = false;
+        await this.handleBurnTransaction(txHash)
+        this.isLoading = false
       }
     } catch (error) {
       // console.log(error);
-      this.error = error.message;
-      this.isLoading = false;
-      this.showWithdrawConfirmation = false;
-      this.hidden = false;
+      this.error = error.message
+      this.isLoading = false
+      this.showWithdrawConfirmation = false
+      this.hidden = false
     }
   }
+
   async handleBurnTransaction(txHash) {
-    console.log("Burn txhash", txHash);
-    this.withdrawTransaction["block_number"] = txHash.blockNumber.toString();
-    let response = await getAxios().post(
-      "assetmigrate",
-      this.withdrawTransaction
-    );
-    this.refreshBalance();
+    console.log('Burn txhash', txHash)
+    this.withdrawTransaction.block_number = txHash.blockNumber.toString()
+    const response = await getAxios().post(
+      'assetmigrate',
+      this.withdrawTransaction,
+    )
+    this.refreshBalance()
     if (response.status === 200) {
-      this.withdrawTransaction = response.data.data;
+      this.withdrawTransaction = response.data.data
     }
   }
 
   onCloseConfirmWithdraw() {
-    this.showWithdrawConfirmation = false;
-    this.cancel();
+    this.showWithdrawConfirmation = false
+    this.cancel()
   }
+
   onShowWithdrawConfirmation() {
-    this.showWithdrawConfirmation = true;
-    this.hidden = true;
+    this.showWithdrawConfirmation = true
+    this.hidden = true
   }
 }
 </script>

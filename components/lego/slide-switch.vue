@@ -8,12 +8,15 @@
       @click="onSwitched(false)"
     >
       <div
-        class="count-wrapper d-flex align-self-center justify-content-center"
         v-if="optionOne.count"
+        class="count-wrapper d-flex align-self-center justify-content-center"
       >
         <span class="align-self-center">{{ optionOne.count }}</span>
       </div>
-      <span class="align-self-center" :class="{ 'ps-l-16': optionOne.count }">{{
+      <span
+        class="align-self-center"
+        :class="{ 'ps-l-16': optionOne.count }"
+      >{{
         optionOne.title
       }}</span>
     </div>
@@ -22,22 +25,25 @@
       @click="onSwitched(true)"
     >
       <div
-        class="count-wrapper d-flex align-self-center justify-content-center"
         v-if="optionTwo.count"
+        class="count-wrapper d-flex align-self-center justify-content-center"
       >
         <span class="align-self-center">{{ optionTwo.count }}</span>
       </div>
-      <span class="align-self-center" :class="{ 'ps-l-16': optionTwo.count }">{{
+      <span
+        class="align-self-center"
+        :class="{ 'ps-l-16': optionTwo.count }"
+      >{{
         optionTwo.title
       }}</span>
     </div>
-    <div class="switch align-self-center"></div>
+    <div class="switch align-self-center" />
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
@@ -69,19 +75,20 @@ export default class SlideSwitch extends Vue {
   switcher = false;
 
   mounted() {
-    this.switcher = this.on;
+    this.switcher = this.on
   }
 
   onSwitched(value) {
-    this.switcher = value;
-    this.onChange(value);
+    this.switcher = value
+    this.onChange(value)
   }
 
   get optionOne() {
-    return this.options[0];
+    return this.options[0]
   }
+
   get optionTwo() {
-    return this.options[1];
+    return this.options[1]
   }
 }
 </script>

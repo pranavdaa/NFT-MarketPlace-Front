@@ -1,9 +1,15 @@
 <template>
   <div class="d-flex short-info">
     <div class="profile-img-wrapper align-self-center">
-      <img :src="category.img_url" :alt="category.name" />
+      <img
+        :src="category.img_url"
+        :alt="category.name"
+      >
       <div class="profile-status d-flex justify-content-center ps-2 ms-l-40">
-        <svg-sprite-icon name="profile" class="status-icon align-self-center" />
+        <svg-sprite-icon
+          name="profile"
+          class="status-icon align-self-center"
+        />
       </div>
     </div>
     <div
@@ -14,9 +20,15 @@
       </h1>
       <div class="font-body-small owner-info">
         Owned by
-        <a href @click.prevent>{{ shortAddress }}</a> in
-        <a :href="order.external_link" target="_blank" rel="noopener noreferrer"
-          >{{ category.name }}
+        <a
+          href
+          @click.prevent
+        >{{ shortAddress }}</a> in
+        <a
+          :href="order.external_link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{{ category.name }}
         </a>
       </div>
     </div>
@@ -24,8 +36,8 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
@@ -47,21 +59,21 @@ export default class TokenShortInfo extends Vue {
   mounted() {}
 
   get shortAddress() {
-    const address = this.order.token.owner;
+    const address = this.order.token.owner
     if (address) {
-      const addressStart = address.slice(0, 4);
-      const addressEnd = address.slice(address.length - 4);
-      return addressStart + "..." + addressEnd;
+      const addressStart = address.slice(0, 4)
+      const addressEnd = address.slice(address.length - 4)
+      return addressStart + '...' + addressEnd
     }
-    return null;
+    return null
   }
 
   get isErc1155() {
-    return this.order.token_type === 'ERC1155';
+    return this.order.token_type === 'ERC1155'
   }
 
   get isErc721() {
-    return this.order.token_type === 'ERC721';
+    return this.order.token_type === 'ERC721'
   }
 }
 </script>

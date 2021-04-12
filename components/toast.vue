@@ -1,16 +1,25 @@
 <template>
   <div class="toast-container font-body-medium">
-    <div :key="item.id" class="tt" v-for="item in toasts">
-      <div class="tt-header d-flex" v-if="!item.details">
+    <div
+      v-for="item in toasts"
+      :key="item.id"
+      class="tt"
+    >
+      <div
+        v-if="!item.details"
+        class="tt-header d-flex"
+      >
         <div class="tt-header-container d-flex mr-auto">
           <div class="mr-3">
             <svg-sprite-icon
               name="dummy"
               class="tt-icon align-self-center"
               :class="item.type"
-            ></svg-sprite-icon>
+            />
           </div>
-          <div class="align-self-center">{{ item.title }}</div>
+          <div class="align-self-center">
+            {{ item.title }}
+          </div>
         </div>
         <div
           class="tt-close-container d-flex align-self-stretch justify-content-center"
@@ -20,32 +29,45 @@
             v-if="item.closeButton"
             name="close"
             class="align-self-center close-icon"
-          ></svg-sprite-icon>
+          />
           <div
-            class="text-button font-body-medium font-medium align-self-center"
             v-if="!item.closeButton"
+            class="text-button font-body-medium font-medium align-self-center"
           >
             Dismiss
           </div>
         </div>
       </div>
 
-      <div class="tt-details-header d-flex" v-if="item.details">
+      <div
+        v-if="item.details"
+        class="tt-details-header d-flex"
+      >
         <div class="mr-3">
           <svg-sprite-icon
             name="dummy"
             class="tt-icon align-self-center"
             :class="item.type"
-          ></svg-sprite-icon>
+          />
         </div>
         <div class="tt-body-container w-100">
-          <div class="font-semibold mb-2">{{ item.title }}</div>
-          <div class="mb-4">{{ item.details }}</div>
+          <div class="font-semibold mb-2">
+            {{ item.title }}
+          </div>
+          <div class="mb-4">
+            {{ item.details }}
+          </div>
           <div class="d-flex justify-content-end">
-            <button class="btn btn-sm btn-light mr-2" v-if="item.acceptButton">
+            <button
+              v-if="item.acceptButton"
+              class="btn btn-sm btn-light mr-2"
+            >
               Accept
             </button>
-            <button class="btn btn-sm" @click="removeToast(item)">
+            <button
+              class="btn btn-sm"
+              @click="removeToast(item)"
+            >
               Dismiss
             </button>
           </div>
@@ -60,9 +82,9 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import app from "~/plugins/app";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import app from '~/plugins/app'
 
 @Component({
   props: {},
@@ -72,37 +94,37 @@ export default class Toast extends Vue {
   toasts = null;
 
   constructor() {
-    super();
-    this.toasts = [];
+    super()
+    this.toasts = []
   }
 
   mounted() {
     // new toast
-    app.bus.$on("toast:add", (title, options) => {
+    app.bus.$on('toast:add', (title, options) => {
       if (title) {
-        options = options || {};
-        options.title = title;
-        options.type = options.type || "success";
-        options.id = `${Date.now()}:${this.toasts.length}`;
+        options = options || {}
+        options.title = title
+        options.type = options.type || 'success'
+        options.id = `${Date.now()}:${this.toasts.length}`
 
-        this.toasts.unshift(options);
+        this.toasts.unshift(options)
         if (!options.sticky) {
           options._tid = setTimeout(
             this.removeToast,
             options.timeout || 3000,
-            options
-          );
+            options,
+          )
         }
       }
-    });
+    })
   }
 
   removeToast(t) {
     for (let i = 0; i < this.toasts.length; i += 1) {
       if (this.toasts[i].id === t.id) {
-        this.toasts[i]._tid && clearTimeout(this.toasts[i]._tid);
-        this.toasts.splice(i, 1);
-        break;
+        this.toasts[i]._tid && clearTimeout(this.toasts[i]._tid)
+        this.toasts.splice(i, 1)
+        break
       }
     }
   }

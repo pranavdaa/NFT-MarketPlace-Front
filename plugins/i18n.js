@@ -1,8 +1,8 @@
-import Vue from 'vue';
-import VueI18n from 'vue-i18n';
+import Vue from 'vue'
+import VueI18n from 'vue-i18n'
 
 // vue i18n mixin
-Vue.use(VueI18n);
+Vue.use(VueI18n)
 
 export default ({ app, store }) => {
   // Set i18n instance on app
@@ -14,5 +14,5 @@ export default ({ app, store }) => {
     messages: {
       en: require('~/locales/en.json'), // eslint-disable-line global-require
     },
-  });
-};
+  })
+}

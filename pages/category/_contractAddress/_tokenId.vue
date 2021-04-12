@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
-import NftDetail from "~/components/lego/token/nft-detail";
+import NftDetail from '~/components/lego/token/nft-detail'
 
 @Component({
   props: {},
@@ -25,15 +25,15 @@ import NftDetail from "~/components/lego/token/nft-detail";
 })
 export default class Token extends Vue {
   get contractAddress() {
-    return this.$route.params.contractAddress;
+    return this.$route.params.contractAddress
   }
 
   get tokenId() {
-    return this.$route.params.tokenId;
+    return this.$route.params.tokenId
   }
 
   get chainId() {
-    return this.$route.query.chainId;
+    return this.$route.query.chainId
   }
 }
 </script>

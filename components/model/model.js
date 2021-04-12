@@ -8,7 +8,7 @@ export default class Model {
         configurable: false,
         writable: true,
         value: data[key],
-      });
-    });
+      })
+    })
   }
 }

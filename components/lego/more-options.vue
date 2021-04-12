@@ -1,6 +1,12 @@
 <template>
-  <div class="more-action-container" v-if="options && options.length > 0">
-    <div class="position-relative" v-click-outside="hide">
+  <div
+    v-if="options && options.length > 0"
+    class="more-action-container"
+  >
+    <div
+      v-click-outside="hide"
+      class="position-relative"
+    >
       <div
         class="more-action-btn d-flex justify-content-center"
         @click="toggleOptions()"
@@ -8,13 +14,16 @@
         <svg-sprite-icon
           name="more-menu"
           class="align-self-center mx-auto"
-        ></svg-sprite-icon>
+        />
       </div>
-      <div class="more-action-menu ps-8" v-if="showOptions">
+      <div
+        v-if="showOptions"
+        class="more-action-menu ps-8"
+      >
         <div
-          class="item ps-x-16 ps-y-12 text-left"
           v-for="option in options"
           :key="option.title"
+          class="item ps-x-16 ps-y-12 text-left"
           @click="optionClicked(option)"
         >
           <span class="font-body-small text-nowrap">{{ option.title }}</span>
@@ -25,8 +34,8 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
@@ -40,17 +49,18 @@ export default class MoreOptions extends Vue {
   showOptions = false;
 
   toggleOptions() {
-    this.showOptions = !this.showOptions;
+    this.showOptions = !this.showOptions
   }
 
   hide() {
-    this.showOptions = false;
+    this.showOptions = false
   }
 
   optionClicked(option) {
-    option.action && option.action();
-    this.hide();
+    option.action && option.action()
+    this.hide()
   }
+
   mounted() {}
 }
 </script>

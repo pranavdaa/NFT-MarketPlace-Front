@@ -2,15 +2,18 @@
   <div class="container">
     <div class="row">
       <div
-        class="col-md-12 text-md-left text-center ps-y-32"
         v-if="notifications > 0"
+        class="col-md-12 text-md-left text-center ps-y-32"
       >
         Here's a list of your requested transactions. Remember, once
         transactions make it onto the blockchain, the app takes a couple minutes
         to receive the updates, so keep checking!
       </div>
     </div>
-    <div class="row" v-if="notifications">
+    <div
+      v-if="notifications"
+      class="row"
+    >
       <activity-deposit-withdraw-row
         v-for="activity in notifications"
         :key="activity.id"
@@ -19,14 +22,15 @@
     </div>
 
     <no-item
+      v-if="notifications.length <= 0 && !isLoading"
       class="ps-b-120"
       :message="exmptyMsg"
-      v-if="notifications.length <= 0 && !isLoading"
     />
 
     <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
       <!-- matic loader here -->
       <button-loader
+        v-if="hasNextPage"
         class="mx-auto"
         :loading="isLoading"
         :loadingText="$t('loading')"
@@ -34,22 +38,21 @@
         block
         lg
         :click="fetchNotifications"
-        v-if="hasNextPage"
         color="light"
-      ></button-loader>
+      />
     </div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
 
-import getAxios from "~/plugins/axios";
+import getAxios from '~/plugins/axios'
 
-import ActivityDepositWithdrawRow from "~/components/lego/account/activity-deposit-withdraw-row";
-import NoItem from "~/components/lego/no-item";
+import ActivityDepositWithdrawRow from '~/components/lego/account/activity-deposit-withdraw-row'
+import NoItem from '~/components/lego/no-item'
 
 @Component({
   props: {},
@@ -58,7 +61,7 @@ import NoItem from "~/components/lego/no-item";
     NoItem,
   },
   computed: {
-    ...mapGetters("auth", ["user"]),
+    ...mapGetters('auth', ['user']),
   },
 })
 export default class ActivityDepositWithdrawTab extends Vue {
@@ -67,52 +70,52 @@ export default class ActivityDepositWithdrawTab extends Vue {
   limit = 20;
   hasNextPage = true;
   async mounted() {
-    await this.fetchNotifications();
+    await this.fetchNotifications()
   }
 
   // Actions
   async fetchNotifications() {
     if (this.isLoading || !this.hasNextPage) {
       // ignore if already fetching
-      return;
+      return
     }
-    this.isLoading = true;
+    this.isLoading = true
     try {
-      let response;
-      let offset = this.notifications.length;
+      let response
+      const offset = this.notifications.length
 
       response = await getAxios().get(
-        `assetmigrate/?user_id=${this.user.id}&type=["DEPOSIT","WITHDRAW"]&status=[0,1,2,3]`
-      );
+        `assetmigrate/?user_id=${this.user.id}&type=["DEPOSIT","WITHDRAW"]&status=[0,1,2,3]`,
+      )
       if (response.status === 200 && response.data.data.assetMigrations) {
-        this.hasNextPage = response.data.data.has_next_page;
+        this.hasNextPage = response.data.data.has_next_page
         if (offset == 0) {
-          this.notifications = response.data.data.assetMigrations;
+          this.notifications = response.data.data.assetMigrations
         } else {
           this.notifications = [
             ...this.notifications,
             ...response.data.data.assetMigrations,
-          ];
+          ]
         }
-        this.isLoading = false;
+        this.isLoading = false
       } else {
-        this.isLoading = false;
-        this.hasNextPage = false;
+        this.isLoading = false
+        this.hasNextPage = false
       }
     } catch (error) {
       // console.log(error);
-      this.isLoading = false;
-      this.hasNextPage = false;
+      this.isLoading = false
+      this.hasNextPage = false
     }
   }
 
   // Getters
   get exmptyMsg() {
     return {
-      title: this.$t("activityTab.empty.title"),
-      description: this.$t("activityTab.empty.description"),
+      title: this.$t('activityTab.empty.title'),
+      description: this.$t('activityTab.empty.description'),
       img: true,
-    };
+    }
   }
 }
 </script>

@@ -8,25 +8,25 @@
 const svgSprite = (svgs) => {
   const svgContent = svgs
     .map((s) => {
-      return `<g id="${s.id}">${s.content}</g>`;
+      return `<g id="${s.id}">${s.content}</g>`
     })
-    .join("");
+    .join('')
 
-  return `<svg><defs>${svgContent}</defs></svg>`;
-};
+  return `<svg><defs>${svgContent}</defs></svg>`
+}
 
-const context = require.context("~/assets/sprite-svgs", false, /.*\.svg$/);
+const context = require.context('~/assets/sprite-svgs', false, /.*\.svg$/)
 const svgContent = svgSprite(
   context.keys().map((filename) => {
     return {
-      id: filename.replace("./", "").replace(".svg", ""),
+      id: filename.replace('./', '').replace('.svg', ''),
       content: atob(
-        context(filename).replace(/data:image\/svg\+xml;base64,/, "")
+        context(filename).replace(/data:image\/svg\+xml;base64,/, ''),
       ),
-    };
-  })
-);
-document.body.innerHTML += svgContent;
+    }
+  }),
+)
+document.body.innerHTML += svgContent
 
 export default {
   props: {
@@ -35,7 +35,7 @@ export default {
       required: true,
     },
   },
-};
+}
 </script>
 
 <style lang="scss">

@@ -1,25 +1,25 @@
-import Vue from "vue";
-import mixpanel from 'mixpanel-browser';
-const uiconfig = require("~/config/uiconfig");
+import Vue from 'vue'
+import mixpanel from 'mixpanel-browser'
+const uiconfig = require('~/config/uiconfig')
 
 export default {
   install() {
     // if (process.env.NODE_ENV === "production") {
-    mixpanel.init(uiconfig.MIXPANEL_TOKEN);
+    mixpanel.init(uiconfig.MIXPANEL_TOKEN)
     // }
-    let shouldTrack = false;
+    let shouldTrack = false
     const logger = {
       initTrack(user) {
         // if(user && process.env.NODE_ENV === "production"){
         if (user) {
-          mixpanel.identify(user.address);
+          mixpanel.identify(user.address)
         } else {
-          user = {};
+          user = {}
         }
-        shouldTrack = true;
+        shouldTrack = true
       },
       stopTrack() {
-        shouldTrack = false;
+        shouldTrack = false
       },
       track(event, payload = {}) {
         // if (process.env.NODE_ENV != "production") {
@@ -27,24 +27,24 @@ export default {
         // }
         // else if (shouldTrack) {
         if (shouldTrack) {
-          mixpanel.track(event, JSON.parse(JSON.stringify(payload)));
+          mixpanel.track(event, JSON.parse(JSON.stringify(payload)))
         }
       },
       error(err) {
-        console.error("error occured", err);
-        if (process.env.NODE_ENV === "production") {
+        console.error('error occured', err)
+        if (process.env.NODE_ENV === 'production') {
           // send error to entry
         }
       },
       debug(...args) {
-        console.log(args);
+        console.log(args)
       },
-    };
-    Vue.logger = logger;
+    }
+    Vue.logger = logger
     Vue.mixin({
       beforeCreate() {
-        this.$logger = logger;
+        this.$logger = logger
       },
-    });
+    })
   },
-};
+}

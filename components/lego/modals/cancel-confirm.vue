@@ -1,26 +1,41 @@
 <template>
   <div class="section position-absolute">
     <div
-      class="modal-backdrop"
       v-bsl="show"
-      v-bind:class="{ show: show }"
-    ></div>
-    <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
-      <div class="modal-dialog w-sm-100 align-self-center" role="document">
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
+    <div
+      class="modal add-token-modal-wrapper"
+      :class="{ show: show }"
+    >
+      <div
+        class="modal-dialog w-sm-100 align-self-center"
+        role="document"
+      >
         <div class="box accept-box">
           <div
             class="box-body"
-            v-bind:style="{
+            :style="{
               background:
                 'linear-gradient( 180deg,' +
                 bg +
                 ' 0%, rgba(236, 235, 223, 0) 80%)',
             }"
           >
-            <div class="close-wrapper" @click="close()">
-              <svg-sprite-icon name="close-modal" class="close" />
+            <div
+              class="close-wrapper"
+              @click="close()"
+            >
+              <svg-sprite-icon
+                name="close-modal"
+                class="close"
+              />
             </div>
-            <div class="container-fluid text-center" v-if="order">
+            <div
+              v-if="order"
+              class="container-fluid text-center"
+            >
               <div class="row">
                 <div class="col-md-12 ps-y-32">
                   <img
@@ -29,7 +44,7 @@
                     :alt="order.token.name"
                     @load="onImageLoad"
                     @error="imageLoadError"
-                  />
+                  >
                 </div>
                 <div class="col-md-12">
                   <div class="font-heading-large title font-semibold">
@@ -44,7 +59,9 @@
                   </div>
                 </div>
                 <div class="col-md-12 ps-y-32">
-                  <div class="font-body-small short-descr">Listed for</div>
+                  <div class="font-body-small short-descr">
+                    Listed for
+                  </div>
                   <div class="amount font-heading-large font-semibold ps-t-4">
                     {{ order.price }} {{ order.erc20tokens.symbol }}
                   </div>
@@ -60,7 +77,7 @@
                     lg
                     color="primary"
                     :click="accept"
-                  ></button-loader>
+                  />
                 </div>
               </div>
             </div>
@@ -72,12 +89,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
-import rgbToHsl from "~/plugins/helpers/color-algorithm";
-import ColorThief from "color-thief";
-const colorThief = new ColorThief();
+import rgbToHsl from '~/plugins/helpers/color-algorithm'
+import ColorThief from 'color-thief'
+const colorThief = new ColorThief()
 
 @Component({
   props: {
@@ -101,7 +118,7 @@ const colorThief = new ColorThief();
       type: Object,
       required: false,
       default: () => {
-        return { title: "Cancel", loadingTitle: "Canceling..." };
+        return { title: 'Cancel', loadingTitle: 'Canceling...' }
       },
     },
     accept: {
@@ -117,34 +134,34 @@ const colorThief = new ColorThief();
   components: {},
 })
 export default class CancelConfirm extends Vue {
-  bg = "#f3f4f7";
+  bg = '#f3f4f7';
 
   mounted() {
-    console.log("mounted");
-    console.log(this.order);
-    console.log(this.order.erc20tokens);
+    console.log('mounted')
+    console.log(this.order)
+    console.log(this.order.erc20tokens)
   }
 
   onImageLoad() {
     try {
-      const img = this.$el.querySelector(".asset-img");
-      let rgbColor = colorThief.getColor(img);
+      const img = this.$el.querySelector('.asset-img')
+      const rgbColor = colorThief.getColor(img)
       if (rgbColor) {
-        let hsl = rgbToHsl({
+        const hsl = rgbToHsl({
           r: rgbColor[0],
           g: rgbColor[1],
           b: rgbColor[2],
-        });
-        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+        })
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`
       } else {
-        this.bg = "#f3f4f7";
+        this.bg = '#f3f4f7'
       }
     } catch (error) {}
   }
 
   imageLoadError(event) {
-    event.target.src = this.category.img_url;
-    event.target.style.width = '50px';
+    event.target.src = this.category.img_url
+    event.target.style.width = '50px'
   }
 }
 </script>

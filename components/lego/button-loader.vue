@@ -16,8 +16,11 @@
         ...classes,
       ]"
     >
-      <div class="spinner inverse align-self-center"></div>
-      <div v-if="loadingText" class="mx-3 font-16 align-self-center">
+      <div class="spinner inverse align-self-center" />
+      <div
+        v-if="loadingText"
+        class="mx-3 font-16 align-self-center"
+      >
         {{ loadingText }}
       </div>
     </div>
@@ -35,8 +38,8 @@
       ]"
       role="button"
       :type="click ? 'button' : 'submit'"
-      v-on:click="click ? click() : false"
       :disabled="disabled"
+      @click="click ? click() : false"
     >
       {{ text }}
     </button>
@@ -44,14 +47,14 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
     color: {
       type: String,
-      default: "primary",
+      default: 'primary',
     },
     disabled: {
       type: Boolean,

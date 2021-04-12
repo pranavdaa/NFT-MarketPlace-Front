@@ -20,34 +20,34 @@ exports.getTypedData = function({
       types: {
         EIP712Domain: [
           {
-            name: "name",
-            type: "string",
+            name: 'name',
+            type: 'string',
           },
           {
-            name: "version",
-            type: "string",
+            name: 'version',
+            type: 'string',
           },
           {
-            name: "verifyingContract",
-            type: "address",
+            name: 'verifyingContract',
+            type: 'address',
           },
           {
-            name: "salt",
-            type: "bytes32",
+            name: 'salt',
+            type: 'bytes32',
           },
         ],
         MetaTransaction: [
           {
-            name: "nonce",
-            type: "uint256",
+            name: 'nonce',
+            type: 'uint256',
           },
           {
-            name: "from",
-            type: "address",
+            name: 'from',
+            type: 'address',
           },
           {
-            name: "functionSignature",
-            type: "bytes",
+            name: 'functionSignature',
+            type: 'bytes',
           },
         ],
       },
@@ -57,13 +57,13 @@ exports.getTypedData = function({
         verifyingContract,
         salt,
       },
-      primaryType: "MetaTransaction",
+      primaryType: 'MetaTransaction',
       message: {
         nonce,
         from,
         functionSignature,
       },
-    };
+    }
   }
-  return null;
-};
+  return null
+}

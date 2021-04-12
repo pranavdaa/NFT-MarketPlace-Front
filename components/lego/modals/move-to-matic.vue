@@ -1,22 +1,40 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
-    <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
-      <div class="modal-dialog w-sm-100 align-self-center" role="document">
+    <div
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
+    <div
+      class="modal add-token-modal-wrapper"
+      :class="{ show: show }"
+    >
+      <div
+        class="modal-dialog w-sm-100 align-self-center"
+        role="document"
+      >
         <div class="box accept-box">
           <div
             class="box-body"
-            v-bind:style="{
+            :style="{
               background:
                 'linear-gradient( 180deg,' +
                 bg +
                 ' 0%, rgba(236, 235, 223, 0) 80%)',
             }"
           >
-            <div class="close-wrapper" @click="close()">
-              <svg-sprite-icon name="close-modal" class="close" />
+            <div
+              class="close-wrapper"
+              @click="close()"
+            >
+              <svg-sprite-icon
+                name="close-modal"
+                class="close"
+              />
             </div>
-            <div class="container-fluid text-center" v-if="token">
+            <div
+              v-if="token"
+              class="container-fluid text-center"
+            >
               <div class="row">
                 <div class="col-md-12 ps-y-32">
                   <img
@@ -24,7 +42,7 @@
                     :src="token.img_url"
                     alt="kitty"
                     @load="onImageLoad"
-                  />
+                  >
                 </div>
                 <div class="col-md-12 ps-t-8 ps-b-40">
                   <div class="font-heading-large title font-semibold">
@@ -42,7 +60,7 @@
                     lg
                     color="primary"
                     :click="depositNFT"
-                  ></button-loader>
+                  />
                 </div>
               </div>
             </div>
@@ -54,17 +72,17 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
-import app from "~/plugins/app";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
+import app from '~/plugins/app'
 
-import rgbToHsl from "~/plugins/helpers/color-algorithm";
-import ColorThief from "color-thief";
-const colorThief = new ColorThief();
+import rgbToHsl from '~/plugins/helpers/color-algorithm'
+import ColorThief from 'color-thief'
 
-import { getWalletProvider } from "~/plugins/helpers/providers";
-const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
+import { getWalletProvider } from '~/plugins/helpers/providers'
+const colorThief = new ColorThief()
+const MaticPOSClient = require('@maticnetwork/maticjs').MaticPOSClient
 
 @Component({
   props: {
@@ -88,45 +106,46 @@ const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
   },
   components: {},
   computed: {
-    ...mapGetters("account", ["account"]),
-    ...mapGetters("auth", ["user"]),
-    ...mapGetters("network", ["networks", "networkMeta"]),
+    ...mapGetters('account', ['account']),
+    ...mapGetters('auth', ['user']),
+    ...mapGetters('network', ['networks', 'networkMeta']),
   },
 })
 export default class MoveToMatic extends Vue {
-  bg = "#f3f4f7";
+  bg = '#f3f4f7';
   isLoading = false;
-  loadingText = "Depositing...";
+  loadingText = 'Depositing...';
 
   mounted() {}
 
   onImageLoad() {
     try {
-      const img = this.$el.querySelector(".asset-img");
-      let rgbColor = colorThief.getColor(img);
+      const img = this.$el.querySelector('.asset-img')
+      const rgbColor = colorThief.getColor(img)
       if (rgbColor) {
-        let hsl = rgbToHsl({
+        const hsl = rgbToHsl({
           r: rgbColor[0],
           g: rgbColor[1],
           b: rgbColor[2],
-        });
-        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
+        })
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`
       } else {
-        this.bg = "#f3f4f7";
+        this.bg = '#f3f4f7'
       }
     } catch (error) {}
   }
+
   // PoS withdraw
   async getMaticPOS() {
-    let parentProvider = getWalletProvider({
+    const parentProvider = getWalletProvider({
       networks: this.networks,
-      primaryProvider: "main",
-    });
+      primaryProvider: 'main',
+    })
 
-    let maticProvider = getWalletProvider({
+    const maticProvider = getWalletProvider({
       networks: this.networks,
-      primaryProvider: "matic",
-    });
+      primaryProvider: 'matic',
+    })
 
     return await new MaticPOSClient({
       network: app.uiconfig.matic.deployment.network,
@@ -140,90 +159,90 @@ export default class MoveToMatic extends Vue {
         .ERC721PredicateProxy,
       parentDefaultOptions: { from: this.account.address },
       maticDefaultOptions: { from: this.account.address },
-    });
+    })
   }
 
   async getApproved(maticPOS, contract, tokenId) {
     try {
       const contractObj = new maticPOS.web3Client.parentWeb3.eth.Contract(
-        this.networkMeta.abi("DummyERC721", "pos"),
-        contract
-      );
-      const approved = await contractObj.methods.getApproved(tokenId).call();
+        this.networkMeta.abi('DummyERC721', 'pos'),
+        contract,
+      )
+      const approved = await contractObj.methods.getApproved(tokenId).call()
       if (
         this.networkMeta.Main.POSContracts.ERC721PredicateProxy === approved
       ) {
-        return true;
+        return true
       }
     } catch (error) {}
-    return false;
+    return false
   }
 
   async approveNFT(maticPOS, contract, tokenId) {
-    this.loadingText = "Approving";
+    this.loadingText = 'Approving'
     try {
       // Check if token is approved to matic deposit address
-      const allowed = await this.getApproved(maticPOS, contract, tokenId);
+      const allowed = await this.getApproved(maticPOS, contract, tokenId)
       if (allowed) {
-        return true;
+        return true
       }
-      const txHash = await maticPOS.approveERC721ForDeposit(contract, tokenId);
+      const txHash = await maticPOS.approveERC721ForDeposit(contract, tokenId)
       if (txHash) {
-        console.log("Approved : ", txHash);
+        console.log('Approved : ', txHash)
         app.addToast(
-          "Token approved successfully",
-          "Your successfully token approved for deposit.",
-          { type: "success" }
-        );
-        return true;
+          'Token approved successfully',
+          'Your successfully token approved for deposit.',
+          { type: 'success' },
+        )
+        return true
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
       app.addToast(
-        "Failed to approve",
-        "Something went wrong while approving NFT for deposit.",
-        { type: "failure" }
-      );
+        'Failed to approve',
+        'Something went wrong while approving NFT for deposit.',
+        { type: 'failure' },
+      )
     }
-    return false;
+    return false
   }
 
   async depositNFT() {
-    this.isLoading = true;
+    this.isLoading = true
     try {
-      const contract = this.token.category.getAddress(this.token.chainId);
-      const tokenId = this.token.token_id;
-      const maticPOS = await this.getMaticPOS();
+      const contract = this.token.category.getAddress(this.token.chainId)
+      const tokenId = this.token.token_id
+      const maticPOS = await this.getMaticPOS()
 
-      const approve = await this.approveNFT(maticPOS, contract, tokenId);
+      const approve = await this.approveNFT(maticPOS, contract, tokenId)
 
       if (approve) {
-        this.loadingText = "Depositing";
+        this.loadingText = 'Depositing'
         const txHash = await maticPOS.depositERC721ForUser(
           contract,
           this.account.address,
-          tokenId
-        );
+          tokenId,
+        )
         if (txHash) {
-          console.log("Deposited : ", txHash);
+          console.log('Deposited : ', txHash)
           app.addToast(
-            "Token deposited successfully",
-            "Your token deposited successfully to matic network, it will take 3-5 minute to appear on matic network",
-            { type: "success" }
-          );
-          this.refreshNFTTokens();
-          this.close();
+            'Token deposited successfully',
+            'Your token deposited successfully to matic network, it will take 3-5 minute to appear on matic network',
+            { type: 'success' },
+          )
+          this.refreshNFTTokens()
+          this.close()
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
       app.addToast(
-        "Failed to deposit",
-        "Something went wrong while depositing token",
-        { type: "failure" }
-      );
+        'Failed to deposit',
+        'Something went wrong while depositing token',
+        { type: 'failure' },
+      )
     }
-    this.isLoading = false;
+    this.isLoading = false
   }
 }
 </script>

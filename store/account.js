@@ -1,6 +1,6 @@
-import getAxios from '~/plugins/axios';
-import app from '~/plugins/app';
-import OrderModel from '~/components/model/order';
+import getAxios from '~/plugins/axios'
+import app from '~/plugins/app'
+import OrderModel from '~/components/model/order'
 
 export default {
   namespaced: true,
@@ -14,98 +14,98 @@ export default {
       totalMainNft: 0,
       totalUnreadOrderActivity: 0,
       pendingWithdrawals: [],
-    };
+    }
   },
 
   getters: {
     account(state) {
-      return state.account;
+      return state.account
     },
     userOrders(state) {
-      return state.userOrders;
+      return state.userOrders
     },
     favouriteOrders(state) {
-      return state.favouriteOrders;
+      return state.favouriteOrders
     },
     totalMaticNft(state) {
-      return state.totalMaticNft;
+      return state.totalMaticNft
     },
     totalMainNft(state) {
-      return state.totalMainNft;
+      return state.totalMainNft
     },
     totalUnreadOrderActivity(state) {
-      return state.totalUnreadOrderActivity;
+      return state.totalUnreadOrderActivity
     },
     pendingWithdrawals(state) {
-      return state.pendingWithdrawals;
+      return state.pendingWithdrawals
     },
   },
 
   mutations: {
     account(state, account) {
-      state.account = account;
+      state.account = account
     },
     userOrders(state, orders) {
-      state.userOrders = orders;
+      state.userOrders = orders
     },
     favouriteOrders(state, orders) {
-      state.favouriteOrders = orders;
+      state.favouriteOrders = orders
     },
     totalMaticNft(state, num) {
-      state.totalMaticNft = num;
+      state.totalMaticNft = num
     },
     totalMainNft(state, num) {
-      state.totalMainNft = num;
+      state.totalMainNft = num
     },
     totalUnreadOrderActivity(state, num) {
-      state.totalUnreadOrderActivity = num;
+      state.totalUnreadOrderActivity = num
     },
     pendingWithdrawals(state, transactions) {
-      state.pendingWithdrawals = transactions;
+      state.pendingWithdrawals = transactions
     },
   },
 
   actions: {
     async fetchActiveOrders({ commit }) {
       try {
-        const user = app.vuexStore.getters['auth/user'];
-        let response = await getAxios().get(`users/${user.id}/activeorders`);
+        const user = app.vuexStore.getters['auth/user']
+        const response = await getAxios().get(`users/${user.id}/activeorders`)
         if (response.status === 200 && response.data.data.length > 0) {
-          let orders = [];
+          const orders = []
           response.data.data.forEach((order) =>
-            orders.push(new OrderModel(order))
-          );
-          commit('userOrders', orders);
+            orders.push(new OrderModel(order)),
+          )
+          commit('userOrders', orders)
         }
       } catch (error) {}
     },
     async fetchFavoritesOrders({ commit }) {
       try {
-        const user = app.vuexStore.getters['auth/user'];
-        let response = await getAxios().get(`users/${user.id}/favourites`);
+        const user = app.vuexStore.getters['auth/user']
+        const response = await getAxios().get(`users/${user.id}/favourites`)
         if (response.status === 200 && response.data.data.length > 0) {
-          let orders = [];
-          response.data.data.forEach(function (fav) {
-            fav.orders.image = fav.image;
-            fav.orders.name = fav.name;
-            fav.orders.description = fav.description;
-            fav.order = new OrderModel(fav.orders);
-            orders.push(fav);
-          });
-          commit('favouriteOrders', orders);
+          const orders = []
+          response.data.data.forEach(function(fav) {
+            fav.orders.image = fav.image
+            fav.orders.name = fav.name
+            fav.orders.description = fav.description
+            fav.order = new OrderModel(fav.orders)
+            orders.push(fav)
+          })
+          commit('favouriteOrders', orders)
         }
       } catch (error) {}
     },
     async fetchPendingWithdrawals({ commit }) {
       try {
-        const user = app.vuexStore.getters['auth/user'];
-        let response = await getAxios().get(
-          `assetmigrate/?user_id=${user.id}&type=["WITHDRAW"]&status=[0,1]`
-        );
+        const user = app.vuexStore.getters['auth/user']
+        const response = await getAxios().get(
+          `assetmigrate/?user_id=${user.id}&type=["WITHDRAW"]&status=[0,1]`,
+        )
         if (response.status === 200 && response.data.data) {
-          commit('pendingWithdrawals', response.data.data.assetMigrations);
+          commit('pendingWithdrawals', response.data.data.assetMigrations)
         }
       } catch (error) {}
     },
   },
-};
+}

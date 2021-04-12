@@ -17,21 +17,21 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
-import getAxios from "~/plugins/axios";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
+import getAxios from '~/plugins/axios'
 
-import SellCard from "~/components/lego/sell-card";
-import CategoriesSelector from "~/components/lego/categories-selector";
-import SearchBox from "~/components/lego/search-box";
-import SortDropdown from "~/components/lego/sort-dropdown";
-import AccountBanner from "~/components/lego/account/account-banner";
-import TabSwitcher from "~/components/lego/tab-switcher";
-import MaticNewTab from "~/components/lego/account/matic-new-tab";
-import EthereumNewTab from "~/components/lego/account/ethereum-new-tab";
-import ActivityOrderTab from "~/components/lego/account/activity-order-tab";
-import ActivityDepositWithdrawTab from "~/components/lego/account/activity-deposit-withdraw-tab";
+import SellCard from '~/components/lego/sell-card'
+import CategoriesSelector from '~/components/lego/categories-selector'
+import SearchBox from '~/components/lego/search-box'
+import SortDropdown from '~/components/lego/sort-dropdown'
+import AccountBanner from '~/components/lego/account/account-banner'
+import TabSwitcher from '~/components/lego/tab-switcher'
+import MaticNewTab from '~/components/lego/account/matic-new-tab'
+import EthereumNewTab from '~/components/lego/account/ethereum-new-tab'
+import ActivityOrderTab from '~/components/lego/account/activity-order-tab'
+import ActivityDepositWithdrawTab from '~/components/lego/account/activity-deposit-withdraw-tab'
 
 @Component({
   props: {},
@@ -47,17 +47,17 @@ import ActivityDepositWithdrawTab from "~/components/lego/account/activity-depos
     ActivityOrderTab,
     ActivityDepositWithdrawTab,
   },
-  middleware: ["auth"],
+  middleware: ['auth'],
   mixins: [],
   computed: {
-    ...mapGetters("account", [
-      "favouriteOrders",
-      "totalMaticNft",
-      "totalMainNft",
-      "totalUnreadOrderActivity",
+    ...mapGetters('account', [
+      'favouriteOrders',
+      'totalMaticNft',
+      'totalMainNft',
+      'totalUnreadOrderActivity',
     ]),
-    ...mapGetters("network", ["networks"]),
-    ...mapGetters("auth", ["user"]),
+    ...mapGetters('network', ['networks']),
+    ...mapGetters('auth', ['user']),
   },
 })
 export default class Index extends Vue {
@@ -66,45 +66,45 @@ export default class Index extends Vue {
   allOrSale = true;
 
   async mounted() {
-    this.fetchTotalTokens();
+    this.fetchTotalTokens()
   }
 
   async fetchTotalTokens() {
     try {
-      this.$store.dispatch("token/reloadBalances");
+      this.$store.dispatch('token/reloadBalances')
 
-      let mainNftResponse = await getAxios().get(
-        `tokens/balance?userId=${this.user.id}&chainId=${this.mainChainId}`
-      );
+      const mainNftResponse = await getAxios().get(
+        `tokens/balance?userId=${this.user.id}&chainId=${this.mainChainId}`,
+      )
       if (mainNftResponse.status === 200 && mainNftResponse.data.data) {
-        this.$store.commit("account/totalMainNft", mainNftResponse.data.count);
+        this.$store.commit('account/totalMainNft', mainNftResponse.data.count)
       }
     } catch (error) {
       // console.log(error);
     }
     try {
-      let maticNftResponse = await getAxios().get(
-        `tokens/balance?userId=${this.user.id}&chainId=${this.maticChainId}`
-      );
+      const maticNftResponse = await getAxios().get(
+        `tokens/balance?userId=${this.user.id}&chainId=${this.maticChainId}`,
+      )
       if (maticNftResponse.status === 200 && maticNftResponse.data.data) {
         this.$store.commit(
-          "account/totalMaticNft",
-          maticNftResponse.data.count
-        );
+          'account/totalMaticNft',
+          maticNftResponse.data.count,
+        )
       }
     } catch (error) {
       // console.log(error);
     }
     try {
-      let activityResponse = await getAxios().get(
-        `users/notification/${this.user.id}`
-      );
+      const activityResponse = await getAxios().get(
+        `users/notification/${this.user.id}`,
+      )
 
       if (activityResponse.status === 200 && activityResponse.data.data) {
         this.$store.commit(
-          "account/totalUnreadOrderActivity",
-          activityResponse.data.data.unread_count
-        );
+          'account/totalUnreadOrderActivity',
+          activityResponse.data.data.unread_count,
+        )
       }
     } catch (error) {
       // console.log(error);
@@ -112,31 +112,33 @@ export default class Index extends Vue {
   }
 
   get mainChainId() {
-    return this.networks.main.chainId;
+    return this.networks.main.chainId
   }
 
   get maticChainId() {
-    return this.networks.matic.chainId;
+    return this.networks.matic.chainId
   }
 
   changeTab(num) {
-    this.activeTab = num;
-    this.fetchTotalTokens();
+    this.activeTab = num
+    this.fetchTotalTokens()
   }
+
   // Get
   get tabs() {
     return [
-      { id: 0, title: "Items on Matic", count: this.totalMaticNft },
-      { id: 1, title: "Items on Ethereum", count: this.totalMainNft },
-      { id: 2, title: "Orders", count: this.totalUnreadOrderActivity },
-      { id: 3, title: "Deposits & Withdraws" },
-    ];
+      { id: 0, title: 'Items on Matic', count: this.totalMaticNft },
+      { id: 1, title: 'Items on Ethereum', count: this.totalMainNft },
+      { id: 2, title: 'Orders', count: this.totalUnreadOrderActivity },
+      { id: 3, title: 'Deposits & Withdraws' },
+    ]
   }
+
   get favCount() {
     if (this.favouriteOrders) {
-      return this.favouriteOrders.length;
+      return this.favouriteOrders.length
     }
-    return 0;
+    return 0
   }
 }
 </script>

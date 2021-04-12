@@ -1,14 +1,20 @@
 <template>
   <section>
-    <div class="modal fade show" v-if="show">
+    <div
+      v-if="show"
+      class="modal fade show"
+    >
       <div class="modal-dialog align-self-center">
         <div class="box">
           <div class="box-body">
             <div class="ps-16 ps-md-32 box-header">
-              <span class="font-heading-medium font-semibold col"
-                >My QR Code</span
+              <span
+                class="font-heading-medium font-semibold col"
+              >My QR Code</span>
+              <div
+                class="align-self-center cursor-pointer"
+                @click="close()"
               >
-              <div class="align-self-center cursor-pointer" @click="close()">
                 <svg-sprite-icon
                   name="close"
                   class="close align-self-center cursor-pointer"
@@ -21,8 +27,8 @@
                 class="row ps-x-md-32 ps-y-md-60 ps-y-32 ps-x-16 d-flex justify-content-center"
               >
                 <div
-                  class="qrcode-container align-self-center mt-4"
                   v-if="qrValue"
+                  class="qrcode-container align-self-center mt-4"
                 >
                   <Qrcode
                     class="d-flex"
@@ -47,17 +53,20 @@
                   Only send ethereum and your ERC20 tokens to this address.
                   sending other token will result in permanent loss.
                 </div>
-                <div class="col-12 p-0" @click="copyAddress()">
+                <div
+                  class="col-12 p-0"
+                  @click="copyAddress()"
+                >
                   <button
-                    class="btn btn-primary ps-20 btn-block no-border no-top-border-radius"
                     v-if="copyAnim === false"
+                    class="btn btn-primary ps-20 btn-block no-border no-top-border-radius"
                   >
                     Copy Address
                   </button>
 
                   <button
-                    class="btn btn-block no-border no-top-border-radius"
                     v-if="copyAnim === true"
+                    class="btn btn-block no-border no-top-border-radius"
                   >
                     <lottie
                       class="copy-anim align-self-center"
@@ -73,19 +82,22 @@
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
   </section>
 </template>
 
 <script>
-import VueQrcode from "@xkeshi/vue-qrcode";
-import Vue from "vue";
-import copy from "copy-to-clipboard";
-import Lottie from "vue-lottie";
+import VueQrcode from '@xkeshi/vue-qrcode'
+import Vue from 'vue'
+import copy from 'copy-to-clipboard'
+import Lottie from 'vue-lottie'
 
-import * as animationData from "~/static/lottie-animations/green-check.json";
+import * as animationData from '~/static/lottie-animations/green-check.json'
 
-import Component from "nuxt-class-component";
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
@@ -101,8 +113,8 @@ import Component from "nuxt-class-component";
     close: {
       type: Function,
       required: false,
-      default: function () {
-        this.show = false;
+      default: function() {
+        this.show = false
       },
     },
   },
@@ -110,7 +122,7 @@ import Component from "nuxt-class-component";
     return {
       defaultOptions: { animationData: animationData.default, loop: false },
       animationSpeed: 2,
-    };
+    }
   },
   components: {
     Qrcode: VueQrcode,
@@ -125,22 +137,22 @@ export default class ReceiveQrCode extends Vue {
   mounted() {}
 
   copyAnimation(show) {
-    this.copyAnim = show;
+    this.copyAnim = show
   }
 
   copyAddress() {
-    this.copyAnimation(true);
-    copy(this.qrValue);
+    this.copyAnimation(true)
+    copy(this.qrValue)
     setTimeout(() => {
-      this.copyAnimation(false);
-    }, 3000);
+      this.copyAnimation(false)
+    }, 3000)
   }
 
   get qrValue() {
     if (this.uri) {
-      return this.uri;
+      return this.uri
     }
-    return null;
+    return null
   }
 }
 </script>

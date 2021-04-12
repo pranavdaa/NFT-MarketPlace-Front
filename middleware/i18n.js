@@ -9,18 +9,18 @@ export default function({
 }) {
   // If middleware is called from hot-reloading, ignore it
   if (hotReload) {
-    return;
+    return
   }
 
   // Get locale from params
-  const locale = params.lang || 'en';
+  const locale = params.lang || 'en'
   if (store.state.locale.locales.indexOf(locale) === -1) {
-    return error({ message: 'This page could not be found.', statusCode: 404 });
+    return error({ message: 'This page could not be found.', statusCode: 404 })
   }
 
   // Set locale
-  store.commit('locale/set', locale);
-  app.i18n.locale = store.getters['locale/current'];
+  store.commit('locale/set', locale)
+  app.i18n.locale = store.getters['locale/current']
   // If route is /en/... -> redirect to /...
   // if (locale === 'en' && route.fullPath.indexOf('/en') === 0) {
   //   return redirect(route.fullPath.replace(/^\/en/, '/'));

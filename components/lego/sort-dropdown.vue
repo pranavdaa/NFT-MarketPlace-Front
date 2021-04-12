@@ -1,5 +1,8 @@
 <template>
-  <div class="dropdown-sort d-flex" v-click-outside="() => (active = false)">
+  <div
+    v-click-outside="() => (active = false)"
+    class="dropdown-sort d-flex"
+  >
     <div class="sort-box cursor-pointer align-self-center">
       <div
         class="title-container d-flex position-relative form-control no-border justify-content-between"
@@ -15,25 +18,28 @@
           <svg-sprite-icon
             name="right-arrow"
             class="down-icon"
-          ></svg-sprite-icon>
+          />
         </div>
       </div>
     </div>
 
     <!-- Dropdown Items -->
-    <div class="table table-wrapper sort-list" v-if="active">
+    <div
+      v-if="active"
+      class="table table-wrapper sort-list"
+    >
       <div class="table-scrollable">
         <div class="table-body">
           <div
-            class="table-row ps-l-20 sort-item"
             v-for="item in sortItems"
             :key="item.id"
-            @click.stop.prevent="onChange(item)"
+            class="table-row ps-l-20 sort-item"
             :class="{ active: selectedItem.id === item.id }"
+            @click.stop.prevent="onChange(item)"
           >
             <div
-              class="title font-body-small font-medium ms-y-auto text-capitalize"
               :id="item.id"
+              class="title font-body-small font-medium ms-y-auto text-capitalize"
             >
               {{ item.name }}
             </div>
@@ -46,8 +52,8 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
@@ -73,13 +79,13 @@ export default class SortDropdown extends Vue {
   selectedItem = null;
 
   mounted() {
-    this.onChange(this.selectedItem || this.sortItems[this.defaultID]);
+    this.onChange(this.selectedItem || this.sortItems[this.defaultID])
   }
 
   onChange(value) {
-    this.selectedItem = value;
-    this.change(value);
-    this.active = false;
+    this.selectedItem = value
+    this.change(value)
+    this.active = false
   }
 }
 </script>

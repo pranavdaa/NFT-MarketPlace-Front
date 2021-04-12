@@ -3,7 +3,10 @@
     <div
       class="col-12 col-lg d-flex flex-column flex-md-row justify-content-center justify-content-lg-start"
     >
-      <svg-sprite-icon name="profile" class="profile-pic align-self-center" />
+      <svg-sprite-icon
+        name="profile"
+        class="profile-pic align-self-center"
+      />
       <div
         class="d-flex flex-column align-self-center ps-l-md-16 text-center text-md-left ps-t-16 ps-t-md-0"
       >
@@ -18,17 +21,20 @@
             {{ account.shortChecksumAddress }}
           </div>
           &nbsp; &nbsp;
-          <div class="copy-wrapper" @click.stop.prevent="copyAddress">
+          <div
+            class="copy-wrapper"
+            @click.stop.prevent="copyAddress"
+          >
             <img
+              v-if="copyAnim === false"
               name="copy-white"
               src="~/assets/svg/copy-white.svg"
-              v-if="copyAnim === false"
-            />
+            >
             <lottie
+              v-if="copyAnim === true"
               :options="defaultOptions"
               :width="24"
               :height="24"
-              v-if="copyAnim === true"
             />
           </div>
         </div>
@@ -88,7 +94,10 @@
       </div>
 
       <div class="align-self-center">
-        <button class="btn btn-light ml-auto" @click="depositModal = true">
+        <button
+          class="btn btn-light ml-auto"
+          @click="depositModal = true"
+        >
           {{ $t("account.banner.depositWeth") }}
         </button>
       </div>
@@ -96,50 +105,50 @@
     <deposit-weth
       :show="depositModal"
       :close="closeDepositModal"
-    ></deposit-weth>
+    />
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import copy from "copy-to-clipboard";
-import Lottie from "vue-lottie";
-import { mapGetters } from "vuex";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import copy from 'copy-to-clipboard'
+import Lottie from 'vue-lottie'
+import { mapGetters } from 'vuex'
 
-import app from "~/plugins/app";
-import DepositWeth from "~/components/lego/modals/deposit-weth";
-import * as animationData from "~/static/lottie-animations/green-check.json";
-import { stripZeros } from "ethereumjs-util";
+import app from '~/plugins/app'
+import DepositWeth from '~/components/lego/modals/deposit-weth'
+import * as animationData from '~/static/lottie-animations/green-check.json'
+import { stripZeros } from 'ethereumjs-util'
 
 @Component({
   props: {},
   components: { DepositWeth, Lottie },
   computed: {
-    ...mapGetters("account", ["account", "totalMaticNft", "totalMainNft"]),
-    ...mapGetters("token", ["totalCurrencyBalance", "erc20Tokens"]),
-    ...mapGetters("network", ["networkMeta"]),
+    ...mapGetters('account', ['account', 'totalMaticNft', 'totalMainNft']),
+    ...mapGetters('token', ['totalCurrencyBalance', 'erc20Tokens']),
+    ...mapGetters('network', ['networkMeta']),
   },
   data() {
     return {
       depositModal: false,
-    };
+    }
   },
   methods: {
     closeDepositModal() {
-      this.depositModal = false;
+      this.depositModal = false
     },
 
     copyAnimation(show) {
-      this.copyAnim = show;
+      this.copyAnim = show
     },
 
     copyAddress() {
-      this.copyAnimation(true);
-      copy(this.account.checksumAddress || this.account.address);
+      this.copyAnimation(true)
+      copy(this.account.checksumAddress || this.account.address)
       setTimeout(() => {
-        this.copyAnimation(false);
-      }, 3000);
+        this.copyAnimation(false)
+      }, 3000)
     },
   },
 })
@@ -150,51 +159,51 @@ export default class AccountBanner extends Vue {
 
   // Widget event listener
   maticWidgetEventsListener = (event) => {
-    let targetedEvents = [
+    const targetedEvents = [
       event.eventTypes.TRANSFER.onReceipt,
       event.eventTypes.DEPOSIT.onReceipt,
       event.eventTypes.WITHDRAW_INIT.onReceipt,
       event.eventTypes.WITHDRAW_CONFIRM.onReceipt,
       event.eventTypes.WITHDRAW_EXIT.onReceipt,
-    ];
+    ]
     if (targetedEvents.includes(event.data.type)) {
-      this.$store.dispatch("token/reloadBalances");
+      this.$store.dispatch('token/reloadBalances')
     }
   };
 
   mounted() {
     // Register widget event listner
-    window.maticWidgetEventsListener = this.maticWidgetEventsListener;
+    window.maticWidgetEventsListener = this.maticWidgetEventsListener
   }
 
   erc20TokenBySymbol(symbol) {
-    let filteredItem = this.erc20Tokens.find((obj) => obj.symbol === symbol);
-    return filteredItem;
+    const filteredItem = this.erc20Tokens.find((obj) => obj.symbol === symbol)
+    return filteredItem
   }
 
   indexBySymbol(symbol) {
-    let filteredItem = this.erc20Tokens.find((obj) => obj.symbol === symbol);
-    return this.erc20Tokens.indexOf(filteredItem);
+    const filteredItem = this.erc20Tokens.find((obj) => obj.symbol === symbol)
+    return this.erc20Tokens.indexOf(filteredItem)
   }
 
   formattedFullUSDBalance(symbol) {
-    let currencyBalance = this.totalCurrencyBalance;
+    const currencyBalance = this.totalCurrencyBalance
     for (let i = 0; i < currencyBalance.length; i++) {
       if (currencyBalance[i] && parseFloat(currencyBalance[i]) > 0) {
-        currencyBalance[i] = parseFloat(currencyBalance[i].toFixed(3));
+        currencyBalance[i] = parseFloat(currencyBalance[i].toFixed(3))
       } else {
-        currencyBalance[i] = "00.00";
+        currencyBalance[i] = '00.00'
       }
     }
-    let index = this.indexBySymbol(symbol);
-    return currencyBalance[index];
+    const index = this.indexBySymbol(symbol)
+    return currencyBalance[index]
   }
 
   get widgetKey() {
     if (app.uiconfig && app.uiconfig.maticWidgetKey) {
-      return app.uiconfig.maticWidgetKey;
+      return app.uiconfig.maticWidgetKey
     }
-    return null;
+    return null
   }
 }
 </script>

@@ -3,15 +3,15 @@
     <div class="nuxt-section">
       <nuxt />
     </div>
-    <toast></toast>
+    <toast />
   </div>
 </template>
 <script>
-import Toast from "~/components/toast";
+import Toast from '~/components/toast'
 
 export default {
   components: {
     Toast,
   },
-};
+}
 </script>

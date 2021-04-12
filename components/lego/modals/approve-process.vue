@@ -5,10 +5,13 @@
         <div class="box">
           <div class="box-body">
             <div class="ps-16 ps-md-32 box-header">
-              <span class="font-heading-medium font-semibold col"
-                >Transactions</span
+              <span
+                class="font-heading-medium font-semibold col"
+              >Transactions</span>
+              <div
+                class="align-self-center cursor-pointer"
+                @click="close()"
               >
-              <div class="align-self-center cursor-pointer" @click="close()">
                 <svg-sprite-icon
                   name="close"
                   class="close align-self-center cursor-pointer"
@@ -22,15 +25,15 @@
                   <div class="col-2">
                     <div class="status-check">
                       <svg-sprite-icon
+                        v-if="isApprovedStatus === false"
                         name="status-undone"
                         class="icon"
-                        v-if="isApprovedStatus === false"
-                      ></svg-sprite-icon>
+                      />
                       <svg-sprite-icon
+                        v-else
                         name="status-done"
                         class="icon"
-                        v-else
-                      ></svg-sprite-icon>
+                      />
                     </div>
                   </div>
                   <div class="col-10">
@@ -52,12 +55,12 @@
                       :loading="approveLoading"
                       :disabled="approveLoading || isApproved === true"
                       :click="approveConfirm"
-                    ></button-loader>
+                    />
                     <div
-                      class="text-danger mx-auto text-center font-body-small"
                       v-if="networkChangeNeeded === true"
+                      class="text-danger mx-auto text-center font-body-small"
                     >
-                      Please select Matic Mainnet in Metamask <br />
+                      Please select Matic Mainnet in Metamask <br>
                       <a
                         href="https://docs.matic.network/docs/develop/metamask/config-matic/#matic-mainnet"
                         target="_blank"
@@ -73,15 +76,15 @@
                   <div class="col-2">
                     <div class="status-check">
                       <svg-sprite-icon
+                        v-if="isSignedStatus === false"
                         name="status-undone"
                         class="icon"
-                        v-if="isSignedStatus === false"
-                      ></svg-sprite-icon>
+                      />
                       <svg-sprite-icon
+                        v-else
                         name="status-done"
                         class="icon"
-                        v-else
-                      ></svg-sprite-icon>
+                      />
                     </div>
                   </div>
                   <div class="col-10">
@@ -103,11 +106,11 @@
                       :loading="signLoading"
                       :disabled="
                         isApproved === false ||
-                        signLoading === true ||
-                        isSigned === true
+                          signLoading === true ||
+                          isSigned === true
                       "
                       :click="signConfirm"
-                    ></button-loader>
+                    />
                   </div>
                 </div>
               </div>
@@ -117,14 +120,14 @@
       </div>
     </div>
 
-    <div class="modal-backdrop show"></div>
+    <div class="modal-backdrop show" />
   </section>
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue'
 
-import Component from "nuxt-class-component";
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
@@ -170,19 +173,19 @@ export default class ApproveProcess extends Vue {
   mounted() {}
 
   approveConfirm() {
-    this.approveClicked();
+    this.approveClicked()
   }
 
   signConfirm() {
-    this.signClicked();
+    this.signClicked()
   }
 
   get isApproved() {
-    return this.isApprovedStatus;
+    return this.isApprovedStatus
   }
 
   get isSigned() {
-    return this.isSignedStatus;
+    return this.isSignedStatus
   }
 }
 </script>

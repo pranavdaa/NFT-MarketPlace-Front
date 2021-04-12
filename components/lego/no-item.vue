@@ -1,11 +1,17 @@
 <template>
   <div class="container-fluid">
-    <div class="row ps-b-32" :class="{ 'ps-t-32': !message.img }">
+    <div
+      class="row ps-b-32"
+      :class="{ 'ps-t-32': !message.img }"
+    >
       <div
-        class="col-md-12 d-flex justify-content-center ps-t-80 ps-b-32"
         v-if="message.img"
+        class="col-md-12 d-flex justify-content-center ps-t-80 ps-b-32"
       >
-        <img src="~/assets/svg/dummy-item.svg" alt="Marketplace" />
+        <img
+          src="~/assets/svg/dummy-item.svg"
+          alt="Marketplace"
+        >
       </div>
       <div
         class="col-md-12 text-center font-heading-large font-semibold ps-b-4"
@@ -20,8 +26,8 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 @Component({
   props: {
     message: {
