@@ -201,13 +201,13 @@ export default class SendToken extends Vue {
     const web3obj = new Web3(window.ethereum);
     const chainId = await web3obj.eth.getChainId();
     if (chainId !== this.networks.matic.chainId) {
-      try {
-        await registerNetwork();
-        return true;
-      } catch (error) {
+      // try {
+      //   await registerNetwork();
+      //   return true;
+      // } catch (error) {
         this.error = "selectMatic";
         return false;
-      }
+      // }
     }
     return true;
   }
