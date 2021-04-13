@@ -13,6 +13,11 @@
       <activity-order-tab v-if="activeTab === 2" />
       <activity-deposit-withdraw-tab v-if="activeTab === 3" />
     </div>
+
+    <notification-modal
+      v-if="showNotification"
+      @close="onNotificationClose"
+    />
   </div>
 </template>
 
@@ -32,6 +37,7 @@ import MaticNewTab from "~/components/lego/account/matic-new-tab";
 import EthereumNewTab from "~/components/lego/account/ethereum-new-tab";
 import ActivityOrderTab from "~/components/lego/account/activity-order-tab";
 import ActivityDepositWithdrawTab from "~/components/lego/account/activity-deposit-withdraw-tab";
+import NotificationModal from '~/components/lego/notification-modal'
 
 @Component({
   props: {},
@@ -45,7 +51,8 @@ import ActivityDepositWithdrawTab from "~/components/lego/account/activity-depos
     MaticNewTab,
     EthereumNewTab,
     ActivityOrderTab,
-    ActivityDepositWithdrawTab
+    ActivityDepositWithdrawTab,
+    NotificationModal,
   },
   middleware: ["auth"],
   mixins: [],
@@ -65,8 +72,23 @@ export default class Index extends Vue {
 
   allOrSale = true;
 
+  showNotification = false;
+
   async mounted() {
     this.fetchTotalTokens();
+
+    if (!localStorage.getItem('WalletSwapFeature')) {
+      this.onNotificationOpen();
+    }
+  }
+
+  onNotificationOpen() {
+    this.showNotification = true;
+    localStorage.setItem('WalletSwapFeature', true);
+  }
+
+  onNotificationClose() {
+    this.showNotification = false;
   }
 
   async fetchTotalTokens() {

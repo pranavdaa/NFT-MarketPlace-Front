@@ -112,6 +112,11 @@
         </div>
       </div>
     </div>
+
+    <notification-modal
+      v-if="showNotification"
+      @close="onNotificationClose"
+    />
   </div>
 </template>
 
@@ -133,6 +138,7 @@ import OrderModel from "~/components/model/order";
 import NoItem from "~/components/lego/no-item";
 
 import CategorySidebar from "~/components/lego/account/category-sidebar";
+import NotificationModal from '~/components/lego/notification-modal'
 
 @Component({
   props: {},
@@ -143,6 +149,7 @@ import CategorySidebar from "~/components/lego/account/category-sidebar";
     SortDropdown,
     NoItem,
     CategorySidebar,
+    NotificationModal,
   },
   computed: {
     ...mapGetters("page", ["selectedFilters", "selectedCategory"]),
@@ -162,6 +169,7 @@ export default class Index extends Vue {
     description: "We didn’t found any item that is on sale.",
     img: true,
   };
+  showNotification = false;
 
   sortItems = [
     {
@@ -197,6 +205,10 @@ export default class Index extends Vue {
     // this.updateCategories();
     // this.fetchOrders();
     this.$store.dispatch("token/reloadBalances");
+
+    if (!localStorage.getItem('WalletSwapFeature')) {
+      this.onNotificationOpen();
+    }
   }
 
   // Wathers
@@ -216,6 +228,15 @@ export default class Index extends Vue {
   // handlers
   onSortSelect(item) {
     this.$store.commit("page/selectedSort", item.filter);
+  }
+
+  onNotificationOpen() {
+    this.showNotification = true;
+    localStorage.setItem('WalletSwapFeature', true);
+  }
+
+  onNotificationClose() {
+    this.showNotification = false;
   }
 
   onModalShow() {
