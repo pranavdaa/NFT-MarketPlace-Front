@@ -2,7 +2,7 @@ export default function rgbToHsl({ r, g, b }) {
   // convert rgb values to the range of 0-1
   let h
   const s = 25
-  const l = 90;
+  const l = 90
   // (r /= 255), (g /= 255), (b /= 255)
 
   // find min and max values out of r,g,b components
