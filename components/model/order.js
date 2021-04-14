@@ -4,7 +4,6 @@ import BigNumber from '~/plugins/bignumber'
 import {
   parseBalance,
   toTokenAmount,
-  formatMetaAttributes,
 } from '~/plugins/helpers/token-utils'
 
 const ZERO = new BigNumber(0)
@@ -46,7 +45,7 @@ export default class Order extends Model {
       img_url: img,
       owner: owner,
       description: description,
-      attributes_metadata: formatMetaAttributes(this.attributes),
+      attributes_metadata: this.attributes,
     }
   }
 
