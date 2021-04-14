@@ -8,7 +8,6 @@ import { initalizeAxios } from './axios'
 import AccountModel from '~/components/model/account'
 import {
   registerAccountChange,
-  getMetamaskProvider,
   registerNetworkChange,
 } from '~/plugins/helpers/metamask-utils'
 import { getWalletProvider } from '~/plugins/helpers/providers'

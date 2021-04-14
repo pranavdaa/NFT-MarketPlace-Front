@@ -111,7 +111,7 @@
           <no-item
             v-if="searchedTokens.length === 0"
             class="ps-b-120"
-            :message="this.$t('searchNotFound')"
+            :message="$t('searchNotFound')"
           />
 
           <NFTTokenCard
@@ -326,9 +326,7 @@ export default class MaticNewTab extends Vue {
   // Async
   async fetchEthereumCount() {
     try {
-      let response
-
-      response = await getAxios().get(
+      const response = await getAxios().get(
         `tokens/balance?userId=${this.user.id}&chainId=${this.mainChainId}`,
       )
 
@@ -347,7 +345,6 @@ export default class MaticNewTab extends Vue {
     }
     this.isLoadingTokens = true
     try {
-      let response
       let offset = this.tokensFullList.length
 
       if (options && options.filtering) {
@@ -356,7 +353,7 @@ export default class MaticNewTab extends Vue {
       }
 
       // Fetch tokens with pagination and filters
-      response = await getAxios().get(
+      const response = await getAxios().get(
         `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}${this.ifCategory}${this.ifSort}&offset=${offset}&limit=${this.limit}`,
       )
 
@@ -457,11 +454,11 @@ export default class MaticNewTab extends Vue {
   }
 
   get selectedTokenIds() {
-    const token_ids = []
+    const tokenIds = []
     if (this.selectedTokens && this.selectedTokens.length > 0) {
-      this.selectedTokens.forEach((token) => token_ids.push(token.token_id))
+      this.selectedTokens.forEach((token) => tokenIds.push(token.token_id))
     }
-    return token_ids
+    return tokenIds
   }
 
   get selectedCateTokens() {

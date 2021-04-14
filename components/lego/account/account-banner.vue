@@ -119,7 +119,6 @@ import { mapGetters } from 'vuex'
 import app from '~/plugins/app'
 import DepositWeth from '~/components/lego/modals/deposit-weth'
 import * as animationData from '~/static/lottie-animations/green-check.json'
-import { stripZeros } from 'ethereumjs-util'
 
 @Component({
   props: {},

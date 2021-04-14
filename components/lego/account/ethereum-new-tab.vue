@@ -241,7 +241,7 @@ export default class EthereumNewTab extends Vue {
   }
 
   sellToken(id) {
-    this.selectedToken = this.tokensFullList.find((token) => token.id == id)
+    this.selectedToken = this.tokensFullList.find((token) => token.id === id)
     this.showSellModal = true
   }
 
@@ -292,7 +292,6 @@ export default class EthereumNewTab extends Vue {
     }
     this.isLoadingTokens = true
     try {
-      let response
       let offset = this.tokensFullList.length
 
       if (options && options.filtering) {
@@ -301,7 +300,7 @@ export default class EthereumNewTab extends Vue {
       }
 
       // Fetch tokens with pagination and filters
-      response = await getAxios().get(
+      const response = await getAxios().get(
         `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}${this.ifCategory}${this.ifSort}&offset=${offset}&limit=${this.limit}`,
       )
 
@@ -377,11 +376,11 @@ export default class EthereumNewTab extends Vue {
   }
 
   get selectedTokenIds() {
-    const token_ids = []
+    const tokenIds = []
     if (this.selectedTokens && this.selectedTokens.length > 0) {
-      this.selectedTokens.forEach((token) => token_ids.push(token.token_id))
+      this.selectedTokens.forEach((token) => tokenIds.push(token.token_id))
     }
-    return token_ids
+    return tokenIds
   }
 
   get selectedCateTokens() {

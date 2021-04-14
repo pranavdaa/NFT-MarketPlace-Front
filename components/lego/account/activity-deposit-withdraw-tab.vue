@@ -81,15 +81,14 @@ export default class ActivityDepositWithdrawTab extends Vue {
     }
     this.isLoading = true
     try {
-      let response
       const offset = this.notifications.length
 
-      response = await getAxios().get(
+      const response = await getAxios().get(
         `assetmigrate/?user_id=${this.user.id}&type=["DEPOSIT","WITHDRAW"]&status=[0,1,2,3]`,
       )
       if (response.status === 200 && response.data.data.assetMigrations) {
         this.hasNextPage = response.data.data.has_next_page
-        if (offset == 0) {
+        if (offset === 0) {
           this.notifications = response.data.data.assetMigrations
         } else {
           this.notifications = [

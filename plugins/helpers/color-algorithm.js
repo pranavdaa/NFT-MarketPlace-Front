@@ -3,19 +3,19 @@ export default function rgbToHsl({ r, g, b }) {
   let h
   const s = 25
   const l = 90;
-  (r /= 255), (g /= 255), (b /= 255)
+  // (r /= 255), (g /= 255), (b /= 255)
 
   // find min and max values out of r,g,b components
   const max = Math.max(r, g, b)
   const min = Math.min(r, g, b)
 
-  if (max == r) {
+  if (max === r) {
     // if red is the predominent color
     h = (g - b) / (max - min)
-  } else if (max == g) {
+  } else if (max === g) {
     // if green is the predominent color
     h = 2 + (b - r) / (max - min)
-  } else if (max == b) {
+  } else if (max === b) {
     // if blue is the predominent color
     h = 4 + (r - g) / (max - min)
   }

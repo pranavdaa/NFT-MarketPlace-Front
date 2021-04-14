@@ -966,7 +966,7 @@ export default class SellToken extends Vue {
           from: this.account.address,
           contractAddress: matic.utils.toChecksumAddress(
             this.category.categoriesaddresses.find(
-              (category) => category.chain_id == this.networks.matic.chainId,
+              (category) => category.chain_id === this.networks.matic.chainId,
             ).address,
           ),
         }
@@ -1017,7 +1017,7 @@ export default class SellToken extends Vue {
     const _nonce = await matic.eth.call({
       to: matic.utils.toChecksumAddress(
         this.category.categoriesaddresses.find(
-          (category) => category.chain_id == this.networks.matic.chainId,
+          (category) => category.chain_id === this.networks.matic.chainId,
         ).address,
       ),
       data,
@@ -1028,7 +1028,7 @@ export default class SellToken extends Vue {
       salt: app.uiconfig.SALT,
       verifyingContract: matic.utils.toChecksumAddress(
         this.category.categoriesaddresses.find(
-          (category) => category.chain_id == this.networks.matic.chainId,
+          (category) => category.chain_id === this.networks.matic.chainId,
         ).address,
       ),
       nonce: parseInt(_nonce),

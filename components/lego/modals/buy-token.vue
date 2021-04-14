@@ -358,10 +358,6 @@ import PlaceBid from '~/components/lego/modals/place-bid'
 import ApproveProcess from '~/components/lego/modals/approve-process'
 import DepositWeth from '~/components/lego/modals/deposit-weth'
 import { registerNetwork } from '~/plugins/helpers/metamask-utils'
-import {
-  getRandomFutureDateInSeconds,
-  calculateProtocolFee,
-} from '~/plugins/helpers/0x-utils'
 
 import { providerEngine } from '~/plugins/helpers/provider-engine'
 import { txShowError } from '~/plugins/helpers/transaction-utils'

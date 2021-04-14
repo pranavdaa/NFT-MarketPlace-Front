@@ -1,4 +1,3 @@
-import ethjsUtil from 'ethjs-util'
 import EthereumTx from 'ethereumjs-tx'
 import app from '~/plugins/app'
 

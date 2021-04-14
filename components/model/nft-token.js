@@ -1,6 +1,5 @@
 import Model from '~/components/model/model'
 import app from '~/plugins/app'
-import Web3 from 'web3'
 import { formatMetaAttributes } from '~/plugins/helpers/token-utils'
 
 export default class NFTToken extends Model {
@@ -18,7 +17,7 @@ export default class NFTToken extends Model {
   get category() {
     const category = app.vuexStore.getters['category/categories'].find(
       (c) =>
-        c.getAddress(this.chainId).toLowerCase() == this.contract.toLowerCase(),
+        c.getAddress(this.chainId).toLowerCase() === this.contract.toLowerCase(),
     )
     return category
   }

@@ -22,7 +22,7 @@ export default {
         shouldTrack = false
       },
       track(event, payload = {}) {
-        // if (process.env.NODE_ENV != "production") {
+        // if (process.env.NODE_ENV !== "production") {
         //     console.log(event, JSON.parse(JSON.stringify(payload)));
         // }
         // else if (shouldTrack) {

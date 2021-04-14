@@ -286,7 +286,7 @@ export default class Index extends Vue {
       }
 
       // Fetch tokens with pagination and filters
-      if (this.searchInput != null && this.searchInput.length > 0) {
+      if (this.searchInput !== null && this.searchInput.length > 0) {
         // with search
         response = await getAxios().get(
           `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`,

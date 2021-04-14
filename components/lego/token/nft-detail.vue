@@ -405,11 +405,11 @@ export default class NftDetail extends Vue {
   }
 
   get tokenDescriptionFirstHalf() {
-    this.tokenDescription.slice(0, this.tokenDescription.length / 2)
+    return this.tokenDescription.slice(0, this.tokenDescription.length / 2)
   }
 
   get tokenDescriptionSecondHalf() {
-    this.tokenDescription.slice(
+    return this.tokenDescription.slice(
       this.tokenDescription.length / 2,
       this.tokenDescription.length,
     )

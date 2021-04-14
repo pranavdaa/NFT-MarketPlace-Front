@@ -94,8 +94,6 @@ import getAxios from '~/plugins/axios'
 import BidConfirmation from '~/components/lego/modals/bid-confirmation'
 import { txShowError } from '~/plugins/helpers/transaction-utils'
 import {
-  getRandomFutureDateInSeconds,
-  calculateProtocolFee,
 } from '~/plugins/helpers/0x-utils'
 
 import { providerEngine } from '~/plugins/helpers/provider-engine'
@@ -103,16 +101,12 @@ import { providerEngine } from '~/plugins/helpers/provider-engine'
 // 0X
 const {
   ContractWrappers,
-  ERC20TokenContract,
   ERC721TokenContract,
   OrderStatus,
 } = require('@0x/contract-wrappers')
 const { generatePseudoRandomSalt, signatureUtils } = require('@0x/order-utils')
 const { BigNumber } = require('@0x/utils')
 const { Web3Wrapper } = require('@0x/web3-wrapper')
-
-const ZERO = BigNumber(0)
-const TEN = BigNumber(10)
 
 @Component({
   props: {
@@ -172,9 +166,7 @@ export default class BidderRow extends Vue {
   }
 
   get showAction() {
-    if (this.order.type === app.orderTypes.AUCTION) {
-      return true
-    }
+    return this.order.type === app.orderTypes.AUCTION
   }
 
   get isErc1155() {
@@ -243,16 +235,16 @@ export default class BidderRow extends Vue {
     // Exchange the nft with this user
     this.$logger.track('accept-bid-start:bid-options')
     this.isLoading = true
-    if (this.order.taker_address == this.user.id) {
+    if (this.order.taker_address === this.user.id) {
       try {
-        const chainId = this.networks.matic.chainId
+        // const chainId = this.networks.matic.chainId
         const nftContract = this.order.categories.categoriesaddresses[0]
           .address
         const nftTokenId = this.order.tokens_id
-        const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
-          .address
+        // const erc20Address = this.order.erc20tokens.erc20tokensaddresses[0]
+        //   .address
 
-        const makerAddress = this.bid.users.address
+        // const makerAddress = this.bid.users.address
         const takerAddress = this.account.address
 
         let takerAssetAmount = null
@@ -394,7 +386,7 @@ export default class BidderRow extends Vue {
   }
 
   async handleBidAccept(takerSign) {
-    if (this.bid.users.id != this.user.id && takerSign) {
+    if (this.bid.users.id !== this.user.id && takerSign) {
       try {
         const data = {
           taker_signature: JSON.stringify(takerSign),
@@ -518,7 +510,7 @@ export default class BidderRow extends Vue {
 
   async denyBid() {
     this.$logger.track('deny-bid-start:bid-options')
-    if (this.bid.order.taker_address == this.user.id) {
+    if (this.bid.order.taker_address === this.user.id) {
       try {
         const response = await getAxios().patch(
           `orders/bid/${this.bid.id}/cancel`,
@@ -611,7 +603,7 @@ export default class BidderRow extends Vue {
   }
 
   async handleCancelBid(takerSign) {
-    if (this.bid.users.id == this.user.id && takerSign) {
+    if (this.bid.users.id === this.user.id && takerSign) {
       try {
         const data = {
           taker_signature: JSON.stringify(takerSign),

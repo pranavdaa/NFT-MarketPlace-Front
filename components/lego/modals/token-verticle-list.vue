@@ -172,24 +172,24 @@ export default class TokenVerticleList extends Vue {
 
   // Getters
   get selectedTokenIds() {
-    const token_ids = []
+    const tokenIds = []
     if (this.selectedTokens && this.selectedTokens.length > 0) {
-      this.selectedTokens.forEach((token) => token_ids.push(token.token_id))
+      this.selectedTokens.forEach((token) => tokenIds.push(token.token_id))
     }
     if (
-      token_ids.length === this.maxTokenSelection ||
+      tokenIds.length === this.maxTokenSelection ||
       (this.selectedTokens.length <= this.maxTokenSelection &&
-        this.selectedTokens.length == this.tokens.length)
+        this.selectedTokens.length === this.tokens.length)
     ) {
       this.isAllSelected = true
     } else {
       this.isAllSelected = false
     }
-    return token_ids
+    return tokenIds
   }
 
   get isMax() {
-    return this.maxTokenSelection == this.selectedTokenIds.length
+    return this.maxTokenSelection === this.selectedTokenIds.length
   }
 
   get allTokens() {
@@ -211,7 +211,7 @@ export default class TokenVerticleList extends Vue {
       this.selectedTokenIds.includes(token.token_id)
     ) {
       this.selectedTokens = this.selectedTokens.filter(
-        (t) => t.token_id != token.token_id,
+        (t) => t.token_id !== token.token_id,
       )
     } else {
       if (

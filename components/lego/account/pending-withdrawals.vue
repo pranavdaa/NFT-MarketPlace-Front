@@ -84,7 +84,6 @@ import Vue from 'vue'
 import Component from 'nuxt-class-component'
 import { mapGetters } from 'vuex'
 
-import { getAxios } from '~/plugins/axios'
 import WithdrawConfirmationModal from '~/components/lego/modals/withdraw-confirmation-modal'
 
 @Component({
@@ -144,7 +143,7 @@ export default class PendingWithdrawalsList extends Vue {
       this.selectedTransaction
     ) {
       return this.categories.find(
-        (c) => c.id == this.selectedTransaction.categories_id,
+        (c) => c.id === this.selectedTransaction.categories_id,
       )
     }
   }

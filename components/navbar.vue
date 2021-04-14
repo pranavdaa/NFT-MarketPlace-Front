@@ -311,7 +311,7 @@
                 <div
                   class="col p-0 d-block d-md-none address mr-auto align-self-center"
                 >
-                  {{ this.account.shortChecksumAddress }}
+                  {{ account.shortChecksumAddress }}
                 </div>
                 <div class="copy-wrapper justify-content-center">
                   <svg-sprite-icon

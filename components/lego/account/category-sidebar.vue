@@ -38,7 +38,7 @@
           :key="category.name"
           class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
           :class="{
-            active: selectedCategory && category.id == selectedCategory.id,
+            active: selectedCategory && category.id === selectedCategory.id,
             'disable-category': disabledCategoryClick(category),
           }"
           @click="selectCategory(category)"
@@ -69,13 +69,13 @@
               </div>
             </div>
             <div v-else>
-              <span v-if="SHOW_COUNT.ORDER == countFor">
+              <span v-if="SHOW_COUNT.ORDER === countFor">
                 {{ category.count || 0 }}
               </span>
-              <span v-if="SHOW_COUNT.MAIN == countFor">
+              <span v-if="SHOW_COUNT.MAIN === countFor">
                 {{ category.mainCount || 0 }}
               </span>
-              <span v-if="SHOW_COUNT.MATIC == countFor">
+              <span v-if="SHOW_COUNT.MATIC === countFor">
                 {{ category.maticCount || 0 }}
               </span>
             </div>
@@ -91,8 +91,6 @@ import Vue from 'vue'
 import Component from 'nuxt-class-component'
 
 import { mapGetters, mapState } from 'vuex'
-import app from '~/plugins/app'
-import getAxios from '~/plugins/axios'
 
 const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 }
 
@@ -141,7 +139,7 @@ export default class CategoriesSelector extends Vue {
 
   get allCount() {
     if (
-      this.SHOW_COUNT.MATIC == this.countFor &&
+      this.SHOW_COUNT.MATIC === this.countFor &&
       !this.isLoading &&
       this.isTab
     ) {
@@ -154,7 +152,7 @@ export default class CategoriesSelector extends Vue {
         }, 0) || 0
       )
     } else if (
-      this.SHOW_COUNT.MAIN == this.countFor &&
+      this.SHOW_COUNT.MAIN === this.countFor &&
       !this.isLoading &&
       this.isTab
     ) {

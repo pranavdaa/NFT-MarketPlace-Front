@@ -165,7 +165,7 @@ export default class MaticTab extends Vue {
   }
 
   sellToken(id) {
-    this.selectedToken = this.tokensFullList.find((token) => token.id == id);
+    this.selectedToken = this.tokensFullList.find((token) => token.id === id);
     this.showSellModal = true;
   }
   onCloseSellModal() {
@@ -270,7 +270,7 @@ export default class MaticTab extends Vue {
         let i = 0;
         response.data.data.forEach((token) => {
           i++;
-          if (token.contract == "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6") {
+          if (token.contract === "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6") {
           {
 return;
 }

@@ -1,7 +1,6 @@
 import BigNumber from '~/plugins/bignumber'
 import moment from 'moment'
 
-const ZERO = new BigNumber(0)
 const TEN = new BigNumber(10)
 
 // parse balance of token returns BN

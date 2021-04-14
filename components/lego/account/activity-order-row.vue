@@ -77,15 +77,12 @@
 import Vue from 'vue'
 import Component from 'nuxt-class-component'
 import moment from 'moment'
-import getAxios from '~/plugins/axios'
 
-import AcceptBid from '~/components/lego/modals/bid-confirmation'
-import OrderModel from '~/components/model/order'
+// import AcceptBid from '~/components/lego/modals/bid-confirmation'
 
 import rgbToHsl from '~/plugins/helpers/color-algorithm'
 import ColorThief from 'color-thief'
 import app from '~/plugins/app'
-import config from '~/config/uiconfig'
 
 const colorThief = new ColorThief()
 
@@ -97,12 +94,12 @@ const colorThief = new ColorThief()
     },
   },
   components: {
-    AcceptBid,
+    // AcceptBid,
   },
 })
 export default class ActivityOrderRow extends Vue {
   bg = '#ffffff';
-  showAcceptBid = false;
+  // showAcceptBid = false;
   showInProcess = false;
   showTokenList = false;
   explorerLink = '';

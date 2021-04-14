@@ -73,10 +73,8 @@
 import Vue from 'vue'
 import Component from 'nuxt-class-component'
 import moment from 'moment'
-import getAxios from '~/plugins/axios'
 
 import AcceptBid from '~/components/lego/modals/bid-confirmation'
-import OrderModel from '~/components/model/order'
 
 import rgbToHsl from '~/plugins/helpers/color-algorithm'
 import ColorThief from 'color-thief'

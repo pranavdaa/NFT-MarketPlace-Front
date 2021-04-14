@@ -223,15 +223,6 @@ export default class SellCard extends Vue {
     return this.order.token_type === 'ERC721'
   }
 
-  get sellTagData() {
-    // if order type AUCTION
-    if (order.type === app.orderTypes.AUCTION) {
-      // if expiry time is less than
-      if (order.expiry_date) {
-      }
-    }
-  }
-
   get isMainToken() {
     if (this.order.chainId) {
       return this.order.chainId === this.networks.main.chainId
@@ -265,10 +256,6 @@ export default class SellCard extends Vue {
 
   moveToEthereum() {
     console.log('moveToEthereum')
-  }
-
-  transfer() {
-    console.log('transfer')
   }
 
   removeFromMarketplace() {

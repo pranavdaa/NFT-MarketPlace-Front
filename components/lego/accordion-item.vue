@@ -65,7 +65,7 @@ export default class AccordionItem extends Vue {
   }
 
   get visible() {
-    return this.index == this.accordionItem.active
+    return this.index === this.accordionItem.active
   }
 }
 </script>

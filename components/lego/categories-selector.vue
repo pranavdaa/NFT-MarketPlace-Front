@@ -59,19 +59,19 @@
               {{ category.name }}
             </div>
             <div
-              v-if="SHOW_COUNT.ORDER == countFor"
+              v-if="SHOW_COUNT.ORDER === countFor"
               class="count ps-l-12 font-body-medium ml-auto"
             >
               {{ category.count || 0 }}
             </div>
             <div
-              v-if="SHOW_COUNT.MAIN == countFor"
+              v-if="SHOW_COUNT.MAIN === countFor"
               class="count ps-l-12 font-body-medium ml-auto"
             >
               {{ category.mainCount || 0 }}
             </div>
             <div
-              v-if="SHOW_COUNT.MATIC == countFor"
+              v-if="SHOW_COUNT.MATIC === countFor"
               class="count ps-l-12 font-body-medium ml-auto"
             >
               {{ category.maticCount || 0 }}
@@ -93,8 +93,6 @@ import Component from 'nuxt-class-component'
 
 import { mapGetters } from 'vuex'
 
-import app from '~/plugins/app'
-import getAxios from '~/plugins/axios'
 const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 }
 @Component({
   props: {
@@ -129,7 +127,7 @@ export default class CategoriesSidebar extends Vue {
   // Getters
 
   get allCount() {
-    if (this.SHOW_COUNT.MATIC == this.countFor) {
+    if (this.SHOW_COUNT.MATIC === this.countFor) {
       return (
         this.categories.reduce((total, category) => {
           if (category.maticCount) {
@@ -138,7 +136,7 @@ export default class CategoriesSidebar extends Vue {
           return total
         }, 0) || 0
       )
-    } else if (this.SHOW_COUNT.MAIN == this.countFor) {
+    } else if (this.SHOW_COUNT.MAIN === this.countFor) {
       return (
         this.categories.reduce((total, category) => {
           if (category.mainCount) {

@@ -151,7 +151,6 @@ import Vue from 'vue'
 import Component from 'nuxt-class-component'
 import app from '~/plugins/app'
 import { mapGetters } from 'vuex'
-import { toDataURL } from '~/plugins/helpers/'
 
 import MoreOptions from '~/components/lego/more-options'
 
@@ -328,7 +327,7 @@ export default class NFTTokenCard extends Vue {
       this.userOrders.length > 0
     ) {
       const order = this.userOrders.find(
-        (t) => t.tokens_id == this.token.token_id,
+        (t) => t.tokens_id === this.token.token_id,
       )
       return order
     }

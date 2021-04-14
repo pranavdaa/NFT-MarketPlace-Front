@@ -4,7 +4,6 @@ import TokenModel from '~/components/model/token'
 import BigNumber from '~/plugins/bignumber'
 
 const ZERO = new BigNumber(0)
-const TEN = new BigNumber(10)
 
 export default {
   namespaced: true,

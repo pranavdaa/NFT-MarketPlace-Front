@@ -31,7 +31,7 @@
                 <div class="table">
                   <div class="table-body">
                     <div
-                      v-if="erc20Tokens && erc20Tokens.length == 0"
+                      v-if="erc20Tokens && erc20Tokens.length === 0"
                       class="d-flex justify-content-center"
                     >
                       <span class="ps-32">No Tokens</span>
@@ -40,7 +40,7 @@
                       v-for="token in erc20Tokens"
                       :key="token.id"
                       class="table-row no-border p-0"
-                      :class="{ active: selectedERC20Token.id == token.id }"
+                      :class="{ active: selectedERC20Token.id === token.id }"
                       @click="onTokenSelect(token)"
                     >
                       <div

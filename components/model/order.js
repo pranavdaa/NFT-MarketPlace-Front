@@ -1,7 +1,6 @@
 import Model from '~/components/model/model'
 import app from '~/plugins/app'
 import BigNumber from '~/plugins/bignumber'
-import Web3 from 'web3'
 import {
   parseBalance,
   toTokenAmount,
@@ -9,7 +8,6 @@ import {
 } from '~/plugins/helpers/token-utils'
 
 const ZERO = new BigNumber(0)
-const TEN = new BigNumber(10)
 
 export default class Order extends Model {
   get categories_id() {
@@ -55,7 +53,7 @@ export default class Order extends Model {
   getPrice() {
     const price = new BigNumber(this.price)
     const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(
-      (token) => token.id == this.erc20tokens_id,
+      (token) => token.id === this.erc20tokens_id,
     )
     if (!price || !erc20Token) {
       return ZERO
@@ -70,14 +68,14 @@ export default class Order extends Model {
     }
 
     const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(
-      (token) => token.id == this.erc20tokens_id,
+      (token) => token.id === this.erc20tokens_id,
     )
     return parseBalance(price, erc20Token.decimal)
   }
 
   getPriceInBN() {
     const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(
-      (token) => token.id == this.erc20tokens_id,
+      (token) => token.id === this.erc20tokens_id,
     )
     if (!this.price || !erc20Token) {
       return ZERO
@@ -90,7 +88,7 @@ export default class Order extends Model {
       return ZERO
     }
     const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(
-      (token) => token.id == this.erc20tokens_id,
+      (token) => token.id === this.erc20tokens_id,
     )
     return toTokenAmount(this.min_price, erc20Token.decimal)
   }

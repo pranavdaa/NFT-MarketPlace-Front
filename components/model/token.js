@@ -31,7 +31,7 @@ export default class Token extends Model {
     const addresses = {}
     if (this.erc20tokensaddresses) {
       this.erc20tokensaddresses.forEach((address) => {
-        if (address.chain_id == network.Matic.ChainId) {
+        if (address.chain_id === network.Matic.ChainId) {
           addresses[network.Matic.ChainId] = address.address
         } else {
           addresses[address.chain_id] = address.address
@@ -55,11 +55,11 @@ export default class Token extends Model {
   }
 
   get isEther() {
-    return this.id == app.uiconfig.ethDBID
+    return this.id === app.uiconfig.ethDBID
   }
 
   get isMatic() {
-    return this.id == app.uiconfig.maticDBID
+    return this.id === app.uiconfig.maticDBID
   }
 
   get usd() {

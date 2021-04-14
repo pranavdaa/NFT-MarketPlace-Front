@@ -5,10 +5,8 @@ import Web3 from 'web3'
 import { config as configStore } from '~/plugins/localstore'
 import NetworkModel from '~/components/model/network'
 
-const uiconfig = JSON.parse(process.env.uiconfig)
-
 // Default symbol
-const DefaultSymbol = 'ETH'
+// const DefaultSymbol = 'ETH'
 
 export default {
   namespaced: true,

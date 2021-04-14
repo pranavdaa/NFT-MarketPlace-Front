@@ -81,15 +81,14 @@ export default class ActivityOrderTab extends Vue {
     }
     this.isLoading = true
     try {
-      let response
       const offset = this.notifications.length
 
-      response = await getAxios().get(
+      const response = await getAxios().get(
         `users/notification/${this.user.id}?offset=${offset}&limit=${this.limit}`,
       )
       if (response.status === 200 && response.data.data.notifications) {
         this.hasNextPage = response.data.data.has_next_page
-        if (offset == 0) {
+        if (offset === 0) {
           this.notifications = response.data.data.notifications
         } else {
           this.notifications = [

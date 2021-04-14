@@ -462,10 +462,6 @@ import { txShowError } from '~/plugins/helpers/transaction-utils'
 
 import rgbToHsl from '~/plugins/helpers/color-algorithm'
 import ColorThief from 'color-thief'
-import {
-  getRandomFutureDateInSeconds,
-  calculateProtocolFee,
-} from '~/plugins/helpers/0x-utils'
 
 import { providerEngine } from '~/plugins/helpers/provider-engine'
 const colorThief = new ColorThief()
@@ -473,15 +469,10 @@ const colorThief = new ColorThief()
 // 0X
 const {
   ContractWrappers,
-  ERC20TokenContract,
-  OrderStatus,
 } = require('@0x/contract-wrappers')
 const { generatePseudoRandomSalt, signatureUtils } = require('@0x/order-utils')
 const { BigNumber } = require('@0x/utils')
 const { Web3Wrapper } = require('@0x/web3-wrapper')
-
-const ZERO = BigNumber(0)
-const TEN = BigNumber(10)
 
 @Component({
   props: {
