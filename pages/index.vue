@@ -118,27 +118,33 @@
         </div>
       </div>
     </div>
+
+    <notification-modal
+      v-if="showNotification"
+      @close="onNotificationClose"
+    />
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import Component from 'nuxt-class-component'
-import { mapGetters, mapState } from 'vuex'
-import app from '~/plugins/app'
-import { fuzzysearch, fuzzySearchResult } from '~/plugins/helpers/index'
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { mapGetters, mapState } from "vuex";
+import app from "~/plugins/app";
+import { fuzzysearch } from "~/plugins/helpers/index";
+import { fuzzySearchResult } from "~/plugins/helpers/index";
+import getAxios from "~/plugins/axios";
+import { VueWatch, VueDebounce } from "~/components/decorator";
 
-import getAxios from '~/plugins/axios'
-import { VueWatch, VueDebounce } from '~/components/decorator'
+import SellCard from "~/components/lego/sell-card";
+import CategoriesSelector from "~/components/lego/categories-selector";
+import SearchBox from "~/components/lego/search-box";
+import SortDropdown from "~/components/lego/sort-dropdown";
+import OrderModel from "~/components/model/order";
+import NoItem from "~/components/lego/no-item";
 
-import SellCard from '~/components/lego/sell-card'
-import CategoriesSelector from '~/components/lego/categories-selector'
-import SearchBox from '~/components/lego/search-box'
-import SortDropdown from '~/components/lego/sort-dropdown'
-import OrderModel from '~/components/model/order'
-import NoItem from '~/components/lego/no-item'
-
-import CategorySidebar from '~/components/lego/account/category-sidebar'
+import CategorySidebar from "~/components/lego/account/category-sidebar";
+import NotificationModal from '~/components/lego/notification-modal'
 
 @Component({
   props: {},
@@ -149,6 +155,7 @@ import CategorySidebar from '~/components/lego/account/category-sidebar'
     SortDropdown,
     NoItem,
     CategorySidebar,
+    NotificationModal,
   },
   computed: {
     ...mapGetters('page', ['selectedFilters', 'selectedCategory']),
@@ -168,6 +175,7 @@ export default class Index extends Vue {
     description: 'We didn’t found any item that is on sale.',
     img: true,
   };
+  showNotification = false;
 
   sortItems = [
     {
@@ -202,7 +210,11 @@ export default class Index extends Vue {
   mounted() {
     // this.updateCategories();
     // this.fetchOrders();
-    this.$store.dispatch('token/reloadBalances')
+    this.$store.dispatch("token/reloadBalances");
+
+    if (!localStorage.getItem('WalletSwapFeature')) {
+      this.onNotificationOpen();
+    }
   }
 
   // Wathers
@@ -222,6 +234,15 @@ export default class Index extends Vue {
   // handlers
   onSortSelect(item) {
     this.$store.commit('page/selectedSort', item.filter)
+  }
+
+  onNotificationOpen() {
+    this.showNotification = true;
+    localStorage.setItem('WalletSwapFeature', true);
+  }
+
+  onNotificationClose() {
+    this.showNotification = false;
   }
 
   onModalShow() {

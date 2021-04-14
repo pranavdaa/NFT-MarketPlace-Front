@@ -13,25 +13,31 @@
       <activity-order-tab v-if="activeTab === 2" />
       <activity-deposit-withdraw-tab v-if="activeTab === 3" />
     </div>
+
+    <notification-modal
+      v-if="showNotification"
+      @close="onNotificationClose"
+    />
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import Component from 'nuxt-class-component'
-import { mapGetters } from 'vuex'
-import getAxios from '~/plugins/axios'
+import Vue from "vue";
+import Component from "nuxt-class-component";
+import { mapGetters } from "vuex";
+import getAxios from "~/plugins/axios";
 
-import SellCard from '~/components/lego/sell-card'
-import CategoriesSelector from '~/components/lego/categories-selector'
-import SearchBox from '~/components/lego/search-box'
-import SortDropdown from '~/components/lego/sort-dropdown'
-import AccountBanner from '~/components/lego/account/account-banner'
-import TabSwitcher from '~/components/lego/tab-switcher'
-import MaticNewTab from '~/components/lego/account/matic-new-tab'
-import EthereumNewTab from '~/components/lego/account/ethereum-new-tab'
-import ActivityOrderTab from '~/components/lego/account/activity-order-tab'
-import ActivityDepositWithdrawTab from '~/components/lego/account/activity-deposit-withdraw-tab'
+import SellCard from "~/components/lego/sell-card";
+import CategoriesSelector from "~/components/lego/categories-selector";
+import SearchBox from "~/components/lego/search-box";
+import SortDropdown from "~/components/lego/sort-dropdown";
+import AccountBanner from "~/components/lego/account/account-banner";
+import TabSwitcher from "~/components/lego/tab-switcher";
+import MaticNewTab from "~/components/lego/account/matic-new-tab";
+import EthereumNewTab from "~/components/lego/account/ethereum-new-tab";
+import ActivityOrderTab from "~/components/lego/account/activity-order-tab";
+import ActivityDepositWithdrawTab from "~/components/lego/account/activity-deposit-withdraw-tab";
+import NotificationModal from '~/components/lego/notification-modal'
 
 @Component({
   props: {},
@@ -46,6 +52,7 @@ import ActivityDepositWithdrawTab from '~/components/lego/account/activity-depos
     EthereumNewTab,
     ActivityOrderTab,
     ActivityDepositWithdrawTab,
+    NotificationModal,
   },
   middleware: ['auth'],
   mixins: [],
@@ -65,8 +72,23 @@ export default class Index extends Vue {
 
   allOrSale = true;
 
+  showNotification = false;
+
   async mounted() {
-    this.fetchTotalTokens()
+    this.fetchTotalTokens();
+
+    if (!localStorage.getItem('WalletSwapFeature')) {
+      this.onNotificationOpen();
+    }
+  }
+
+  onNotificationOpen() {
+    this.showNotification = true;
+    localStorage.setItem('WalletSwapFeature', true);
+  }
+
+  onNotificationClose() {
+    this.showNotification = false;
   }
 
   async fetchTotalTokens() {

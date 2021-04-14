@@ -431,8 +431,8 @@ export default class SellToken extends Vue {
 
   mounted() {
     // initialize duration
-    this.changeDuration(this.EXPIRY_DURATION.ONE_WEEK)
-    this.$logger.track('mounted:sell-token')
+    this.changeDuration(this.EXPIRY_DURATION.ONE_WEEK);
+    this.$logger.track("mounted:sell-token", this.nftToken);
   }
 
   // Handlers
@@ -569,7 +569,8 @@ export default class SellToken extends Vue {
   }
 
   async approveClickedFunc() {
-    this.approveLoading = true
+    this.showNetworkChangeNeeded = false;
+    this.approveLoading = true;
 
     try {
       this.$logger.track('approval-start:sell-token')
@@ -826,13 +827,14 @@ export default class SellToken extends Vue {
     const web3obj = new Web3(window.ethereum)
     const chainId = await web3obj.eth.getChainId()
     if (chainId !== this.networks.matic.chainId) {
-      try {
-        await registerNetwork()
-        return true
-      } catch (error) {
+      // try {
+      //   await registerNetwork();
+      //   return true;
+      // } catch (error) {
         this.error = 'selectMatic'
-        return false
-      }
+        this.showNetworkChangeNeeded = true;
+        return false;
+      // }
     }
     return true
   }
@@ -869,35 +871,47 @@ export default class SellToken extends Vue {
         }
 
         if (this.isErc721) {
-          const makerERC721ApprovalTxHash = await tokenCont
-            .setApprovalForAll(
-              contractWrappers.contractAddresses.erc721Proxy,
-              true,
-            )
-            .sendTransactionAsync({
-              from: makerAddress,
-              gas: 100000,
-              gasPrice: 1000000000,
-            })
+          try {
+            const makerERC721ApprovalTxHash = await tokenCont
+              .setApprovalForAll(
+                contractWrappers.contractAddresses.erc721Proxy,
+                true
+              )
+              .sendTransactionAsync({
+                from: makerAddress,
+                gas: 100000,
+                gasPrice: 1000000000,
+              });
 
-          if (makerERC721ApprovalTxHash) {
-            console.log('Approve Hash', makerERC721ApprovalTxHash)
-            app.addToast(
-              'Approved successfully',
-              'You successfully approved the token to put on sale',
-              {
-                type: 'success',
-              },
-            )
-            return true
+            if (makerERC721ApprovalTxHash) {
+              console.log("Approve Hash", makerERC721ApprovalTxHash);
+              app.addToast(
+                "Approved successfully",
+                "You successfully approved the token to put on sale",
+                {
+                  type: "success",
+                }
+              );
+              return true;
+            }
+          } catch (error) {
+            console.log(error);
+            if (
+              error.message.includes(
+                "MetaMask is having trouble connecting to the network"
+              )
+            ) {
+              txShowError(error, null, "Please Try Again");
+            } else {
+              app.addToast(
+                "Failed to approve",
+                "You need to approve the transaction to sale the NFT",
+                {
+                  type: "failure",
+                }
+              );
+            }
           }
-          app.addToast(
-            'Failed to approve',
-            'You need to approve the transaction to sale the NFT',
-            {
-              type: 'failure',
-            },
-          )
         } else {
           const maticWeb3 = new Web3(window.ethereum)
           const contract = new maticWeb3.eth.Contract(

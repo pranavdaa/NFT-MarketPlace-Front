@@ -25,7 +25,7 @@
 
             <div class="container">
               <div
-                class="row ps-x-md-32 ps-y-md-32 ps-y-32 ps-x-16 d-flex justify-content-center"
+                class="row ps-x-md-32 ps-y-24 ps-x-16 d-flex justify-content-center"
               >
                 <a
                   class="option-box d-flex flex-row my-2"
@@ -72,6 +72,14 @@
                       {{ $t("account.deposit.options.transfer.description") }}
                     </div>
                   </div>
+                </div>
+
+                <div class="know-more text-center text-primary ps-t-16">
+                  <a
+                    href="https://docs.matic.network/docs/develop/wallets/matic-web-wallet/deposit-eth-dai-on-matic"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >How to deposit ETH/DAI on Matic ?</a>
                 </div>
               </div>
             </div>
@@ -163,6 +171,14 @@ export default class DepositWeth extends Vue {
       @include font-setting("body-small", "regular");
       color: dark-color("500");
     }
+  }
+}
+
+.know-more {
+  @include font-setting("heading-small", "semibold");
+
+  a:hover {
+    color: primary-color("600");
   }
 }
 </style>
