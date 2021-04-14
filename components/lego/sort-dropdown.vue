@@ -1,5 +1,8 @@
 <template>
-  <div class="dropdown-sort d-flex" v-click-outside="() => active=false">
+  <div
+    v-click-outside="() => (active = false)"
+    class="dropdown-sort d-flex"
+  >
     <div class="sort-box cursor-pointer align-self-center">
       <div
         class="title-container d-flex position-relative form-control no-border justify-content-between"
@@ -8,28 +11,38 @@
         <div
           v-if="selectedItem"
           class="font-body-small ms-y-auto font-medium text-capitalize sort-selected cursor-pointer"
-        >{{selectedItem.name}}</div>
+        >
+          {{ selectedItem.name }}
+        </div>
         <div class="action ps-l-12">
-          <svg-sprite-icon name="right-arrow" class="down-icon"></svg-sprite-icon>
+          <svg-sprite-icon
+            name="right-arrow"
+            class="down-icon"
+          />
         </div>
       </div>
     </div>
 
     <!-- Dropdown Items -->
-    <div class="table table-wrapper sort-list" v-if="active">
+    <div
+      v-if="active"
+      class="table table-wrapper sort-list"
+    >
       <div class="table-scrollable">
         <div class="table-body">
           <div
-            class="table-row ps-l-20 sort-item"
             v-for="item in sortItems"
             :key="item.id"
+            class="table-row ps-l-20 sort-item"
+            :class="{ active: selectedItem.id === item.id }"
             @click.stop.prevent="onChange(item)"
-            :class="{'active': selectedItem.id === item.id}"
           >
             <div
-              class="title font-body-small font-medium ms-y-auto text-capitalize"
               :id="item.id"
-            >{{item.name}}</div>
+              class="title font-body-small font-medium ms-y-auto text-capitalize"
+            >
+              {{ item.name }}
+            </div>
           </div>
         </div>
       </div>
@@ -39,40 +52,40 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
     sortItems: {
       type: Array,
-      required: true
+      required: true,
     },
     defaultID: {
       type: Number,
       required: false,
-      default: 0
+      default: 0,
     },
     change: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {},
-  mixins: []
+  mixins: [],
 })
 export default class SortDropdown extends Vue {
   active = false;
   selectedItem = null;
 
   mounted() {
-    this.onChange(this.selectedItem || this.sortItems[this.defaultID]);
+    this.onChange(this.selectedItem || this.sortItems[this.defaultID])
   }
 
   onChange(value) {
-    this.selectedItem = value;
-    this.change(value);
-    this.active = false;
+    this.selectedItem = value
+    this.change(value)
+    this.active = false
   }
 }
 </script>

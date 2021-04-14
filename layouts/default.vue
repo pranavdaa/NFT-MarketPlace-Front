@@ -6,13 +6,13 @@
         <nuxt />
       </div>
     </div>
-    <toast></toast>
+    <toast />
   </div>
 </template>
 
 <script>
-import NavbarSection from "~/components/navbar";
-import Toast from "~/components/toast";
+import NavbarSection from '~/components/navbar'
+import Toast from '~/components/toast'
 
 export default {
   components: {
@@ -21,9 +21,9 @@ export default {
   },
 
   created() {
-    this.isMobileDevice = window.innerWidth < 768;
+    this.isMobileDevice = window.innerWidth < 768
   },
-};
+}
 </script>
 
 <style lang="scss" scoped="true">

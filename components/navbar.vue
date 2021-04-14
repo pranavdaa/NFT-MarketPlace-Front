@@ -2,7 +2,10 @@
   <nav class="navbar navbar-expand-lg fixed-top p-0">
     <div class="container-fluid h-100">
       <div class="row mx-auto ps-x-16 w-100 h-100">
-        <nuxt-link class="logo-container d-flex" :to="{ name: 'index' }">
+        <nuxt-link
+          class="logo-container d-flex"
+          :to="{ name: 'index' }"
+        >
           <button
             class="navbar-toggler"
             role="button"
@@ -13,11 +16,11 @@
             <svg-sprite-icon
               name="grabber"
               class="icon navbar-toggler-icon"
-            ></svg-sprite-icon>
+            />
             <svg-sprite-icon
               name="close"
               class="icon close-icon"
-            ></svg-sprite-icon>
+            />
           </button>
           <div class="d-flex">
             <div class="d-flex">
@@ -25,7 +28,7 @@
                 src="~assets/img/open-sea-logo.svg"
                 alt="Open Sea Logo"
                 class="logo align-self-center"
-              />
+              >
             </div>
             <div
               class="d-flex flex-column justify-content-center logo-desc-container"
@@ -35,7 +38,9 @@
                 <span class="logo-product-name">L2</span>
                 <span class="tag">BETA</span>
               </div>
-              <div class="logo-description">Powered by Matic Network</div>
+              <div class="logo-description">
+                Powered by Matic Network
+              </div>
             </div>
           </div>
         </nuxt-link>
@@ -84,11 +89,11 @@
             </li>
             <li class="nav-item d-md-none">
               <div
+                v-if="user"
                 class="d-flex ms-x-16 nav-profile-container align-self-center"
                 @click.prevent.stop="handleOpenProfile(!openProfile)"
-                v-if="user"
               >
-                <img src="~assets/svg/metamask.svg" />
+                <img src="~assets/svg/metamask.svg">
                 <span class="navbar-user-address">
                   {{ formattedUserAddress }}
                 </span>
@@ -99,7 +104,7 @@
                   <svg-sprite-icon
                     class="align-self-center"
                     name="right-arrow"
-                  ></svg-sprite-icon>
+                  />
                 </span>
               </div>
             </li>
@@ -114,7 +119,7 @@
                   <svg-sprite-icon
                     name="login"
                     class="align-self-center"
-                  ></svg-sprite-icon>
+                  />
                 </span>
                 <span>{{ $t("login") }}</span>
               </nuxt-link>
@@ -144,7 +149,10 @@
           </ul>
         </div>
         <div class="d-none d-sm-flex profile-navbar ml-auto ps-l-16">
-          <div class="d-flex align-self-center" v-if="user && false">
+          <div
+            v-if="user && false"
+            class="d-flex align-self-center"
+          >
             <nuxt-link
               class="nav-link d-flex"
               :to="{ name: 'index-notification' }"
@@ -154,16 +162,16 @@
                 <svg-sprite-icon
                   name="notification"
                   class="align-self-center"
-                ></svg-sprite-icon>
+                />
               </span>
             </nuxt-link>
           </div>
           <div
+            v-if="user"
             class="d-flex nav-profile-container align-self-center"
             @click.prevent.stop="handleOpenProfile(!openProfile)"
-            v-if="user"
           >
-            <img src="~assets/svg/metamask.svg" />
+            <img src="~assets/svg/metamask.svg">
             <span class="navbar-user-address">
               {{ formattedUserAddress }}
             </span>
@@ -174,11 +182,14 @@
               <svg-sprite-icon
                 class="align-self-center"
                 name="right-arrow"
-              ></svg-sprite-icon>
+              />
             </span>
           </div>
 
-          <ul class="navbar-nav right-nav ps-x-16 pr-1" v-if="!user">
+          <ul
+            v-if="!user"
+            class="navbar-nav right-nav ps-x-16 pr-1"
+          >
             <li class="nav-item d-flex">
               <nuxt-link
                 class="align-self-center btn btn-primary login-button d-flex"
@@ -189,7 +200,7 @@
                   <svg-sprite-icon
                     name="login"
                     class="align-self-center"
-                  ></svg-sprite-icon>
+                  />
                 </span>
                 <span>{{ $t("login") }}</span>
               </nuxt-link>
@@ -200,9 +211,9 @@
     </div>
     <!-- Profile Dropdown -->
     <div
-      class="profile-dropdown-menu no-top-border-radius dropdown-menu dropdown-menu-right show"
       v-if="openProfile"
       v-click-outside="() => (openProfile = false)"
+      class="profile-dropdown-menu no-top-border-radius dropdown-menu dropdown-menu-right show"
     >
       <div class="profile-container">
         <div class="d-flex ps-16 ps-md-32">
@@ -210,7 +221,7 @@
             <svg-sprite-icon
               name="profile"
               class="profile-logo"
-            ></svg-sprite-icon>
+            />
             <!-- <svg-sprite-icon v-if="!userProfilePic" name="profile" class="profile-logo"></svg-sprite-icon> -->
             <!-- <img v-if="userProfilePic" :src="userProfilePic" :alt="formattedUserAddress" /> -->
             <div class="profile-status d-none">
@@ -223,7 +234,12 @@
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <g filter="url(#filter0_d)">
-                  <circle cx="16" cy="15" r="12" fill="white" />
+                  <circle
+                    cx="16"
+                    cy="15"
+                    r="12"
+                    fill="white"
+                  />
                 </g>
                 <path
                   fill-rule="evenodd"
@@ -241,7 +257,10 @@
                     filterUnits="userSpaceOnUse"
                     color-interpolation-filters="sRGB"
                   >
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <feFlood
+                      flood-opacity="0"
+                      result="BackgroundImageFix"
+                    />
                     <feColorMatrix
                       in="SourceAlpha"
                       type="matrix"
@@ -279,8 +298,8 @@
               </div>
             </div>
             <div
-              class="d-flex justify-content-center ps-t-12"
               v-if="account"
+              class="d-flex justify-content-center ps-t-12"
               @click.stop.prevent="copyAddress"
             >
               <div class="profile-address d-flex w-100">
@@ -292,43 +311,46 @@
                 <div
                   class="col p-0 d-block d-md-none address mr-auto align-self-center"
                 >
-                  {{ this.account.shortChecksumAddress }}
+                  {{ account.shortChecksumAddress }}
                 </div>
                 <div class="copy-wrapper justify-content-center">
                   <svg-sprite-icon
+                    v-if="copyAnim === false"
                     class="copy-icon align-self-center"
                     name="copy"
-                    v-if="copyAnim === false"
-                  ></svg-sprite-icon>
+                  />
 
                   <lottie
+                    v-if="copyAnim === true"
                     class="copy-anim align-self-center"
                     :options="defaultOptions"
                     :width="24"
                     :height="24"
-                    v-if="copyAnim === true"
                   />
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="dropdown-divider"></div>
+        <div class="dropdown-divider" />
         <div class="d-flex ps-6 ps-md-12">
           <ul class="profile-option-list w-100">
-            <li class="option-item" @click="openQrCode = !openQrCode">
+            <li
+              class="option-item"
+              @click="openQrCode = !openQrCode"
+            >
               <div class="d-flex">
                 <div class="align-self-center">
                   <img
                     src="~/static/icons/qr-code.svg"
                     alt="qr-code"
                     class="option-icon inactive"
-                  />
+                  >
                   <img
                     src="~/static/icons/active/qr-code.svg"
                     alt="qr-code"
                     class="option-icon active"
-                  />
+                  >
                 </div>
                 <div
                   class="option-text font-body-medium align-self-center ps-x-16"
@@ -355,19 +377,22 @@
               </div>
             </li>
 
-            <li class="option-item" @click="openLogout = true">
+            <li
+              class="option-item"
+              @click="openLogout = true"
+            >
               <div class="d-flex">
                 <div class="align-self-center">
                   <img
                     src="~/static/icons/logout.svg"
                     alt="qr-code"
                     class="option-icon inactive"
-                  />
+                  >
                   <img
                     src="~/static/icons/active/logout.svg"
                     alt="qr-code"
                     class="option-icon active"
-                  />
+                  >
                 </div>
                 <div
                   class="option-text font-body-medium align-self-center ps-x-16"
@@ -399,36 +424,39 @@
     </div>
     <!-- ./ Profile Dropdown -->
     <receive-qr-code
+      v-if="user"
       :show="openQrCode"
       :uri="account.address"
       :close="qrClose"
-      v-if="user"
     />
-    <logout-confirm :show="openLogout" :logout="logout" :close="logoutClose" />
+    <logout-confirm
+      :show="openLogout"
+      :logout="logout"
+      :close="logoutClose"
+    />
   </nav>
 </template>
 
-
 <script>
-import Vue from "vue";
-import { mapGetters } from "vuex";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import { mapGetters } from 'vuex'
+import Component from 'nuxt-class-component'
 
-import copy from "copy-to-clipboard";
-import Lottie from "vue-lottie";
+import copy from 'copy-to-clipboard'
+import Lottie from 'vue-lottie'
 
-import ReceiveQrCode from "~/components/lego/receive-qr-code";
-import LogoutConfirm from "~/components/lego/logout-confirm";
+import ReceiveQrCode from '~/components/lego/receive-qr-code'
+import LogoutConfirm from '~/components/lego/logout-confirm'
 
-import * as animationData from "~/static/lottie-animations/green-check.json";
+import * as animationData from '~/static/lottie-animations/green-check.json'
 
 @Component({
   props: {},
   components: { Lottie, ReceiveQrCode, LogoutConfirm },
   computed: {
-    ...mapGetters("auth", ["user"]),
-    ...mapGetters("account", ["account"]),
-    ...mapGetters("network", ["selectedNetwork", "rootChainNetwork"]),
+    ...mapGetters('auth', ['user']),
+    ...mapGetters('account', ['account']),
+    ...mapGetters('network', ['selectedNetwork', 'rootChainNetwork']),
   },
   methods: {},
 })
@@ -446,84 +474,86 @@ export default class Navbar extends Vue {
   openLogout = false;
 
   currentNetwork = {
-    key: "matic",
-    name: "Matic",
+    key: 'matic',
+    name: 'Matic',
   };
 
   checkIfNestedRoute(...names) {
     if (this.$route && this.$route.name) {
       for (let index = 0; index < names.length; index++) {
-        const name = names[index];
+        const name = names[index]
         if (this.$route.name.startsWith(name)) {
-          return true;
+          return true
         }
       }
     }
-    return false;
+    return false
   }
 
   copyAnimation(show) {
-    this.copyAnim = show;
+    this.copyAnim = show
   }
 
   copyAddress() {
-    this.copyAnimation(true);
-    copy(this.account.checksumAddress || this.account.address);
+    this.copyAnimation(true)
+    copy(this.account.checksumAddress || this.account.address)
     setTimeout(() => {
-      this.copyAnimation(false);
-    }, 3000);
+      this.copyAnimation(false)
+    }, 3000)
   }
 
   handleOpenMenu(status) {
     if (status) {
-      this.openMenu = true;
-      this.openProfile = !this.openMenu;
+      this.openMenu = true
+      this.openProfile = !this.openMenu
     } else {
-      this.openMenu = this.openProfile = false;
+      this.openMenu = this.openProfile = false
     }
   }
+
   handleOpenProfile(status) {
     if (status) {
-      this.openProfile = true;
-      this.openMenu = !this.openProfile;
+      this.openProfile = true
+      this.openMenu = !this.openProfile
     } else {
-      this.openMenu = this.openProfile = false;
+      this.openMenu = this.openProfile = false
     }
   }
 
   qrClose() {
-    this.openQrCode = false;
+    this.openQrCode = false
   }
+
   logoutClose() {
-    this.openLogout = false;
+    this.openLogout = false
   }
 
   get formattedUserAddress() {
     if (this.account && this.account.address) {
       if (this.account.name) {
-        return this.account.name;
+        return this.account.name
       }
 
-      const start = this.account.address.slice(0, 4);
-      const length = this.account.address.length;
-      const end = this.account.address.slice(length - 4);
-      return start + "..." + end;
+      const start = this.account.address.slice(0, 4)
+      const length = this.account.address.length
+      const end = this.account.address.slice(length - 4)
+      return start + '...' + end
     }
-    return "";
+    return ''
   }
 
   get userProfilePic() {
     try {
-      return user.photoURL;
+      return user.photoURL
     } catch (error) {
-      return false;
+      return false
     }
   }
 
   async logout() {
-    await this.$store.dispatch("auth/logout");
-    this.$router.push({ name: "index" });
-    this.openLogout = false;
+    await this.$store.dispatch('auth/logout')
+    this.$router.push({ name: 'index' })
+    this.openLogout = false
   }
 }
 </script>

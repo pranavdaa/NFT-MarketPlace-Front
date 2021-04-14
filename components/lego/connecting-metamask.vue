@@ -1,11 +1,16 @@
 <template>
   <section>
-    <div class="modal fade show" v-if="loaded">
+    <div
+      v-if="loaded"
+      class="modal fade show"
+    >
       <div class="modal-dialog">
         <div class="box">
           <div class="box-body">
             <div class="ps-16 ps-md-32 box-header">
-              <span class="font-heading-medium font-semibold col text-center">Metamask</span>
+              <span
+                class="font-heading-medium font-semibold col text-center"
+              >Metamask</span>
             </div>
 
             <div class="container">
@@ -16,11 +21,13 @@
                     width="96"
                     src="~/assets/img/metamask-big.svg"
                     alt="Connecting to metamask"
-                  />
+                  >
                 </div>
                 <div
                   class="col-12 font-body-small text-center text-muted ps-t-8"
-                >Waiting for confirmation from Metamask</div>
+                >
+                  Waiting for confirmation from Metamask
+                </div>
               </div>
 
               <!-- <div class="row justify-content-center wallet-download-info">
@@ -37,21 +44,24 @@
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ 'show': loaded }"></div>
+    <div
+      class="modal-backdrop"
+      :class="{ show: loaded }"
+    />
   </section>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
-    loaded: { type: Boolean, required: true }
+    loaded: { type: Boolean, required: true },
   },
   components: {},
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class ConnectingMetamask extends Vue {
   mounted() {}

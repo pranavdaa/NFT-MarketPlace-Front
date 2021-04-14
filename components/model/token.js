@@ -1,43 +1,41 @@
-import { toChecksumAddress } from "ethereumjs-util"
+import { toChecksumAddress } from 'ethereumjs-util'
 
-import BigNumber from "~/plugins/bignumber"
-import Model from "~/components/model/model"
-import app from "~/plugins/app"
-import MetaNetwork from "@maticnetwork/meta/network"
-import { formatUSDValue } from "~/plugins/helpers/index"
+import BigNumber from '~/plugins/bignumber'
+import Model from '~/components/model/model'
+import app from '~/plugins/app'
+import MetaNetwork from '@maticnetwork/meta/network'
+import { formatUSDValue } from '~/plugins/helpers/index'
+
+import { parseBalance, parseUSDBalance } from '~/plugins/helpers/token-utils'
 const uiconfig = JSON.parse(process.env.uiconfig)
-
-import { parseBalance, parseUSDBalance } from "~/plugins/helpers/token-utils"
 
 const ZERO = new BigNumber(0)
 const TEN = new BigNumber(10)
 
 export default class Token extends Model {
-  static ERC20 = "ERC20"
+  static ERC20 = 'ERC20';
 
-  static balanceHex = "0x70a08231"
-  static transferHex = "0xa9059cbb"
+  static balanceHex = '0x70a08231';
+  static transferHex = '0xa9059cbb';
 
   get checksumAddress() {
     return this.address && toChecksumAddress(this.address)
   }
 
   get addresses() {
-
     const network = new MetaNetwork(
       uiconfig.matic.deployment.network,
-      uiconfig.matic.deployment.version
+      uiconfig.matic.deployment.version,
     )
 
-    let addresses = {}
+    const addresses = {}
     if (this.erc20tokensaddresses) {
-      this.erc20tokensaddresses.forEach(address => {
-        if (address.chain_id == network.Matic.ChainId) {
+      this.erc20tokensaddresses.forEach((address) => {
+        if (address.chain_id === network.Matic.ChainId) {
           addresses[network.Matic.ChainId] = address.address
         } else {
           addresses[address.chain_id] = address.address
         }
-
       })
     }
     return addresses
@@ -57,11 +55,11 @@ export default class Token extends Model {
   }
 
   get isEther() {
-    return this.id == app.uiconfig.ethDBID
+    return this.id === app.uiconfig.ethDBID
   }
 
   get isMatic() {
-    return this.id == app.uiconfig.maticDBID
+    return this.id === app.uiconfig.maticDBID
   }
 
   get usd() {
@@ -78,9 +76,9 @@ export default class Token extends Model {
       return ZERO
     }
 
-    return app.vuexStore.getters["trunk/tokenBalance"](
+    return app.vuexStore.getters['trunk/tokenBalance'](
       this.address.toLowerCase(),
-      selectedNetwork.id
+      selectedNetwork.id,
     )
   }
 
@@ -103,7 +101,6 @@ export default class Token extends Model {
     return ZERO
   }
 
-
   getFormattedBalance(networkId) {
     return this.getBalance(networkId).toFixed(3)
   }
@@ -118,9 +115,9 @@ export default class Token extends Model {
       return null
     }
 
-    return app.vuexStore.dispatch("trunk/fetchERC20ContractObject", {
+    return app.vuexStore.dispatch('trunk/fetchERC20ContractObject', {
       address,
-      network
+      network,
     })
   }
 
@@ -148,9 +145,9 @@ export default class Token extends Model {
       return ZERO
     }
 
-    const value = app.vuexStore.getters["trunk/tokenBalance"](
+    const value = app.vuexStore.getters['trunk/tokenBalance'](
       address.toLowerCase(),
-      networkId
+      networkId,
     )
 
     return parseBalance(value, this.decimal)
@@ -159,9 +156,9 @@ export default class Token extends Model {
   getFullBalance(networkId) {
     const address = this.getAddress(networkId)
 
-    return app.vuexStore.getters["trunk/tokenBalance"](
+    return app.vuexStore.getters['trunk/tokenBalance'](
       address.toLowerCase(),
-      networkId
+      networkId,
     )
   }
 
@@ -171,6 +168,6 @@ export default class Token extends Model {
   }
 
   async convertToFormattedUSDBalance(amount) {
-    return amount.times(new BigNumber(this.usd || "0.00")).dp(2);
+    return amount.times(new BigNumber(this.usd || '0.00')).dp(2)
   }
 }

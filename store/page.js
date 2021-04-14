@@ -8,7 +8,7 @@ export default {
     return {
       selectedFilters: {
         selectedCategory: null,
-        selectedSort: null
+        selectedSort: null,
       },
       isCategoryFetching: false,
     }
@@ -36,5 +36,5 @@ export default {
     selectedFilters(state) {
       return state.selectedFilters
     },
-  }
+  },
 }

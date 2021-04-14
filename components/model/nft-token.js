@@ -1,9 +1,7 @@
-import Model from "~/components/model/model"
-import app from "~/plugins/app"
-import Web3 from "web3"
+import Model from '~/components/model/model'
+import app from '~/plugins/app'
 
 export default class NFTToken extends Model {
-
   get name() {
     return `Token ${this.token_id}`
   }
@@ -12,12 +10,13 @@ export default class NFTToken extends Model {
     if (this.image) {
       return this.image
     }
-    return "";
+    return ''
   }
 
   get category() {
     const category = app.vuexStore.getters['category/categories'].find(
-      c => c.getAddress(this.chainId).toLowerCase() == this.contract.toLowerCase()
+      (c) =>
+        c.getAddress(this.chainId).toLowerCase() === this.contract.toLowerCase(),
     )
     return category
   }
@@ -36,5 +35,4 @@ export default class NFTToken extends Model {
       attributes_metadata: this.attributes,
     }
   }
-
 }

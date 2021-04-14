@@ -1,34 +1,41 @@
 <template>
   <div class="pill-wrapper d-flex">
     <div class="time-left-pill d-flex ms-r-8">
-      <div class="font-caps font-medium caps align-self-center ps-x-6 ps-t-1">{{$t('token.onsale')}}</div>
+      <div class="font-caps font-medium caps align-self-center ps-x-6 ps-t-1">
+        {{ $t("token.onsale") }}
+      </div>
     </div>
-    <div class="time-left-pill d-flex" v-if="time">
+    <div
+      v-if="time"
+      class="time-left-pill d-flex"
+    >
       <img
         src="~/assets/svg/clock-analog.svg"
         alt="Cryptokitty"
         class="icon ms-r-4 align-self-center"
-      />
-      <div class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1">{{time}}</div>
+      >
+      <div class="font-caps font-medium caps align-self-center ps-r-6 ps-t-1">
+        {{ time }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
     time: {
       type: String,
       required: false,
-      default: ""
-    }
+      default: '',
+    },
   },
   components: {},
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class OnSaleTag extends Vue {
   mounted() {}

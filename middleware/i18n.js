@@ -5,15 +5,17 @@ export default function({
   params,
   error,
   redirect,
-  hotReload
+  hotReload,
 }) {
   // If middleware is called from hot-reloading, ignore it
-  if (hotReload) return
+  if (hotReload) {
+    return
+  }
 
   // Get locale from params
   const locale = params.lang || 'en'
   if (store.state.locale.locales.indexOf(locale) === -1) {
-    return error({message: 'This page could not be found.', statusCode: 404})
+    return error({ message: 'This page could not be found.', statusCode: 404 })
   }
 
   // Set locale

@@ -1,25 +1,27 @@
-import Model from "~/components/model/model"
-import app from "~/plugins/app"
-import BigNumber from "~/plugins/bignumber"
-import Web3 from "web3"
-import { parseBalance, toTokenAmount } from "~/plugins/helpers/token-utils"
+import Model from '~/components/model/model'
+import app from '~/plugins/app'
+import BigNumber from '~/plugins/bignumber'
+import {
+  parseBalance,
+  toTokenAmount,
+} from '~/plugins/helpers/token-utils'
 
 const ZERO = new BigNumber(0)
-const TEN = new BigNumber(10)
 
 export default class Order extends Model {
   get categories_id() {
     return this.categories.id
   }
+
   get erc20tokens_id() {
     return this.erc20tokens.id
   }
 
   get token() {
-    let img = ""
+    let img = ''
     let name = `Token ${this.tokens_id}`
-    let owner = ""
-    let description = ""
+    let owner = ''
+    let description = ''
     if (this.image) {
       img = this.image
     }
@@ -30,9 +32,13 @@ export default class Order extends Model {
       description = this.description
     }
 
-    if (this.seller_users) owner = this.seller_users.address
-    else if (this.makerAddress) owner = this.makerAddress
-    else owner = ""
+    if (this.seller_users) {
+      owner = this.seller_users.address
+    } else if (this.makerAddress) {
+      owner = this.makerAddress
+    } else {
+      owner = ''
+    }
 
     return {
       name: name,
@@ -45,7 +51,9 @@ export default class Order extends Model {
 
   getPrice() {
     const price = new BigNumber(this.price)
-    const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(token => token.id == this.erc20tokens_id)
+    const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(
+      (token) => token.id === this.erc20tokens_id,
+    )
     if (!price || !erc20Token) {
       return ZERO
     }
@@ -58,12 +66,16 @@ export default class Order extends Model {
       return ZERO
     }
 
-    const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(token => token.id == this.erc20tokens_id)
+    const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(
+      (token) => token.id === this.erc20tokens_id,
+    )
     return parseBalance(price, erc20Token.decimal)
   }
 
   getPriceInBN() {
-    const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(token => token.id == this.erc20tokens_id)
+    const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(
+      (token) => token.id === this.erc20tokens_id,
+    )
     if (!this.price || !erc20Token) {
       return ZERO
     }
@@ -74,8 +86,9 @@ export default class Order extends Model {
     if (!this.min_price) {
       return ZERO
     }
-    const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(token => token.id == this.erc20tokens_id)
+    const erc20Token = app.vuexStore.getters['token/erc20Tokens'].find(
+      (token) => token.id === this.erc20tokens_id,
+    )
     return toTokenAmount(this.min_price, erc20Token.decimal)
   }
-
 }

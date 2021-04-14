@@ -4,27 +4,33 @@
       <div
         class="col container-fluid sidebar-container d-none d-lg-block sticky-top"
       >
-        <category-sidebar :countFor="0" :isLoading="isLoadingTokens" />
+        <category-sidebar
+          :countFor="0"
+          :isLoading="isLoadingTokens"
+        />
       </div>
       <div class="col container-fluid content-container">
         <div class="row ps-y-16 ps-x-16 sticky-top tab-header">
           <div
             class="col-12 col-lg cat-switch d-flex d-lg-none ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
           >
-            <categories-selector :countFor="0" class="category-wrapper" />
+            <categories-selector
+              :countFor="0"
+              class="category-wrapper"
+            />
           </div>
           <div
             class="col-12 col-lg cat-switch d-none d-lg-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
           >
             <div
-              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
               v-if="!selectedCategory"
+              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
             >
               <img
                 :src="allCategory.img_url"
                 :alt="allCategory.name"
                 class="icon align-self-center ms-r-12"
-              />
+              >
               <div class="font-body-large align-self-center font-medium">
                 {{ allCategory.name }}
               </div>
@@ -33,22 +39,22 @@
               </div>
             </div>
             <div
-              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
               v-if="selectedCategory"
+              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
             >
               <img
                 :src="selectedCategory.img_url"
                 :alt="selectedCategory.name"
                 class="icon align-self-center ms-r-12"
-              />
+              >
               <div class="font-body-large align-self-center font-medium">
                 {{ selectedCategory.name }}
               </div>
               <div class="count ps-l-12 font-body-large ml-auto">
                 {{
                   selectedCategory.count ||
-                  (displayedTokens && displayedTokens.length) ||
-                  0
+                    (displayedTokens && displayedTokens.length) ||
+                    0
                 }}
                 {{ $t("collectibles") }}
               </div>
@@ -74,14 +80,14 @@
           class="row ps-x-16 ps-y-40 d-flex justify-content-center justify-content-lg-start"
         >
           <no-item
+            v-if="orderFullList.length <= 0 && !isLoadingTokens"
             class="ps-b-120"
             :message="exmptyMsg"
-            v-if="orderFullList.length <= 0 && !isLoadingTokens"
           />
           <no-item
+            v-else-if="searchedTokens.length === 0 && !isLoadingTokens"
             class="ps-b-120"
             :message="this.$t('searchNotFound')"
-            v-else-if="searchedTokens.length === 0 && !isLoadingTokens"
           />
 
           <sell-card
@@ -96,19 +102,19 @@
         >
           <!-- matic loader here -->
           <button-loader
+            v-if="
+              (hasNextPage && searchedTokens && searchedTokens.length > 0) ||
+                isLoadingTokens
+            "
             class="mx-auto"
             :loading="isLoadingTokens"
             :loadingText="$t('loading')"
             :text="$t('loadMore')"
             block
             lg
-            v-if="
-              (hasNextPage && searchedTokens && searchedTokens.length > 0) ||
-              isLoadingTokens
-            "
             color="light"
             :click="loadMore"
-          ></button-loader>
+          />
         </div>
       </div>
     </div>
@@ -152,10 +158,10 @@ import NotificationModal from '~/components/lego/notification-modal'
     NotificationModal,
   },
   computed: {
-    ...mapGetters("page", ["selectedFilters", "selectedCategory"]),
-    ...mapState("page", ["isCategoryFetching"]),
-    ...mapGetters("category", ["categories", "allCategory"]),
-    ...mapGetters("token", ["erc20Tokens"]),
+    ...mapGetters('page', ['selectedFilters', 'selectedCategory']),
+    ...mapState('page', ['isCategoryFetching']),
+    ...mapGetters('category', ['categories', 'allCategory']),
+    ...mapGetters('token', ['erc20Tokens']),
   },
   middleware: [],
   mixins: [],
@@ -165,8 +171,8 @@ export default class Index extends Vue {
   searchInput = null;
   fuzzysearch = fuzzysearch;
   exmptyMsg = {
-    title: "Oops! No item found.",
-    description: "We didn’t found any item that is on sale.",
+    title: 'Oops! No item found.',
+    description: 'We didn’t found any item that is on sale.',
     img: true,
   };
   showNotification = false;
@@ -174,23 +180,23 @@ export default class Index extends Vue {
   sortItems = [
     {
       id: 0,
-      name: "Newest",
-      filter: "-created",
+      name: 'Newest',
+      filter: '-created',
     },
     {
       id: 1,
-      name: "Oldest",
-      filter: "+created",
+      name: 'Oldest',
+      filter: '+created',
     },
     {
       id: 2,
-      name: "Price low to high",
-      filter: "+usd_price",
+      name: 'Price low to high',
+      filter: '+usd_price',
     },
     {
       id: 3,
-      name: "Price high to low",
-      filter: "-usd_price",
+      name: 'Price high to low',
+      filter: '-usd_price',
     },
   ];
 
@@ -212,22 +218,22 @@ export default class Index extends Vue {
   }
 
   // Wathers
-  @VueWatch("selectedFilters", { immediate: true, deep: true })
+  @VueWatch('selectedFilters', { immediate: true, deep: true })
   @VueDebounce(500)
   async onFilterChanged() {
     if (this.isCategoryFetching) {
-      return;
+      return
     }
-    this.hasNextPage = true;
-    this.orderFullList.length = 0;
-    this.$store.commit("page/setIsCategoryFetching", true);
-    await this.fetchOrders({ filtering: true });
-    this.$store.commit("page/setIsCategoryFetching", false);
+    this.hasNextPage = true
+    this.orderFullList.length = 0
+    this.$store.commit('page/setIsCategoryFetching', true)
+    await this.fetchOrders({ filtering: true })
+    this.$store.commit('page/setIsCategoryFetching', false)
   }
 
   // handlers
   onSortSelect(item) {
-    this.$store.commit("page/selectedSort", item.filter);
+    this.$store.commit('page/selectedSort', item.filter)
   }
 
   onNotificationOpen() {
@@ -240,18 +246,20 @@ export default class Index extends Vue {
   }
 
   onModalShow() {
-    this.showModal = true;
+    this.showModal = true
   }
+
   onModalClose() {
-    this.showModal = false;
+    this.showModal = false
   }
 
   // Get
   get displayedTokens() {
-    return this.orderFullList || [];
+    return this.orderFullList || []
   }
+
   get searchedTokens() {
-    let searchedTokensList = [];
+    const searchedTokensList = []
 
     if (this.searchInput !== null && this.orderFullList.length > 0) {
       this.orderFullList.forEach((order) => {
@@ -259,24 +267,26 @@ export default class Index extends Vue {
           fuzzysearch(this.searchInput, order.name) ||
           fuzzysearch(this.searchInput, order.tokens_id)
         ) {
-          searchedTokensList.push(order);
+          searchedTokensList.push(order)
         }
-      });
+      })
     } else {
-      return this.orderFullList;
+      return this.orderFullList
     }
 
-    return searchedTokensList;
+    return searchedTokensList
   }
+
   get ifCategory() {
     return this.selectedFilters.selectedCategory
       ? `&categoryArray=[${this.selectedFilters.selectedCategory.id}]`
-      : "&categoryArray=[]";
+      : '&categoryArray=[]'
   }
+
   get ifSort() {
     return this.selectedFilters.selectedSort
       ? `&sort=${this.selectedFilters.selectedSort}`
-      : `&sort=${this.sortItems[0].filter}`;
+      : `&sort=${this.sortItems[0].filter}`
   }
 
   // async
@@ -284,54 +294,54 @@ export default class Index extends Vue {
   async fetchOrders(options = {}) {
     // Do not remove data while fetching
     if (this.isLoadingTokens || !this.hasNextPage) {
-      return;
+      return
     }
-    this.isLoadingTokens = true;
+    this.isLoadingTokens = true
     try {
-      let response;
-      let offset = this.orderFullList.length;
+      let response
+      let offset = this.orderFullList.length
 
       if (options && options.filtering) {
         // Start from page one with new filter
-        offset = 0;
+        offset = 0
       }
 
       // Fetch tokens with pagination and filters
-      if (this.searchInput != null && this.searchInput.length > 0) {
+      if (this.searchInput !== null && this.searchInput.length > 0) {
         // with search
         response = await getAxios().get(
-          `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
-        );
+          `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`,
+        )
       } else {
         // without search
         response = await getAxios().get(
-          `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`
-        );
+          `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`,
+        )
       }
 
       if (response && response.status === 200 && response.data.data.order) {
-        this.hasNextPage = response.data.data.has_next_page;
-        let data = response.data.data.order.map(function (order) {
-          return new OrderModel(order);
-        });
+        this.hasNextPage = response.data.data.has_next_page
+        const data = response.data.data.order.map(function(order) {
+          return new OrderModel(order)
+        })
         if (options && options.filtering) {
-          this.orderFullList = data;
+          this.orderFullList = data
         } else {
-          this.orderFullList = [...this.orderFullList, ...data];
+          this.orderFullList = [...this.orderFullList, ...data]
         }
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-    this.isLoadingTokens = false;
+    this.isLoadingTokens = false
   }
 
   updateCategories() {
-    this.$store.dispatch("category/fetchCategories");
+    this.$store.dispatch('category/fetchCategories')
   }
 
   async loadMore() {
-    await this.fetchOrders();
+    await this.fetchOrders()
   }
 }
 </script>

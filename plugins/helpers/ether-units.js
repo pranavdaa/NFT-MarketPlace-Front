@@ -3,7 +3,7 @@ import BigNumber from '~/plugins/bignumber'
 
 const web3 = new Web3()
 export default class EtherUnits {
-  static unitMap = web3.utils.unitMap
+  static unitMap = web3.utils.unitMap;
 
   static getValueOfUnit(unit) {
     const unitKey = unit ? unit.toLowerCase() : 'ether'

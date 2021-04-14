@@ -1,68 +1,81 @@
 <template>
-  <div class="d-flex" :class="{'search-box': true, 'd-flex': true, disabled}">
+  <div
+    class="d-flex"
+    :class="{ 'search-box': true, 'd-flex': true, disabled }"
+  >
     <input
+      v-model.trim="searchInput"
       class="form-control font-body-small align-self-center"
       type="text"
       :placeholder="placeholder"
-      v-model.trim="searchInput"
       :disabled="disabled"
-    />
-    <div class="align-self-center d-flex" v-if="searching && searchInput && searchInput.length > 0">
+    >
+    <div
+      v-if="searching && searchInput && searchInput.length > 0"
+      class="align-self-center d-flex"
+    >
       <div class="spinner align-self-center" />
     </div>
-    <div class="align-self-center d-flex" v-if="searchInput" @click="() => searchInput = null">
-      <svg-sprite-icon name="close" class="close-icon align-self-center"></svg-sprite-icon>
+    <div
+      v-if="searchInput"
+      class="align-self-center d-flex"
+      @click="() => (searchInput = null)"
+    >
+      <svg-sprite-icon
+        name="close"
+        class="close-icon align-self-center"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
-import { VueWatch, VueDebounce } from "~/components/decorator";
+import { VueWatch, VueDebounce } from '~/components/decorator'
 
 @Component({
   props: {
     change: {
       type: Function,
-      required: true
+      required: true,
     },
     placeholder: {
       type: String,
-      default: "Search"
+      default: 'Search',
     },
     value: {
       type: String,
       required: false,
-      default: null
+      default: null,
     },
     disabled: {
       type: Boolean,
-      default: false
-    }
-  }
+      default: false,
+    },
+  },
 })
 export default class SearchBox extends Vue {
   searchInput = false;
   searching = false;
 
-  @VueWatch("value", { immediate: true })
+  @VueWatch('value', { immediate: true })
   onValueChanged(v) {
-    this.searchInput = v;
+    this.searchInput = v
   }
 
-  @VueWatch("searchInput")
+  @VueWatch('searchInput')
   @VueDebounce()
   notifyChange() {
-    this.searching = true;
+    this.searching = true
     Promise.resolve(this.change(this.searchInput))
       .then(() => {
-        this.searching = false;
+        this.searching = false
       })
-      .catch(e => {
-        this.searching = false;
-      });
+      .catch((e) => {
+        this.searching = false
+      })
   }
 }
 </script>

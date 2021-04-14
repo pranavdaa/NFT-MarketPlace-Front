@@ -1,6 +1,9 @@
 <template>
   <section>
-    <div class="modal fade show" v-if="show">
+    <div
+      v-if="show"
+      class="modal fade show"
+    >
       <div class="modal-dialog">
         <div class="box">
           <div class="box-body">
@@ -21,7 +24,10 @@
                 class="row ps-16 w-100 mx-auto ps-md-32 pt-0 d-flex justify-content-center"
               >
                 <div class="align-self-center mt-4">
-                  <img src="~/assets/svg/logout.svg" alt="Matic Marketplace" />
+                  <img
+                    src="~/assets/svg/logout.svg"
+                    alt="Matic Marketplace"
+                  >
                 </div>
                 <div
                   class="col-12 font-heading-medium font-semibold text-center ps-t-32"
@@ -31,12 +37,18 @@
               </div>
               <div class="row w-100 mx-auto ps-x-md-32 ps-x-16 ps-b-32">
                 <div class="col-6">
-                  <button class="btn btn-light btn-block" @click="close()">
+                  <button
+                    class="btn btn-light btn-block"
+                    @click="close()"
+                  >
                     {{ $t("cancel") }}
                   </button>
                 </div>
                 <div class="col-6">
-                  <button class="btn btn-primary btn-block" @click="logout()">
+                  <button
+                    class="btn btn-primary btn-block"
+                    @click="logout()"
+                  >
                     {{ $t("logout.okay") }}
                   </button>
                 </div>
@@ -46,14 +58,17 @@
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
   </section>
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue'
 
-import Component from "nuxt-class-component";
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
@@ -69,8 +84,8 @@ import Component from "nuxt-class-component";
     close: {
       type: Function,
       required: false,
-      default: function () {
-        this.show = false;
+      default: function() {
+        this.show = false
       },
     },
   },

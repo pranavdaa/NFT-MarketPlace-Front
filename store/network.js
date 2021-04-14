@@ -1,14 +1,12 @@
 /* eslint no-param-reassign: 0 */
-import Web3 from "web3"
+import Web3 from 'web3'
 
 // import ENS from "~/plugins/helpers/ens"
-import { config as configStore } from "~/plugins/localstore"
-import NetworkModel from "~/components/model/network"
-
-const uiconfig = JSON.parse(process.env.uiconfig)
+import { config as configStore } from '~/plugins/localstore'
+import NetworkModel from '~/components/model/network'
 
 // Default symbol
-const DefaultSymbol = "ETH"
+// const DefaultSymbol = 'ETH'
 
 export default {
   namespaced: true,
@@ -26,37 +24,36 @@ export default {
       state.networks = networks
     },
     selectedNetworkKey(state, selectedNetworkKey) {
-      configStore.set("selectedNetworkKey", selectedNetworkKey)
+      configStore.set('selectedNetworkKey', selectedNetworkKey)
       state.selectedNetworkKey = selectedNetworkKey
     },
     networkMeta(state, networkMeta) {
       state.networkMeta = networkMeta
-    }
-
+    },
   },
 
   getters: {
     selectedNetwork(state) {
       return state.networks[
         state.selectedNetworkKey ||
-        configStore.get("selectedNetworkKey") ||
-        "matic"
+          configStore.get('selectedNetworkKey') ||
+          'matic'
       ]
     },
 
     selectedNetworkKey(state) {
       return (
         state.selectedNetworkKey ||
-        configStore.get("selectedNetworkKey") ||
-        "matic"
+        configStore.get('selectedNetworkKey') ||
+        'matic'
       )
     },
 
     rootChainNetwork(state) {
       return state.networks[
         state.selectedNetworkKey ||
-        configStore.get("selectedNetworkKey") ||
-        "main"
+          configStore.get('selectedNetworkKey') ||
+          'main'
       ]
     },
 
@@ -66,9 +63,7 @@ export default {
 
     networkMeta(state) {
       return state.networkMeta
-    }
-
-
+    },
   },
 
   actions: {
@@ -81,14 +76,14 @@ export default {
       const matic = new NetworkModel(networks.matic)
 
       // commit networks
-      commit("networks", {
+      commit('networks', {
         main,
-        matic
+        matic,
       })
     },
 
     async setSelectedNetworkKey({ commit }, networkKey) {
-      commit("selectedNetworkKey", networkKey)
+      commit('selectedNetworkKey', networkKey)
 
       return Promise.all([
         // send action to other storage
@@ -97,16 +92,10 @@ export default {
     },
 
     async setSelectedNetwork({ dispatch }, network) {
-      return dispatch("setSelectedNetworkKey", network.key)
+      return dispatch('setSelectedNetworkKey', network.key)
     },
 
-
-
-    async setProviders(
-      { state, dispatch },
-      providers,
-      selectedNetworkKey
-    ) {
+    async setProviders({ state, dispatch }, providers, selectedNetworkKey) {
       // set main web3
       state.networks.main.web3 = new Web3(providers.main)
       state.networks.main.provider = providers.main
@@ -119,29 +108,28 @@ export default {
       state.networks.main.web3.eth.extend({
         methods: [
           {
-            name: "signTypedDataLegacy",
-            call: "eth_signTypedDataLegacy",
-            params: 2
-          }
-        ]
+            name: 'signTypedDataLegacy',
+            call: 'eth_signTypedDataLegacy',
+            params: 2,
+          },
+        ],
       })
 
       state.networks.matic.web3.eth.extend({
         methods: [
           {
-            name: "signTypedDataLegacy",
-            call: "eth_signTypedDataLegacy",
-            params: 2
-          }
-        ]
+            name: 'signTypedDataLegacy',
+            call: 'eth_signTypedDataLegacy',
+            params: 2,
+          },
+        ],
       })
 
       // set selected network id into store
       if (selectedNetworkKey) {
         // set new selected network
-        await dispatch("setSelectedNetworkKey", selectedNetworkKey)
+        await dispatch('setSelectedNetworkKey', selectedNetworkKey)
       }
-
-    }
-  }
+    },
+  },
 }

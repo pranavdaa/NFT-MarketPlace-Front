@@ -1,5 +1,5 @@
-import MetamaskProvider from "@maticnetwork/metamask-provider"
-import Web3 from "web3"
+import MetamaskProvider from '@maticnetwork/metamask-provider'
+import Web3 from 'web3'
 import app from '~/plugins/app'
 
 // check metamask
@@ -27,10 +27,10 @@ export async function getDefaultAccount() {
 export function isMetamaskLocked() {
   return new Promise((resolve, reject) => {
     getAccounts()
-      .then(result => {
+      .then((result) => {
         resolve(!result[0])
       })
-      .catch(e => {
+      .catch((e) => {
         resolve(true)
       })
   })
@@ -68,9 +68,9 @@ export function personalSign(from, messageInHex, provider) {
   return new Promise((resolve, reject) => {
     provider.sendAsync(
       {
-        method: "personal_sign",
+        method: 'personal_sign',
         params: [messageInHex, from],
-        from
+        from,
       },
       (err, result) => {
         const e = err || (result && result.error)
@@ -79,14 +79,14 @@ export function personalSign(from, messageInHex, provider) {
         } else {
           resolve(result)
         }
-      }
+      },
     )
   })
 }
 
 export function signTypedData(from, data, provider) {
   const params = [from, JSON.stringify(data)]
-  const method = "eth_signTypedData_v3"
+  const method = 'eth_signTypedData_v3'
 
   // promise
   return new Promise((resolve, reject) => {
@@ -94,7 +94,7 @@ export function signTypedData(from, data, provider) {
       {
         method,
         params,
-        from
+        from,
       },
       (err, result) => {
         const e = err || (result && result.error)
@@ -103,7 +103,7 @@ export function signTypedData(from, data, provider) {
         } else {
           resolve(result)
         }
-      }
+      },
     )
   })
 }
@@ -111,8 +111,8 @@ export function signTypedData(from, data, provider) {
 export function signTypedDataLegacy(from, data, provider) {
   const params = [data, from]
   const method = provider.isMetaMask
-    ? "eth_signTypedData"
-    : "eth_signTypedDataLegacy"
+    ? 'eth_signTypedData'
+    : 'eth_signTypedDataLegacy'
 
   // promise
   return new Promise((resolve, reject) => {
@@ -120,7 +120,7 @@ export function signTypedDataLegacy(from, data, provider) {
       {
         method,
         params,
-        from
+        from,
       },
       (err, result) => {
         const e = err || (result && result.error)
@@ -129,7 +129,7 @@ export function signTypedDataLegacy(from, data, provider) {
         } else {
           resolve(result)
         }
-      }
+      },
     )
   })
 }
@@ -137,14 +137,14 @@ export function signTypedDataLegacy(from, data, provider) {
 // register account change
 export function registerAccountChange(fn) {
   if (window.ethereum.on) {
-    window.ethereum.on("accountsChanged", fn)
+    window.ethereum.on('accountsChanged', fn)
   }
 }
 
 // register network change
 export function registerNetworkChange(fn) {
   if (window.ethereum.on) {
-    window.ethereum.on("chainChanged", chainId => fn(chainId))
+    window.ethereum.on('chainChanged', (chainId) => fn(chainId))
   }
 }
 
@@ -160,24 +160,22 @@ export async function registerNetwork() {
   const chainIdHex = web3Obj.utils.toHex(ethereumNetworks.matic.chainId)
 
   // add custom network for Matic
-  await web3Obj.currentProvider.request(
-    {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'wallet_addEthereumChain',
-      params: [
-        {
-          chainId: chainIdHex,
-          chainName: ethereumNetworks.matic.name,
-          rpcUrls: [ethereumNetworks.matic.publicRPC],
-          nativeCurrency: {
-            name: 'MATIC',
-            symbol: 'MATIC',
-            decimals: app.uiconfig.maticDecimals,
-          },
-          blockExplorerUrls: [app.uiconfig.maticExplorer],
+  await web3Obj.currentProvider.request({
+    id: 1,
+    jsonrpc: '2.0',
+    method: 'wallet_addEthereumChain',
+    params: [
+      {
+        chainId: chainIdHex,
+        chainName: ethereumNetworks.matic.name,
+        rpcUrls: [ethereumNetworks.matic.publicRPC],
+        nativeCurrency: {
+          name: 'MATIC',
+          symbol: 'MATIC',
+          decimals: app.uiconfig.maticDecimals,
         },
-      ],
-    },
-  )
+        blockExplorerUrls: [app.uiconfig.maticExplorer],
+      },
+    ],
+  })
 }

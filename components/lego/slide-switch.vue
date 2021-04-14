@@ -1,84 +1,94 @@
 <template>
   <div
     class="switch-wrapper d-flex ps-4 flex-row justify-content-between font-body-small font-medium"
-    :class="{'active': switcher}"
+    :class="{ active: switcher }"
   >
     <div
       class="w-50 d-flex top ms-r-4 align-self-center justify-content-center"
       @click="onSwitched(false)"
     >
       <div
-        class="count-wrapper d-flex align-self-center justify-content-center"
         v-if="optionOne.count"
+        class="count-wrapper d-flex align-self-center justify-content-center"
       >
-        <span class="align-self-center">{{optionOne.count}}</span>
+        <span class="align-self-center">{{ optionOne.count }}</span>
       </div>
-      <span class="align-self-center" :class="{'ps-l-16': optionOne.count}">{{optionOne.title}}</span>
+      <span
+        class="align-self-center"
+        :class="{ 'ps-l-16': optionOne.count }"
+      >{{
+        optionOne.title
+      }}</span>
     </div>
     <div
       class="w-50 top d-flex flex-row align-self-center justify-content-center"
       @click="onSwitched(true)"
     >
       <div
-        class="count-wrapper d-flex align-self-center justify-content-center"
         v-if="optionTwo.count"
+        class="count-wrapper d-flex align-self-center justify-content-center"
       >
-        <span class="align-self-center">{{optionTwo.count}}</span>
+        <span class="align-self-center">{{ optionTwo.count }}</span>
       </div>
-      <span class="align-self-center" :class="{'ps-l-16': optionTwo.count}">{{optionTwo.title}}</span>
+      <span
+        class="align-self-center"
+        :class="{ 'ps-l-16': optionTwo.count }"
+      >{{
+        optionTwo.title
+      }}</span>
     </div>
-    <div class="switch align-self-center"></div>
+    <div class="switch align-self-center" />
   </div>
 </template>
 
-
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
     on: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     options: {
       type: Array,
-      required: true
+      required: true,
     },
     onOff: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     onChange: {
       type: Function,
       required: false,
-      default: value => {}
-    }
+      default: (value) => {},
+    },
   },
   components: {},
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class SlideSwitch extends Vue {
   switcher = false;
 
   mounted() {
-    this.switcher = this.on;
+    this.switcher = this.on
   }
 
   onSwitched(value) {
-    this.switcher = value;
-    this.onChange(value);
+    this.switcher = value
+    this.onChange(value)
   }
 
   get optionOne() {
-    return this.options[0];
+    return this.options[0]
   }
+
   get optionTwo() {
-    return this.options[1];
+    return this.options[1]
   }
 }
 </script>

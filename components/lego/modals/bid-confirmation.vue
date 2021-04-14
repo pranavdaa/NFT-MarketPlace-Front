@@ -1,20 +1,36 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bsl="show" v-bind:class="{ show: show }"></div>
-    <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
-      <div class="modal-dialog w-sm-100 align-self-center" role="document">
+    <div
+      v-bsl="show"
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
+    <div
+      class="modal add-token-modal-wrapper"
+      :class="{ show: show }"
+    >
+      <div
+        class="modal-dialog w-sm-100 align-self-center"
+        role="document"
+      >
         <div class="box accept-box">
           <div
             class="box-body"
-            v-bind:style="{
+            :style="{
               background:
                 'linear-gradient( 180deg,' +
                 bg +
                 ' 0%, rgba(236, 235, 223, 0) 80%)',
             }"
           >
-            <div class="close-wrapper" @click="close()">
-              <svg-sprite-icon name="close-modal" class="close" />
+            <div
+              class="close-wrapper"
+              @click="close()"
+            >
+              <svg-sprite-icon
+                name="close-modal"
+                class="close"
+              />
             </div>
             <div class="container-fluid text-center">
               <div class="row">
@@ -37,7 +53,9 @@
                   </div>
                 </div>
                 <div class="col-md-12 ps-y-32">
-                  <div class="font-body-small short-descr">Offered for</div>
+                  <div class="font-body-small short-descr">
+                    Offered for
+                  </div>
                   <div class="amount font-heading-large font-semibold ps-t-4">
                     {{ bid.price }} {{ bid.erc20Token.symbol }}
                   </div>
@@ -53,7 +71,7 @@
                     lg
                     color="primary"
                     :click="accept"
-                  ></button-loader>
+                  />
                 </div>
               </div>
             </div>
@@ -65,12 +83,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
-import rgbToHsl from "~/plugins/helpers/color-algorithm";
-import ColorThief from "color-thief";
-const colorThief = new ColorThief();
+import rgbToHsl from '~/plugins/helpers/color-algorithm'
+import ColorThief from 'color-thief'
+const colorThief = new ColorThief()
 
 @Component({
   props: {
@@ -90,7 +108,7 @@ const colorThief = new ColorThief();
       type: Object,
       required: false,
       default: () => {
-        return { title: "Confirm", loadingTitle: "Accepting..." };
+        return { title: 'Confirm', loadingTitle: 'Accepting...' }
       },
     },
     accept: {
@@ -106,22 +124,24 @@ const colorThief = new ColorThief();
   components: {},
 })
 export default class BidConfirmationModal extends Vue {
-  bg = "#f3f4f7";
+  bg = '#f3f4f7';
 
   mounted() {}
 
   onImageLoad() {
     try {
-      const img = this.$el.querySelector(".asset-img");
-      let rgbColor = colorThief.getColor(img);
+      const img = this.$el.querySelector('.asset-img')
+      const rgbColor = colorThief.getColor(img)
       if (rgbColor) {
-        let hsl = rgbToHsl({
+        const hsl = rgbToHsl({
           r: rgbColor[0],
           g: rgbColor[1],
           b: rgbColor[2],
-        });
-        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+        })
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`
+      } else {
+        this.bg = '#f3f4f7'
+      }
     } catch (error) {}
   }
 }

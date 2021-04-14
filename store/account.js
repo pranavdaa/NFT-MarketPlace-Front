@@ -1,5 +1,5 @@
-import getAxios from '~/plugins/axios';
-import app from '~/plugins/app';
+import getAxios from '~/plugins/axios'
+import app from '~/plugins/app'
 import OrderModel from '~/components/model/order'
 
 export default {
@@ -22,7 +22,7 @@ export default {
       return state.account
     },
     userOrders(state) {
-      return state.userOrders;
+      return state.userOrders
     },
     favouriteOrders(state) {
       return state.favouriteOrders
@@ -38,7 +38,7 @@ export default {
     },
     pendingWithdrawals(state) {
       return state.pendingWithdrawals
-    }
+    },
   },
 
   mutations: {
@@ -62,30 +62,30 @@ export default {
     },
     pendingWithdrawals(state, transactions) {
       state.pendingWithdrawals = transactions
-    }
+    },
   },
 
   actions: {
     async fetchActiveOrders({ commit }) {
       try {
         const user = app.vuexStore.getters['auth/user']
-        let response = await getAxios().get(`users/${user.id}/activeorders`)
+        const response = await getAxios().get(`users/${user.id}/activeorders`)
         if (response.status === 200 && response.data.data.length > 0) {
-          let orders = [];
-          response.data.data.forEach(
-            order => orders.push(new OrderModel(order))
+          const orders = []
+          response.data.data.forEach((order) =>
+            orders.push(new OrderModel(order)),
           )
           commit('userOrders', orders)
         }
-      } catch (error) { }
+      } catch (error) {}
     },
     async fetchFavoritesOrders({ commit }) {
       try {
         const user = app.vuexStore.getters['auth/user']
-        let response = await getAxios().get(`users/${user.id}/favourites`)
+        const response = await getAxios().get(`users/${user.id}/favourites`)
         if (response.status === 200 && response.data.data.length > 0) {
-          let orders = [];
-          response.data.data.forEach(function (fav) {
+          const orders = []
+          response.data.data.forEach(function(fav) {
             fav.orders.image = fav.image
             fav.orders.name = fav.name
             fav.orders.description = fav.description
@@ -94,18 +94,18 @@ export default {
           })
           commit('favouriteOrders', orders)
         }
-      } catch (error) { }
+      } catch (error) {}
     },
     async fetchPendingWithdrawals({ commit }) {
       try {
         const user = app.vuexStore.getters['auth/user']
-        let response = await getAxios().get(
-          `assetmigrate/?user_id=${user.id}&type=["WITHDRAW"]&status=[0,1]`
-        );
+        const response = await getAxios().get(
+          `assetmigrate/?user_id=${user.id}&type=["WITHDRAW"]&status=[0,1]`,
+        )
         if (response.status === 200 && response.data.data) {
           commit('pendingWithdrawals', response.data.data.assetMigrations)
         }
-      } catch (error) { }
-    }
-  }
+      } catch (error) {}
+    },
+  },
 }

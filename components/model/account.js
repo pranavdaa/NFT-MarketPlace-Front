@@ -1,15 +1,16 @@
-import Model from "~/components/model/model"
-import ethjsUtil from 'ethjs-util';
-import { toChecksumAddress } from "ethereumjs-util"
+import Model from '~/components/model/model'
+import ethjsUtil from 'ethjs-util'
+import { toChecksumAddress } from 'ethereumjs-util'
 
-import app from "~/plugins/app"
-import { config as configStore } from "~/plugins/localstore"
+import app from '~/plugins/app'
+import { config as configStore } from '~/plugins/localstore'
 
 export default class Account extends Model {
   // getters
   get name() {
     return (
-      this.label || `Account ${ethjsUtil.stripHexPrefix(this.address).slice(0, 4)}`
+      this.label ||
+      `Account ${ethjsUtil.stripHexPrefix(this.address).slice(0, 4)}`
     )
   }
 
@@ -34,7 +35,7 @@ export default class Account extends Model {
   }
 
   get isMetamaskAccount() {
-    const strategy = configStore.get("loginStrategy")
+    const strategy = configStore.get('loginStrategy')
     if (strategy && strategy === app.strategies.METAMASK) {
       return true
     }

@@ -5,11 +5,21 @@
         class="col-12 col-lg cat-switch d-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
       >
         <categories-selector class="ms-r-16 category-wrapper" />
-        <slide-switch :options="switchItems" :onOff="switchOnOff" :onChange="onSwitched" />
+        <slide-switch
+          :options="switchItems"
+          :onOff="switchOnOff"
+          :onChange="onSwitched"
+        />
       </div>
-      <div class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end">
+      <div
+        class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end"
+      >
         <!-- <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" /> -->
-        <sort-dropdown class="dropdown-filter" :sortItems="sortItems" :change="onSortSelect" />
+        <sort-dropdown
+          class="dropdown-filter"
+          :sortItems="sortItems"
+          :change="onSortSelect"
+        />
       </div>
     </div>
     <div
@@ -155,7 +165,7 @@ export default class MaticTab extends Vue {
   }
 
   sellToken(id) {
-    this.selectedToken = this.tokensFullList.find((token) => token.id == id);
+    this.selectedToken = this.tokensFullList.find((token) => token.id === id);
     this.showSellModal = true;
   }
   onCloseSellModal() {
@@ -260,8 +270,10 @@ export default class MaticTab extends Vue {
         let i = 0;
         response.data.data.forEach((token) => {
           i++;
-          if (token.contract == "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6")
-            return;
+          if (token.contract === "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6") {
+          {
+return;
+}
           token.id = i;
           token.chainId = this.chainId;
           tokens.push(new NFTTokenModel(token));
