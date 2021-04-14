@@ -156,6 +156,20 @@ export default {
     dsn: uiconfig.sentryDsn,
     config: {
       environment: uiconfig.matic.deployment.network,
+      beforeSend: (sentryError) => {
+        /**
+         * Use this function to filter and stop sending
+         * the error events that are not required
+         * or does not belong to us
+         */
+        const errorMessage = sentryError?.exception?.values?.[0]?.value
+
+        if (/jwplayer/gi.test(errorMessage)) {
+          return null
+        }
+
+        return sentryError
+      },
     },
   },
 }
