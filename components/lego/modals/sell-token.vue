@@ -416,13 +416,8 @@ export default class SellToken extends Vue {
   tabs = [
     {
       id: 0,
-<<<<<<< HEAD
-      title: 'Fixed Price',
-      subtitle: this.isErc1155 ? 'Set price per Unit' : 'Set price',
-=======
       title: "List your NFT",
       subtitle: this.isErc1155 ? "Set price per Unit" : "Set price",
->>>>>>> 2f38631e3231171a9e196383e013caa004615af4
       description: this.isErc1155
         ? 'Your asset will be sold at this price for 1 unit. It will be available for sale in marketplace until you cancel it.'
         : 'Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.',
