@@ -26,7 +26,7 @@ export default {
     addUsersMaticCount(state, categories) {
       for (let i = 0; i < state.categories.length; i++) {
         state.categories[i].maticCount =
-          categories[state.categories[i].maticAddress.toLowerCase()]
+          categories[state.categories[i].maticAddress]
       }
     },
     addUsersMainCount(state, categories) {
