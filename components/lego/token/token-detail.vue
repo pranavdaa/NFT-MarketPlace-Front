@@ -223,11 +223,16 @@
                   v-for="attribute in order.token.attributes_metadata"
                 >
                   <div class="d-flex flex-column text-center properties-pill p-3 mb-4">
-                    <p class="property-title m-0 p-0 text-truncate text-capitalize">
-                      {{ attribute.trait_type }}
+                    <p class="property-title m-0 p-0 text-truncate">
+                      {{ attribute.trait_type | pascal }}
                     </p>
                     <p class="property-detail m-0 pt-1 text-truncate">
-                      {{ attribute.value }}
+                      <template v-if="attribute.trait_type === 'birthday'">
+                        {{  attribute.value | date-human }}
+                      </template>
+                      <template v-else>
+                        {{  attribute.value | pascal }}
+                      </template>
                     </p>
                   </div>
                 </div>
