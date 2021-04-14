@@ -122,7 +122,7 @@
                   <div
                     class="align-self-center font-heading-small font-semibold"
                   >
-                    Allow Negotiation?
+                    Negotiation
                   </div>
                   <svg-sprite-icon
                     name="questionmark-black"
@@ -130,10 +130,10 @@
                   />
                 </div>
                 <div class="d-flex ml-auto align-self-center">
-                  <label class="switch align-self-center">
+                  <!-- <label class="switch align-self-center">
                     <input type="checkbox" v-model="negotiation" />
                     <span class="slider round"></span>
-                  </label>
+                  </label> -->
                 </div>
                 <transition name="fade">
                   <div class="col-md-12 p-0" v-if="negotiation">
@@ -367,7 +367,7 @@ const TEN = BigNumber(10);
 export default class SellToken extends Vue {
   activeTab = 0;
   duration = 0;
-  negotiation = false;
+  negotiation = true;
   isLoading = false;
   dirty = false;
   error = "";
@@ -402,7 +402,7 @@ export default class SellToken extends Vue {
   tabs = [
     {
       id: 0,
-      title: "Fixed Price",
+      title: "List your NFT",
       subtitle: this.isErc1155 ? "Set price per Unit" : "Set price",
       description: this.isErc1155
         ? "Your asset will be sold at this price for 1 unit. It will be available for sale in marketplace until you cancel it."
