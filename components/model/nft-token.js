@@ -7,8 +7,8 @@ export default class NFTToken extends Model {
   }
 
   get img_url() {
-    if (this.image) {
-      return this.image
+    if (this.image_url) {
+      return this.image_url
     }
     return ''
   }
