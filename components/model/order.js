@@ -17,6 +17,10 @@ export default class Order extends Model {
     return this.erc20tokens.id
   }
 
+  get external_link(){
+    return this.tokens.external_url
+  }
+
   get token() {
     let img = ''
     let name = `Token ${this.tokens_id}`
