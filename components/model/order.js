@@ -22,14 +22,14 @@ export default class Order extends Model {
     let name = `Token ${this.tokens_id}`
     let owner = ''
     let description = ''
-    if (this.image) {
-      img = this.image
+    if (this.tokens.image_url) {
+      img = this.tokens.image_url
     }
-    if (this.name) {
-      name = this.name
+    if (this.tokens.name) {
+      name = this.tokens.name
     }
-    if (this.description) {
-      description = this.description
+    if (this.tokens.description) {
+      description = this.tokens.description
     }
 
     if (this.seller_users) {
@@ -45,7 +45,7 @@ export default class Order extends Model {
       img_url: img,
       owner: owner,
       description: description,
-      attributes_metadata: this.attributes,
+      attributes_metadata: JSON.parse(JSON.stringify(this.tokens.attributes)),
     }
   }
 
