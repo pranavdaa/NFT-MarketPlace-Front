@@ -32,7 +32,10 @@ export default class NFTToken extends Model {
       name: this.name,
       owner: this.owner,
       img_url: this.img_url,
-      attributes_metadata: this.attributes,
+      attributes_metadata: this.attributes ?
+        typeof (this.attributes) === 'string' ?
+          JSON.parse(this.attributes) : this.attributes
+        : [],
     }
   }
 }

@@ -33,7 +33,11 @@ export default class Order extends Model {
       description = this.tokens.description
     }
     if (this.tokens.attributes) {
-      attributes = this.tokens.attributes
+      if (typeof (this.tokens.attributes) === 'string') {
+        attributes = JSON.parse(this.tokens.attributes)
+      } else {
+        attributes = this.tokens.attributes
+      }
     }
 
     if (this.seller_users) {
@@ -49,7 +53,7 @@ export default class Order extends Model {
       img_url: img,
       owner: owner,
       description: description,
-      attributes_metadata: JSON.parse(JSON.stringify(attributes)),
+      attributes_metadata: attributes,
     }
   }
 
