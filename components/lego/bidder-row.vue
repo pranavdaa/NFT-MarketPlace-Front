@@ -443,7 +443,7 @@ export default class BidderRow extends Vue {
             erc721Proxy: contractWrappers.contractAddresses.erc721Proxy,
             makerAddress: makerAddress,
           })
-          const makerERC721ApprovalTxHash = await erc721TokenCont
+          const makerERC721ApprovalTxHash = await tokenContract
             .setApprovalForAll(
               contractWrappers.contractAddresses.erc721Proxy,
               true,
@@ -480,7 +480,7 @@ export default class BidderRow extends Vue {
             makerAddress: makerAddress,
           })
 
-          const makerERC1155ApprovalTxHash = await cont
+          const makerERC1155ApprovalTxHash = await contract
             .setApprovalForAll(
               contractWrappers.contractAddresses.erc1155Proxy,
               true,

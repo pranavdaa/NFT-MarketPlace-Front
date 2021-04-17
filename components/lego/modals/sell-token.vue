@@ -864,7 +864,7 @@ export default class SellToken extends Vue {
       if (!this.category.isMetaTx) {
         if (!(await this.metamaskValidation())) {
           this.isLoading = false
-          return
+          return false
         }
 
         if (this.isErc721) {
