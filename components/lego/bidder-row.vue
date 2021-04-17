@@ -317,6 +317,7 @@ export default class BidderRow extends Vue {
         )
         if (!isApproved) {
           this.$logger.track('accept-bid-not-approved:bid-options')
+          this.isLoading = false
           return
         }
 
@@ -436,6 +437,11 @@ export default class BidderRow extends Vue {
       }
       console.log('Approving 1', isApprovedForAll)
       if (!isApprovedForAll) {
+        if (!(await this.metamaskValidation())) {
+          this.approveLoading = false
+          return false
+        }
+
         if (this.isErc721) {
           console.log('Approving 2', {
             isApprovedForAll,
@@ -640,6 +646,16 @@ export default class BidderRow extends Vue {
       }
     }
     this.$store.dispatch('category/fetchCategories')
+  }
+
+  async metamaskValidation() {
+    const web3obj = new Web3(window.ethereum)
+    const chainId = await web3obj.eth.getChainId()
+    if (chainId !== this.networks.matic.chainId) {
+        this.error = 'selectMatic';
+        return false;
+    }
+    return true
   }
 }
 </script>

@@ -1107,7 +1107,7 @@ export default class BuyToken extends Vue {
       } else {
         if (!(await this.metamaskValidation())) {
           this.approveLoading = false
-          return
+          return false
         }
         try {
           const amount = new BigNumber(
