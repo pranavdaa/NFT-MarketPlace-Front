@@ -208,6 +208,7 @@ export default class Index extends Vue {
   showModal = false;
 
   mounted() {
+    this.$store.dispatch('page/clearFilters')
     this.$store.dispatch('token/reloadBalances')
 
     if (!localStorage.getItem('WalletSwapFeature')) {
@@ -252,7 +253,8 @@ export default class Index extends Vue {
   }
 
   handleSearchInput(val) {
-    this.$store.commit('page/setSearchString', val)
+    const formattedString = val.trim()
+    this.$store.commit('page/setSearchString', formattedString)
   }
 
   // Get
