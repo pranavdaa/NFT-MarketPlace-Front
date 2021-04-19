@@ -66,7 +66,7 @@
             <search-box
               class="search-box ms-r-0 ms-r-sm-6"
               placeholder="Search NFT..."
-              :change="(val) => (searchInput = val)"
+              :change="handleSearchInput"
             />
             <sort-dropdown
               class="dropdown-filter ms-l-0 ms-l-sm-6"
@@ -87,14 +87,13 @@
           <no-item
             v-else-if="searchedTokens.length === 0 && !isLoadingTokens"
             class="ps-b-120"
-            :message="this.$t('searchNotFound')"
+            :message="$t('searchNotFound')"
           />
 
           <sell-card
             v-for="order in searchedTokens"
             :key="order.id"
             :order="order"
-            :searchInput="searchInput"
           />
         </div>
         <div
@@ -127,23 +126,23 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters, mapState } from "vuex";
-import app from "~/plugins/app";
-import { fuzzysearch } from "~/plugins/helpers/index";
-import { fuzzySearchResult } from "~/plugins/helpers/index";
-import getAxios from "~/plugins/axios";
-import { VueWatch, VueDebounce } from "~/components/decorator";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters, mapState } from 'vuex'
+import app from '~/plugins/app'
+import { fuzzysearch } from '~/plugins/helpers/index'
 
-import SellCard from "~/components/lego/sell-card";
-import CategoriesSelector from "~/components/lego/categories-selector";
-import SearchBox from "~/components/lego/search-box";
-import SortDropdown from "~/components/lego/sort-dropdown";
-import OrderModel from "~/components/model/order";
-import NoItem from "~/components/lego/no-item";
+import getAxios from '~/plugins/axios'
+import { VueWatch, VueDebounce } from '~/components/decorator'
 
-import CategorySidebar from "~/components/lego/account/category-sidebar";
+import SellCard from '~/components/lego/sell-card'
+import CategoriesSelector from '~/components/lego/categories-selector'
+import SearchBox from '~/components/lego/search-box'
+import SortDropdown from '~/components/lego/sort-dropdown'
+import OrderModel from '~/components/model/order'
+import NoItem from '~/components/lego/no-item'
+
+import CategorySidebar from '~/components/lego/account/category-sidebar'
 import NotificationModal from '~/components/lego/notification-modal'
 
 @Component({
@@ -175,6 +174,7 @@ export default class Index extends Vue {
     description: 'We didn’t found any item that is on sale.',
     img: true,
   };
+
   showNotification = false;
 
   sortItems = [
@@ -208,12 +208,11 @@ export default class Index extends Vue {
   showModal = false;
 
   mounted() {
-    // this.updateCategories();
-    // this.fetchOrders();
-    this.$store.dispatch("token/reloadBalances");
+    this.$store.dispatch('page/clearFilters')
+    this.$store.dispatch('token/reloadBalances')
 
     if (!localStorage.getItem('WalletSwapFeature')) {
-      this.onNotificationOpen();
+      this.onNotificationOpen()
     }
   }
 
@@ -237,12 +236,12 @@ export default class Index extends Vue {
   }
 
   onNotificationOpen() {
-    this.showNotification = true;
-    localStorage.setItem('WalletSwapFeature', true);
+    this.showNotification = true
+    localStorage.setItem('WalletSwapFeature', true)
   }
 
   onNotificationClose() {
-    this.showNotification = false;
+    this.showNotification = false
   }
 
   onModalShow() {
@@ -253,28 +252,18 @@ export default class Index extends Vue {
     this.showModal = false
   }
 
+  handleSearchInput(val) {
+    const formattedString = val.trim()
+    this.$store.commit('page/setSearchString', formattedString)
+  }
+
   // Get
   get displayedTokens() {
     return this.orderFullList || []
   }
 
   get searchedTokens() {
-    const searchedTokensList = []
-
-    if (this.searchInput !== null && this.orderFullList.length > 0) {
-      this.orderFullList.forEach((order) => {
-        if (
-          fuzzysearch(this.searchInput, order.name) ||
-          fuzzysearch(this.searchInput, order.tokens_id)
-        ) {
-          searchedTokensList.push(order)
-        }
-      })
-    } else {
-      return this.orderFullList
-    }
-
-    return searchedTokensList
+    return this.orderFullList
   }
 
   get ifCategory() {
@@ -307,10 +296,13 @@ export default class Index extends Vue {
       }
 
       // Fetch tokens with pagination and filters
-      if (this.searchInput !== null && this.searchInput.length > 0) {
+      if (
+        this.selectedFilters.searchString !== null &&
+        this.selectedFilters.searchString.length > 0
+      ) {
         // with search
         response = await getAxios().get(
-          `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}`,
+          `orders/?offset=${offset}&limit=${this.limit}${this.ifCategory}${this.ifSort}&searchString=${this.selectedFilters.searchString}`,
         )
       } else {
         // without search

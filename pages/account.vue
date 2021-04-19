@@ -75,6 +75,7 @@ export default class Index extends Vue {
   showNotification = false;
 
   async mounted() {
+    this.$store.dispatch('page/clearFilters')
     this.fetchTotalTokens();
 
     if (!localStorage.getItem('WalletSwapFeature')) {
