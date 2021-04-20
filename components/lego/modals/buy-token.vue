@@ -73,7 +73,7 @@
                     </div>
                     <div
                       v-if="erc20Token"
-                      class="font-heading-large font-semibold"
+                      class="font-heading-large font-semibold word-break-all"
                     >
                       {{ order.price }} {{ erc20Token.symbol }}
                     </div>
@@ -111,13 +111,13 @@
                     </div>
 
                     <div class="d-flex justify-content-between">
-                      <div>
+                      <div class="ms-r-6">
                         <div class="font-body-small text-gray-300 ps-y-4">
                           Listed for
                         </div>
                         <div
                           v-if="erc20Token"
-                          class="font-heading-large font-semibold"
+                          class="font-heading-large font-semibold word-break-all"
                         >
                           {{ order.price }} {{ erc20Token.symbol }}
                         </div>
@@ -131,12 +131,12 @@
 
                       <div
                         v-if="order.highest_bid"
-                        class="text-right"
+                        class="text-right ms-l-6"
                       >
                         <div class="font-body-small text-gray-300 ps-y-4">
                           Last offer
                         </div>
-                        <div class="font-heading-large font-semibold">
+                        <div class="font-heading-large font-semibold word-break-all">
                           {{ order.highest_bid }} {{ erc20Token.symbol }}
                         </div>
                         <div
@@ -1253,6 +1253,10 @@ export default class BuyToken extends Vue {
 
 .hide-modal {
   opacity: 0;
+}
+
+.word-break-all {
+  word-break: break-all;
 }
 
 .text-gray-900 {
