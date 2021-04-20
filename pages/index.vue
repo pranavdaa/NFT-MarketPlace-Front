@@ -80,18 +80,12 @@
           class="row ps-x-16 ps-y-40 d-flex justify-content-center justify-content-lg-start"
         >
           <no-item
-            v-if="
-              orderFullList.length <= 0 && !isLoadingTokens && !isFirstTimeLoad
-            "
+            v-if="orderFullList.length <= 0 && !isLoadingTokens"
             class="ps-b-120"
             :message="emptyMsg"
           />
           <no-item
-            v-else-if="
-              searchedTokens.length === 0 &&
-                !isLoadingTokens &&
-                !isFirstTimeLoad
-            "
+            v-else-if="searchedTokens.length === 0 && !isLoadingTokens"
             class="ps-b-120"
             :message="$t('searchNotFound')"
           />
@@ -208,8 +202,7 @@ export default class Index extends Vue {
   orderFullList = [];
   hasNextPage = true;
   displayTokens = 0;
-  isLoadingTokens = false;
-  isFirstTimeLoad = true;
+  isLoadingTokens = true;
 
   showModal = false;
 
@@ -287,10 +280,8 @@ export default class Index extends Vue {
   // async
 
   async fetchOrders(options = {}) {
-    this.isFirstTimeLoad = false
-
     // Do not remove data while fetching
-    if (this.isLoadingTokens || !this.hasNextPage) {
+    if (!this.hasNextPage) {
       return
     }
     this.isLoadingTokens = true
