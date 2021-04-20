@@ -80,12 +80,18 @@
           class="row ps-x-16 ps-y-40 d-flex justify-content-center justify-content-lg-start"
         >
           <no-item
-            v-if="orderFullList.length <= 0 && !isLoadingTokens"
+            v-if="
+              orderFullList.length <= 0 && !isLoadingTokens && !isFirstTimeLoad
+            "
             class="ps-b-120"
-            :message="exmptyMsg"
+            :message="emptyMsg"
           />
           <no-item
-            v-else-if="searchedTokens.length === 0 && !isLoadingTokens"
+            v-else-if="
+              searchedTokens.length === 0 &&
+                !isLoadingTokens &&
+                !isFirstTimeLoad
+            "
             class="ps-b-120"
             :message="$t('searchNotFound')"
           />
@@ -160,7 +166,6 @@ import NotificationModal from '~/components/lego/notification-modal'
     ...mapGetters('page', ['selectedFilters', 'selectedCategory']),
     ...mapState('page', ['isCategoryFetching']),
     ...mapGetters('category', ['categories', 'allCategory']),
-    ...mapGetters('token', ['erc20Tokens']),
   },
   middleware: [],
   mixins: [],
@@ -169,7 +174,7 @@ export default class Index extends Vue {
   limit = app.uiconfig.defaultPageSize;
   searchInput = null;
   fuzzysearch = fuzzysearch;
-  exmptyMsg = {
+  emptyMsg = {
     title: 'Oops! No item found.',
     description: 'We didn’t found any item that is on sale.',
     img: true,
@@ -204,6 +209,7 @@ export default class Index extends Vue {
   hasNextPage = true;
   displayTokens = 0;
   isLoadingTokens = false;
+  isFirstTimeLoad = true;
 
   showModal = false;
 
@@ -281,6 +287,8 @@ export default class Index extends Vue {
   // async
 
   async fetchOrders(options = {}) {
+    this.isFirstTimeLoad = false
+
     // Do not remove data while fetching
     if (this.isLoadingTokens || !this.hasNextPage) {
       return
