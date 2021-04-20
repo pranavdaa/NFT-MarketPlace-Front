@@ -25,9 +25,9 @@
                   <div class="banner-info__title text-center" v-if="false">
                   </div>
                   <div class="banner-info__desc text-center ps-x-4 ps-t-12">
-                    <span class="text-highlight">WETH &lt;&gt; PoS-WETH Swap</span> is now available at <a href="https://wallet.matic.network/" target="_blank" rel="noopener noreferrer">wallet.matic.network</a>. Those who incorrectly deposited WETH from Ethereum to Matic can use this to get the PoS-WETH. PoS WETH is needed for trading on <a href="https://matic.opensea.io/" rel="noopener noreferrer">matic.opensea.io</a>.
+                    <span class="text-highlight">WETH &lt;&gt; PoS-ETH Swap</span> is now available at <a href="https://wallet.matic.network/" target="_blank" rel="noopener noreferrer">wallet.matic.network</a>. Those who incorrectly deposited WETH from Ethereum to Matic can use this to get the PoS-ETH. PoS-ETH is needed for trading on <a href="https://matic.opensea.io/" rel="noopener noreferrer">matic.opensea.io</a>.
                     <br/> <br/>
-                    <span class="text-highlight">Please Note:</span> Depositing Ether from Ethereum to Matic using <a href="https://wallet.matic.network/" target="_blank" rel="noopener noreferrer">wallet.matic.network</a> will give you PoS WETH on Matic.
+                    <span class="text-highlight">Please Note:</span> Depositing Ether from Ethereum to Matic using <a href="https://wallet.matic.network/" target="_blank" rel="noopener noreferrer">wallet.matic.network</a> will give you PoS-ETH on Matic.
                   </div>
                   <div
                     class="banner-info__action text-center ps-t-32"
