@@ -57,13 +57,13 @@
         class="d-flex flex-column align-self-center ms-r-32 justify-content-start"
       >
         <div class="white-color name ps-b-4 font-heading-small font-semibold">
-          {{ $t("account.banner.WETHBalance") }}
+          {{ $t("account.banner.ETHBalance") }}
         </div>
         <div
-          v-if="erc20TokenBySymbol('WETH')"
+          v-if="erc20TokenBySymbol('ETH')"
           class="white-color amount font-body-medium text-right"
         >
-          {{ formattedFullUSDBalance("WETH") }}
+          {{ formattedFullUSDBalance("ETH") }}
         </div>
       </div>
       <div

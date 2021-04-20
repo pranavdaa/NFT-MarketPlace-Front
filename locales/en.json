@@ -36,7 +36,7 @@
     },
     "banner": {
       "totalNft": "Total NFT",
-      "WETHBalance": "WETH",
+      "ETHBalance": "ETH",
       "DAIBalance": "DAI",
       "USDCBalance": "USDC",
       "depositWeth": "Add Funds"
@@ -46,15 +46,15 @@
       "options": {
         "buy": {
           "title": "Buy from Transak",
-          "description": "You can buy WETH/DAI from Transak, directly to your Matic wallet."
+          "description": "You can buy ETH/DAI from Transak, directly to your Matic wallet."
         },
         "deposit": {
           "title": "Deposit from Mainnet",
-          "description": "Deposit ETH/DAI from your Ethereum wallet to Matic wallet to get WETH/DAI on Matic"
+          "description": "Deposit ETH/DAI from your Ethereum wallet to Matic wallet to get ETH/DAI on Matic"
         },
         "transfer": {
           "title": "Transfer from another wallet",
-          "description": "You can transfer WETH/DAI to your wallet if you have WETH/DAI in another Matic wallet."
+          "description": "You can transfer ETH/DAI to your wallet if you have ETH/DAI in another Matic wallet."
         }
       }
     }

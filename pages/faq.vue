@@ -79,7 +79,7 @@
             <accordion-item :accordionItem="accordion">
               <template slot="accordion-header">
                 <div class="font-body-medium">
-                  How to get WETH/DAI on Matic?
+                  How to get ETH/DAI on Matic?
                 </div>
                 <span class="spin">+</span>
               </template>
@@ -91,7 +91,7 @@
                     href="https://docs.matic.network/docs/develop/wallets/matic-web-wallet/deposit-eth-dai-on-matic"
                     target="_blank"
                   >guide</a>
-                  to understand how to get WETH/DAI on Matic. They can also be
+                  to understand how to get ETH/DAI on Matic. They can also be
                   purchased directly on the Matic chain using the fiat on-ramp
                   provider
                   <a
@@ -158,7 +158,7 @@ const FAQS = [
   {
     question:
       'How can I buy NFTs on this marketplace? Which ERC20 tokens are supported?',
-    answer: 'You can purchase NFTs on this marketplace with WETH and DAI.',
+    answer: 'You can purchase NFTs on this marketplace with ETH and DAI.',
   },
   {
     question: 'How do I list NFTs for sale in this marketplace?',
@@ -197,7 +197,7 @@ const FAQS = [
   {
     question: "What can be used to buy NFT's ? ",
     answer:
-      "ERC20 tokens are required to buy the NFT's on the NFT Marketplace. Currently only WETH and DAI are supported.",
+      "ERC20 tokens are required to buy the NFT's on the NFT Marketplace. Currently only ETH and DAI are supported.",
   },
   {
     question: 'How can I get ERC20 tokens on Matic?',
