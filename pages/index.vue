@@ -82,7 +82,7 @@
           <no-item
             v-if="orderFullList.length <= 0 && !isLoadingTokens"
             class="ps-b-120"
-            :message="exmptyMsg"
+            :message="emptyMsg"
           />
           <no-item
             v-else-if="searchedTokens.length === 0 && !isLoadingTokens"
@@ -160,7 +160,6 @@ import NotificationModal from '~/components/lego/notification-modal'
     ...mapGetters('page', ['selectedFilters', 'selectedCategory']),
     ...mapState('page', ['isCategoryFetching']),
     ...mapGetters('category', ['categories', 'allCategory']),
-    ...mapGetters('token', ['erc20Tokens']),
   },
   middleware: [],
   mixins: [],
@@ -169,7 +168,7 @@ export default class Index extends Vue {
   limit = app.uiconfig.defaultPageSize;
   searchInput = null;
   fuzzysearch = fuzzysearch;
-  exmptyMsg = {
+  emptyMsg = {
     title: 'Oops! No item found.',
     description: 'We didn’t found any item that is on sale.',
     img: true,
@@ -203,7 +202,7 @@ export default class Index extends Vue {
   orderFullList = [];
   hasNextPage = true;
   displayTokens = 0;
-  isLoadingTokens = false;
+  isLoadingTokens = true;
 
   showModal = false;
 
@@ -282,7 +281,7 @@ export default class Index extends Vue {
 
   async fetchOrders(options = {}) {
     // Do not remove data while fetching
-    if (this.isLoadingTokens || !this.hasNextPage) {
+    if (!this.hasNextPage) {
       return
     }
     this.isLoadingTokens = true
