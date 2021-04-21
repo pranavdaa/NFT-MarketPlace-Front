@@ -404,7 +404,7 @@ const TEN = BigNumber(10)
   components: { InputToken, PlaceBid, ApproveProcess, DepositWeth },
   computed: {
     ...mapGetters('token', ['erc20Tokens', 'selectedERC20Token']),
-    ...mapGetters('network', ['networks']),
+    ...mapGetters('network', ['networks', 'networkMeta']),
     ...mapGetters('account', ['account']),
     ...mapGetters('auth', ['user']),
   },
@@ -1189,8 +1189,14 @@ export default class BuyToken extends Vue {
       ),
       data,
     })
+    const erc20ContractInstance = new matic.eth.Contract(
+      this.networkMeta.abi('ChildERC20', 'pos'),
+      this.order.erc20tokens.erc20tokensaddresses[0].address
+    )
+    const name = await erc20ContractInstance.methods.name().call();
+
     const dataToSign = getTypedData({
-      name: this.order.erc20tokens.name,
+      name: name,
       version: '1',
       salt: app.uiconfig.SALT,
       verifyingContract: matic.utils.toChecksumAddress(
