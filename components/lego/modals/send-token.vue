@@ -413,7 +413,6 @@ export default class SendToken extends Vue {
             .sendTransactionAsync({
               from: this.account.address,
               gas: 1000000,
-              gasPrice: 1000000000,
             })
           if (erc721TransferTxHash) {
             // console.log("Transfer Hash", erc721TransferTxHash);
@@ -451,7 +450,6 @@ export default class SendToken extends Vue {
             .send({
               from: this.account.address,
               gas: 1000000,
-              gasPrice: 1000000000,
             })
           if (erc1155TransferTxHash) {
             this.refreshNFTTokens()

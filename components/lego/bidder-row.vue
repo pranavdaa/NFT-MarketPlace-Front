@@ -457,7 +457,6 @@ export default class BidderRow extends Vue {
             .sendTransactionAsync({
               from: makerAddress,
               gas: 100000,
-              gasPrice: 1000000000,
             })
           console.log('Approving 2')
           if (makerERC721ApprovalTxHash) {
@@ -494,7 +493,6 @@ export default class BidderRow extends Vue {
             .send({
               from: makerAddress,
               gas: 100000,
-              gasPrice: 1000000000,
             })
           console.log('Approving 2')
           if (makerERC1155ApprovalTxHash) {
