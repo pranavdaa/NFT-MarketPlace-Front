@@ -1118,7 +1118,6 @@ export default class BuyToken extends Vue {
             .sendTransactionAsync({
               from: this.account.address,
               gas: 100000,
-              gasPrice: 1000000000,
             })
           if (erc20Approve) {
             console.log('Approved')
