@@ -20,23 +20,29 @@
             class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             :style="{ background: bg }"
           >
+            <img
+              v-if="checkImageFormat(token.img_url) || isNotVideoFormat"
+              class="asset-img align-self-center"
+              :src="token.img_url"
+              alt="Token Image"
+              @load="onImageLoad"
+              @error="imageLoadError"
+            >
             <video
-              v-if="isVideoFormat"
-              controls
+              v-else
               autoplay
               muted
               loop
               height="500px"
+              :poster="token.img_url"
             >
               <source
                 :src="token.img_url"
                 type="video/webm"
-                @error="handleNotVideo"
               >
               <source
                 :src="token.img_url"
                 type="video/ogg"
-                @error="handleNotVideo"
               >
               <source
                 :src="token.img_url"
@@ -44,14 +50,6 @@
                 @error="handleNotVideo"
               >
             </video>
-            <img
-              v-else
-              class="asset-img align-self-center"
-              :src="token.img_url"
-              alt="Kitty"
-              @load="onImageLoad"
-              @error="imageLoadError"
-            >
           </div>
           <div class="details-section">
             <div
@@ -295,6 +293,8 @@ import ColorThief from 'color-thief'
 import { providerEngine } from '~/plugins/helpers/provider-engine'
 const colorThief = new ColorThief()
 
+const imageExtensions = ['gif', 'png', 'svg', 'jpg', 'jpeg']
+
 @Component({
   props: {
     tokenId: {
@@ -335,9 +335,9 @@ export default class NftDetail extends Vue {
 
   isLoadingDetails = false;
   isLoading = false;
-  isVideoFormat = true;
   showSellModal = false;
   showSendModal = false;
+  isNotVideoFormat = false;
 
   token = {};
 
@@ -370,10 +370,6 @@ export default class NftDetail extends Vue {
     event.target.style.width = '100px'
   }
 
-  handleNotVideo() {
-    this.isVideoFormat = false
-  }
-
   onCloseSellModal() {
     this.showSellModal = false
   }
@@ -392,6 +388,30 @@ export default class NftDetail extends Vue {
 
   async refreshNFTTokens() {
     this.$router.push({ name: 'account' })
+  }
+
+  checkImageFormat(imgUrl) {
+    let imgExt = imgUrl.substr((imgUrl.lastIndexOf('.') + 1))
+    if (imageExtensions.includes(imgExt)) {
+      return true
+    }
+
+    return false
+  }
+
+  handleNotVideo() {
+    const image = new Image()
+    image.src = this.token.img_url
+    image.onload = () => { this.isNotVideoFormat = true }
+    image.onerror = () => {
+      const image = document.createElement('img')
+      image.src = this.category.img_url;
+      document.querySelector('.feature-image').appendChild(image)
+      image.style.width = '200px'
+      image.style.height = '200px'
+      image.classList.add("asset-img", "align-self-center")
+      document.getElementsByTagName("VIDEO")[0].style.display = "none"
+    }
   }
 
   // Get
