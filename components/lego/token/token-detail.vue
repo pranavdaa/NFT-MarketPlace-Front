@@ -4,7 +4,7 @@
       v-if="order.id && !isLoadingDetails"
       class="container-fluid ps-y-16"
     >
-      <div class="row ps-y-16 ps-x-md-16">
+      <div class="row ps-y-16 ps-x-md-16 justify-content-between">
         <div class="col-md-7 d-flex">
           <token-short-info
             v-if="category"
@@ -31,6 +31,9 @@
             <span>Share</span>
           </a>
         </div>
+        <a :href="createOpenseaUrl" rel="noopener noreferrer" target="_blank" class="align-self-center">
+          <img src="~/static/icons/opensea.svg" class="os-icon ps-r-16" alt="OS">
+        </a>
       </div>
       <div class="row ps-y-16 ps-x-md-16 justify-content-center">
         <div class="col-md-8 h-100">
@@ -38,23 +41,29 @@
             class="feature-image d-flex d-lg-flex justify-content-center mb-4"
             :style="{ background: bg }"
           >
+            <img
+              v-if="checkImageFormat(order.token.img_url) || isNotVideoFormat"
+              class="asset-img align-self-center"
+              :src="order.token.img_url"
+              alt="Token Image"
+              @load="onImageLoad"
+              @error="imageLoadError"
+            >
             <video
-              v-if="isVideoFormat"
-              controls
+              v-else
               autoplay
               muted
               loop
               height="500px"
+              :poster="order.token.img_url"
             >
               <source
                 :src="order.token.img_url"
                 type="video/webm"
-                @error="handleNotVideo"
               >
               <source
                 :src="order.token.img_url"
                 type="video/ogg"
-                @error="handleNotVideo"
               >
               <source
                 :src="order.token.img_url"
@@ -62,14 +71,6 @@
                 @error="handleNotVideo"
               >
             </video>
-            <img
-              v-else
-              class="asset-img align-self-center"
-              :src="order.token.img_url"
-              alt="Kitty"
-              @load="onImageLoad"
-              @error="imageLoadError"
-            >
           </div>
           <div
             class="feature-info mobile d-flex d-lg-none flex-column ps-16 ps-lg-40 ms-y-16"
@@ -477,6 +478,8 @@ import ColorThief from 'color-thief'
 import { providerEngine } from '~/plugins/helpers/provider-engine'
 const colorThief = new ColorThief()
 
+const imageExtensions = ['gif', 'png', 'svg', 'jpg', 'jpeg']
+
 // 0X
 const {
   ContractWrappers,
@@ -535,7 +538,7 @@ export default class TokenDetail extends Vue {
   isLoadingBids = false;
   isLoadingDetails = false;
   isLoading = false;
-  isVideoFormat = true;
+  isNotVideoFormat = false;
 
   order = {};
 
@@ -643,6 +646,10 @@ export default class TokenDetail extends Vue {
     return !(this.order.status === 3)
   }
 
+  get createOpenseaUrl() {
+    return `https://opensea.io/assets/matic/${this.order.categories.categoriesaddresses[0].address}/${this.order.tokens_id}`
+  }
+
   // async
   async fetchOrder() {
     if (!this.tokenId || this.isLoadingDetails) {
@@ -718,8 +725,28 @@ export default class TokenDetail extends Vue {
     event.target.style.width = '100px'
   }
 
+  checkImageFormat(imgUrl) {
+    let imgExt = imgUrl.substr((imgUrl.lastIndexOf('.') + 1))
+    if (imageExtensions.includes(imgExt)) {
+      return true
+    }
+
+    return false
+  }
+
   handleNotVideo() {
-    this.isVideoFormat = false
+    const image = new Image()
+    image.src = this.order.token.img_url
+    image.onload = () => { this.isNotVideoFormat = true }
+    image.onerror = () => {
+      const image = document.createElement('img')
+      image.src = this.category.img_url;
+      document.querySelector('.feature-image').appendChild(image)
+      image.style.width = '200px'
+      image.style.height = '200px'
+      image.classList.add("asset-img", "align-self-center")
+      document.getElementsByTagName("VIDEO")[0].style.display = "none"
+    }
   }
 
   async cancelOrder() {
@@ -880,6 +907,12 @@ export default class TokenDetail extends Vue {
     max-height: 380px;
   }
 }
+
+.os-icon {
+  height: 64px;
+  width: 64px;
+}
+
 .feature-info {
   &.mobile {
     min-height: auto;
