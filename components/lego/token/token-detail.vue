@@ -4,7 +4,7 @@
       v-if="order.id && !isLoadingDetails"
       class="container-fluid ps-y-16"
     >
-      <div class="row ps-y-16 ps-x-md-16">
+      <div class="row ps-y-16 ps-x-md-16 justify-content-between">
         <div class="col-md-7 d-flex">
           <token-short-info
             v-if="category"
@@ -31,6 +31,9 @@
             <span>Share</span>
           </a>
         </div>
+        <a :href="createOpenseaUrl" rel="noopener noreferrer" target="_blank" class="align-self-center">
+          <img src="~/static/icons/opensea.svg" class="os-icon ps-r-16" alt="OS">
+        </a>
       </div>
       <div class="row ps-y-16 ps-x-md-16 justify-content-center">
         <div class="col-md-8 h-100">
@@ -722,6 +725,10 @@ export default class TokenDetail extends Vue {
     this.isVideoFormat = false
   }
 
+  get createOpenseaUrl() {
+    return `https://opensea.io/assets/matic/${this.order.categories.categoriesaddresses[0].address}/${this.order.tokens_id}`
+  }
+
   async cancelOrder() {
     this.isLoading = true
     try {
@@ -880,6 +887,12 @@ export default class TokenDetail extends Vue {
     max-height: 380px;
   }
 }
+
+.os-icon {
+  height: 64px;
+  width: 64px;
+}
+
 .feature-info {
   &.mobile {
     min-height: auto;
