@@ -30,7 +30,7 @@ export default {
 @import "~assets/css/theme/_theme";
 
 .nuxt-section {
-  margin-top: $navbar-local-height;
+  margin-top: 169px; //$navbar-local-height;
 }
 
 .logo-container {
@@ -46,10 +46,17 @@ export default {
   height: 24px;
 }
 .content-container {
-  margin-top: $navbar-local-height;
+  margin-top: 169px; //$navbar-local-height;
 }
 
 @media (max-width: 768px) {
+  .nuxt-section {
+    margin-top: 300px; //$navbar-local-height;
+  }
+  .content-container {
+    margin-top: 300px; //$navbar-local-height;
+  }
+
   .logo-container {
     height: 60px;
     box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.05);
