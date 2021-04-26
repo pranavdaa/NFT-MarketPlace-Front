@@ -85,10 +85,10 @@ export default {
   plugins: [
     { src: '~/plugins/i18n', ssr: false }, // i18n initialize
     { src: '~/plugins/v-body-scroll-lock', ssr: false }, // Vue Body Scroll Lock initialize
+    { src: '~/plugins/vue-tooltip', ssr: false }, // Adds v-tooltip prop
 
     { src: '~/plugins/auxillary', ssr: false }, // Vue auxillary :)
     { src: '~/plugins/app-init', ssr: false }, // Initialize local app
-    { src: '~/plugins/vue-tooltip', ssr: false }, // Adds v-tooltip prop
   ],
   /*
    ** Nuxt.js dev-modules

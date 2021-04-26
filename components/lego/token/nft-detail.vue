@@ -13,8 +13,8 @@
             :category="category"
           />
         </div>
-        <a :href="createOpenseaUrl" v-tooltip.left="'View on OpenSea'" rel="noopener noreferrer" target="_blank" class="align-self-center ps-x-16 ps-x-md-0">
-          <img src="~/static/icons/opensea.svg" class="os-icon ps-r-16" alt="OS">
+        <a :href="openseaUrl" v-tooltip.left="'View on OpenSea'" rel="noopener noreferrer" target="_blank" class="align-self-center ps-x-16 ps-x-md-0">
+          <img src="~/static/icons/opensea.svg" class="opensea-icon ps-r-16" alt="OS">
         </a>
       </div>
       <div class="row ps-y-16 ps-x-md-16 justify-content-center">
@@ -443,7 +443,7 @@ export default class NftDetail extends Vue {
     )
   }
 
-  get createOpenseaUrl() {
+  get openseaUrl() {
     return `https://opensea.io/assets/matic/${this.category.address}/${this.token.token_id}`
   }
 
@@ -499,7 +499,7 @@ export default class NftDetail extends Vue {
     max-height: 380px;
   }
 }
-.os-icon {
+.opensea-icon {
   height: 64px;
   width: 64px;
 }

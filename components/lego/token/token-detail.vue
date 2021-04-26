@@ -31,8 +31,8 @@
             <span>Share</span>
           </a>
         </div>
-        <a :href="createOpenseaUrl" v-tooltip.left="'View on OpenSea'" rel="noopener noreferrer" target="_blank" class="align-self-center ps-x-16 ps-x-md-0">
-          <img src="~/static/icons/opensea.svg" class="os-icon ps-r-16" alt="OS">
+        <a :href="openseaUrl" v-tooltip.left="'View on OpenSea'" rel="noopener noreferrer" target="_blank" class="align-self-center ps-x-16 ps-x-md-0">
+          <img src="~/static/icons/opensea.svg" class="opensea-icon ps-r-16" alt="OS">
         </a>
       </div>
       <div class="row ps-y-16 ps-x-md-16 justify-content-center">
@@ -646,7 +646,7 @@ export default class TokenDetail extends Vue {
     return !(this.order.status === 3)
   }
 
-  get createOpenseaUrl() {
+  get openseaUrl() {
     return `https://opensea.io/assets/matic/${this.order.categories.categoriesaddresses[0].address}/${this.order.tokens_id}`
   }
 
@@ -908,7 +908,7 @@ export default class TokenDetail extends Vue {
   }
 }
 
-.os-icon {
+.opensea-icon {
   height: 64px;
   width: 64px;
 }
