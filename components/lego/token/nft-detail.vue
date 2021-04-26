@@ -4,7 +4,7 @@
       v-if="token.token_id && !isLoadingDetails"
       class="container-fluid ps-y-16"
     >
-      <div class="row ps-y-16 ps-x-md-16">
+      <div class="row ps-y-16 ps-x-md-16 justify-content-between">
         <div class="col-md-7 d-flex">
           <token-short-info
             v-if="category"
@@ -13,6 +13,9 @@
             :category="category"
           />
         </div>
+        <a :href="createOpenseaUrl" rel="noopener noreferrer" target="_blank" class="align-self-center ps-x-16 ps-x-md-0">
+          <img src="~/static/icons/opensea.svg" class="os-icon ps-r-16" alt="OS">
+        </a>
       </div>
       <div class="row ps-y-16 ps-x-md-16 justify-content-center">
         <div class="col-md-8 h-100">
@@ -440,6 +443,10 @@ export default class NftDetail extends Vue {
     )
   }
 
+  get createOpenseaUrl() {
+    return `https://opensea.io/assets/matic/${this.category.address}/${this.token.token_id}`
+  }
+
   // async
   async fetchNFTTokens() {
     if (!this.tokenId || this.isLoadingDetails) {
@@ -491,6 +498,10 @@ export default class NftDetail extends Vue {
     max-width: 90%;
     max-height: 380px;
   }
+}
+.os-icon {
+  height: 64px;
+  width: 64px;
 }
 .feature-info {
   &.mobile {
