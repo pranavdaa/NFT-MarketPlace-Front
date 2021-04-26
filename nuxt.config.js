@@ -88,6 +88,7 @@ export default {
 
     { src: '~/plugins/auxillary', ssr: false }, // Vue auxillary :)
     { src: '~/plugins/app-init', ssr: false }, // Initialize local app
+    { src: '~/plugins/vue-tooltip', ssr: false }, // Adds v-tooltip prop
   ],
   /*
    ** Nuxt.js dev-modules

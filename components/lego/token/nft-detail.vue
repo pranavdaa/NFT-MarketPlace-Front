@@ -13,7 +13,7 @@
             :category="category"
           />
         </div>
-        <a :href="createOpenseaUrl" rel="noopener noreferrer" target="_blank" class="align-self-center ps-x-16 ps-x-md-0">
+        <a :href="createOpenseaUrl" v-tooltip.left="'View on OpenSea'" rel="noopener noreferrer" target="_blank" class="align-self-center ps-x-16 ps-x-md-0">
           <img src="~/static/icons/opensea.svg" class="os-icon ps-r-16" alt="OS">
         </a>
       </div>
