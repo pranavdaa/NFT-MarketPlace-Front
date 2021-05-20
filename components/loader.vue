@@ -1,17 +1,16 @@
 <template>
   <div class="wrapper py-5 d-flex justify-content-center">
-    <span class="spinner my-5"></span>
+    <span class="spinner my-5" />
   </div>
 </template>
 
-
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {},
-  components: {}
+  components: {},
 })
 export default class Loader extends Vue {}
 </script>

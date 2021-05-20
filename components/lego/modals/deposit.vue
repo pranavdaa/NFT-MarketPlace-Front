@@ -1,11 +1,14 @@
 <template>
   <div class="section position-absolute">
     <div
-      class="modal receive-modal-wrapper"
       v-bsl="show"
-      v-bind:class="{ show: show && !hidden }"
+      class="modal receive-modal-wrapper"
+      :class="{ show: show && !hidden }"
     >
-      <div class="modal-dialog w-sm-100 align-self-center" role="document">
+      <div
+        class="modal-dialog w-sm-100 align-self-center"
+        role="document"
+      >
         <div class="box deposit-box">
           <div class="box-header justify-content-center">
             <div
@@ -14,13 +17,13 @@
               {{ $t("deposit.title") }}
             </div>
             <span
-              @click="onCancel()"
               class="left-arrow align-self-center float-right cursor-pointer"
+              @click="onCancel()"
             >
               <svg-sprite-icon
                 name="close"
                 class="close align-self-center float-left cursor-pointer"
-              ></svg-sprite-icon>
+              />
             </span>
           </div>
           <div class="box-body">
@@ -33,12 +36,15 @@
                 :onSelectionChange="onSelectionChange"
               />
 
-              <div class="row ps-x-32 ps-b-8" v-if="error">
+              <div
+                v-if="error"
+                class="row ps-x-32 ps-b-8"
+              >
                 <div
                   class="font-body-small text-danger text-center mx-auto"
                   v-html="error"
-                ></div>
-                <div class="mx-auto text-gray-300 font-caption"></div>
+                />
+                <div class="mx-auto text-gray-300 font-caption" />
               </div>
               <div class="row p-0">
                 <div class="col-12 p-0 d-flex justify-content-space-between">
@@ -52,7 +58,7 @@
                     :text="'Deposit to Matic Network'"
                     :click="approveForDeposit"
                     :disabled="selectedTokens.length <= 0"
-                  ></button-loader>
+                  />
                 </div>
               </div>
             </div>
@@ -69,23 +75,25 @@
       :cancel="onCloseConfirmDeposit"
       :refreshBalance="refreshBalance"
     />
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
   </div>
 </template>
 
-
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
-import app from "~/plugins/app";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
+import app from '~/plugins/app'
 
-import getBaseAxios from "~/plugins/axios";
-import { getWalletProvider } from "~/plugins/helpers/providers";
-const MaticPOSClient = require("@maticnetwork/maticjs").MaticPOSClient;
+import getBaseAxios from '~/plugins/axios'
+import { getWalletProvider } from '~/plugins/helpers/providers'
 
-import DepositConfirmationModal from "~/components/lego/modals/deposit-confirmation-modal";
-import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
+import DepositConfirmationModal from '~/components/lego/modals/deposit-confirmation-modal'
+import TokenVerticleList from '~/components/lego/modals/token-verticle-list'
+const MaticPOSClient = require('@maticnetwork/maticjs').MaticPOSClient
 
 @Component({
   props: {
@@ -122,9 +130,9 @@ import TokenVerticleList from "~/components/lego/modals/token-verticle-list";
   },
   methods: {},
   computed: {
-    ...mapGetters("account", ["account"]),
-    ...mapGetters("network", ["networks", "networkMeta"]),
-    ...mapGetters("page", ["selectedCategory"]),
+    ...mapGetters('account', ['account']),
+    ...mapGetters('network', ['networks', 'networkMeta']),
+    ...mapGetters('page', ['selectedCategory']),
   },
 })
 export default class Deposit extends Vue {
@@ -137,100 +145,107 @@ export default class Deposit extends Vue {
   lastCategory = {};
 
   async mounted() {
-    this.selectedTokens = this.preSelectedTokens;
+    this.selectedTokens = this.preSelectedTokens
   }
 
   // Getters
   get showTokenList() {
-    return this.show && this.selectingTokens;
+    return this.show && this.selectingTokens
   }
+
   get parentNetwork() {
-    return this.networks.main;
+    return this.networks.main
   }
+
   get childNetwork() {
-    return this.networks.matic;
+    return this.networks.matic
   }
+
   get networkID() {
-    return this.parentNetwork.chainId;
+    return this.parentNetwork.chainId
   }
+
   get category() {
     if (this.selectedCategory) {
-      this.lastCategory = this.selectedCategory;
-      return this.selectedCategory;
+      this.lastCategory = this.selectedCategory
+      return this.selectedCategory
     } else if (this.selectedTokens && this.selectedTokens.length > 0) {
-      this.lastCategory = this.selectedTokens[0].category;
-      return this.selectedTokens[0].category;
+      this.lastCategory = this.selectedTokens[0].category
+      return this.selectedTokens[0].category
     }
-    return null;
+    return null
   }
 
   getMaticPOS() {
     const maticProvider = getWalletProvider({
       networks: this.networks,
-      primaryProvider: "child",
-    });
+      primaryProvider: 'child',
+    })
     const parentProvider = getWalletProvider({
       networks: this.networks,
-      primaryProvider: "main",
-    });
+      primaryProvider: 'main',
+    })
 
     return new MaticPOSClient({
       network: app.uiconfig.matic.deployment.network,
       version: app.uiconfig.matic.deployment.version,
       parentProvider,
       maticProvider,
-    });
+    })
   }
 
   // Handlers
   onCancel() {
-    this.cancel();
+    this.cancel()
   }
+
   onSelectionChange(tokens) {
-    this.selectedTokens = tokens;
+    this.selectedTokens = tokens
   }
+
   async approveForDeposit() {
     if (this.isLoading || this.selectedTokens.length <= 0) {
-      return;
+      return
     }
 
     try {
-      this.isLoading = true;
-      this.showDepositConfirmation = true;
-      this.hidden = true;
+      this.isLoading = true
+      this.showDepositConfirmation = true
+      this.hidden = true
 
-      const maticPoS = this.getMaticPOS();
-      const ERC721 = this.selectedTokens[0].contract;
+      const maticPoS = this.getMaticPOS()
+      const ERC721 = this.selectedTokens[0].contract
 
       const isApproved = await maticPoS.isApprovedAllERC721ForDeposit(
         ERC721,
         this.account.address,
         {
           from: this.account.address,
-        }
-      );
+        },
+      )
       if (isApproved) {
-        this.isLoading = false;
+        this.isLoading = false
       } else {
-        let txHash = await maticPoS.approveAllERC721ForDeposit(ERC721, {
+        const txHash = await maticPoS.approveAllERC721ForDeposit(ERC721, {
           from: this.account.address,
-        });
+        })
         if (txHash) {
-          console.log("approve transaction", txHash);
-          this.isLoading = false;
+          console.log('approve transaction', txHash)
+          this.isLoading = false
         }
       }
     } catch (error) {
-      console.log(error);
-      this.error = error.message;
-      this.isLoading = false;
-      this.showDepositConfirmation = false;
-      this.hidden = false;
+      console.log(error)
+      this.error = error.message
+      this.isLoading = false
+      this.showDepositConfirmation = false
+      this.hidden = false
     }
   }
+
   onCloseConfirmDeposit() {
-    this.showDepositConfirmation = false;
-    this.cancel();
+    this.showDepositConfirmation = false
+    this.cancel()
   }
 }
 </script>

@@ -1,19 +1,17 @@
-import { toChecksumAddress } from "ethereumjs-util"
+import { toChecksumAddress } from 'ethereumjs-util'
 
-import Model from "~/components/model/model"
-import app from "~/plugins/app"
+import Model from '~/components/model/model'
+import app from '~/plugins/app'
 
 export default class Category extends Model {
-
   get checksumAddress() {
     return this.address && toChecksumAddress(this.address)
   }
 
-
   get addresses() {
-    let addresses = {}
+    const addresses = {}
     if (this.categoriesaddresses) {
-      this.categoriesaddresses.forEach(address => {
+      this.categoriesaddresses.forEach((address) => {
         addresses[address.chain_id] = address.address
       })
     }
@@ -43,6 +41,7 @@ export default class Category extends Model {
     }
     return null
   }
+
   get mainAddress() {
     if (app.ethereumNetworks) {
       return this.addresses[app.ethereumNetworks.main.chainId]

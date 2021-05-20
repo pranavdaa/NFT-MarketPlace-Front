@@ -37,7 +37,7 @@ export function fuzzysearch(rawNeedle, rawHaystack) {
   }
 
   outer: for (let i = 0, j = 0; i < nlen; i++) {
-    var nch = needle.charCodeAt(i)
+    const nch = needle.charCodeAt(i)
     while (j < hlen) {
       if (haystack.charCodeAt(j++) === nch) {
         continue outer
@@ -50,7 +50,7 @@ export function fuzzysearch(rawNeedle, rawHaystack) {
 }
 
 export function fuzzySearchResult(inputVal, tokensList) {
-  let searchedTokensList = [];
+  const searchedTokensList = []
 
   tokensList.forEach((token) => {
     if (
@@ -59,11 +59,11 @@ export function fuzzySearchResult(inputVal, tokensList) {
       (token.token_id ? fuzzysearch(inputVal, token.token_id) : false) ||
       (token.category.name ? fuzzysearch(inputVal, token.category.name) : false)
     ) {
-      searchedTokensList.push(token);
+      searchedTokensList.push(token)
     }
   })
 
-  return searchedTokensList;
+  return searchedTokensList
 }
 
 export function getNextRoute(route) {
@@ -94,7 +94,7 @@ export function getBlob(mime, value) {
     return ''
   }
   const blob = new Blob([str], {
-    type: mime
+    type: mime,
   })
   return window.URL.createObjectURL(blob)
 }
@@ -112,7 +112,9 @@ export function padLeft(data, width, padding = '0') {
 
 export function sanitizeHex(value) {
   const hex = eutils.stripHexPrefix(value)
-  if (hex === '') return ''
+  if (hex === '') {
+    return ''
+  }
   return eutils.addHexPrefix(eutils.padToEven(hex))
 }
 
@@ -143,10 +145,7 @@ export function isValidTxHash(txHash) {
 }
 
 export function getFunctionSignature(name) {
-  return eutils
-    .sha3(name)
-    .toString('hex')
-    .slice(0, 8)
+  return eutils.sha3(name).toString('hex').slice(0, 8)
 }
 
 export function isChecksumAddress(address) {
@@ -170,22 +169,22 @@ export function namehash(name) {
 }
 
 export function toDataURL(url, callback) {
-  var xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      callback(reader.result);
+  const xhr = new XMLHttpRequest()
+  xhr.onload = function() {
+    const reader = new FileReader()
+    reader.onloadend = function() {
+      callback(reader.result)
     }
-    reader.readAsDataURL(xhr.response);
-  };
-  xhr.open('GET', url);
-  xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-  xhr.responseType = 'blob';
-  xhr.send();
+    reader.readAsDataURL(xhr.response)
+  }
+  xhr.open('GET', url)
+  xhr.setRequestHeader('Access-Control-Allow-Origin', '*')
+  xhr.responseType = 'blob'
+  xhr.send()
 }
 
 export function tokenImage(token) {
-  let imgs = require.context('~/static/tokens/', false, /\.svg$/)
+  const imgs = require.context('~/static/tokens/', false, /\.svg$/)
   try {
     return imgs('./' + token.toUpperCase() + '.svg')
   } catch (error) {
@@ -197,7 +196,7 @@ export function formatUSDValue(amount) {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 2
+    minimumFractionDigits: 2,
   })
 
   return formatter.format(amount)

@@ -1,8 +1,17 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop show" v-if="!showApproveModal"></div>
-    <div class="modal transaction-prog-modal show" v-if="!showApproveModal">
-      <div class="modal-dialog w-sm-100 align-self-center" role="document">
+    <div
+      v-if="!showApproveModal"
+      class="modal-backdrop show"
+    />
+    <div
+      v-if="!showApproveModal"
+      class="modal transaction-prog-modal show"
+    >
+      <div
+        class="modal-dialog w-sm-100 align-self-center"
+        role="document"
+      >
         <div class="box in-process-box">
           <div class="box-body">
             <div class="container-fluid">
@@ -10,18 +19,20 @@
                 class="row tabs nav bottom-border no-border-radius d-flex col-md-12 px-0 mx-0"
               >
                 <a
-                  class="nav-item col ps-y-24 px-0 text-center nav-link font-body-medium"
-                  :class="{ 'active font-medium': activeTab === tab.id }"
                   v-for="tab in tabs"
                   :key="tab.id"
+                  class="nav-item col ps-y-24 px-0 text-center nav-link font-body-medium"
+                  :class="{ 'active font-medium': activeTab === tab.id }"
                   @click.prevent="changeTab(tab.id)"
-                  >{{ tab.title }}</a
-                >
+                >{{ tab.title }}</a>
               </nav>
               <div
                 class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border d-flex"
               >
-                <div v-if="isErc1155" class="d-flex align-self-center ps-b-8">
+                <div
+                  v-if="isErc1155"
+                  class="d-flex align-self-center ps-b-8"
+                >
                   <div
                     class="align-self-center font-heading-small font-semibold"
                   >
@@ -36,7 +47,10 @@
                     Available : {{ nftToken.amount }}
                   </div>
                 </div>
-                <div class="col-md-12 p-0" v-if="isErc1155">
+                <div
+                  v-if="isErc1155"
+                  class="col-md-12 p-0"
+                >
                   <Textfield
                     v-if="isErc1155"
                     type="text"
@@ -46,12 +60,12 @@
                     @input="handleERC1155Amount"
                   />
                   <div
-                    class="w-100 font-caption error-text ps-t-12"
                     v-if="isErc1155 && dirty && !validation['erc1155Amount']"
+                    class="w-100 font-caption error-text ps-t-12"
                   >
                     Valid quantity is required
                   </div>
-                  <br />
+                  <br>
                 </div>
 
                 <div
@@ -101,13 +115,13 @@
 
                 <div class="col-md-12 p-0">
                   <div
-                    class="w-100 font-caption error-text ps-t-12"
                     v-if="
                       dirty &&
-                      (isErc721
-                        ? !validation['price']
-                        : !validation['pricePerUnit'])
+                        (isErc721
+                          ? !validation['price']
+                          : !validation['pricePerUnit'])
                     "
+                    class="w-100 font-caption error-text ps-t-12"
                   >
                     Valid amount required
                   </div>
@@ -115,8 +129,8 @@
               </div>
 
               <div
-                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border d-flex"
                 v-if="activeTab === 0"
+                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border d-flex"
               >
                 <div class="d-flex align-self-center">
                   <div
@@ -136,7 +150,10 @@
                   </label>
                 </div>
                 <transition name="fade">
-                  <div class="col-md-12 p-0" v-if="negotiation">
+                  <div
+                    v-if="negotiation"
+                    class="col-md-12 p-0"
+                  >
                     <div
                       v-if="isErc721"
                       class="w-100 font-body-small ps-y-12 text-gray-500"
@@ -182,13 +199,13 @@
                       </div>
                     </div>
                     <div
-                      class="w-100 font-caption error-text ps-t-4"
                       v-if="
                         dirty &&
-                        (isErc721
-                          ? !validation['minPrice']
-                          : !validation['minPricePerUnit'])
+                          (isErc721
+                            ? !validation['minPrice']
+                            : !validation['minPricePerUnit'])
                       "
+                      class="w-100 font-caption error-text ps-t-4"
                     >
                       Valid amount is required for minimum price
                     </div>
@@ -196,8 +213,8 @@
                 </transition>
               </div>
               <div
-                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border d-flex"
                 v-if="activeTab === 1"
+                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 bottom-border d-flex"
               >
                 <div class="d-flex align-self-center">
                   <div
@@ -215,43 +232,40 @@
                     class="time-pill font-body-small"
                     :class="{ active: duration === EXPIRY_DURATION.ONE_WEEK }"
                     @click="changeDuration(EXPIRY_DURATION.ONE_WEEK)"
-                    >1 week</span
-                  >
+                  >1 week</span>
                   <span
                     class="time-pill font-body-small"
                     :class="{ active: duration === EXPIRY_DURATION.ONE_MONTH }"
                     @click="changeDuration(EXPIRY_DURATION.ONE_MONTH)"
-                    >1 month</span
-                  >
+                  >1 month</span>
                   <span
                     class="time-pill font-body-small"
                     :class="{ active: duration === EXPIRY_DURATION.CUSTOM }"
                     @click="changeDuration(EXPIRY_DURATION.CUSTOM)"
-                    >Custom</span
-                  >
+                  >Custom</span>
                 </div>
                 <div class="col-md-12 ps-x-0 ps-t-24">
                   <input
+                    v-model="auction_date"
                     class="form-control form-control-inline float-left w-auto ps-y-0"
                     type="date"
                     :min="minimumDate"
-                    v-model="auction_date"
                     :change="onAuctionDateTimeChange()"
                     @click="toCustom()"
-                  />
+                  >
                   <input
+                    v-model="auction_time"
                     class="form-control form-control-inline float-right w-auto ps-y-0"
                     type="time"
-                    v-model="auction_time"
                     :change="onAuctionDateTimeChange()"
                     @click="toCustom()"
-                  />
+                  >
                 </div>
               </div>
               <div
-                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 d-flex error"
                 v-if="dirty && false"
-              ></div>
+                class="row ps-x-16 ps-x-md-32 ps-x-lg-40 d-flex error"
+              />
               <div class="row ps-x-16 ps-x-md-32 ps-x-lg-40 ps-y-32 d-flex">
                 <button-loader
                   :text="$t('cancel')"
@@ -260,7 +274,7 @@
                   lg
                   color="light"
                   :disabled="isLoading"
-                ></button-loader>
+                />
                 <button-loader
                   class="ml-auto"
                   :loading="isLoading"
@@ -270,7 +284,7 @@
                   lg
                   color="primary"
                   :click="submitToMarketplace"
-                ></button-loader>
+                />
               </div>
             </div>
           </div>
@@ -289,51 +303,53 @@
       :signLoading="signLoading"
       :modalTexts="approvalModalText"
       :networkChangeNeeded="showNetworkChangeNeeded"
-    ></approve-process>
+    />
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
-import { formatUSDValue } from "~/plugins/helpers/index";
-import Web3 from "web3";
-import moment from "moment";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
+import { formatUSDValue } from '~/plugins/helpers/index'
+import { txShowError } from '~/plugins/helpers/transaction-utils'
+import Web3 from 'web3'
+import moment from 'moment'
 
-import app from "~/plugins/app";
-import getAxios from "~/plugins/axios";
-import BigNumber from "~/plugins/bignumber";
+import app from '~/plugins/app'
+import getAxios from '~/plugins/axios'
+import BigNumber from '~/plugins/bignumber'
 
-import { FormValidator } from "~/components/mixin";
-import InputToken from "~/components/lego/input-token";
-import { parseBalance } from "~/plugins/helpers/token-utils";
-import ApproveProcess from "~/components/lego/modals/approve-process";
+import { FormValidator } from '~/components/mixin'
+import InputToken from '~/components/lego/input-token'
+import { parseBalance } from '~/plugins/helpers/token-utils'
+import ApproveProcess from '~/components/lego/modals/approve-process'
+import { getRandomFutureDateInSeconds } from '~/plugins/helpers/0x-utils'
+import { Textfield } from '@maticnetwork/matic-design-system'
 
-const { getTypedData } = require("~/plugins/meta-tx");
+import { providerEngine } from '~/plugins/helpers/provider-engine'
+import { registerNetwork } from '~/plugins/helpers/metamask-utils'
+
+const { getTypedData } = require('~/plugins/meta-tx')
 
 // 0X
-let {
+const {
   ContractWrappers,
   ERC721TokenContract,
   OrderStatus,
-} = require("@0x/contract-wrappers");
-let { generatePseudoRandomSalt, signatureUtils } = require("@0x/order-utils");
+} = require('@0x/contract-wrappers')
+const { generatePseudoRandomSalt, signatureUtils } = require('@0x/order-utils')
 // let { BigNumber } = require("@0x/utils");
-let { Web3Wrapper } = require("@0x/web3-wrapper");
-import { getRandomFutureDateInSeconds } from "~/plugins/helpers/0x-utils";
-import { Textfield } from "@maticnetwork/matic-design-system";
-
-import { providerEngine } from "~/plugins/helpers/provider-engine";
+const { Web3Wrapper } = require('@0x/web3-wrapper')
 
 const EXPIRY_DURATION = {
   ONE_WEEK: 0,
   ONE_MONTH: 1,
   CUSTOM: 2,
-};
+}
 
-const ZERO = BigNumber(0);
-const TEN = BigNumber(10);
+const ZERO = BigNumber(0)
+const TEN = BigNumber(10)
 
 @Component({
   props: {
@@ -353,11 +369,11 @@ const TEN = BigNumber(10);
   },
   components: { InputToken, ApproveProcess, Textfield },
   computed: {
-    ...mapGetters("token", ["selectedERC20Token"]),
-    ...mapGetters("account", ["account"]),
-    ...mapGetters("auth", ["user"]),
-    ...mapGetters("network", ["networks", "networkMeta"]),
-    ...mapGetters("category", ["categories"]),
+    ...mapGetters('token', ['selectedERC20Token']),
+    ...mapGetters('account', ['account']),
+    ...mapGetters('auth', ['user']),
+    ...mapGetters('network', ['networks', 'networkMeta']),
+    ...mapGetters('category', ['categories']),
   },
   methods: {},
   mixins: [FormValidator],
@@ -368,10 +384,10 @@ export default class SellToken extends Vue {
   negotiation = false;
   isLoading = false;
   dirty = false;
-  error = "";
-  expiry_date_time = "";
-  auction_time = moment().format("HH:mm");
-  auction_date = moment().add(1, "days").format("YYYY-MM-DD");
+  error = '';
+  expiry_date_time = '';
+  auction_time = moment().format('HH:mm');
+  auction_date = moment().add(1, 'days').format('YYYY-MM-DD');
   minimumDate = this.auction_date;
   showApproveModal = false;
   isApprovedStatus = false;
@@ -382,12 +398,12 @@ export default class SellToken extends Vue {
 
   approvalModalText = {
     approve: {
-      title: "Approve",
-      subText: "Approve 0x contract to transfer your NFT",
+      title: 'Approve',
+      subText: 'Approve 0x contract to transfer your NFT',
     },
     sign: {
-      title: "Sign sell order",
-      subText: "Sign sell transaction",
+      title: 'Sign sell order',
+      subText: 'Sign sell transaction',
     },
   };
 
@@ -400,298 +416,303 @@ export default class SellToken extends Vue {
   tabs = [
     {
       id: 0,
-      title: "Fixed Price",
+      title: "List NFT for Sale",
       subtitle: this.isErc1155 ? "Set price per Unit" : "Set price",
       description: this.isErc1155
-        ? "Your asset will be sold at this price for 1 unit. It will be available for sale in marketplace until you cancel it."
-        : "Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.",
-      commission: "",
-      btnTitle: "List for Sale",
+        ? 'Your asset will be sold at this price for 1 unit. It will be available for sale in marketplace until you cancel it.'
+        : 'Your asset will be sold at this price. It will be available for sale in marketplace until you cancel it.',
+      commission: '',
+      btnTitle: 'List for Sale',
     },
   ];
 
   mounted() {
     // initialize duration
     this.changeDuration(this.EXPIRY_DURATION.ONE_WEEK);
+    this.$logger.track("mounted:sell-token", this.nftToken);
   }
 
   // Handlers
   changeTab(num) {
-    this.activeTab = num;
+    this.activeTab = num
   }
 
   handleERC1155Amount(input) {
-    this.dirty = false;
-    this.erc1155Amount = input;
+    this.dirty = false
+    this.erc1155Amount = input
   }
 
   toCustom() {
     // Set current time to minimum
     if (this.duration !== this.EXPIRY_DURATION.CUSTOM) {
-      this.changeDuration(EXPIRY_DURATION.CUSTOM);
+      this.changeDuration(EXPIRY_DURATION.CUSTOM)
     }
   }
+
   onAuctionDateTimeChange() {
-    this.expiry_date_time = moment(`${this.auction_date} ${this.auction_time}`);
-    return false;
+    this.expiry_date_time = moment(`${this.auction_date} ${this.auction_time}`)
+    return false
   }
 
   changeDuration(num) {
-    this.duration = num;
-    let date;
+    this.duration = num
+    let date
     // Change the date and time according
     if (num === this.EXPIRY_DURATION.ONE_WEEK) {
-      date = moment().add(7, "days");
+      date = moment().add(7, 'days')
     } else if (num === this.EXPIRY_DURATION.ONE_MONTH) {
-      date = moment().add(30, "days");
+      date = moment().add(30, 'days')
     } else {
-      date = moment().add(15, "days");
+      date = moment().add(15, 'days')
     }
-    this.auction_date = date.format("YYYY-MM-DD");
-    this.auction_time = date.format("HH:mm");
+    this.auction_date = date.format('YYYY-MM-DD')
+    this.auction_time = date.format('HH:mm')
   }
 
   changePrice(value) {
-    this.dirty = false;
-    this.price = value;
+    this.dirty = false
+    this.price = value
   }
 
   changePricePerUnit(value) {
-    this.dirty = false;
-    this.pricePerUnit = value;
+    this.dirty = false
+    this.pricePerUnit = value
   }
 
   changeMinPrice(value) {
-    this.dirty = false;
-    this.minPrice = value;
+    this.dirty = false
+    this.minPrice = value
   }
 
   changeMinPricePerUnit(value) {
-    this.dirty = false;
-    this.minPricePerUnit = value;
+    this.dirty = false
+    this.minPricePerUnit = value
   }
 
   closeApproveModal() {
-    this.showApproveModal = false;
-    this.close();
+    this.showApproveModal = false
+    this.close()
   }
 
   convertPriceToUSD(amount) {
-    let result = null;
+    let result = null
     if (this.selectedERC20Token) {
       result = new BigNumber(
-        parseBalance(amount, this.selectedERC20Token.decimal)
+        parseBalance(amount, this.selectedERC20Token.decimal),
       )
         .times(new BigNumber(this.selectedERC20Token.usd))
-        .toString(10);
+        .toString(10)
     }
-    return result;
+    return result
   }
 
   get isErc1155() {
-    return this.nftToken.type === "ERC1155";
+    return this.nftToken.type === 'ERC1155'
   }
 
   get isErc721() {
-    return this.nftToken.type === "ERC721";
+    return this.nftToken.type === 'ERC721'
   }
 
   // action
   async approveStatus() {
-    this.approveLoading = true;
+    this.approveLoading = true
     try {
       const nftContract = this.nftToken.category.getAddress(
-        this.networks.matic.chainId
-      );
-      const makerAddress = this.account.address;
-      const chainId = this.networks.matic.chainId;
+        this.networks.matic.chainId,
+      )
+      const makerAddress = this.account.address
+      const chainId = this.networks.matic.chainId
       const contractWrappers = new ContractWrappers(providerEngine(), {
         chainId: chainId,
-      });
+      })
 
-      let isApprovedForAll;
+      let isApprovedForAll
 
       if (this.isErc1155) {
-        let matic = new Web3(this.networks.matic.rpc);
+        const matic = new Web3(this.networks.matic.rpc)
         const erc1155TokenCont = new matic.eth.Contract(
-          this.networkMeta.abi("ChildERC1155", "pos"),
-          nftContract
-        );
+          this.networkMeta.abi('ChildERC1155', 'pos'),
+          nftContract,
+        )
 
         isApprovedForAll = await erc1155TokenCont.methods
           .isApprovedForAll(
             makerAddress,
-            contractWrappers.contractAddresses.erc1155Proxy
+            contractWrappers.contractAddresses.erc1155Proxy,
           )
-          .call();
+          .call()
       } else {
         const erc721TokenCont = new ERC721TokenContract(
           nftContract,
-          providerEngine()
-        );
+          providerEngine(),
+        )
 
         isApprovedForAll = await erc721TokenCont
           .isApprovedForAll(
             makerAddress,
-            contractWrappers.contractAddresses.erc721Proxy
+            contractWrappers.contractAddresses.erc721Proxy,
           )
-          .callAsync();
+          .callAsync()
       }
 
-      this.isApprovedStatus = isApprovedForAll;
-      this.approveLoading = false;
+      this.isApprovedStatus = isApprovedForAll
+      this.approveLoading = false
     } catch (error) {
-      console.log(error);
-      this.approveLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      console.log(error)
+      this.approveLoading = false
+      txShowError(error, null, 'Something went wrong')
     }
   }
 
   async approveClickedFunc() {
+    this.showNetworkChangeNeeded = false;
     this.approveLoading = true;
 
     try {
-      const yearInSec = moment().add(365, "days").format("x");
+      this.$logger.track('approval-start:sell-token')
+      const yearInSec = moment().add(365, 'days').format('x')
       const expiry_date_time = this.expiry_date_time
-        ? this.expiry_date_time.format("x")
-        : 0;
-      const orderType = this.orderType;
+        ? this.expiry_date_time.format('x')
+        : 0
+      const orderType = this.orderType
       const nftContract = this.nftToken.category.getAddress(
-        this.networks.matic.chainId
-      );
+        this.networks.matic.chainId,
+      )
       // const nftTokenId = this.nftToken.token_id;
-      const erc20Address = this.selectedERC20Token.address;
-      const makerAddress = this.account.address;
-      const chainId = this.networks.matic.chainId;
+      const erc20Address = this.selectedERC20Token.address
+      const makerAddress = this.account.address
+      const chainId = this.networks.matic.chainId
       const contractWrappers = new ContractWrappers(providerEngine(), {
         chainId: chainId,
-      });
-      const decimalnftTokenId = this.nftToken.token_id;
-      let makerAssetAmount = new BigNumber(1);
-      let takerAssetAmount = null;
-      let takerAssetAmountPerUnit = null;
-      let minPrice = null;
-      let minPricePerUnit = null;
-      let erc721TokenCont = null;
-      let erc1155TokenCont = null;
-      let isApproved = false;
+      })
+      const decimalnftTokenId = this.nftToken.token_id
+      const makerAssetAmount = new BigNumber(1)
+      let takerAssetAmount = null
+      let takerAssetAmountPerUnit = null
+      let minPrice = null
+      let minPricePerUnit = null
+      let erc721TokenCont = null
+      const erc1155TokenCont = null
+      let isApproved = false
 
       if (this.isErc721) {
-        takerAssetAmount = this.price.toString(10);
-        minPrice = this.minPrice;
+        takerAssetAmount = this.price.toString(10)
+        minPrice = this.minPrice
 
         erc721TokenCont = new ERC721TokenContract(
           nftContract,
-          providerEngine()
-        );
-        console.log(erc721TokenCont);
+          providerEngine(),
+        )
+        console.log(erc721TokenCont)
+        this.$logger.track('approve0x-721-start:sell-token')
         isApproved = await this.approve0x(
           erc721TokenCont,
           contractWrappers,
-          makerAddress
-        );
+          makerAddress,
+        )
+        this.$logger.track('approve0x-721-complete:sell-token', { isApproved })
       } else {
-        takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit);
+        takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit)
         takerAssetAmount = makerAssetAmount
           .times(takerAssetAmountPerUnit)
-          .toString(10);
-        minPricePerUnit = this.minPricePerUnit;
+          .toString(10)
+        minPricePerUnit = this.minPricePerUnit
         minPrice = makerAssetAmount
           .times(new BigNumber(minPricePerUnit))
-          .toString(10);
+          .toString(10)
 
-        let matic = new Web3(this.networks.matic.rpc);
+        const matic = new Web3(this.networks.matic.rpc)
         const erc1155TokenCont = new matic.eth.Contract(
-          this.networkMeta.abi("ChildERC1155", "pos"),
-          nftContract
-        );
-        console.log(erc1155TokenCont);
+          this.networkMeta.abi('ChildERC1155', 'pos'),
+          nftContract,
+        )
+        console.log(erc1155TokenCont)
+        this.$logger.track('approve0x-1155-start:sell-token')
         isApproved = await this.approve0x(
           erc1155TokenCont,
           contractWrappers,
-          makerAddress
-        );
+          makerAddress,
+        )
+        this.$logger.track('approve0x-1155-complete:sell-token', {
+          isApproved,
+        })
       }
-
-      this.isApprovedStatus = isApproved;
-      this.approveLoading = false;
+      this.isApprovedStatus = isApproved
+      this.approveLoading = false
     } catch (error) {
-      console.log(error);
-      this.approveLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      console.log(error)
+      this.approveLoading = false
+      txShowError(error, null, 'Something went wrong')
     }
   }
 
   async signClickedFunc() {
-    this.signLoading = true;
-
+    this.signLoading = true
+    this.$logger.track('sign-start:sell-token')
     try {
-      const yearInSec = moment().add(365, "days").format("x");
+      const yearInSec = moment().add(365, 'days').format('x')
       const expiry_date_time = this.expiry_date_time
-        ? this.expiry_date_time.format("x")
-        : 0;
-      const orderType = this.orderType;
+        ? this.expiry_date_time.format('x')
+        : 0
+      const orderType = this.orderType
       const nftContract = this.nftToken.category.getAddress(
-        this.networks.matic.chainId
-      );
+        this.networks.matic.chainId,
+      )
       // const nftTokenId = this.nftToken.token_id;
-      const erc20Address = this.selectedERC20Token.address;
-      const makerAddress = this.account.address;
-      const chainId = this.networks.matic.chainId;
-      const decimalnftTokenId = this.nftToken.token_id;
+      const erc20Address = this.selectedERC20Token.address
+      const makerAddress = this.account.address
+      const chainId = this.networks.matic.chainId
+      const decimalnftTokenId = this.nftToken.token_id
       const contractWrappers = new ContractWrappers(providerEngine(), {
         chainId: chainId,
-      });
+      })
 
-      let makerAssetAmount = new BigNumber(1);
-      let takerAssetAmount = null;
-      let takerAssetAmountPerUnit = null;
-      let minPrice = null;
-      let minPricePerUnit = null;
-      let erc721TokenCont = null;
-      let erc1155TokenCont = null;
-      let isApproved = false;
-      let makerAssetData = null;
+      const makerAssetAmount = new BigNumber(1)
+      let takerAssetAmount = null
+      let takerAssetAmountPerUnit = null
+      let minPrice = null
+      let minPricePerUnit = null
+      const erc721TokenCont = null
+      const erc1155TokenCont = null
+      const isApproved = false
+      let makerAssetData = null
       const takerAssetData = await contractWrappers.devUtils
         .encodeERC20AssetData(erc20Address)
-        .callAsync();
+        .callAsync()
 
       if (this.isErc1155) {
-        takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit);
+        takerAssetAmountPerUnit = new BigNumber(this.pricePerUnit)
         takerAssetAmount = makerAssetAmount
           .times(takerAssetAmountPerUnit)
-          .toString(10);
-        minPricePerUnit = this.minPricePerUnit;
+          .toString(10)
+        minPricePerUnit = this.minPricePerUnit
         minPrice = makerAssetAmount
           .times(new BigNumber(minPricePerUnit))
-          .toString(10);
+          .toString(10)
 
         makerAssetData = await contractWrappers.devUtils
           .encodeERC1155AssetData(
             nftContract,
             [new BigNumber(decimalnftTokenId)],
             [new BigNumber(this.erc1155Amount)],
-            "0x"
+            '0x',
           )
-          .callAsync();
+          .callAsync()
       } else {
-        takerAssetAmount = this.price.toString(10);
-        minPrice = this.minPrice;
+        takerAssetAmount = this.price.toString(10)
+        minPrice = this.minPrice
 
         makerAssetData = await contractWrappers.devUtils
           .encodeERC721AssetData(nftContract, new BigNumber(decimalnftTokenId))
-          .callAsync();
+          .callAsync()
       }
 
-      const exchangeAddress = contractWrappers.contractAddresses.exchange;
+      const exchangeAddress = contractWrappers.contractAddresses.exchange
 
-      let expirationTimeSeconds = new BigNumber(yearInSec);
+      let expirationTimeSeconds = new BigNumber(yearInSec)
       if (orderType === app.orderTypes.AUCTION) {
-        expirationTimeSeconds = new BigNumber(expiry_date_time);
+        expirationTimeSeconds = new BigNumber(expiry_date_time)
       }
 
       const orderTemplate = {
@@ -711,121 +732,143 @@ export default class SellToken extends Vue {
         takerFeeAssetData: app.uiconfig.NULL_BYTES,
         makerFee: ZERO,
         takerFee: ZERO,
-      };
+      }
 
       // Sign if FIXED order
-      let signedOrder = "";
+      let signedOrder = ''
       if (orderType === app.orderTypes.FIXED) {
+        this.$logger.track('sign-fixed-order-start:sell-token')
         signedOrder = await signatureUtils.ecSignOrderAsync(
           providerEngine(),
           orderTemplate,
-          makerAddress
-        );
+          makerAddress,
+        )
       }
       // add extra info
-      orderTemplate.orderType = orderType;
-      orderTemplate.expiry_date_time = expiry_date_time;
-
-      await this.handleSellSign(orderTemplate, signedOrder);
+      orderTemplate.orderType = orderType
+      orderTemplate.expiry_date_time = expiry_date_time
+      this.$logger.track('handle-sign-server:sell-token')
+      await this.handleSellSign(orderTemplate, signedOrder)
+      this.$logger.track('sign-success:sell-token')
     } catch (error) {
-      console.log(error);
-      this.signLoading = false;
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      console.log(error)
+      this.signLoading = false
+      txShowError(error, null, 'Something went wrong')
     }
   }
 
   async submitToMarketplace() {
-    this.isLoading = true;
+    this.isLoading = true
+    this.$logger.track('submit-to-marketplace:sell-token')
     if (!this.isValid) {
-      this.dirty = true;
-      this.isLoading = false;
-      return;
+      this.dirty = true
+      this.isLoading = false
+      return
     }
     if (this.isErc1155) {
-      if (!this.validation["erc1155Amount"]) {
-        this.dirty = true;
-        this.isLoading = false;
-        return;
+      if (!this.validation.erc1155Amount) {
+        this.dirty = true
+        this.isLoading = false
+        return
       }
     }
+    this.$logger.track('submit-to-marketplace-validation-complete:sell-token')
 
-    this.dirty = false;
+    this.dirty = false
     try {
       if (this.isErc721) {
         const nftContract = this.nftToken.category.getAddress(
-          this.networks.matic.chainId
-        );
-        const decimalnftTokenId = this.nftToken.token_id;
+          this.networks.matic.chainId,
+        )
+        const decimalnftTokenId = this.nftToken.token_id
 
         // ERC721 contract
         const erc721TokenCont = new ERC721TokenContract(
           nftContract,
-          providerEngine()
-        );
+          providerEngine(),
+        )
 
         // Owner of current token
         const owner = await erc721TokenCont
           .ownerOf(new BigNumber(decimalnftTokenId))
-          .callAsync();
+          .callAsync()
         const isOwnerOfToken =
-          owner.toLowerCase() === this.account.address.toLowerCase();
+          owner.toLowerCase() === this.account.address.toLowerCase()
         if (!isOwnerOfToken) {
+          this.$logger.track(
+            'submit-to-marketplace-not-token-owner:sell-token',
+            { nftToken, owner, address: this.account.address },
+          )
           app.addToast(
-            "You are no owner of this token",
-            "You are no longer owner of this token, refresh to update the data",
+            'You are no owner of this token',
+            'You are no longer owner of this token, refresh to update the data',
             {
-              type: "failure",
-            }
-          );
-          this.isLoading = false;
-          this.close();
-          return;
+              type: 'failure',
+            },
+          )
+          this.isLoading = false
+          this.close()
+          return
         }
       }
-      this.showApproveModal = true;
-      this.approveStatus();
+      this.showApproveModal = true
+      this.approveStatus()
     } catch (error) {
-      console.error(error);
-      app.addToast("Something went wrong", error.message.substring(0, 60), {
-        type: "failure",
-      });
+      console.error(error)
+      txShowError(error, null, 'Something went wrong')
     }
-    this.isLoading = false;
+    this.isLoading = false
+  }
+
+  async metamaskValidation() {
+    const web3obj = new Web3(window.ethereum)
+    const chainId = await web3obj.eth.getChainId()
+    if (chainId !== this.networks.matic.chainId) {
+      // try {
+      //   await registerNetwork();
+      //   return true;
+      // } catch (error) {
+        this.error = 'selectMatic'
+        this.showNetworkChangeNeeded = true;
+        return false;
+      // }
+    }
+    return true
   }
 
   async approve0x(tokenCont, contractWrappers, makerAddress) {
     // Check if token is approved to 0x
-    let matic = new Web3(this.networks.matic.rpc);
-    let isApprovedForAll;
+    const matic = new Web3(this.networks.matic.rpc)
+    let isApprovedForAll
     const nftContract = this.nftToken.category.getAddress(
-      this.networks.matic.chainId
-    );
+      this.networks.matic.chainId,
+    )
 
     if (this.isErc721) {
       isApprovedForAll = await tokenCont
         .isApprovedForAll(
           makerAddress,
-          contractWrappers.contractAddresses.erc721Proxy
+          contractWrappers.contractAddresses.erc721Proxy,
         )
-        .callAsync();
+        .callAsync()
     } else {
       isApprovedForAll = await tokenCont.methods
         .isApprovedForAll(
           makerAddress,
-          contractWrappers.contractAddresses.erc1155Proxy
+          contractWrappers.contractAddresses.erc1155Proxy,
         )
-        .call();
+        .call()
     }
 
     if (!isApprovedForAll) {
       if (!this.category.isMetaTx) {
-        if (
-          window.ethereum.chainId ===
-          "0x" + this.networks.matic.chainId.toString(16)
-        ) {
-          if (this.isErc721) {
+        if (!(await this.metamaskValidation())) {
+          this.isLoading = false
+          return false
+        }
+
+        if (this.isErc721) {
+          try {
             const makerERC721ApprovalTxHash = await tokenCont
               .setApprovalForAll(
                 contractWrappers.contractAddresses.erc721Proxy,
@@ -833,8 +876,7 @@ export default class SellToken extends Vue {
               )
               .sendTransactionAsync({
                 from: makerAddress,
-                gas: 8000000,
-                gasPrice: 1000000000,
+                gas: 100000,
               });
 
             if (makerERC721ApprovalTxHash) {
@@ -848,286 +890,284 @@ export default class SellToken extends Vue {
               );
               return true;
             }
-            app.addToast(
-              "Failed to approve",
-              "You need to approve the transaction to sale the NFT",
-              {
-                type: "failure",
-              }
-            );
-          } else {
-            let maticWeb3 = new Web3(window.ethereum);
-            let cont = new maticWeb3.eth.Contract(
-              this.networkMeta.abi("ChildERC1155", "pos"),
-              nftContract
-            );
-
-            const makerERC1155ApprovalTxHash = await cont.methods
-              .setApprovalForAll(
-                contractWrappers.contractAddresses.erc1155Proxy,
-                true
+          } catch (error) {
+            console.log(error);
+            if (
+              error.message.includes(
+                "MetaMask is having trouble connecting to the network"
               )
-              .send({
-                from: makerAddress,
-                gas: 8000000,
-                gasPrice: 1000000000,
-              });
-
-            if (makerERC1155ApprovalTxHash) {
-              console.log("Approve Hash", makerERC1155ApprovalTxHash);
+            ) {
+              txShowError(error, null, "Please Try Again");
+            } else {
               app.addToast(
-                "Approved successfully",
-                "You successfully approved the token to put on sale",
+                "Failed to approve",
+                "You need to approve the transaction to sale the NFT",
                 {
-                  type: "success",
+                  type: "failure",
                 }
               );
-              return true;
             }
-            app.addToast(
-              "Failed to approve",
-              "You need to approve the transaction to sale the NFT",
-              {
-                type: "failure",
-              }
-            );
           }
         } else {
-          this.showNetworkChangeNeeded = true;
-          // app.addToast(
-          //   "Change network",
-          //   "Please change the network to Matic",
-          //   {
-          //     type: "failure",
-          //   }
-          // );
+          const maticWeb3 = new Web3(window.ethereum)
+          const contract = new maticWeb3.eth.Contract(
+            this.networkMeta.abi('ChildERC1155', 'pos'),
+            nftContract,
+          )
 
-          return false;
+          const makerERC1155ApprovalTxHash = await contract.methods
+            .setApprovalForAll(
+              contractWrappers.contractAddresses.erc1155Proxy,
+              true,
+            )
+            .send({
+              from: makerAddress,
+              gas: 100000,
+            })
+
+          if (makerERC1155ApprovalTxHash) {
+            console.log('Approve Hash', makerERC1155ApprovalTxHash)
+            app.addToast(
+              'Approved successfully',
+              'You successfully approved the token to put on sale',
+              {
+                type: 'success',
+              },
+            )
+            return true
+          }
+          app.addToast(
+            'Failed to approve',
+            'You need to approve the transaction to sale the NFT',
+            {
+              type: 'failure',
+            },
+          )
         }
       } else {
-        let contractWrapperAddress = this.isErc1155
+        const contractWrapperAddress = this.isErc1155
           ? contractWrappers.contractAddresses.erc1155Proxy
-          : contractWrappers.contractAddresses.erc721Proxy;
+          : contractWrappers.contractAddresses.erc721Proxy
 
-        let data = await matic.eth.abi.encodeFunctionCall(
+        const data = await matic.eth.abi.encodeFunctionCall(
           {
-            name: "setApprovalForAll",
-            type: "function",
+            name: 'setApprovalForAll',
+            type: 'function',
             inputs: [
               {
-                name: "operator",
-                type: "address",
+                name: 'operator',
+                type: 'address',
               },
               {
-                name: "approved",
-                type: "bool",
+                name: 'approved',
+                type: 'bool',
               },
             ],
           },
-          [contractWrapperAddress, true]
-        );
+          [contractWrapperAddress, true],
+        )
 
-        let { sig } = await this.executeMetaTx(data);
+        const { sig } = await this.executeMetaTx(data)
 
-        let tx = {
+        const tx = {
           intent: sig,
           fnSig: data,
           from: this.account.address,
           contractAddress: matic.utils.toChecksumAddress(
             this.category.categoriesaddresses.find(
-              (category) => category.chain_id == this.networks.matic.chainId
-            ).address
+              (category) => category.chain_id === this.networks.matic.chainId,
+            ).address,
           ),
-        };
+        }
 
         if (tx) {
           try {
-            let response = await getAxios().post(`orders/executeMetaTx`, tx);
+            const response = await getAxios().post(`orders/executeMetaTx`, tx)
             if (response.status === 200) {
-              console.log("Approved");
-              app.addToast("Approved", "You successfully approved", {
-                type: "success",
-              });
-              return true;
+              console.log('Approved')
+              app.addToast('Approved', 'You successfully approved', {
+                type: 'success',
+              })
+              return true
             }
           } catch (error) {
-            console.log(error);
+            console.log(error)
             app.addToast(
-              "Failed to approve",
-              "You need to approve the transaction to sale the NFT",
+              'Failed to approve',
+              'You need to approve the transaction to sale the NFT',
               {
-                type: "failure",
-              }
-            );
+                type: 'failure',
+              },
+            )
           }
         }
       }
-      return false;
+      return false
     }
-    return true;
+    return true
   }
 
   async executeMetaTx(functionSig) {
-    let matic = new Web3(this.networks.matic.rpc);
-    let address = matic.utils.toChecksumAddress(this.account.address);
-    let data = await matic.eth.abi.encodeFunctionCall(
+    const matic = new Web3(this.networks.matic.rpc)
+    const address = matic.utils.toChecksumAddress(this.account.address)
+    const data = await matic.eth.abi.encodeFunctionCall(
       {
-        name: "getNonce",
-        type: "function",
+        name: 'getNonce',
+        type: 'function',
         inputs: [
           {
-            name: "user",
-            type: "address",
+            name: 'user',
+            type: 'address',
           },
         ],
       },
-      [address]
-    );
-    let _nonce = await matic.eth.call({
+      [address],
+    )
+    const _nonce = await matic.eth.call({
       to: matic.utils.toChecksumAddress(
         this.category.categoriesaddresses.find(
-          (category) => category.chain_id == this.networks.matic.chainId
-        ).address
+          (category) => category.chain_id === this.networks.matic.chainId,
+        ).address,
       ),
       data,
-    });
+    })
     const dataToSign = getTypedData({
       name: this.category.name,
-      version: "1",
+      version: '1',
       salt: app.uiconfig.SALT,
       verifyingContract: matic.utils.toChecksumAddress(
         this.category.categoriesaddresses.find(
-          (category) => category.chain_id == this.networks.matic.chainId
-        ).address
+          (category) => category.chain_id === this.networks.matic.chainId,
+        ).address,
       ),
       nonce: parseInt(_nonce),
       from: address,
       functionSignature: functionSig,
-    });
-    const msgParams = [address, JSON.stringify(dataToSign)];
-    let sign = await window.ethereum.request({
-      method: "eth_signTypedData_v3",
+    })
+    const msgParams = [address, JSON.stringify(dataToSign)]
+    const sign = await window.ethereum.request({
+      method: 'eth_signTypedData_v3',
       params: msgParams,
-    });
+    })
     return {
       sig: sign,
-    };
+    }
   }
 
   async handleSellSign(data, signedOrder) {
     // Create Object to pass as data to post request
-    let formData = {
+    const formData = {
       type: data.orderType,
       chain_id: `${this.networks.matic.chainId}`,
-    };
+    }
 
     if (formData.type === app.orderTypes.FIXED) {
-      formData.maker_address = this.user.id;
-      formData.maker_token = this.nftToken.categories_id;
-      formData.maker_token_id = this.nftToken.token_id;
-      formData.taker_token = this.selectedERC20Token.id;
-      formData.signature = JSON.stringify(signedOrder);
-      formData.usd_price = this.priceInUSD.toString();
-      formData.token_type = this.nftToken.type;
+      formData.maker_address = this.user.id
+      formData.maker_token = this.nftToken.categories_id
+      formData.maker_token_id = this.nftToken.token_id
+      formData.taker_token = this.selectedERC20Token.id
+      formData.signature = JSON.stringify(signedOrder)
+      formData.usd_price = this.priceInUSD.toString()
+      formData.token_type = this.nftToken.type
       if (this.isErc1155) {
-        let pricePerUnit = new BigNumber(this.pricePerUnit);
-        let amount = new BigNumber(this.erc1155Amount);
-        let price = amount.times(pricePerUnit).toString(10);
+        const pricePerUnit = new BigNumber(this.pricePerUnit)
+        const amount = new BigNumber(this.erc1155Amount)
+        const price = amount.times(pricePerUnit).toString(10)
         formData.price_per_unit = parseBalance(
           this.pricePerUnit,
-          this.selectedERC20Token.decimal
-        ).toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
         formData.price = parseBalance(
           price,
-          this.selectedERC20Token.decimal
-        ).toString(10);
-        formData.quantity = this.erc1155Amount.toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
+        formData.quantity = this.erc1155Amount.toString(10)
       } else {
         formData.price = parseBalance(
           this.price,
-          this.selectedERC20Token.decimal
-        ).toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
       }
     } else if (formData.type === app.orderTypes.NEGOTIATION) {
-      formData.taker_address = this.user.id;
-      formData.taker_token = this.nftToken.categories_id;
-      formData.taker_token_id = this.nftToken.token_id;
-      formData.maker_token = this.selectedERC20Token.id;
-      formData.token_type = this.nftToken.type;
-      formData.usd_price = this.priceInUSD.toString();
+      formData.taker_address = this.user.id
+      formData.taker_token = this.nftToken.categories_id
+      formData.taker_token_id = this.nftToken.token_id
+      formData.maker_token = this.selectedERC20Token.id
+      formData.token_type = this.nftToken.type
+      formData.usd_price = this.priceInUSD.toString()
       if (this.isErc1155) {
-        let pricePerUnit = new BigNumber(this.pricePerUnit);
-        let minPricePerUnit = new BigNumber(this.minPricePerUnit);
-        let amount = new BigNumber(this.erc1155Amount);
-        let price = amount.times(pricePerUnit).toString(10);
-        let minPrice = amount.times(minPricePerUnit).toString(10);
+        const pricePerUnit = new BigNumber(this.pricePerUnit)
+        const minPricePerUnit = new BigNumber(this.minPricePerUnit)
+        const amount = new BigNumber(this.erc1155Amount)
+        const price = amount.times(pricePerUnit).toString(10)
+        const minPrice = amount.times(minPricePerUnit).toString(10)
         formData.price_per_unit = parseBalance(
           this.pricePerUnit,
-          this.selectedERC20Token.decimal
-        ).toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
         formData.price = parseBalance(
           price,
-          this.selectedERC20Token.decimal
-        ).toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
         formData.min_price_per_unit = parseBalance(
           this.minPricePerUnit,
-          this.selectedERC20Token.decimal
-        ).toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
         formData.min_price = parseBalance(
           minPrice,
-          this.selectedERC20Token.decimal
-        ).toString(10);
-        formData.quantity = this.erc1155Amount.toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
+        formData.quantity = this.erc1155Amount.toString(10)
       } else {
         formData.price = parseBalance(
           this.price,
-          this.selectedERC20Token.decimal
-        ).toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
         formData.min_price = parseBalance(
           this.minPrice,
-          this.selectedERC20Token.decimal
-        ).toString(10);
+          this.selectedERC20Token.decimal,
+        ).toString(10)
       }
     } else if (formData.type === app.orderTypes.AUCTION) {
-      formData.taker_address = this.user.id;
-      formData.taker_token = this.nftToken.categories_id;
-      formData.taker_token_id = this.nftToken.token_id;
-      formData.expiry_date = data.expiry_date_time;
-      formData.maker_token = this.selectedERC20Token.id;
+      formData.taker_address = this.user.id
+      formData.taker_token = this.nftToken.categories_id
+      formData.taker_token_id = this.nftToken.token_id
+      formData.expiry_date = data.expiry_date_time
+      formData.maker_token = this.selectedERC20Token.id
       formData.min_price = parseBalance(
         this.price,
-        this.selectedERC20Token.decimal
-      ).toString(10);
+        this.selectedERC20Token.decimal,
+      ).toString(10)
     }
 
     try {
-      let response = await getAxios().post("orders", formData);
+      const response = await getAxios().post('orders', formData)
       if (response.status === 200) {
-        this.refreshNFTTokens();
+        this.refreshNFTTokens()
         app.addToast(
-          "Sell order added successfully",
-          "Your NFT successfully added on sale",
+          'Sell order added successfully',
+          'Your NFT successfully added on sale',
           {
-            type: "success",
-          }
-        );
-        this.$store.dispatch("account/fetchActiveOrders");
-        this.isSignedStatus = true;
-        this.signLoading = false;
-        this.close();
+            type: 'success',
+          },
+        )
+        this.$store.dispatch('account/fetchActiveOrders')
+        this.isSignedStatus = true
+        this.signLoading = false
+        this.close()
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
       app.addToast(
-        "Sell order failed to add",
-        "Failed to add you NFT on sale",
+        'Sell order failed to add',
+        'Failed to add you NFT on sale',
         {
-          type: "failure",
-        }
-      );
-      this.isSignedStatus = false;
+          type: 'failure',
+        },
+      )
+      this.isSignedStatus = false
     }
-    this.$store.dispatch("category/fetchCategories");
+    this.$store.dispatch('category/fetchCategories')
   }
 
   // Get
@@ -1154,76 +1194,76 @@ export default class SellToken extends Vue {
           : true,
       erc1155Amount: this.isErc1155
         ? new BigNumber(this.erc1155Amount).lte(
-            new BigNumber(this.nftToken.amount)
-          ) &&
+          new BigNumber(this.nftToken.amount),
+        ) &&
           new BigNumber(parseFloat(this.erc1155Amount)).eq(
-            new BigNumber(parseInt(this.erc1155Amount))
+            new BigNumber(parseInt(this.erc1155Amount)),
           ) &&
           new BigNumber(parseInt(this.erc1155Amount)).gt(ZERO)
         : true,
-    };
+    }
   }
 
   get EXPIRY_DURATION() {
-    return EXPIRY_DURATION;
+    return EXPIRY_DURATION
   }
 
   get orderType() {
     if (this.activeTab === 0 && this.negotiation) {
-      return app.orderTypes.NEGOTIATION;
+      return app.orderTypes.NEGOTIATION
     } else if (this.activeTab === 0 && !this.negotiation) {
-      return app.orderTypes.FIXED;
+      return app.orderTypes.FIXED
     } else if (this.activeTab === 1) {
-      return app.orderTypes.AUCTION;
+      return app.orderTypes.AUCTION
     }
   }
 
   get category() {
     return this.categories.find(
       (category) =>
-        category.address.toLowerCase() === this.nftToken.contract.toLowerCase()
-    );
+        category.address.toLowerCase() === this.nftToken.contract.toLowerCase(),
+    )
   }
 
   get priceInUSD() {
-    let equivalentUSD;
+    let equivalentUSD
     if (this.isErc721) {
-      equivalentUSD = this.convertPriceToUSD(this.price);
+      equivalentUSD = this.convertPriceToUSD(this.price)
     } else {
-      let pricePerUnit = new BigNumber(this.pricePerUnit);
-      let amount = new BigNumber(this.erc1155Amount);
-      let price = amount.times(pricePerUnit).toString(10);
-      equivalentUSD = this.convertPriceToUSD(price);
+      const pricePerUnit = new BigNumber(this.pricePerUnit)
+      const amount = new BigNumber(this.erc1155Amount)
+      const price = amount.times(pricePerUnit).toString(10)
+      equivalentUSD = this.convertPriceToUSD(price)
     }
-    return isNaN(equivalentUSD) ? 0 : equivalentUSD;
+    return isNaN(equivalentUSD) ? 0 : equivalentUSD
   }
 
   get priceInUSDFormatted() {
-    let equivalentUSD = null;
+    let equivalentUSD = null
     if (this.isErc1155) {
-      let pricePerUnit = new BigNumber(this.pricePerUnit);
-      let amount = new BigNumber(this.erc1155Amount);
+      const pricePerUnit = new BigNumber(this.pricePerUnit)
+      const amount = new BigNumber(this.erc1155Amount)
       equivalentUSD = this.convertPriceToUSD(
-        pricePerUnit.times(amount).toString(10)
-      );
+        pricePerUnit.times(amount).toString(10),
+      )
     } else {
-      equivalentUSD = this.convertPriceToUSD(this.price);
+      equivalentUSD = this.convertPriceToUSD(this.price)
     }
-    return isNaN(equivalentUSD) ? "$0" : formatUSDValue(equivalentUSD);
+    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
   }
 
   get minPriceInUSDFormatted() {
-    let equivalentUSD = null;
+    let equivalentUSD = null
     if (this.isErc1155) {
-      let minPricePerUnit = new BigNumber(this.minPricePerUnit);
-      let amount = new BigNumber(this.erc1155Amount);
+      const minPricePerUnit = new BigNumber(this.minPricePerUnit)
+      const amount = new BigNumber(this.erc1155Amount)
       equivalentUSD = this.convertPriceToUSD(
-        minPricePerUnit.times(amount).toString(10)
-      );
+        minPricePerUnit.times(amount).toString(10),
+      )
     } else {
-      equivalentUSD = this.convertPriceToUSD(this.minPrice);
+      equivalentUSD = this.convertPriceToUSD(this.minPrice)
     }
-    return isNaN(equivalentUSD) ? "$0" : formatUSDValue(equivalentUSD);
+    return isNaN(equivalentUSD) ? '$0' : formatUSDValue(equivalentUSD)
   }
 }
 </script>

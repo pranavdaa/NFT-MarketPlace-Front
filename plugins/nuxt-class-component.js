@@ -8,7 +8,7 @@ Component.registerHooks([
   'middleware',
   'layout',
   'transition',
-  'scrollToTop'
+  'scrollToTop',
 ])
 
 export default Component

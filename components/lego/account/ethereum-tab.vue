@@ -7,8 +7,14 @@
       >
         <categories-selector class="ms-r-16 category-wrapper" />
       </div>
-      <div class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end">
-        <search-box class="search-box ms-r-16" placeholder="Search NFT..." :change="(val) => val" />
+      <div
+        class="col-12 col-lg search-sort d-flex justify-content-between justify-content-lg-end"
+      >
+        <search-box
+          class="search-box ms-r-16"
+          placeholder="Search NFT..."
+          :change="(val) => val"
+        />
       </div>
     </div>
     <div
@@ -37,7 +43,11 @@
       :refreshNFTTokens="refreshNFTTokens"
     />
 
-    <deposit :show="showDepositModal" :visible="onDeposit" :cancel="onDepositClose" />
+    <deposit
+      :show="showDepositModal"
+      :visible="onDeposit"
+      :cancel="onDepositClose"
+    />
 
     <div class="row ps-x-16 ps-y-40 d-flex justify-content-center text-center">
       <!-- ethereum loader here -->
@@ -211,12 +221,14 @@ export default class EthereumTab extends Vue {
         let i = 0;
         response.data.data.forEach((token) => {
           i++;
-          if (token.contract == "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6")
-            return;
+          if (token.contract === "0x12Ee2605AF9F3784eeA033C7DfB66E5Acd67F8d6") {
+          {
+return;
+}
           token.id = i;
           token.chainId = this.chainId;
           tokens.push(new NFTTokenModel(token));
-        });
+        })
         if (options && options.filtering) {
           this.tokensFullList = tokens;
           this.isLoadingTokens = false;
@@ -242,10 +254,10 @@ export default class EthereumTab extends Vue {
     this.showMoveToMatic = false;
   }
   onDeposit() {
-    this.showDepositModal = true
+    this.showDepositModal = true;
   }
   onDepositClose() {
-    this.showDepositModal = false
+    this.showDepositModal = false;
   }
 
   async loadMore() {

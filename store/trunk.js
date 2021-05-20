@@ -1,10 +1,10 @@
 /* eslint no-param-reassign: 0 */
-import Vue from "vue"
-import BigNumber from "~/plugins/bignumber"
+import Vue from 'vue'
+import BigNumber from '~/plugins/bignumber'
 import {
   getBalance as getAccountBalancePromise,
-  getContractCode
-} from "~/plugins/helpers/transaction-utils"
+  getContractCode,
+} from '~/plugins/helpers/transaction-utils'
 
 // Zero balance
 const ZeroBalance = new BigNumber(0)
@@ -16,7 +16,7 @@ export default {
     return {
       tokenBalance: {},
       contractObject: {},
-      contractCode: {}
+      contractCode: {},
     }
   },
 
@@ -31,7 +31,7 @@ export default {
 
     setCache(state, { which, id, value }) {
       Vue.set(state[which], id, value)
-    }
+    },
   },
 
   getters: {
@@ -54,20 +54,20 @@ export default {
       return (address, networkId) => {
         return state.contractObject[`${networkId}:${address.toLowerCase()}`]
       }
-    }
+    },
   },
 
   actions: {
     async networkChanged({ commit }) {
-      commit("resetCache", { which: "accountBalance" })
-      commit("resetCache", { which: "tokenBalance" })
-      commit("resetCache", { which: "contractObject" })
-      commit("resetCache", { which: "contractCode" })
+      commit('resetCache', { which: 'accountBalance' })
+      commit('resetCache', { which: 'tokenBalance' })
+      commit('resetCache', { which: 'contractObject' })
+      commit('resetCache', { which: 'contractCode' })
     },
 
     async loadTokenBalance(
       { state, commit, rootGetters },
-      { address, token, refresh = false, network }
+      { address, token, refresh = false, network },
     ) {
       if (!network) {
         return
@@ -80,8 +80,8 @@ export default {
       const cacheId = `${network.id}:${tokenAddress.toLowerCase()}`
       if (refresh) {
         // remove balance
-        commit("resetCache", { which: "tokenBalance" })
-        commit("resetCache", { which: "contractObject" })
+        commit('resetCache', { which: 'tokenBalance' })
+        commit('resetCache', { which: 'contractObject' })
       }
 
       let result = state.tokenBalance[cacheId]
@@ -91,7 +91,8 @@ export default {
 
       result = ZeroBalance
       try {
-        const accountAddress = address || rootGetters["account/account"].address
+        const accountAddress =
+          address || rootGetters['account/account'].address
 
         // Fetch balance
         let r = null
@@ -105,13 +106,13 @@ export default {
 
         result = new BigNumber(r)
       } catch (e) {
-        //console.error("error::loadTokenBalance", e)
+        // console.error("error::loadTokenBalance", e)
       }
 
-      commit("setCache", {
-        which: "tokenBalance",
+      commit('setCache', {
+        which: 'tokenBalance',
         id: cacheId,
-        value: result
+        value: result,
       })
 
       return result
@@ -119,7 +120,7 @@ export default {
 
     async fetchERC20ContractObject(
       { state, commit, rootGetters },
-      { address, network }
+      { address, network },
     ) {
       const cacheId = `${network.id}:${address.toLowerCase()}`
       let result = state.contractObject[cacheId]
@@ -129,24 +130,27 @@ export default {
 
       const networkMeta = rootGetters['network/networkMeta']
       const web3 = network.web3
-      result = new web3.eth.Contract(networkMeta.abi("ChildERC20"), address.toLowerCase())
-      commit("setCache", {
-        which: "contractObject",
+      result = new web3.eth.Contract(
+        networkMeta.abi('ChildERC20'),
+        address.toLowerCase(),
+      )
+      commit('setCache', {
+        which: 'contractObject',
         id: cacheId,
-        value: result
+        value: result,
       })
       return result
     },
 
     async resetBalances({ commit }) {
-      commit("resetCache", { which: "accountBalance" })
-      commit("resetCache", { which: "tokenBalance" })
-      commit("resetCache", { which: "contractObject" })
+      commit('resetCache', { which: 'accountBalance' })
+      commit('resetCache', { which: 'tokenBalance' })
+      commit('resetCache', { which: 'contractObject' })
     },
 
     async fetchContractCode(
       { state, commit, rootGetters },
-      { address, network }
+      { address, network },
     ) {
       const cacheId = `${address.toLowerCase()}`
       let result = state.contractCode[cacheId]
@@ -155,12 +159,12 @@ export default {
       }
 
       result = await getContractCode(network, address)
-      commit("setCache", {
-        which: "contractCode",
+      commit('setCache', {
+        which: 'contractCode',
         id: cacheId,
-        value: result
+        value: result,
       })
       return result
-    }
-  }
+    },
+  },
 }

@@ -1,7 +1,7 @@
 import utils from 'ethereumjs-util'
 import ETHAccount from 'ethereumjs-wallet'
 
-import {accounts as accountStore} from '~/plugins/localstore'
+import { accounts as accountStore } from '~/plugins/localstore'
 
 const N_FACTOR = 1024
 
@@ -9,6 +9,7 @@ export default class Account extends ETHAccount {
   constructor(priv, pub) {
     if (priv) {
       priv = utils.stripHexPrefix(priv) // eslint-disable-line no-param-reassign
+      // eslint-disable-next-line node/no-deprecated-api
       priv = priv.length === 32 ? priv : Buffer(priv, 'hex') // eslint-disable-line no-param-reassign
     }
     super(priv, pub)
@@ -34,7 +35,7 @@ export default class Account extends ETHAccount {
     const address = this.getAddressString().toLowerCase()
     const keystore = this.toV3(password, {
       kdf: 'scrypt',
-      n: N_FACTOR
+      n: N_FACTOR,
     })
 
     // set data local store
@@ -42,8 +43,8 @@ export default class Account extends ETHAccount {
       address,
       JSON.stringify({
         keystore,
-        ...extraData
-      })
+        ...extraData,
+      }),
     )
   }
 }

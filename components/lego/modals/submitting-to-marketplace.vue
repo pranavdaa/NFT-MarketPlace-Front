@@ -1,20 +1,35 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
-    <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
-      <div class="modal-dialog w-sm-100 align-self-center" role="document">
+    <div
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
+    <div
+      class="modal add-token-modal-wrapper"
+      :class="{ show: show }"
+    >
+      <div
+        class="modal-dialog w-sm-100 align-self-center"
+        role="document"
+      >
         <div class="box accept-box">
           <div
             class="box-body"
-            v-bind:style="{
+            :style="{
               background:
                 'linear-gradient( 180deg,' +
                 bg +
                 ' 0%, rgba(236, 235, 223, 0) 80%)',
             }"
           >
-            <div class="close-wrapper" @click="close()">
-              <svg-sprite-icon name="close-modal" class="close" />
+            <div
+              class="close-wrapper"
+              @click="close()"
+            >
+              <svg-sprite-icon
+                name="close-modal"
+                class="close"
+              />
             </div>
             <div class="container-fluid text-center">
               <div class="row ps-x-20 ps-x-40">
@@ -24,18 +39,18 @@
                     src="~/static/img/dummy-kitty.png"
                     alt="kitty"
                     @load="onImageLoad"
-                  />
+                  >
                 </div>
                 <div class="col-md-12 ps-b-32">
                   <div
-                    class="font-heading-large title font-semibold"
                     v-if="!submitted"
+                    class="font-heading-large title font-semibold"
                   >
                     Submitting to Marketplace
                   </div>
                   <div
-                    class="font-heading-large title font-semibold"
                     v-if="submitted"
+                    class="font-heading-large title font-semibold"
                   >
                     Successfully Submited!
                   </div>
@@ -45,13 +60,16 @@
                   </div>
                 </div>
                 <div
-                  class="col-md-12 ps-t-8 ps-b-40 ps-x-40"
                   v-if="!submitted"
+                  class="col-md-12 ps-t-8 ps-b-40 ps-x-40"
                   @click="submitted = !submitted"
                 >
                   Matic loader
                 </div>
-                <div class="col-md-12 ps-t-8 ps-b-40 ps-x-0" v-if="submitted">
+                <div
+                  v-if="submitted"
+                  class="col-md-12 ps-t-8 ps-b-40 ps-x-0"
+                >
                   <button
                     class="btn btn-light btn-block"
                     @click="submitted = !submitted"
@@ -69,12 +87,12 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
-import rgbToHsl from "~/plugins/helpers/color-algorithm";
-import ColorThief from "color-thief";
-const colorThief = new ColorThief();
+import rgbToHsl from '~/plugins/helpers/color-algorithm'
+import ColorThief from 'color-thief'
+const colorThief = new ColorThief()
 
 @Component({
   props: {
@@ -94,21 +112,23 @@ const colorThief = new ColorThief();
 })
 export default class SubmittingToMarketplace extends Vue {
   submitted = false;
-  bg = "#f3f4f7";
+  bg = '#f3f4f7';
   mounted() {}
 
   onImageLoad() {
     try {
-      const img = this.$el.querySelector(".asset-img");
-      let rgbColor = colorThief.getColor(img);
+      const img = this.$el.querySelector('.asset-img')
+      const rgbColor = colorThief.getColor(img)
       if (rgbColor) {
-        let hsl = rgbToHsl({
+        const hsl = rgbToHsl({
           r: rgbColor[0],
           g: rgbColor[1],
           b: rgbColor[2],
-        });
-        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`;
-      } else this.bg = "#f3f4f7";
+        })
+        this.bg = `hsl(${hsl.h},${hsl.s}%,${hsl.l}%)`
+      } else {
+        this.bg = '#f3f4f7'
+      }
     } catch (error) {}
   }
 }

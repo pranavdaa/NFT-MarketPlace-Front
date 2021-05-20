@@ -1,5 +1,8 @@
 <template>
-  <div class="section" v-if="transactions.length > 0">
+  <div
+    v-if="transactions.length > 0"
+    class="section"
+  >
     <div class="box transaction-widget">
       <div
         class="box-header d-flex justify-content-center justify-content-md-between ps-sm-32 ps-20"
@@ -9,16 +12,19 @@
         </div>
       </div>
 
-      <div class="box-body" v-if="transactions">
+      <div
+        v-if="transactions"
+        class="box-body"
+      >
         <div
           class="table table-wrapper wallet-transactions no-border selectable"
         >
           <div class="table">
             <div class="table-body">
               <div
-                class="table-row no-border p-0"
                 v-for="transaction in transactions"
                 :key="transaction.txhash"
+                class="table-row no-border p-0"
                 @click="selectTransaction(transaction)"
               >
                 <div
@@ -45,8 +51,8 @@
           </div>
         </div>
         <div
-          class="no-transaction-card-wrapper d-flex justify-content-center"
           v-if="false"
+          class="no-transaction-card-wrapper d-flex justify-content-center"
         >
           <div class="text-center align-self-center">
             <div class="font-heading-small font-semibold ms-t-12">
@@ -74,12 +80,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
 
-import { getAxios } from "~/plugins/axios";
-import WithdrawConfirmationModal from "~/components/lego/modals/withdraw-confirmation-modal";
+import WithdrawConfirmationModal from '~/components/lego/modals/withdraw-confirmation-modal'
 
 @Component({
   props: {
@@ -90,43 +95,45 @@ import WithdrawConfirmationModal from "~/components/lego/modals/withdraw-confirm
     refreshBalance: { type: Function, required: true },
   },
   computed: {
-    ...mapGetters("account", ["account", "pendingWithdrawals"]),
-    ...mapGetters("auth", ["userId"]),
-    ...mapGetters("category", ["categories"]),
+    ...mapGetters('account', ['account', 'pendingWithdrawals']),
+    ...mapGetters('auth', ['userId']),
+    ...mapGetters('category', ['categories']),
   },
   components: { WithdrawConfirmationModal },
   middleware: [],
-  mixins: ["auth"],
+  mixins: ['auth'],
 })
 export default class PendingWithdrawalsList extends Vue {
   selectedTransaction = null;
   showWithdrawConfirmation = null;
 
   async mounted() {
-    this.$store.dispatch("account/fetchPendingWithdrawals");
+    this.$store.dispatch('account/fetchPendingWithdrawals')
   }
 
   selectTransaction(transaction) {
-    this.selectedTransaction = transaction;
-    this.onShowWithdrawConfirmation();
+    this.selectedTransaction = transaction
+    this.onShowWithdrawConfirmation()
   }
+
   onShowWithdrawConfirmation() {
-    this.showWithdrawConfirmation = true;
+    this.showWithdrawConfirmation = true
   }
+
   onCloseConfirmWithdraw() {
-    this.showWithdrawConfirmation = false;
+    this.showWithdrawConfirmation = false
   }
 
   refreshTransactionAndBalance() {
-    this.refreshBalance();
-    this.$store.dispatch("account/fetchPendingWithdrawals");
+    this.refreshBalance()
+    this.$store.dispatch('account/fetchPendingWithdrawals')
   }
 
   get transactions() {
     if (this.pendingWithdrawals && this.pendingWithdrawals.length > 0) {
-      return this.pendingWithdrawals;
+      return this.pendingWithdrawals
     }
-    return [];
+    return []
   }
 
   get category() {
@@ -136,16 +143,16 @@ export default class PendingWithdrawalsList extends Vue {
       this.selectedTransaction
     ) {
       return this.categories.find(
-        (c) => c.id == this.selectedTransaction.categories_id
-      );
+        (c) => c.id === this.selectedTransaction.categories_id,
+      )
     }
   }
 
   get selectedTokens() {
     if (this.tokens && this.tokens.length > 0 && this.selectedTransaction) {
       return this.tokens.filter((token) =>
-        this.selectedTransaction.token_array.includes(token.token_id)
-      );
+        this.selectedTransaction.token_array.includes(token.token_id),
+      )
     }
   }
 }

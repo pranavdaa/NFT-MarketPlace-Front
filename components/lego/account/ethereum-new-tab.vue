@@ -15,20 +15,23 @@
           <div
             class="col-12 col-lg cat-switch d-flex d-lg-none ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
           >
-            <categories-selector :countFor="2" class="category-wrapper" />
+            <categories-selector
+              :countFor="2"
+              class="category-wrapper"
+            />
           </div>
           <div
             class="col-12 col-lg cat-switch d-none d-lg-flex ms-b-16 ms-b-lg-0 justify-content-between justify-content-lg-start"
           >
             <div
-              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
               v-if="!selectedCategory"
+              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
             >
               <img
                 :src="allCategory.img_url"
                 :alt="allCategory.name"
                 class="icon align-self-center ms-r-12"
-              />
+              >
               <div class="font-body-large align-self-center font-medium">
                 {{ allCategory.name }}
               </div>
@@ -37,22 +40,22 @@
               </div>
             </div>
             <div
-              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
               v-if="selectedCategory"
+              class="category d-flex ps-x-16 ps-y-8 cursor-pointer"
             >
               <img
                 :src="selectedCategory.img_url"
                 :alt="selectedCategory.name"
                 class="icon align-self-center ms-r-12"
-              />
+              >
               <div class="font-body-large align-self-center font-medium">
                 {{ selectedCategory.name }}
               </div>
               <div class="count ps-l-12 font-body-large ml-auto">
                 {{
                   selectedCategory.mainCount ||
-                  (displayedTokens && displayedTokens.length) ||
-                  0
+                    (displayedTokens && displayedTokens.length) ||
+                    0
                 }}
                 {{ $t("collectibles") }}
               </div>
@@ -91,21 +94,21 @@
         </div>
 
         <no-item
-          class="ps-b-120"
-          :message="exmptyMsg"
           v-if="
             displayedTokens && displayedTokens.length <= 0 && !isLoadingTokens
           "
+          class="ps-b-120"
+          :message="exmptyMsg"
         />
 
         <div
-          class="row ps-x-16 d-flex justify-content-center justify-content-lg-start text-center ps-b-60"
           v-if="displayedTokens && displayedTokens.length > 0"
+          class="row ps-x-16 d-flex justify-content-center justify-content-lg-start text-center ps-b-60"
         >
           <no-item
+            v-if="searchedTokens.length === 0"
             class="ps-b-120"
             :message="this.$t('searchNotFound')"
-            v-if="searchedTokens.length === 0"
           />
 
           <NFTTokenCard
@@ -124,7 +127,7 @@
         <deposit
           v-if="
             (selectedCategory && showDepositModal) ||
-            (selectedTokens.length > 0 && showDepositModal)
+              (selectedTokens.length > 0 && showDepositModal)
           "
           :show="showDepositModal"
           :visible="onDeposit"
@@ -139,18 +142,18 @@
         >
           <!-- matic loader here -->
           <button-loader
+            v-if="
+              (hasNextPage && displayedTokens && displayedTokens.length > 0) ||
+                isLoadingTokens
+            "
             class="mx-auto"
             :loading="isLoadingTokens"
             :loadingText="$t('loading')"
             :text="$t('loadMore')"
             block
             lg
-            v-if="
-              (hasNextPage && displayedTokens && displayedTokens.length > 0) ||
-              isLoadingTokens
-            "
             color="light"
-          ></button-loader>
+          />
         </div>
       </div>
     </div>
@@ -158,27 +161,26 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
-import getAxios from "~/plugins/axios";
-import app from "~/plugins/app";
-import { fuzzysearch } from "~/plugins/helpers/index";
-import { fuzzySearchResult } from "~/plugins/helpers/index";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
+import getAxios from '~/plugins/axios'
+import app from '~/plugins/app'
+import { fuzzysearch, fuzzySearchResult } from '~/plugins/helpers/index'
 
-import NFTTokenModel from "~/components/model/nft-token";
+import NFTTokenModel from '~/components/model/nft-token'
 
-import SellCard from "~/components/lego/sell-card";
-import CategoriesSelector from "~/components/lego/categories-selector";
-import SearchBox from "~/components/lego/search-box";
-import SortDropdown from "~/components/lego/sort-dropdown";
-import SlideSwitch from "~/components/lego/slide-switch";
-import NoItem from "~/components/lego/no-item";
-import CategorySidebar from "~/components/lego/account/category-sidebar";
-import NFTTokenCard from "~/components/lego/nft-token-card";
+import SellCard from '~/components/lego/sell-card'
+import CategoriesSelector from '~/components/lego/categories-selector'
+import SearchBox from '~/components/lego/search-box'
+import SortDropdown from '~/components/lego/sort-dropdown'
+import SlideSwitch from '~/components/lego/slide-switch'
+import NoItem from '~/components/lego/no-item'
+import CategorySidebar from '~/components/lego/account/category-sidebar'
+import NFTTokenCard from '~/components/lego/nft-token-card'
 
-import SellToken from "~/components/lego/modals/sell-token";
-import Deposit from "~/components/lego/modals/deposit";
+import SellToken from '~/components/lego/modals/sell-token'
+import Deposit from '~/components/lego/modals/deposit'
 
 @Component({
   props: {},
@@ -195,17 +197,17 @@ import Deposit from "~/components/lego/modals/deposit";
     CategorySidebar,
   },
   computed: {
-    ...mapGetters("page", ["selectedFilters", "selectedCategory"]),
-    ...mapGetters("category", ["categories", "allCategory"]),
-    ...mapGetters("account", ["account", "userOrders", "totalMainNft"]),
-    ...mapGetters("auth", ["user"]),
-    ...mapGetters("network", ["networks"]),
+    ...mapGetters('page', ['selectedFilters', 'selectedCategory']),
+    ...mapGetters('category', ['categories', 'allCategory']),
+    ...mapGetters('account', ['account', 'userOrders', 'totalMainNft']),
+    ...mapGetters('auth', ['user']),
+    ...mapGetters('network', ['networks']),
   },
   middleware: [],
   mixins: [],
   watch: {
     selectedFilters: {
-      handler: async function () {
+      handler: async function() {
         // disabled api call on category change
         // this.fetchNFTTokens({ filtering: true });
       },
@@ -230,109 +232,114 @@ export default class EthereumNewTab extends Vue {
   fuzzysearch = fuzzysearch;
 
   mounted() {
-    this.fetchNFTTokens();
+    this.fetchNFTTokens()
   }
 
   // Handlers
   onSortSelect(item) {
-    this.$store.commit("page/selectedSort", item.filter);
+    this.$store.commit('page/selectedSort', item.filter)
   }
+
   sellToken(id) {
-    this.selectedToken = this.tokensFullList.find((token) => token.id == id);
-    this.showSellModal = true;
+    this.selectedToken = this.tokensFullList.find((token) => token.id === id)
+    this.showSellModal = true
   }
+
   onCloseSellModal() {
-    this.showSellModal = false;
+    this.showSellModal = false
   }
+
   onSelectToken(token) {
-    let exists = this.selectedTokens.find((t) => t.token_id === token.token_id);
-    if (typeof exists == "undefined") {
+    const exists = this.selectedTokens.find((t) => t.token_id === token.token_id)
+    if (typeof exists === 'undefined') {
       if (
         this.selectedTokens &&
         this.selectedTokens.length < this.maxTokenSelection
       ) {
-        this.selectedTokens.push(token);
+        this.selectedTokens.push(token)
       }
     } else {
       this.selectedTokens = this.selectedTokens.filter(
-        (t) => t.token_id !== token.token_id
-      );
+        (t) => t.token_id !== token.token_id,
+      )
     }
   }
+
   onDeposit(token = null) {
     if (token) {
-      this.selectedTokens = [token];
+      this.selectedTokens = [token]
     }
-    this.showDepositModal = true;
+    this.showDepositModal = true
   }
+
   onDepositClose() {
-    this.selectedTokens = [];
+    this.selectedTokens = []
     if (this.tokens && this.tokens.length > 0) {
-      this.tokens.forEach((token) => (token.isSelected = false));
+      this.tokens.forEach((token) => (token.isSelected = false))
     }
-    this.showDepositModal = false;
+    this.showDepositModal = false
   }
+
   refreshBalance() {
-    this.fetchNFTTokens({ filtering: true });
+    this.fetchNFTTokens({ filtering: true })
   }
 
   // Async
   async fetchNFTTokens(options = {}) {
     if (this.isLoadingTokens || (!this.hasNextPage && !options.filtering)) {
       // ignore if already fetching
-      return;
+      return
     }
-    this.isLoadingTokens = true;
+    this.isLoadingTokens = true
     try {
-      let response;
-      let offset = this.tokensFullList.length;
+      let offset = this.tokensFullList.length
 
       if (options && options.filtering) {
         // Start from page one with new filter
-        offset = 0;
+        offset = 0
       }
 
       // Fetch tokens with pagination and filters
-      response = await getAxios().get(
-        `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}${this.ifCategory}${this.ifSort}&offset=${offset}&limit=${this.limit}`
-      );
+      const response = await getAxios().get(
+        `tokens/balance?userId=${this.user.id}&chainId=${this.chainId}${this.ifCategory}${this.ifSort}&offset=${offset}&limit=${this.limit}`,
+      )
 
       if (response.status === 200 && response.data.data) {
         // Update total token number
-        this.$store.commit("account/totalMainNft", response.data.count);
+        this.$store.commit('account/totalMainNft', response.data.count)
         // Check for next page
         // this.hasNextPage = response.data.data.has_next_page;
-        this.hasNextPage = false;
+        this.hasNextPage = false
 
-        let tokens = [];
-        let i = 0;
+        const tokens = []
+        let i = 0
         response.data.data.forEach((token) => {
-          i++;
-          token.id = i;
-          token.chainId = this.chainId;
-          tokens.push(new NFTTokenModel(token));
-        });
+          i++
+          token.id = i
+          token.chainId = this.chainId
+          tokens.push(new NFTTokenModel(token))
+        })
         this.$store.commit(
-          "category/addUsersMainCount",
-          response.data.balances
-        );
+          'category/addUsersMainCount',
+          response.data.balances,
+        )
         if (options && options.filtering) {
-          this.tokensFullList = tokens;
-          this.isLoadingTokens = false;
+          this.tokensFullList = tokens
+          this.isLoadingTokens = false
 
-          return;
+          return
         }
-        this.tokensFullList = [...this.tokensFullList, ...tokens];
+        this.tokensFullList = [...this.tokensFullList, ...tokens]
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-    this.isLoadingTokens = false;
+    this.isLoadingTokens = false
   }
 
   // Getters
   get displayedTokens() {
-    let tokens = [];
+    let tokens = []
     if (
       this.selectedTokenIds &&
       this.selectedTokenIds.length > 0 &&
@@ -340,98 +347,108 @@ export default class EthereumNewTab extends Vue {
       this.tokensFullList.length > 0
     ) {
       this.tokensFullList.forEach((token) => {
-        token.isSelected = this.selectedTokenIds.includes(token.token_id);
-        tokens.push(token);
-      });
+        token.isSelected = this.selectedTokenIds.includes(token.token_id)
+        tokens.push(token)
+      })
     } else {
-      tokens = [];
+      tokens = []
       this.tokensFullList.forEach((token) => {
-        token.isSelected = false;
-        tokens.push(token);
-      });
+        token.isSelected = false
+        tokens.push(token)
+      })
     }
     if (this.selectedCategory && this.tokensFullList) {
       return tokens.filter(
         (t) =>
           t.contract.toLowerCase() ===
-          this.selectedCategory.getAddress(this.mainChainId).toLowerCase()
-      );
+          this.selectedCategory.getAddress(this.mainChainId).toLowerCase(),
+      )
     }
-    return tokens || [];
+    return tokens || []
   }
+
   get searchedTokens() {
     if (this.searchInput !== null && this.displayedTokens.length > 0) {
       return fuzzySearchResult(this.searchInput, this.displayedTokens)
     } else {
-      return this.displayedTokens;
+      return this.displayedTokens
     }
   }
+
   get selectedTokenIds() {
-    let token_ids = [];
+    const tokenIds = []
     if (this.selectedTokens && this.selectedTokens.length > 0) {
-      this.selectedTokens.forEach((token) => token_ids.push(token.token_id));
+      this.selectedTokens.forEach((token) => tokenIds.push(token.token_id))
     }
-    return token_ids;
+    return tokenIds
   }
+
   get selectedCateTokens() {
     if (this.selectedCategory && this.tokensFullList) {
       return this.tokensFullList.filter(
         (t) =>
           t.contract.toLowerCase() ===
-          this.selectedCategory.getAddress(this.mainChainId).toLowerCase()
-      );
+          this.selectedCategory.getAddress(this.mainChainId).toLowerCase(),
+      )
     }
     if (this.selectedTokens.length > 0) {
       return this.tokensFullList.filter(
         (t) =>
           t.contract.toLowerCase() ===
-          this.selectedTokens[0].contract.toLowerCase()
-      );
+          this.selectedTokens[0].contract.toLowerCase(),
+      )
     }
-    return [];
+    return []
   }
+
   get preSelectedTokens() {
     if (this.selectedTokens && this.selectedTokens.length > 0) {
-      return this.selectedTokens;
+      return this.selectedTokens
     }
-    return this.selectedCateTokens;
+    return this.selectedCateTokens
   }
+
   get ifCategory() {
     return this.selectedFilters.selectedCategory
       ? `&categoryArray=[${this.selectedFilters.selectedCategory.id}]`
-      : "&categoryArray=[]";
+      : '&categoryArray=[]'
   }
+
   get ifSort() {
     return this.selectedFilters.selectedSort
       ? `&sort=${this.selectedFilters.selectedSort}`
-      : "";
+      : ''
   }
+
   get chainId() {
-    return this.networks.main.chainId;
+    return this.networks.main.chainId
   }
+
   get exmptyMsg() {
     return {
-      title: this.$t("ethereumTab.empty.title"),
-      description: this.$t("ethereumTab.empty.description"),
+      title: this.$t('ethereumTab.empty.title'),
+      description: this.$t('ethereumTab.empty.description'),
       img: true,
-    };
+    }
   }
+
   get mainChainId() {
-    return this.networks.main.chainId;
+    return this.networks.main.chainId
   }
+
   get sortItems() {
     return [
       {
         id: 0,
-        name: this.$t("sort.newest"),
-        filter: "-created",
+        name: this.$t('sort.newest'),
+        filter: '-created',
       },
       {
         id: 1,
-        name: this.$t("sort.oldest"),
-        filter: "+created",
+        name: this.$t('sort.oldest'),
+        filter: '+created',
       },
-    ];
+    ]
   }
 }
 </script>

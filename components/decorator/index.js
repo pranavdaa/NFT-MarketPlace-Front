@@ -28,8 +28,8 @@ export function VueWatch(...paths) {
     }
 
     // paths
-    let { deep = false, immediate = false } = options
-    paths.forEach(path => {
+    const { deep = false, immediate = false } = options
+    paths.forEach((path) => {
       componentOptions.watch[path] = { handler, deep, immediate }
     })
   })
@@ -49,10 +49,10 @@ export function Debounce(duration) {
         Object.defineProperty(this, key, {
           configurable: true,
           enumerable: descriptor.enumerable,
-          value: debounce(descriptor.value, duration)
+          value: debounce(descriptor.value, duration),
         })
         return this[key]
-      }
+      },
     }
   }
 }
@@ -67,7 +67,7 @@ export function waitFor(...names) {
   return (target, prop, descriptor) => {
     const fn = descriptor.value
     const newFn = function(...args) {
-      const promises = names.map(name => {
+      const promises = names.map((name) => {
         if (!(this[name] instanceof Promise)) {
           throw new Error(`Expecting this['${name}'] to be a Promise`)
         }

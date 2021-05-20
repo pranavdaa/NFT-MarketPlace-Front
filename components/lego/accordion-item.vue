@@ -6,7 +6,7 @@
   >
     <div class="accordion__header">
       <!-- This slot will handle the title/header of the accordion and is the part you click on -->
-      <slot name="accordion-header"></slot>
+      <slot name="accordion-header" />
     </div>
 
     <transition
@@ -16,10 +16,13 @@
       @before-leave="start"
       @after-leave="end"
     >
-      <div class="accordion__content" v-show="visible">
+      <div
+        v-show="visible"
+        class="accordion__content"
+      >
         <ul class="p-0">
           <!-- This slot will handle all the content that is passed to the accordion -->
-          <slot name="accordion-content"></slot>
+          <slot name="accordion-content" />
         </ul>
       </div>
     </transition>
@@ -27,42 +30,42 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
     accordionItem: {
       type: Object,
-      required: false
-    }
-  }
+      required: false,
+    },
+  },
 })
 export default class AccordionItem extends Vue {
   index = null;
 
   created() {
-    this.index = this.accordionItem.count++;
+    this.index = this.accordionItem.count++
   }
 
   open() {
     if (this.visible) {
-      this.accordionItem.active = null;
+      this.accordionItem.active = null
     } else {
-      this.accordionItem.active = this.index;
+      this.accordionItem.active = this.index
     }
   }
 
   start(el) {
-    el.style.height = el.scrollHeight + "px";
+    el.style.height = el.scrollHeight + 'px'
   }
 
   end(el) {
-    el.style.height = "unset";
+    el.style.height = 'unset'
   }
 
   get visible() {
-    return this.index == this.accordionItem.active;
+    return this.index === this.accordionItem.active
   }
 }
 </script>

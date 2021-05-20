@@ -9,8 +9,6 @@ import category from './category'
 import network from './network'
 import trunk from './trunk'
 
-
-
 const createStore = () =>
   new Vuex.Store({
     // modules
@@ -23,7 +21,7 @@ const createStore = () =>
       network,
       trunk,
       page,
-    }
+    },
   })
 
 export default createStore

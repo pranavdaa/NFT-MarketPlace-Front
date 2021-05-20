@@ -3,25 +3,25 @@ import { getNextRoute } from '~/plugins/helpers'
 export const NoSSR = {
   data() {
     return {
-      smartRender: this.smartRender || false
+      smartRender: this.smartRender || false,
     }
   },
   mounted() {
     this.smartRender = true
-  }
+  },
 }
 
 export const Toggle = {
   data() {
     return {
-      open: this.open || false
+      open: this.open || false,
     }
   },
   methods: {
     toggle() {
       this.open = !this.open
-    }
-  }
+    },
+  },
 }
 
 export const FormValidator = {
@@ -32,15 +32,15 @@ export const FormValidator = {
 
     isValid() {
       const validation = this.validation
-      return Object.keys(validation).every(key => validation[key])
-    }
-  }
+      return Object.keys(validation).every((key) => validation[key])
+    },
+  },
 }
 
 export const NextNavigation = {
   data() {
     return {
-      nextRoute: this.nextRoute || null
+      nextRoute: this.nextRoute || null,
     }
   },
   mounted() {
@@ -57,6 +57,6 @@ export const NextNavigation = {
           this.$router.push({ name: 'index' })
         }
       }
-    }
-  }
+    },
+  },
 }

@@ -1,14 +1,16 @@
 <template>
   <div class="pill-wrapper d-flex">
     <div class="order-type-pill d-flex ms-r-8">
-      <div class="font-caps font-medium caps align-self-center ps-x-6 ps-t-1">{{ type }}</div>
+      <div class="font-caps font-medium caps align-self-center ps-x-6 ps-t-1">
+        {{ type }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
 @Component({
   props: {
@@ -19,7 +21,7 @@ import Component from "nuxt-class-component";
   },
   components: {},
   middleware: [],
-  mixins: []
+  mixins: [],
 })
 export default class OrderTypeTag extends Vue {
   mounted() {}

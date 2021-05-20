@@ -1,13 +1,28 @@
 <template>
   <div class="section position-absolute">
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
-    <div class="modal add-token-modal-wrapper" v-bind:class="{ show: show }">
-      <div class="modal-dialog w-sm-100 align-self-center" role="document">
+    <div
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
+    <div
+      class="modal add-token-modal-wrapper"
+      :class="{ show: show }"
+    >
+      <div
+        class="modal-dialog w-sm-100 align-self-center"
+        role="document"
+      >
         <div class="box token-list-box">
           <div class="box-header text-center font-heading-medium font-semibold">
             Choose token
-            <div class="close-wrapper" @click="close()">
-              <svg-sprite-icon name="close-modal" class="close" />
+            <div
+              class="close-wrapper"
+              @click="close()"
+            >
+              <svg-sprite-icon
+                name="close-modal"
+                class="close"
+              />
             </div>
           </div>
           <div class="box-body">
@@ -16,17 +31,17 @@
                 <div class="table">
                   <div class="table-body">
                     <div
+                      v-if="erc20Tokens && erc20Tokens.length === 0"
                       class="d-flex justify-content-center"
-                      v-if="erc20Tokens && erc20Tokens.length == 0"
                     >
                       <span class="ps-32">No Tokens</span>
                     </div>
                     <div
-                      class="table-row no-border p-0"
                       v-for="token in erc20Tokens"
                       :key="token.id"
+                      class="table-row no-border p-0"
+                      :class="{ active: selectedERC20Token.id === token.id }"
                       @click="onTokenSelect(token)"
-                      :class="{ active: selectedERC20Token.id == token.id }"
                     >
                       <div
                         class="table-row-in-row bottom-separator ps-l-0 ps-r-md-20 ps-r-4 ms-l-lg-32 ms-l-16 w-100"
@@ -39,9 +54,9 @@
                             <img
                               v-if="!!tokenImage(token.symbol) && token.symbol"
                               class="align-self-center"
-                              v-bind:src="tokenImage(token.symbol)"
+                              :src="tokenImage(token.symbol)"
                               :alt="token.name"
-                            />
+                            >
                           </div>
                           <div
                             class="align-self-center d-flex flex-column ps-l-16"
@@ -58,13 +73,13 @@
                           class="table-column col ml-auto ms-r-md-8 ms-r-0 justify-content-end"
                         >
                           <div class="text-right d-flex flex-column">
-                            <span class="font-body-medium font-medium"
-                              >{{ token.formattedFullUSDBalance }}</span
-                            >
-                            <span class="text-gray font-body-medium mt-1"
-                              >{{ token.formattedBalance }}
-                              {{ token.symbol }}</span
-                            >
+                            <span class="font-body-medium font-medium">{{
+                              token.formattedFullUSDBalance
+                            }}</span>
+                            <span
+                              class="text-gray font-body-medium mt-1"
+                            >{{ token.formattedBalance }}
+                              {{ token.symbol }}</span>
                           </div>
                         </div>
                       </div>
@@ -81,11 +96,11 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
-import { mapGetters } from "vuex";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
+import { mapGetters } from 'vuex'
 
-import { tokenImage } from "~/plugins/helpers/";
+import { tokenImage } from '~/plugins/helpers/'
 
 @Component({
   props: {
@@ -100,15 +115,15 @@ import { tokenImage } from "~/plugins/helpers/";
   },
   components: {},
   computed: {
-    ...mapGetters("token", ["erc20Tokens", "selectedERC20Token"]),
+    ...mapGetters('token', ['erc20Tokens', 'selectedERC20Token']),
   },
 })
 export default class TokenList extends Vue {
   mounted() {}
   tokenImage = tokenImage;
   async onTokenSelect(token) {
-    this.$store.commit("token/selectedERC20Token", token);
-    this.close();
+    this.$store.commit('token/selectedERC20Token', token)
+    this.close()
   }
 }
 </script>

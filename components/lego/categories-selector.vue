@@ -8,7 +8,7 @@
         :src="defaultSelectedCategory.img_url"
         :alt="defaultSelectedCategory.name"
         class="icon align-self-center ms-r-12"
-      />
+      >
       <div class="font-body-small align-self-center font-medium">
         {{ defaultSelectedCategory.name }}
       </div>
@@ -18,12 +18,12 @@
         <svg-sprite-icon
           class="align-self-center"
           name="right-arrow"
-        ></svg-sprite-icon>
+        />
       </span>
     </div>
     <div
-      class="modal fade show"
       v-if="showCategory"
+      class="modal fade show"
       @click="showCategory = false"
     >
       <div class="container-fluid ms-l-16 ms-l-lg-32 ms-t-32">
@@ -36,7 +36,7 @@
               :src="allCategory.img_url"
               :alt="allCategory.name"
               class="icon align-self-center ms-r-12"
-            />
+            >
             <div class="font-body-small align-self-center font-medium">
               {{ allCategory.name }}
             </div>
@@ -45,34 +45,34 @@
             </div>
           </div>
           <div
-            class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
             v-for="category in categories"
             :key="category.name"
+            class="category d-flex ps-x-16 ps-y-12 cursor-pointer"
             @click="selectCategory(category)"
           >
             <img
               :src="category.img_url"
               :alt="category.name"
               class="icon align-self-center ms-r-12"
-            />
+            >
             <div class="font-body-small align-self-center font-medium">
               {{ category.name }}
             </div>
             <div
+              v-if="SHOW_COUNT.ORDER === countFor"
               class="count ps-l-12 font-body-medium ml-auto"
-              v-if="SHOW_COUNT.ORDER == countFor"
             >
               {{ category.count || 0 }}
             </div>
             <div
+              v-if="SHOW_COUNT.MAIN === countFor"
               class="count ps-l-12 font-body-medium ml-auto"
-              v-if="SHOW_COUNT.MAIN == countFor"
             >
               {{ category.mainCount || 0 }}
             </div>
             <div
+              v-if="SHOW_COUNT.MATIC === countFor"
               class="count ps-l-12 font-body-medium ml-auto"
-              v-if="SHOW_COUNT.MATIC == countFor"
             >
               {{ category.maticCount || 0 }}
             </div>
@@ -80,19 +80,20 @@
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ show: showCategory }"></div>
+    <div
+      class="modal-backdrop"
+      :class="{ show: showCategory }"
+    />
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-import Component from "nuxt-class-component";
+import Vue from 'vue'
+import Component from 'nuxt-class-component'
 
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 
-import app from "~/plugins/app";
-import getAxios from "~/plugins/axios";
-const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 };
+const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 }
 @Component({
   props: {
     countFor: {
@@ -102,8 +103,8 @@ const SHOW_COUNT = { ORDER: 0, MATIC: 1, MAIN: 2 };
     },
   },
   computed: {
-    ...mapGetters("page", ["selectedCategory"]),
-    ...mapGetters("category", ["categories", "allCategory"]),
+    ...mapGetters('page', ['selectedCategory']),
+    ...mapGetters('category', ['categories', 'allCategory']),
   },
 })
 export default class CategoriesSidebar extends Vue {
@@ -115,54 +116,54 @@ export default class CategoriesSidebar extends Vue {
   // Actions
   selectCategory(category) {
     if (category.isAll) {
-      this.$store.commit("page/selectedCategory", null);
-      return;
+      this.$store.commit('page/selectedCategory', null)
+      return
     }
 
-    this.$store.commit("page/selectedCategory", category);
-    this.showCategory = false;
+    this.$store.commit('page/selectedCategory', category)
+    this.showCategory = false
   }
 
   // Getters
 
   get allCount() {
-    if (this.SHOW_COUNT.MATIC == this.countFor) {
+    if (this.SHOW_COUNT.MATIC === this.countFor) {
       return (
         this.categories.reduce((total, category) => {
           if (category.maticCount) {
-            total = total + parseInt(category.maticCount);
+            total = total + parseInt(category.maticCount)
           }
-          return total;
+          return total
         }, 0) || 0
-      );
-    } else if (this.SHOW_COUNT.MAIN == this.countFor) {
+      )
+    } else if (this.SHOW_COUNT.MAIN === this.countFor) {
       return (
         this.categories.reduce((total, category) => {
           if (category.mainCount) {
-            total = total + parseInt(category.mainCount);
+            total = total + parseInt(category.mainCount)
           }
-          return total;
+          return total
         }, 0) || 0
-      );
+      )
     } else {
-      return this.totalOrderCount;
+      return this.totalOrderCount
     }
   }
 
   get defaultSelectedCategory() {
     if (this.selectedCategory) {
-      return this.selectedCategory;
+      return this.selectedCategory
     }
-    return this.allCategory;
+    return this.allCategory
   }
 
   get totalOrderCount() {
     return (
       this.categories.reduce(
         (total, item) => total + parseInt(item.count),
-        0
-      ) || "0"
-    );
+        0,
+      ) || '0'
+    )
   }
 }
 </script>

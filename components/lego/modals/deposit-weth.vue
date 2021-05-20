@@ -1,8 +1,8 @@
 <template>
   <section>
     <div
-      class="deposit-weth modal fade show"
       v-if="show"
+      class="deposit-weth modal fade show"
       :class="{ 'hide-modal': showReceiveModal }"
     >
       <div class="modal-dialog align-self-center">
@@ -11,9 +11,11 @@
             <div class="ps-16 ps-md-32 box-header">
               <span
                 class="heading-title text-center font-heading-medium font-semibold col"
-                >{{ $t("account.deposit.title") }}</span
+              >{{ $t("account.deposit.title") }}</span>
+              <div
+                class="align-self-center cursor-pointer"
+                @click="close()"
               >
-              <div class="align-self-center cursor-pointer" @click="close()">
                 <svg-sprite-icon
                   name="close"
                   class="close align-self-center cursor-pointer"
@@ -23,7 +25,7 @@
 
             <div class="container">
               <div
-                class="row ps-x-md-32 ps-y-md-32 ps-y-32 ps-x-16 d-flex justify-content-center"
+                class="row ps-x-md-32 ps-y-24 ps-x-16 d-flex justify-content-center"
               >
                 <a
                   class="option-box d-flex flex-row my-2"
@@ -31,7 +33,7 @@
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <div><img src="~assets/svg/deposit-from-mainnet.svg" /></div>
+                  <div><img src="~assets/svg/deposit-from-mainnet.svg"></div>
                   <div class="option-right d-flex flex-column">
                     <div class="title">
                       {{ $t("account.deposit.options.deposit.title") }}
@@ -47,7 +49,7 @@
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <div><img src="~assets/svg/buy-from-transak.svg" /></div>
+                  <div><img src="~assets/svg/buy-from-transak.svg"></div>
                   <div class="option-right d-flex flex-column">
                     <div class="title">
                       {{ $t("account.deposit.options.buy.title") }}
@@ -61,7 +63,7 @@
                   class="option-box d-flex flex-row my-2"
                   @click="showReceiveModal = true"
                 >
-                  <div><img src="~assets/svg/transfer-from-wallet.svg" /></div>
+                  <div><img src="~assets/svg/transfer-from-wallet.svg"></div>
                   <div class="option-right d-flex flex-column">
                     <div class="title">
                       {{ $t("account.deposit.options.transfer.title") }}
@@ -71,28 +73,39 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="know-more text-center text-primary ps-t-16">
+                  <a
+                    href="https://docs.matic.network/docs/develop/wallets/matic-web-wallet/deposit-eth-dai-on-matic"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >How to deposit ETH/DAI on Matic ?</a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="modal-backdrop" v-bind:class="{ show: show }"></div>
+    <div
+      class="modal-backdrop"
+      :class="{ show: show }"
+    />
 
     <receive-qr-code
       :show="showReceiveModal"
       :close="closeReceiveModal"
       :uri="account.address"
-    ></receive-qr-code>
+    />
   </section>
 </template>
 
 <script>
-import Vue from "vue";
-import { mapGetters } from "vuex";
+import Vue from 'vue'
+import { mapGetters } from 'vuex'
 
-import Component from "nuxt-class-component";
-import ReceiveQrCode from "~/components/lego/receive-qr-code";
+import Component from 'nuxt-class-component'
+import ReceiveQrCode from '~/components/lego/receive-qr-code'
 
 @Component({
   props: {
@@ -109,15 +122,15 @@ import ReceiveQrCode from "~/components/lego/receive-qr-code";
   data() {
     return {
       showReceiveModal: false,
-    };
+    }
   },
   components: { ReceiveQrCode },
   computed: {
-    ...mapGetters("account", ["account"]),
+    ...mapGetters('account', ['account']),
   },
   methods: {
     closeReceiveModal() {
-      this.showReceiveModal = false;
+      this.showReceiveModal = false
     },
   },
 })
@@ -158,6 +171,14 @@ export default class DepositWeth extends Vue {
       @include font-setting("body-small", "regular");
       color: dark-color("500");
     }
+  }
+}
+
+.know-more {
+  @include font-setting("heading-small", "semibold");
+
+  a:hover {
+    color: primary-color("600");
   }
 }
 </style>

@@ -1,7 +1,8 @@
 /* eslint no-param-reassign: 0 */
-import { clearStore, config as configStore } from "~/plugins/localstore"
-import { getAxios } from "~/plugins/axios"
-import app from "~/plugins/app"
+import { clearStore, config as configStore } from '~/plugins/localstore'
+import { getAxios } from '~/plugins/axios'
+import app from '~/plugins/app'
+import Vue from 'vue'
 
 export default {
   namespaced: true,
@@ -12,7 +13,7 @@ export default {
       authToken: null,
       user: null,
       address: null,
-      userId: null
+      userId: null,
     }
   },
 
@@ -42,7 +43,7 @@ export default {
 
     authToken(state, value) {
       state.authToken = value
-    }
+    },
   },
 
   getters: {
@@ -76,39 +77,40 @@ export default {
 
     anonymous(state) {
       return !!(state.user && state.user.isAnonymous)
-    }
+    },
   },
 
   actions: {
     login({ commit }, user) {
-      commit("user", user)
+      commit('user', user)
       if (user) {
-        commit("address", user.address)
+        commit('address', user.address)
       } else {
-        commit("address", null)
+        commit('address', null)
       }
     },
 
     async logout({ commit, dispatch }) {
-      commit("user", null)
-      commit("userId", null)
-      commit("authToken", null)
-      commit("address", null)
-      dispatch("trunk/resetBalances", {}, { root: true });
+      commit('user', null)
+      commit('userId', null)
+      commit('authToken', null)
+      commit('address', null)
+      dispatch('trunk/resetBalances', {}, { root: true })
+      Vue.logger.stopTrack()
       clearStore()
     },
 
     // do login
     async doLogin({ dispatch }, payload) {
       if (!payload || !payload.address || !payload.signature) {
-        console.log("User addresss and Signature is required for login")
+        console.log('User addresss and Signature is required for login')
         return
       }
 
-      const response = await getAxios().post("users/login", payload)
+      const response = await getAxios().post('users/login', payload)
       if (response.status === 200 && response.data.data) {
         // Store auth token to local store and add user
-        configStore.set("authToken", response.data.auth_token)
+        configStore.set('authToken', response.data.auth_token)
         dispatch('login', response.data.data)
         app.initNetworks(app.vuexStore)
         app.initAccount(app.vuexStore)
@@ -125,9 +127,9 @@ export default {
         }
       } catch (err) {
         if (err.response.status === 401) {
-          dispatch('logout');
+          dispatch('logout')
         }
       }
-    }
-  }
+    },
+  },
 }

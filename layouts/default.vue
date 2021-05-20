@@ -6,20 +6,24 @@
         <nuxt />
       </div>
     </div>
-    <toast></toast>
+    <toast />
   </div>
 </template>
 
 <script>
-import NavbarSection from "~/components/navbar";
-import Toast from "~/components/toast";
+import NavbarSection from '~/components/navbar'
+import Toast from '~/components/toast'
 
 export default {
   components: {
     NavbarSection,
-    Toast
-  }
-};
+    Toast,
+  },
+
+  created() {
+    this.isMobileDevice = window.innerWidth < 768
+  },
+}
 </script>
 
 <style lang="scss" scoped="true">
@@ -44,6 +48,7 @@ export default {
 .content-container {
   margin-top: $navbar-local-height;
 }
+
 @media (max-width: 768px) {
   .logo-container {
     height: 60px;
